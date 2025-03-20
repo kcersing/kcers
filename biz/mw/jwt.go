@@ -7,9 +7,9 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/hertz-contrib/jwt"
 	"github.com/spf13/cast"
-	"kcers/dal/config"
-	"kcers/infras/do"
-	"kcers/infras/service/admin"
+	"kcers/biz/dal/config"
+	"kcers/biz/infras/do"
+	"kcers/biz/infras/service"
 	"strconv"
 	"time"
 )

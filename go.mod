@@ -22,6 +22,7 @@ require (
 	github.com/hertz-contrib/websocket v0.1.0
 	github.com/jackc/pgx/v5 v5.7.1
 	github.com/jinzhu/copier v0.4.0
+	github.com/kcersing/dy v0.0.0-20250319093200-c849f4153c26
 	github.com/lib/pq v1.10.2
 	github.com/medivhzhan/weapp/v2 v2.5.0
 	github.com/minio/minio-go/v7 v7.0.69

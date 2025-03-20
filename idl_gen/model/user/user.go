@@ -11,31 +11,31 @@ import (
 
 // 用户基本信息
 type UserInfo struct {
-	ID               int64  `thrift:"id,1" form:"id" json:"id" query:"id"`
-	Status           int64  `thrift:"status,2" form:"status" json:"status" query:"status"`
-	Username         string `thrift:"username,3" form:"username" json:"username" query:"username"`
-	Password         string `thrift:"password,4" form:"password" json:"password" query:"password"`
-	Name             string `thrift:"name,5" form:"name" json:"name" query:"name"`
-	SideMode         string `thrift:"sideMode,6" form:"sideMode" json:"sideMode" query:"sideMode"`
-	BaseColor        string `thrift:"baseColor,7" form:"baseColor" json:"baseColor" query:"baseColor"`
-	ActiveColor      string `thrift:"activeColor,8" form:"activeColor" json:"activeColor" query:"activeColor"`
-	RoleId           int64  `thrift:"roleId,9" form:"roleId" json:"roleId" query:"roleId"`
-	Mobile           string `thrift:"mobile,10" form:"mobile" json:"mobile" query:"mobile"`
-	Email            string `thrift:"email,11" form:"email" json:"email" query:"email"`
-	Wecom            string `thrift:"wecom,12" form:"wecom" json:"wecom" query:"wecom"`
-	Avatar           string `thrift:"avatar,13" form:"avatar" json:"avatar" query:"avatar"`
-	CreatedAt        string `thrift:"createdAt,14" form:"createdAt" json:"createdAt" query:"createdAt"`
-	UpdatedAt        string `thrift:"updatedAt,15" form:"updatedAt" json:"updatedAt" query:"updatedAt"`
-	RoleName         string `thrift:"roleName,16" form:"roleName" json:"roleName" query:"roleName"`
-	RoleValue        string `thrift:"roleValue,17" form:"roleValue" json:"roleValue" query:"roleValue"`
-	Gender           string `thrift:"gender,18" form:"gender" json:"gender" query:"gender"`
-	Age              int64  `thrift:"age,19" form:"age" json:"age" query:"age"`
-	Birthday         string `thrift:"birthday,20" form:"birthday" json:"birthday" query:"birthday"`
-	Job              string `thrift:"job,21" form:"job" json:"job" query:"job"`
-	JobName          string `thrift:"jobName,22" form:"jobName" json:"jobName" query:"jobName"`
-	Organization     string `thrift:"organization,23" form:"organization" json:"organization" query:"organization"`
-	OrganizationName string `thrift:"organizationName,24" form:"organizationName" json:"organizationName" query:"organizationName"`
-	DefaultVenueId   int64  `thrift:"defaultVenueId,25" form:"defaultVenueId" json:"defaultVenueId" query:"defaultVenueId"`
+	ID               int64  `thrift:"id,1,optional" form:"id" json:"id" query:"id"`
+	Status           int64  `thrift:"status,2,optional" form:"status" json:"status" query:"status"`
+	Username         string `thrift:"username,3,optional" form:"username" json:"username" query:"username"`
+	Password         string `thrift:"password,4,optional" form:"password" json:"password" query:"password"`
+	Name             string `thrift:"name,5,optional" form:"name" json:"name" query:"name"`
+	SideMode         string `thrift:"sideMode,6,optional" form:"sideMode" json:"sideMode" query:"sideMode"`
+	BaseColor        string `thrift:"baseColor,7,optional" form:"baseColor" json:"baseColor" query:"baseColor"`
+	ActiveColor      string `thrift:"activeColor,8,optional" form:"activeColor" json:"activeColor" query:"activeColor"`
+	RoleId           int64  `thrift:"roleId,9,optional" form:"roleId" json:"roleId" query:"roleId"`
+	Mobile           string `thrift:"mobile,10,optional" form:"mobile" json:"mobile" query:"mobile"`
+	Email            string `thrift:"email,11,optional" form:"email" json:"email" query:"email"`
+	Wecom            string `thrift:"wecom,12,optional" form:"wecom" json:"wecom" query:"wecom"`
+	Avatar           string `thrift:"avatar,13,optional" form:"avatar" json:"avatar" query:"avatar"`
+	CreatedAt        string `thrift:"createdAt,14,optional" form:"createdAt" json:"createdAt" query:"createdAt"`
+	UpdatedAt        string `thrift:"updatedAt,15,optional" form:"updatedAt" json:"updatedAt" query:"updatedAt"`
+	RoleName         string `thrift:"roleName,16,optional" form:"roleName" json:"roleName" query:"roleName"`
+	RoleValue        string `thrift:"roleValue,17,optional" form:"roleValue" json:"roleValue" query:"roleValue"`
+	Gender           string `thrift:"gender,18,optional" form:"gender" json:"gender" query:"gender"`
+	Age              int64  `thrift:"age,19,optional" form:"age" json:"age" query:"age"`
+	Birthday         string `thrift:"birthday,20,optional" form:"birthday" json:"birthday" query:"birthday"`
+	Job              string `thrift:"job,21,optional" form:"job" json:"job" query:"job"`
+	JobName          string `thrift:"jobName,22,optional" form:"jobName" json:"jobName" query:"jobName"`
+	Organization     string `thrift:"organization,23,optional" form:"organization" json:"organization" query:"organization"`
+	OrganizationName string `thrift:"organizationName,24,optional" form:"organizationName" json:"organizationName" query:"organizationName"`
+	DefaultVenueId   int64  `thrift:"defaultVenueId,25,optional" form:"defaultVenueId" json:"defaultVenueId" query:"defaultVenueId"`
 }
 
 func NewUserInfo() *UserInfo {
@@ -97,103 +97,228 @@ func (p *UserInfo) InitDefault() {
 	p.DefaultVenueId = 0
 }
 
+var UserInfo_ID_DEFAULT int64 = 0
+
 func (p *UserInfo) GetID() (v int64) {
+	if !p.IsSetID() {
+		return UserInfo_ID_DEFAULT
+	}
 	return p.ID
 }
 
+var UserInfo_Status_DEFAULT int64 = 0
+
 func (p *UserInfo) GetStatus() (v int64) {
+	if !p.IsSetStatus() {
+		return UserInfo_Status_DEFAULT
+	}
 	return p.Status
 }
 
+var UserInfo_Username_DEFAULT string = ""
+
 func (p *UserInfo) GetUsername() (v string) {
+	if !p.IsSetUsername() {
+		return UserInfo_Username_DEFAULT
+	}
 	return p.Username
 }
 
+var UserInfo_Password_DEFAULT string = ""
+
 func (p *UserInfo) GetPassword() (v string) {
+	if !p.IsSetPassword() {
+		return UserInfo_Password_DEFAULT
+	}
 	return p.Password
 }
 
+var UserInfo_Name_DEFAULT string = ""
+
 func (p *UserInfo) GetName() (v string) {
+	if !p.IsSetName() {
+		return UserInfo_Name_DEFAULT
+	}
 	return p.Name
 }
 
+var UserInfo_SideMode_DEFAULT string = ""
+
 func (p *UserInfo) GetSideMode() (v string) {
+	if !p.IsSetSideMode() {
+		return UserInfo_SideMode_DEFAULT
+	}
 	return p.SideMode
 }
 
+var UserInfo_BaseColor_DEFAULT string = ""
+
 func (p *UserInfo) GetBaseColor() (v string) {
+	if !p.IsSetBaseColor() {
+		return UserInfo_BaseColor_DEFAULT
+	}
 	return p.BaseColor
 }
 
+var UserInfo_ActiveColor_DEFAULT string = ""
+
 func (p *UserInfo) GetActiveColor() (v string) {
+	if !p.IsSetActiveColor() {
+		return UserInfo_ActiveColor_DEFAULT
+	}
 	return p.ActiveColor
 }
 
+var UserInfo_RoleId_DEFAULT int64 = 0
+
 func (p *UserInfo) GetRoleId() (v int64) {
+	if !p.IsSetRoleId() {
+		return UserInfo_RoleId_DEFAULT
+	}
 	return p.RoleId
 }
 
+var UserInfo_Mobile_DEFAULT string = ""
+
 func (p *UserInfo) GetMobile() (v string) {
+	if !p.IsSetMobile() {
+		return UserInfo_Mobile_DEFAULT
+	}
 	return p.Mobile
 }
 
+var UserInfo_Email_DEFAULT string = ""
+
 func (p *UserInfo) GetEmail() (v string) {
+	if !p.IsSetEmail() {
+		return UserInfo_Email_DEFAULT
+	}
 	return p.Email
 }
 
+var UserInfo_Wecom_DEFAULT string = ""
+
 func (p *UserInfo) GetWecom() (v string) {
+	if !p.IsSetWecom() {
+		return UserInfo_Wecom_DEFAULT
+	}
 	return p.Wecom
 }
 
+var UserInfo_Avatar_DEFAULT string = ""
+
 func (p *UserInfo) GetAvatar() (v string) {
+	if !p.IsSetAvatar() {
+		return UserInfo_Avatar_DEFAULT
+	}
 	return p.Avatar
 }
 
+var UserInfo_CreatedAt_DEFAULT string = ""
+
 func (p *UserInfo) GetCreatedAt() (v string) {
+	if !p.IsSetCreatedAt() {
+		return UserInfo_CreatedAt_DEFAULT
+	}
 	return p.CreatedAt
 }
 
+var UserInfo_UpdatedAt_DEFAULT string = ""
+
 func (p *UserInfo) GetUpdatedAt() (v string) {
+	if !p.IsSetUpdatedAt() {
+		return UserInfo_UpdatedAt_DEFAULT
+	}
 	return p.UpdatedAt
 }
 
+var UserInfo_RoleName_DEFAULT string = ""
+
 func (p *UserInfo) GetRoleName() (v string) {
+	if !p.IsSetRoleName() {
+		return UserInfo_RoleName_DEFAULT
+	}
 	return p.RoleName
 }
 
+var UserInfo_RoleValue_DEFAULT string = ""
+
 func (p *UserInfo) GetRoleValue() (v string) {
+	if !p.IsSetRoleValue() {
+		return UserInfo_RoleValue_DEFAULT
+	}
 	return p.RoleValue
 }
 
+var UserInfo_Gender_DEFAULT string = ""
+
 func (p *UserInfo) GetGender() (v string) {
+	if !p.IsSetGender() {
+		return UserInfo_Gender_DEFAULT
+	}
 	return p.Gender
 }
 
+var UserInfo_Age_DEFAULT int64 = 0
+
 func (p *UserInfo) GetAge() (v int64) {
+	if !p.IsSetAge() {
+		return UserInfo_Age_DEFAULT
+	}
 	return p.Age
 }
 
+var UserInfo_Birthday_DEFAULT string = ""
+
 func (p *UserInfo) GetBirthday() (v string) {
+	if !p.IsSetBirthday() {
+		return UserInfo_Birthday_DEFAULT
+	}
 	return p.Birthday
 }
 
+var UserInfo_Job_DEFAULT string = ""
+
 func (p *UserInfo) GetJob() (v string) {
+	if !p.IsSetJob() {
+		return UserInfo_Job_DEFAULT
+	}
 	return p.Job
 }
 
+var UserInfo_JobName_DEFAULT string = ""
+
 func (p *UserInfo) GetJobName() (v string) {
+	if !p.IsSetJobName() {
+		return UserInfo_JobName_DEFAULT
+	}
 	return p.JobName
 }
 
+var UserInfo_Organization_DEFAULT string = ""
+
 func (p *UserInfo) GetOrganization() (v string) {
+	if !p.IsSetOrganization() {
+		return UserInfo_Organization_DEFAULT
+	}
 	return p.Organization
 }
 
+var UserInfo_OrganizationName_DEFAULT string = ""
+
 func (p *UserInfo) GetOrganizationName() (v string) {
+	if !p.IsSetOrganizationName() {
+		return UserInfo_OrganizationName_DEFAULT
+	}
 	return p.OrganizationName
 }
 
+var UserInfo_DefaultVenueId_DEFAULT int64 = 0
+
 func (p *UserInfo) GetDefaultVenueId() (v int64) {
+	if !p.IsSetDefaultVenueId() {
+		return UserInfo_DefaultVenueId_DEFAULT
+	}
 	return p.DefaultVenueId
 }
 
@@ -223,6 +348,106 @@ var fieldIDToName_UserInfo = map[int16]string{
 	23: "organization",
 	24: "organizationName",
 	25: "defaultVenueId",
+}
+
+func (p *UserInfo) IsSetID() bool {
+	return p.ID != UserInfo_ID_DEFAULT
+}
+
+func (p *UserInfo) IsSetStatus() bool {
+	return p.Status != UserInfo_Status_DEFAULT
+}
+
+func (p *UserInfo) IsSetUsername() bool {
+	return p.Username != UserInfo_Username_DEFAULT
+}
+
+func (p *UserInfo) IsSetPassword() bool {
+	return p.Password != UserInfo_Password_DEFAULT
+}
+
+func (p *UserInfo) IsSetName() bool {
+	return p.Name != UserInfo_Name_DEFAULT
+}
+
+func (p *UserInfo) IsSetSideMode() bool {
+	return p.SideMode != UserInfo_SideMode_DEFAULT
+}
+
+func (p *UserInfo) IsSetBaseColor() bool {
+	return p.BaseColor != UserInfo_BaseColor_DEFAULT
+}
+
+func (p *UserInfo) IsSetActiveColor() bool {
+	return p.ActiveColor != UserInfo_ActiveColor_DEFAULT
+}
+
+func (p *UserInfo) IsSetRoleId() bool {
+	return p.RoleId != UserInfo_RoleId_DEFAULT
+}
+
+func (p *UserInfo) IsSetMobile() bool {
+	return p.Mobile != UserInfo_Mobile_DEFAULT
+}
+
+func (p *UserInfo) IsSetEmail() bool {
+	return p.Email != UserInfo_Email_DEFAULT
+}
+
+func (p *UserInfo) IsSetWecom() bool {
+	return p.Wecom != UserInfo_Wecom_DEFAULT
+}
+
+func (p *UserInfo) IsSetAvatar() bool {
+	return p.Avatar != UserInfo_Avatar_DEFAULT
+}
+
+func (p *UserInfo) IsSetCreatedAt() bool {
+	return p.CreatedAt != UserInfo_CreatedAt_DEFAULT
+}
+
+func (p *UserInfo) IsSetUpdatedAt() bool {
+	return p.UpdatedAt != UserInfo_UpdatedAt_DEFAULT
+}
+
+func (p *UserInfo) IsSetRoleName() bool {
+	return p.RoleName != UserInfo_RoleName_DEFAULT
+}
+
+func (p *UserInfo) IsSetRoleValue() bool {
+	return p.RoleValue != UserInfo_RoleValue_DEFAULT
+}
+
+func (p *UserInfo) IsSetGender() bool {
+	return p.Gender != UserInfo_Gender_DEFAULT
+}
+
+func (p *UserInfo) IsSetAge() bool {
+	return p.Age != UserInfo_Age_DEFAULT
+}
+
+func (p *UserInfo) IsSetBirthday() bool {
+	return p.Birthday != UserInfo_Birthday_DEFAULT
+}
+
+func (p *UserInfo) IsSetJob() bool {
+	return p.Job != UserInfo_Job_DEFAULT
+}
+
+func (p *UserInfo) IsSetJobName() bool {
+	return p.JobName != UserInfo_JobName_DEFAULT
+}
+
+func (p *UserInfo) IsSetOrganization() bool {
+	return p.Organization != UserInfo_Organization_DEFAULT
+}
+
+func (p *UserInfo) IsSetOrganizationName() bool {
+	return p.OrganizationName != UserInfo_OrganizationName_DEFAULT
+}
+
+func (p *UserInfo) IsSetDefaultVenueId() bool {
+	return p.DefaultVenueId != UserInfo_DefaultVenueId_DEFAULT
 }
 
 func (p *UserInfo) Read(iprot thrift.TProtocol) (err error) {
@@ -874,14 +1099,16 @@ WriteStructEndError:
 }
 
 func (p *UserInfo) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("id", thrift.I64, 1); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteI64(p.ID); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetID() {
+		if err = oprot.WriteFieldBegin("id", thrift.I64, 1); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI64(p.ID); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -891,14 +1118,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("status", thrift.I64, 2); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteI64(p.Status); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetStatus() {
+		if err = oprot.WriteFieldBegin("status", thrift.I64, 2); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI64(p.Status); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -908,14 +1137,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("username", thrift.STRING, 3); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Username); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetUsername() {
+		if err = oprot.WriteFieldBegin("username", thrift.STRING, 3); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.Username); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -925,14 +1156,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField4(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("password", thrift.STRING, 4); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Password); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetPassword() {
+		if err = oprot.WriteFieldBegin("password", thrift.STRING, 4); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.Password); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -942,14 +1175,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField5(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("name", thrift.STRING, 5); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Name); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetName() {
+		if err = oprot.WriteFieldBegin("name", thrift.STRING, 5); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.Name); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -959,14 +1194,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField6(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("sideMode", thrift.STRING, 6); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.SideMode); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetSideMode() {
+		if err = oprot.WriteFieldBegin("sideMode", thrift.STRING, 6); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.SideMode); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -976,14 +1213,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField7(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("baseColor", thrift.STRING, 7); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.BaseColor); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetBaseColor() {
+		if err = oprot.WriteFieldBegin("baseColor", thrift.STRING, 7); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.BaseColor); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -993,14 +1232,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField8(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("activeColor", thrift.STRING, 8); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.ActiveColor); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetActiveColor() {
+		if err = oprot.WriteFieldBegin("activeColor", thrift.STRING, 8); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.ActiveColor); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -1010,14 +1251,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField9(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("roleId", thrift.I64, 9); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteI64(p.RoleId); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetRoleId() {
+		if err = oprot.WriteFieldBegin("roleId", thrift.I64, 9); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI64(p.RoleId); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -1027,14 +1270,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField10(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("mobile", thrift.STRING, 10); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Mobile); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetMobile() {
+		if err = oprot.WriteFieldBegin("mobile", thrift.STRING, 10); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.Mobile); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -1044,14 +1289,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField11(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("email", thrift.STRING, 11); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Email); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetEmail() {
+		if err = oprot.WriteFieldBegin("email", thrift.STRING, 11); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.Email); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -1061,14 +1308,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField12(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("wecom", thrift.STRING, 12); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Wecom); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetWecom() {
+		if err = oprot.WriteFieldBegin("wecom", thrift.STRING, 12); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.Wecom); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -1078,14 +1327,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField13(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("avatar", thrift.STRING, 13); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Avatar); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetAvatar() {
+		if err = oprot.WriteFieldBegin("avatar", thrift.STRING, 13); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.Avatar); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -1095,14 +1346,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField14(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("createdAt", thrift.STRING, 14); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.CreatedAt); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetCreatedAt() {
+		if err = oprot.WriteFieldBegin("createdAt", thrift.STRING, 14); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.CreatedAt); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -1112,14 +1365,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField15(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("updatedAt", thrift.STRING, 15); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.UpdatedAt); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetUpdatedAt() {
+		if err = oprot.WriteFieldBegin("updatedAt", thrift.STRING, 15); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.UpdatedAt); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -1129,14 +1384,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField16(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("roleName", thrift.STRING, 16); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.RoleName); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetRoleName() {
+		if err = oprot.WriteFieldBegin("roleName", thrift.STRING, 16); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.RoleName); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -1146,14 +1403,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField17(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("roleValue", thrift.STRING, 17); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.RoleValue); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetRoleValue() {
+		if err = oprot.WriteFieldBegin("roleValue", thrift.STRING, 17); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.RoleValue); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -1163,14 +1422,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField18(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("gender", thrift.STRING, 18); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Gender); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetGender() {
+		if err = oprot.WriteFieldBegin("gender", thrift.STRING, 18); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.Gender); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -1180,14 +1441,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField19(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("age", thrift.I64, 19); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteI64(p.Age); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetAge() {
+		if err = oprot.WriteFieldBegin("age", thrift.I64, 19); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI64(p.Age); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -1197,14 +1460,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField20(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("birthday", thrift.STRING, 20); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Birthday); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetBirthday() {
+		if err = oprot.WriteFieldBegin("birthday", thrift.STRING, 20); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.Birthday); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -1214,14 +1479,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField21(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("job", thrift.STRING, 21); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Job); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetJob() {
+		if err = oprot.WriteFieldBegin("job", thrift.STRING, 21); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.Job); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -1231,14 +1498,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField22(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("jobName", thrift.STRING, 22); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.JobName); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetJobName() {
+		if err = oprot.WriteFieldBegin("jobName", thrift.STRING, 22); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.JobName); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -1248,14 +1517,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField23(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("organization", thrift.STRING, 23); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Organization); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetOrganization() {
+		if err = oprot.WriteFieldBegin("organization", thrift.STRING, 23); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.Organization); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -1265,14 +1536,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField24(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("organizationName", thrift.STRING, 24); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.OrganizationName); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetOrganizationName() {
+		if err = oprot.WriteFieldBegin("organizationName", thrift.STRING, 24); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.OrganizationName); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -1282,14 +1555,16 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField25(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("defaultVenueId", thrift.I64, 25); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteI64(p.DefaultVenueId); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetDefaultVenueId() {
+		if err = oprot.WriteFieldBegin("defaultVenueId", thrift.I64, 25); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI64(p.DefaultVenueId); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:
@@ -3492,343 +3767,6 @@ func (p *UserListReq) String() string {
 		return "<nil>"
 	}
 	return fmt.Sprintf("UserListReq(%+v)", *p)
-
-}
-
-// 更新用户信息请求
-type UpdateUserProfileReq struct {
-	ID     int64  `thrift:"id,1" form:"id" json:"id" query:"id"`
-	Name   string `thrift:"name,2" form:"name" json:"name" query:"name"`
-	Email  string `thrift:"email,3" form:"email" json:"email" query:"email"`
-	Mobile string `thrift:"mobile,4" form:"mobile" json:"mobile" query:"mobile"`
-	Avatar string `thrift:"avatar,5" form:"avatar" json:"avatar" query:"avatar"`
-}
-
-func NewUpdateUserProfileReq() *UpdateUserProfileReq {
-	return &UpdateUserProfileReq{
-
-		ID:     0,
-		Name:   "",
-		Email:  "",
-		Mobile: "",
-		Avatar: "",
-	}
-}
-
-func (p *UpdateUserProfileReq) InitDefault() {
-	p.ID = 0
-	p.Name = ""
-	p.Email = ""
-	p.Mobile = ""
-	p.Avatar = ""
-}
-
-func (p *UpdateUserProfileReq) GetID() (v int64) {
-	return p.ID
-}
-
-func (p *UpdateUserProfileReq) GetName() (v string) {
-	return p.Name
-}
-
-func (p *UpdateUserProfileReq) GetEmail() (v string) {
-	return p.Email
-}
-
-func (p *UpdateUserProfileReq) GetMobile() (v string) {
-	return p.Mobile
-}
-
-func (p *UpdateUserProfileReq) GetAvatar() (v string) {
-	return p.Avatar
-}
-
-var fieldIDToName_UpdateUserProfileReq = map[int16]string{
-	1: "id",
-	2: "name",
-	3: "email",
-	4: "mobile",
-	5: "avatar",
-}
-
-func (p *UpdateUserProfileReq) Read(iprot thrift.TProtocol) (err error) {
-
-	var fieldTypeId thrift.TType
-	var fieldId int16
-
-	if _, err = iprot.ReadStructBegin(); err != nil {
-		goto ReadStructBeginError
-	}
-
-	for {
-		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
-		if err != nil {
-			goto ReadFieldBeginError
-		}
-		if fieldTypeId == thrift.STOP {
-			break
-		}
-
-		switch fieldId {
-		case 1:
-			if fieldTypeId == thrift.I64 {
-				if err = p.ReadField1(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 2:
-			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField2(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 3:
-			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField3(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 4:
-			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField4(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 5:
-			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField5(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		default:
-			if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		}
-		if err = iprot.ReadFieldEnd(); err != nil {
-			goto ReadFieldEndError
-		}
-	}
-	if err = iprot.ReadStructEnd(); err != nil {
-		goto ReadStructEndError
-	}
-
-	return nil
-ReadStructBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
-ReadFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
-ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_UpdateUserProfileReq[fieldId]), err)
-SkipFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
-
-ReadFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
-ReadStructEndError:
-	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-}
-
-func (p *UpdateUserProfileReq) ReadField1(iprot thrift.TProtocol) error {
-
-	var _field int64
-	if v, err := iprot.ReadI64(); err != nil {
-		return err
-	} else {
-		_field = v
-	}
-	p.ID = _field
-	return nil
-}
-func (p *UpdateUserProfileReq) ReadField2(iprot thrift.TProtocol) error {
-
-	var _field string
-	if v, err := iprot.ReadString(); err != nil {
-		return err
-	} else {
-		_field = v
-	}
-	p.Name = _field
-	return nil
-}
-func (p *UpdateUserProfileReq) ReadField3(iprot thrift.TProtocol) error {
-
-	var _field string
-	if v, err := iprot.ReadString(); err != nil {
-		return err
-	} else {
-		_field = v
-	}
-	p.Email = _field
-	return nil
-}
-func (p *UpdateUserProfileReq) ReadField4(iprot thrift.TProtocol) error {
-
-	var _field string
-	if v, err := iprot.ReadString(); err != nil {
-		return err
-	} else {
-		_field = v
-	}
-	p.Mobile = _field
-	return nil
-}
-func (p *UpdateUserProfileReq) ReadField5(iprot thrift.TProtocol) error {
-
-	var _field string
-	if v, err := iprot.ReadString(); err != nil {
-		return err
-	} else {
-		_field = v
-	}
-	p.Avatar = _field
-	return nil
-}
-
-func (p *UpdateUserProfileReq) Write(oprot thrift.TProtocol) (err error) {
-	var fieldId int16
-	if err = oprot.WriteStructBegin("UpdateUserProfileReq"); err != nil {
-		goto WriteStructBeginError
-	}
-	if p != nil {
-		if err = p.writeField1(oprot); err != nil {
-			fieldId = 1
-			goto WriteFieldError
-		}
-		if err = p.writeField2(oprot); err != nil {
-			fieldId = 2
-			goto WriteFieldError
-		}
-		if err = p.writeField3(oprot); err != nil {
-			fieldId = 3
-			goto WriteFieldError
-		}
-		if err = p.writeField4(oprot); err != nil {
-			fieldId = 4
-			goto WriteFieldError
-		}
-		if err = p.writeField5(oprot); err != nil {
-			fieldId = 5
-			goto WriteFieldError
-		}
-	}
-	if err = oprot.WriteFieldStop(); err != nil {
-		goto WriteFieldStopError
-	}
-	if err = oprot.WriteStructEnd(); err != nil {
-		goto WriteStructEndError
-	}
-	return nil
-WriteStructBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
-WriteFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
-WriteFieldStopError:
-	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
-WriteStructEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
-}
-
-func (p *UpdateUserProfileReq) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("id", thrift.I64, 1); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteI64(p.ID); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
-}
-
-func (p *UpdateUserProfileReq) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("name", thrift.STRING, 2); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Name); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
-}
-
-func (p *UpdateUserProfileReq) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("email", thrift.STRING, 3); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Email); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
-}
-
-func (p *UpdateUserProfileReq) writeField4(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("mobile", thrift.STRING, 4); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Mobile); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
-}
-
-func (p *UpdateUserProfileReq) writeField5(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("avatar", thrift.STRING, 5); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Avatar); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
-}
-
-func (p *UpdateUserProfileReq) String() string {
-	if p == nil {
-		return "<nil>"
-	}
-	return fmt.Sprintf("UpdateUserProfileReq(%+v)", *p)
 
 }
 

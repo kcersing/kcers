@@ -27,6 +27,7 @@ struct Empty {
 
 }
 
+
 struct IdReq{
     1: i64 id=0 (api.raw = "id")
 }
@@ -48,16 +49,6 @@ struct Tree  {
  4:	string method="" (api.raw = "method")
  5:	list<Tree> children={} (api.raw = "children")
 }
-
-
-
-
-
-
-
-
-
-
 enum Err {
     Success            = 0,
     NoRoute            = 1,

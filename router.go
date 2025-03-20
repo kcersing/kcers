@@ -4,14 +4,13 @@ package main
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
-	handler "kcers/biz/handler"
 	"kcers/biz/mw"
 	"kcers/dal/casbin"
 )
 
 // customizeRegister registers customize routers.
 func customizedRegister(r *server.Hertz) {
-	r.GET("/__vite_ping", handler.Ping)
+	//r.GET("/__vite_ping", handler.Ping)
 
 	// your code ...
 

@@ -5,35 +5,34 @@ package main
 import (
 	"context"
 	"fmt"
-	"kcers/app/admin/config"
-	"kcers/app/admin/infras"
-	"kcers/app/dal/cache"
-	"kcers/app/dal/casbin"
-	config2 "kcers/app/dal/config"
-	"kcers/app/dal/db"
-	"kcers/app/dal/logger"
-	"kcers/app/pkg/service/admin"
-	"kcers/pkg/minio"
-	"time"
+	"kcers/biz/dal/config"
+	db "kcers/biz/dal/db/mysql"
+	"kcers/biz/infras/service/admin"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/hertz-contrib/logger/accesslog"
 	"github.com/hertz-contrib/reverseproxy"
+	"kcers/biz/dal/cache"
+	"kcers/biz/dal/casbin"
+	"kcers/biz/dal/data"
+	"kcers/biz/dal/logger"
+	"kcers/biz/pkg/minio"
+	"time"
 )
 
 func init() {
 
 	logger.InitLogger()
-	config2.InitConfig()
-	infras.InitDB()
+	config.InitConfig()
+	db.InitDB()
 	casbin.InitCasbin()
 	cache.InitCache()
-	db.NewInitDatabase().InitDatabaseUser()
-	db.NewInitDatabase().InitDatabaseDict()
-	db.NewInitDatabase().InsertDatabaseMenuData()
-	db.NewInitDatabase().InitDatabaseApi()
+	data.NewInitDatabase().InitDatabaseUser()
+	data.NewInitDatabase().InitDatabaseDict()
+	data.NewInitDatabase().InsertDatabaseMenuData()
+	data.NewInitDatabase().InitDatabaseApi()
 	minio.Init()
 }
 func minioReverseProxy(c context.Context, ctx *app.RequestContext) {

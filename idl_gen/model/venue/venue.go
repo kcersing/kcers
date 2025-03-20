@@ -3064,7 +3064,6 @@ func (p *CreateOrUpdateVenuePlaceReq) String() string {
 }
 
 type VenueService interface {
-	// 获取用户列表
 	// 添加
 	CreatePlace(ctx context.Context, req *CreateOrUpdateVenuePlaceReq) (r *base.NilResponse, err error)
 	// 编辑

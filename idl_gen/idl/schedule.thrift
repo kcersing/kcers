@@ -78,31 +78,8 @@ struct CreateOrUpdateScheduleReq {
     13:optional i64 memberProductPropertyId =0 (api.raw = "memberProductPropertyId")
 }
 
-struct ScheduleListReq {
-    1:  optional i64 page=0 (api.raw = "page")
-    2:  optional i64 pageSize=0 (api.raw = "pageSize")
-    3:  optional i64 memberId=0 (api.raw = "memberId")
-    4:  optional list<i64> coachIds =""(api.raw = "coachIds")
-    5:  optional list<i64> productIds =""(api.raw = "productIds")
-    6:  optional i64 venueId=0 (api.raw = "venueId")
-    7:  optional list<i64> propertyIds=0 (api.raw = "propertyIds")
-    8:  optional string startTime ="" (api.raw = "startTime")
-    9:  optional string type=""  (api.raw = "type")
-}
-struct ScheduleMemberReq {
-    1:  optional i64 page =0(api.raw = "page")
-    2:  optional i64 pageSize=0 (api.raw = "pageSize")
-    3:  optional i64 memberId=0 (api.raw = "memberId")
-    4:  optional i64 scheduleId=0 (api.raw = "scheduleId")
-    5:  optional string type ="" (api.raw = "type")
-}
-struct ScheduleCoachReq{
-    1:  optional i64 page=0 (api.raw = "page")
-    2:  optional i64 pageSize =0(api.raw = "pageSize")
-    3:  optional i64 memberId=0 (api.raw = "memberId")
-    4:  optional i64 scheduleId=0 (api.raw = "scheduleId")
-    5:  optional string type ="" (api.raw = "type")
-}
+
+
 
 struct SearchSubscribeByMemberReq{
     1:  optional i64 propertyId=0 (api.raw = "propertyId")
@@ -117,71 +94,76 @@ struct MemberSubscribeReq{
     3:  optional string remark =""(api.raw = "remark")
 }
 
-
-struct ScheduleMemberCreate  {
-	MemberProductPropertyID []int64 (api.raw = "memberProductPropertyId")
-	Schedule                int64   (api.raw = "schedule")
-	Remark                  string  (api.raw = "remark")
+struct ScheduleListReq {
+    3:  optional i64 memberId=0 (api.raw = "memberId")
+    4:  optional list<i64> coachIds =""(api.raw = "coachIds")
+    5:  optional list<i64> productIds =""(api.raw = "productIds")
+    6:  optional i64 venueId=0 (api.raw = "venueId")
+    7:  optional list<i64> propertyIds=0 (api.raw = "propertyIds")
+    8:  optional string startTime ="" (api.raw = "startTime")
+    9:  optional string type=""  (api.raw = "type")
+	101:  optional i64 page = 0  (api.raw = "page")
+    102:  optional i64 pageSize = 0  (api.raw = "pageSize")
 }
 struct ScheduleMemberListReq  {
-	Type     string (api.raw = "type")
-	Page     int64  (api.raw = "page")
-	PageSize int64  (api.raw = "pageSize")
-	Member   int64  (api.raw = "member")
-	Schedule int64  (api.raw = "schedule")
+	1:  optional string type=""      (api.raw = "type")
+	2:  optional i64 memberId   =0  (api.raw = "memberId")
+	3:  optional i64 scheduleId =0  (api.raw = "scheduleId")
+	101:  optional i64 page = 0  (api.raw = "page")
+    102:  optional i64 pageSize = 0  (api.raw = "pageSize")
 }
-
+struct ScheduleCoachListReq  {
+    1:optional string type = "" (api.raw = "type")
+    2:optional i64	coachId  = 0  (api.raw = "coachId")
+    3:optional i64	scheduleId =0  (api.raw = "scheduleId")
+	101:  optional i64 page = 0  (api.raw = "page")
+    102:  optional i64 pageSize = 0  (api.raw = "pageSize")
+}
 struct ScheduleCoachInfo  {
 	1:optional i64 id =0 (api.raw = "id")
-	CoachId       int64  (api.raw = "CoachId")
-	VenueId       int64  (api.raw = "VenueId")
-	PlaceID       int64  (api.raw = "PlaceId")
-	PropertyId    int64  (api.raw = "PropertyId")
-	ScheduleId    int64  (api.raw = "ScheduleId")
-	Type          string (api.raw = "type")
-	Date          string (api.raw = "date")
-	StartTime     string (api.raw = "startTime")
-	EndTime       string (api.raw = "endTime")
-	SignStartTime string (api.raw = "signStartTime")
-	SignEndTime   string (api.raw = "signEndTime")
-	Status        int64  (api.raw = "status")
+	2:optional i64 coachId =0  (api.raw = "coachId")
+	3:optional i64 venueId =0  (api.raw = "venueId")
+	4:optional i64 placeId =0  (api.raw = "placeId")
+	5:optional i64 propertyId =0  (api.raw = "propertyId")
+	6:optional i64 scheduleId =0  (api.raw = "scheduleId")
+	7:optional string type ="" (api.raw = "type")
+	8:optional string date ="" (api.raw = "date")
+	9:optional string startTime ="" (api.raw = "startTime")
+	10:optional string endTime ="" (api.raw = "endTime")
+	11:optional string signStartTime ="" (api.raw = "signStartTime")
+	12:optional string signEndTime ="" (api.raw = "signEndTime")
+	13:optional i64 status =0  (api.raw = "status")
 
-	ScheduleName string (api.raw = "scheduleName")
-	PropertyName string (api.raw = "propertyName")
-	VenueName    string (api.raw = "venueName")
-	PlaceName    string (api.raw = "placeName")
-	CoachName    string (api.raw = "coachName")
-	CoachAvatar  string (api.raw = "coachAvatar")
+	14:optional string scheduleName  ="" (api.raw = "scheduleName")
+	15:optional string propertyName ="" (api.raw = "propertyName")
+	16:optional string venueName ="" (api.raw = "venueName")
+	17:optional string placeName ="" (api.raw = "placeName")
+	18:optional string coachName ="" (api.raw = "coachName")
+	19:optional string coachAvatar ="" (api.raw = "coachAvatar")
 
-	Mobile                    string (api.raw = "mobile")
-	MemberName                string (api.raw = "memberName")
-	MemberAvatar              string (api.raw = "memberAvatar")
-	MemberProductName         string (api.raw = "memberProductName")
-	MemberProductPropertyName string (api.raw = "memberProductPropertyName")
-	Remark                    string (api.raw = "remark")
-	MRemark                   string (api.raw = "mRemark")
-		251:optional string createdAt =""(api.raw = "createdAt")
-    	252:optional string updatedAt =""(api.raw = "updatedAt")
+	20:optional string mobile ="" (api.raw = "mobile")
+	21:optional string memberName ="" (api.raw = "memberName")
+	22:optional string memberAvatar ="" (api.raw = "memberAvatar")
+	23:optional string memberProductName ="" (api.raw = "memberProductName")
+	24:optional string memberProductPropertyName  ="" (api.raw = "memberProductPropertyName")
+	25:optional string remark ="" (api.raw = "remark")
+	26:optional string mRemark ="" (api.raw = "mRemark")
+	251:optional string createdAt =""(api.raw = "createdAt")
+   	252:optional string updatedAt =""(api.raw = "updatedAt")
 }
 
-struct ScheduleCoachListReq  {
-	Type     string (api.raw = "type")
-	Page     int64  (api.raw = "page")
-	PageSize int64  (api.raw = "pageSize")
-	Coach    int64  (api.raw = "coach")
-	Schedule int64  (api.raw = "schedule")
-}
+
 
 struct SubscribeByMember  {
-	Avatar                  string (api.raw = "avatar")
-	Mobile                  string (api.raw = "mobile")
-	MemberId                int64  (api.raw = "memberId")
-	MemberProductID         int64  (api.raw = "memberProductID")
-	MemberProductPropertyId int64  (api.raw = "memberProductPropertyId")
+	1:optional string  avatar =""  (api.raw = "avatar")
+	2:optional string  mobile =""  (api.raw = "mobile")
+	3:optional i64  memberId =0   (api.raw = "memberId")
+	4:optional i64  memberProductID =0   (api.raw = "memberProductID")
+	5:optional i64  memberProductPropertyId =0  (api.raw = "memberProductPropertyId")
 
-	MemberName                string (api.raw = "memberName")
-	MemberProductName         string (api.raw = "memberProductName")
-	MemberProductPropertyName string (api.raw = "memberProductPropertyName")
+	6:optional string  memberName =""  (api.raw = "memberName")
+	7:optional string  memberProductName = ""  (api.raw = "memberProductName")
+	8:optional string  memberProductPropertyName = ""  (api.raw = "memberProductPropertyName")
 }
 
 
@@ -199,7 +181,7 @@ service ScheduleService {
 
     base.NilResponse GetScheduleById(1: base.IdReq req) (api.post = "/api/admin/schedule/info")
 
-    base.NilResponse GetScheduleMemberList(1: ScheduleMemberReq req) (api.post = "/api/admin/schedule/schedule-member-list")
+    base.NilResponse GetScheduleMemberList(1: ScheduleMemberListReq req) (api.post = "/api/admin/schedule/schedule-member-list")
 
     base.NilResponse SearchSubscribeByMember(1: SearchSubscribeByMemberReq req) (api.post = "/api/admin/schedule/search-subscribe-by-member")
 
@@ -207,8 +189,7 @@ service ScheduleService {
 
     base.NilResponse UpdateMemberStatus(1: base.StatusCodeReq req) (api.post = "/api/admin/schedule/schedule-member-status")
 
-
-    base.NilResponse GetScheduleCoachList(1: ScheduleMemberReq req) (api.post = "/api/admin/schedule/schedule-coach-list")
+    base.NilResponse GetScheduleCoachList(1: ScheduleCoachListReq req) (api.post = "/api/admin/schedule/schedule-coach-list")
 
     base.NilResponse UpdateCoachStatus(1: base.StatusCodeReq req) (api.post = "/api/admin/schedule/schedule-coach-status")
 

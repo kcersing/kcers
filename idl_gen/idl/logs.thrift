@@ -1,32 +1,33 @@
-namespace go admin.logs
+namespace go logs
 
 include "../base/base.thrift"
 
-
 //日志列表请求数据
 struct LogsListReq {
-    1:  i64 page (api.raw = "page")
-    2:  i64 pageSize (api.raw = "pageSize")
-    3:  string type (api.raw = "type")
-    4:  string method (api.raw = "method")
-    5:  string api (api.raw = "api")
-    6:  string success (api.raw = "success")
-    7:  string operators (api.raw = "operators")
+    1: optional i64 page=0 (api.raw = "page")
+    2: optional i64 pageSize=0 (api.raw = "pageSize")
+    3: optional string type="" (api.raw = "type")
+    4: optional string method="" (api.raw = "method")
+    5: optional string api="" (api.raw = "api")
+    6: optional string success="" (api.raw = "success")
+    7: optional string operators ="" (api.raw = "operators")
 }
 //日志信息
 struct LogsInfo {
-    1:  string type (api.raw = "type")
-    2:  string method (api.raw = "method")
-    3:  string api (api.raw = "api")
-    4:  string success (api.raw = "success")
-    5:  string reqContent (api.raw = "reqContent")
-    6:  string respContent (api.raw = "respContent")
-    7:  string ip (api.raw = "ip")
-    8:  string userAgent (api.raw = "userAgent")
-    9:  string operator (api.raw = "operator")
-    10:  string time (api.raw = "time")
-    11:  string createdAt (api.raw = "createdAt")
-    12:  string updatedAt (api.raw = "updatedAt")
+    1: optional string type="" (api.raw = "type")
+    2: optional string method =""(api.raw = "method")
+    3: optional string api =""(api.raw = "api")
+    4: optional string success =""(api.raw = "success")
+    5: optional string reqContent="" (api.raw = "reqContent")
+    6: optional string respContent="" (api.raw = "respContent")
+    7: optional string ip="" (api.raw = "ip")
+    8: optional string userAgent =""(api.raw = "userAgent")
+    9: optional string operators =""(api.raw = "operators")
+    10: optional string time="" (api.raw = "time")
+    11: optional string createdAt =""(api.raw = "createdAt")
+    12: optional string updatedAt =""(api.raw = "updatedAt")
+
+    251: optional i64 id = 0 (api.raw = "id")
 }
 
 service LogsService{
