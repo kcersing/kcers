@@ -5,10 +5,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"kcers/biz/dal/config"
-	db "kcers/biz/dal/db/mysql"
-	"kcers/biz/infras/service/admin"
-
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -16,7 +12,9 @@ import (
 	"github.com/hertz-contrib/reverseproxy"
 	"kcers/biz/dal/cache"
 	"kcers/biz/dal/casbin"
+	"kcers/biz/dal/config"
 	"kcers/biz/dal/data"
+	db "kcers/biz/dal/db/mysql"
 	"kcers/biz/dal/logger"
 	"kcers/biz/pkg/minio"
 	"time"
@@ -55,7 +53,7 @@ func main() {
 	h.NoHijackConnPool = true
 	// Set up /src/*name route forwarding to access minio from external network
 	h.GET("/src/*name", minioReverseProxy)
-	h.GET("/api/ws/face", admin.Faces)
+	//h.GET("/api/ws/face", service.Faces)
 	register(h)
 	h.Spin()
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cast"
 	"kcers/biz/dal/config"
 	"kcers/biz/infras/do"
+	"kcers/biz/infras/do/1"
 	"kcers/biz/infras/service"
 	"strconv"
 	"time"
@@ -67,7 +68,7 @@ func newJWT(enforcer *casbin.Enforcer) (jwtMiddleware *jwt.HertzJWTMiddleware, e
 		},
 		// Authenticator is used to validate the login data.
 		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {
-			res := new(do.LoginResp)
+			res := new(_.LoginResp)
 
 			var loginVal jwtLogin
 			if err := c.BindAndValidate(&loginVal); err != nil {

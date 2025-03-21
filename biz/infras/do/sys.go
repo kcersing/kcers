@@ -1,6 +1,6 @@
 package do
 
-import "kcers/idl_gen/model/admin/sys"
+import "kcers/idl_gen/model/sys"
 
 type Sys interface {
 	ProductList(req *sys.SysListReq) (list []*sys.SysList, total int64, err error)

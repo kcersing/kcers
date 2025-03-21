@@ -12,7 +12,7 @@ import (
 )
 
 // CreatePlace .
-// @router /api/admin/place/create [POST]
+// @router /service/place/create [POST]
 func CreatePlace(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req venue.CreateOrUpdateVenuePlaceReq
@@ -28,7 +28,7 @@ func CreatePlace(ctx context.Context, c *app.RequestContext) {
 }
 
 // UpdatePlace .
-// @router /api/admin/place/update [POST]
+// @router /service/place/update [POST]
 func UpdatePlace(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req venue.CreateOrUpdateVenuePlaceReq
@@ -44,7 +44,7 @@ func UpdatePlace(ctx context.Context, c *app.RequestContext) {
 }
 
 // PlaceUpdateStatus .
-// @router /api/admin/place/status [POST]
+// @router /service/place/status [POST]
 func PlaceUpdateStatus(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req base.StatusCodeReq
@@ -60,7 +60,7 @@ func PlaceUpdateStatus(ctx context.Context, c *app.RequestContext) {
 }
 
 // PlaceList .
-// @router /api/admin/place/list [POST]
+// @router /service/place/list [POST]
 func PlaceList(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req venue.VenuePlaceListReq
@@ -76,7 +76,7 @@ func PlaceList(ctx context.Context, c *app.RequestContext) {
 }
 
 // Create .
-// @router /api/admin/venue/create [POST]
+// @router /service/venue/create [POST]
 func Create(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req venue.CreateOrUpdateVenueReq
@@ -92,7 +92,7 @@ func Create(ctx context.Context, c *app.RequestContext) {
 }
 
 // Update .
-// @router /api/admin/venue/update [POST]
+// @router /service/venue/update [POST]
 func Update(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req venue.CreateOrUpdateVenueReq
@@ -108,7 +108,7 @@ func Update(ctx context.Context, c *app.RequestContext) {
 }
 
 // UpdateStatus .
-// @router /api/admin/venue/status [POST]
+// @router /service/venue/status [POST]
 func UpdateStatus(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req base.StatusCodeReq
@@ -124,7 +124,7 @@ func UpdateStatus(ctx context.Context, c *app.RequestContext) {
 }
 
 // List .
-// @router /api/admin/venue/list [POST]
+// @router /service/venue/list [POST]
 func List(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req venue.VenueListReq

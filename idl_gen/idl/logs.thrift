@@ -32,9 +32,9 @@ struct LogsInfo {
 
 service LogsService{
   // Get logs list | 获取日志列表
-  base.NilResponse GetLogsList(1: LogsListReq req) (api.post = "/api/admin/logs/list")
+  base.NilResponse GetLogsList(1: LogsListReq req) (api.post = "/service/logs/list")
 
   // Delete logs | 删除日志信息
-  base.NilResponse DeleteLogs(1: base.Empty req) (api.post = "/api/admin/logs/deleteAll")
+  base.NilResponse DeleteLogs(1: base.Empty req) (api.post = "/service/logs/deleteAll")
 
 }

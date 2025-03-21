@@ -2,8 +2,8 @@ package schema
 
 import (
 	"entgo.io/ent/schema/index"
-	"kcers/app/pkg/do"
-	"kcers/pkg/db/ent/schema/mixins"
+
+	"kcers/biz/dal/db/mysql/ent/schema/mixins"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
@@ -22,7 +22,7 @@ func (OrderItem) Fields() []ent.Field {
 		field.Int64("product_id").Comment("产品id").Optional(),
 		field.Int64("related_user_product_id").Default(0).Comment("关联会员产品id").Optional(),
 		//field.Text("data").Default("").Comment("数据附件").Optional(),
-		field.JSON("data", do.CreateOrder{}).Comment("数据附件").Optional(),
+		//field.JSON("data", do.CreateOrder{}).Comment("数据附件").Optional(),
 	}
 }
 

@@ -12,7 +12,7 @@ import (
 )
 
 // UpdateToken .
-// @router /api/admin/token/update [POST]
+// @router /service/token/update [POST]
 func UpdateToken(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req token.TokenInfo
@@ -28,10 +28,10 @@ func UpdateToken(ctx context.Context, c *app.RequestContext) {
 }
 
 // DeleteToken .
-// @router /api/admin/token [POST]
+// @router /service/token [POST]
 func DeleteToken(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req base.IdReq
+	var req base.IDReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
@@ -44,7 +44,7 @@ func DeleteToken(ctx context.Context, c *app.RequestContext) {
 }
 
 // TokenList .
-// @router /api/admin/token/list [POST]
+// @router /service/token/list [POST]
 func TokenList(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req token.TokenListReq

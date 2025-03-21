@@ -1,4 +1,4 @@
-namespace go admin.sys
+namespace go sys
 
 include "../base/base.thrift"
 

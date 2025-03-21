@@ -4157,7 +4157,7 @@ type UserService interface {
 	// 获取用户列表
 	UserList(ctx context.Context, req *UserListReq) (r *base.NilResponse, err error)
 	// 删除用户信息
-	DeleteUser(ctx context.Context, req *base.IdReq) (r *base.NilResponse, err error)
+	DeleteUser(ctx context.Context, req *base.IDReq) (r *base.NilResponse, err error)
 	// 获取用户个人信息
 	UserProfile(ctx context.Context, req *base.Empty) (r *base.NilResponse, err error)
 	// 更新用户状态
@@ -4257,7 +4257,7 @@ func (p *UserServiceClient) UserList(ctx context.Context, req *UserListReq) (r *
 	}
 	return _result.GetSuccess(), nil
 }
-func (p *UserServiceClient) DeleteUser(ctx context.Context, req *base.IdReq) (r *base.NilResponse, err error) {
+func (p *UserServiceClient) DeleteUser(ctx context.Context, req *base.IDReq) (r *base.NilResponse, err error) {
 	var _args UserServiceDeleteUserArgs
 	_args.Req = req
 	var _result UserServiceDeleteUserResult
@@ -6990,7 +6990,7 @@ func (p *UserServiceUserListResult) String() string {
 }
 
 type UserServiceDeleteUserArgs struct {
-	Req *base.IdReq `thrift:"req,1"`
+	Req *base.IDReq `thrift:"req,1"`
 }
 
 func NewUserServiceDeleteUserArgs() *UserServiceDeleteUserArgs {
@@ -7000,9 +7000,9 @@ func NewUserServiceDeleteUserArgs() *UserServiceDeleteUserArgs {
 func (p *UserServiceDeleteUserArgs) InitDefault() {
 }
 
-var UserServiceDeleteUserArgs_Req_DEFAULT *base.IdReq
+var UserServiceDeleteUserArgs_Req_DEFAULT *base.IDReq
 
-func (p *UserServiceDeleteUserArgs) GetReq() (v *base.IdReq) {
+func (p *UserServiceDeleteUserArgs) GetReq() (v *base.IDReq) {
 	if !p.IsSetReq() {
 		return UserServiceDeleteUserArgs_Req_DEFAULT
 	}
@@ -7074,7 +7074,7 @@ ReadStructEndError:
 }
 
 func (p *UserServiceDeleteUserArgs) ReadField1(iprot thrift.TProtocol) error {
-	_field := base.NewIdReq()
+	_field := base.NewIDReq()
 	if err := _field.Read(iprot); err != nil {
 		return err
 	}

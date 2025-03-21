@@ -1,7 +1,7 @@
 package schema
 
 import (
-	"kcers/pkg/db/ent/schema/mixins"
+	"kcers/biz/dal/db/mysql/ent/schema/mixins"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"

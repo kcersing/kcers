@@ -6,7 +6,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
-	"kcers/pkg/db/ent/schema/mixins"
+	"kcers/biz/dal/db/mysql/ent/schema/mixins"
 )
 
 type Messages struct {

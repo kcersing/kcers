@@ -21,7 +21,7 @@ func _registerMw() []app.HandlerFunc {
 	return nil
 }
 
-func _adminMw() []app.HandlerFunc {
+func _serviceMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }

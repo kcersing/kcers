@@ -7,7 +7,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
-	"kcers/pkg/db/ent/schema/mixins"
+	"kcers/biz/dal/db/mysql/ent/schema/mixins"
 	"time"
 )
 

@@ -12,7 +12,7 @@ import (
 )
 
 // GetLogsList .
-// @router /api/admin/logs/list [POST]
+// @router /service/logs/list [POST]
 func GetLogsList(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req logs.LogsListReq
@@ -28,7 +28,7 @@ func GetLogsList(ctx context.Context, c *app.RequestContext) {
 }
 
 // DeleteLogs .
-// @router /api/admin/logs/deleteAll [POST]
+// @router /service/logs/deleteAll [POST]
 func DeleteLogs(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req base.Empty

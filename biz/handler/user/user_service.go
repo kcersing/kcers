@@ -28,7 +28,7 @@ func Register(ctx context.Context, c *app.RequestContext) {
 }
 
 // UserPermCode .
-// @router /api/admin/user/perm [POST]
+// @router /service/user/perm [POST]
 func UserPermCode(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req base.Empty
@@ -44,7 +44,7 @@ func UserPermCode(ctx context.Context, c *app.RequestContext) {
 }
 
 // ChangePassword .
-// @router /api/admin/user/change-password [POST]
+// @router /service/user/change-password [POST]
 func ChangePassword(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.ChangePasswordReq
@@ -60,7 +60,7 @@ func ChangePassword(ctx context.Context, c *app.RequestContext) {
 }
 
 // CreateUser .
-// @router /api/admin/user/create [POST]
+// @router /service/user/create [POST]
 func CreateUser(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.CreateOrUpdateUserReq
@@ -76,7 +76,7 @@ func CreateUser(ctx context.Context, c *app.RequestContext) {
 }
 
 // UpdateUser .
-// @router /api/admin/user/update [POST]
+// @router /service/user/update [POST]
 func UpdateUser(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.CreateOrUpdateUserReq
@@ -92,7 +92,7 @@ func UpdateUser(ctx context.Context, c *app.RequestContext) {
 }
 
 // UserInfo .
-// @router /api/admin/user/info [GET]
+// @router /service/user/info [GET]
 func UserInfo(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req base.Empty
@@ -108,7 +108,7 @@ func UserInfo(ctx context.Context, c *app.RequestContext) {
 }
 
 // UserList .
-// @router /api/admin/user/list [POST]
+// @router /service/user/list [POST]
 func UserList(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.UserListReq
@@ -124,10 +124,10 @@ func UserList(ctx context.Context, c *app.RequestContext) {
 }
 
 // DeleteUser .
-// @router /api/admin/user [POST]
+// @router /service/user [POST]
 func DeleteUser(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req base.IdReq
+	var req base.IDReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
@@ -140,7 +140,7 @@ func DeleteUser(ctx context.Context, c *app.RequestContext) {
 }
 
 // UserProfile .
-// @router /api/admin/user/profile [GET]
+// @router /service/user/profile [GET]
 func UserProfile(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req base.Empty
@@ -156,7 +156,7 @@ func UserProfile(ctx context.Context, c *app.RequestContext) {
 }
 
 // UpdateUserStatus .
-// @router /api/admin/user/status [POST]
+// @router /service/user/status [POST]
 func UpdateUserStatus(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req base.StatusCodeReq
@@ -172,7 +172,7 @@ func UpdateUserStatus(ctx context.Context, c *app.RequestContext) {
 }
 
 // SetUserRole .
-// @router /api/admin/user/set-role [POST]
+// @router /service/user/set-role [POST]
 func SetUserRole(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.SetUserRole
@@ -188,7 +188,7 @@ func SetUserRole(ctx context.Context, c *app.RequestContext) {
 }
 
 // SetDefaultVenue .
-// @router /api/admin/user/set-default-venue [POST]
+// @router /service/user/set-default-venue [POST]
 func SetDefaultVenue(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.SetDefaultVenueReq

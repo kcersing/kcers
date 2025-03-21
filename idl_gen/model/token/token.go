@@ -915,7 +915,7 @@ type TokenService interface {
 	// 更新Token
 	UpdateToken(ctx context.Context, req *TokenInfo) (r *base.NilResponse, err error)
 	// 删除token信息
-	DeleteToken(ctx context.Context, req *base.IdReq) (r *base.NilResponse, err error)
+	DeleteToken(ctx context.Context, req *base.IDReq) (r *base.NilResponse, err error)
 	// 获取token列表
 	TokenList(ctx context.Context, req *TokenListReq) (r *base.NilResponse, err error)
 }
@@ -955,7 +955,7 @@ func (p *TokenServiceClient) UpdateToken(ctx context.Context, req *TokenInfo) (r
 	}
 	return _result.GetSuccess(), nil
 }
-func (p *TokenServiceClient) DeleteToken(ctx context.Context, req *base.IdReq) (r *base.NilResponse, err error) {
+func (p *TokenServiceClient) DeleteToken(ctx context.Context, req *base.IDReq) (r *base.NilResponse, err error) {
 	var _args TokenServiceDeleteTokenArgs
 	_args.Req = req
 	var _result TokenServiceDeleteTokenResult
@@ -1456,7 +1456,7 @@ func (p *TokenServiceUpdateTokenResult) String() string {
 }
 
 type TokenServiceDeleteTokenArgs struct {
-	Req *base.IdReq `thrift:"req,1"`
+	Req *base.IDReq `thrift:"req,1"`
 }
 
 func NewTokenServiceDeleteTokenArgs() *TokenServiceDeleteTokenArgs {
@@ -1466,9 +1466,9 @@ func NewTokenServiceDeleteTokenArgs() *TokenServiceDeleteTokenArgs {
 func (p *TokenServiceDeleteTokenArgs) InitDefault() {
 }
 
-var TokenServiceDeleteTokenArgs_Req_DEFAULT *base.IdReq
+var TokenServiceDeleteTokenArgs_Req_DEFAULT *base.IDReq
 
-func (p *TokenServiceDeleteTokenArgs) GetReq() (v *base.IdReq) {
+func (p *TokenServiceDeleteTokenArgs) GetReq() (v *base.IDReq) {
 	if !p.IsSetReq() {
 		return TokenServiceDeleteTokenArgs_Req_DEFAULT
 	}
@@ -1540,7 +1540,7 @@ ReadStructEndError:
 }
 
 func (p *TokenServiceDeleteTokenArgs) ReadField1(iprot thrift.TProtocol) error {
-	_field := base.NewIdReq()
+	_field := base.NewIDReq()
 	if err := _field.Read(iprot); err != nil {
 		return err
 	}

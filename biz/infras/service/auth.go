@@ -1,4 +1,4 @@
-package admin
+package service
 
 import (
 	"context"
@@ -9,14 +9,13 @@ import (
 	"github.com/dgraph-io/ristretto"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
-	"kcers/app/dal/cache"
-	casbin2 "kcers/app/dal/casbin"
-	"kcers/app/pkg/do"
-	"kcers/config"
-	"kcers/infras"
-	"kcers/pkg/db/ent"
-	"kcers/pkg/db/ent/api"
-	"kcers/pkg/db/ent/role"
+	casbin2 "kcers/biz/dal/casbin"
+	"kcers/biz/dal/config"
+	"kcers/biz/dal/db/mysql/ent"
+	"kcers/biz/dal/db/mysql/ent/api"
+	"kcers/biz/dal/db/mysql/ent/role"
+	"kcers/biz/infras/do"
+	"kcers/idl_gen/model/auth"
 	"strconv"
 )
 
@@ -29,7 +28,7 @@ type Auth struct {
 	cache *ristretto.Cache
 }
 
-func (a Auth) QueryApiAll(id []int64) (resp []*do.ApiAuthInfo, err error) {
+func (a Auth) QueryApiAll(id *[]int64) (resp []*auth.ApiAuthInfo, err error) {
 
 	//ApiAuthInterface, exist := a.cache.Get("apiAll")
 	//if exist {
@@ -37,7 +36,7 @@ func (a Auth) QueryApiAll(id []int64) (resp []*do.ApiAuthInfo, err error) {
 	//		return u, nil
 	//	}
 	//}
-	all, err := a.db.API.Query().Where(api.IDIn(id...)).All(a.ctx)
+	all, err := a.db.API.Query().Where(api.IDIn(*id...)).All(a.ctx)
 	if err != nil {
 		return resp, err
 	}

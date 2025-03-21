@@ -28,8 +28,11 @@ struct Empty {
 }
 
 
-struct IdReq{
-    1: i64 id=0 (api.raw = "id")
+struct IDReq{
+    1: i64 id,
+}
+struct Ids{
+    1: list<i64> ids,
 }
 
 struct PageInfoReq{

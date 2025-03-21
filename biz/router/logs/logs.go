@@ -18,14 +18,11 @@ func Register(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
 	{
-		_api := root.Group("/api", _apiMw()...)
+		_service := root.Group("/service", _serviceMw()...)
 		{
-			_admin := _api.Group("/admin", _adminMw()...)
-			{
-				_logs := _admin.Group("/logs", _logsMw()...)
-				_logs.POST("/deleteAll", append(_deletelogsMw(), logs.DeleteLogs)...)
-				_logs.POST("/list", append(_getlogslistMw(), logs.GetLogsList)...)
-			}
+			_logs := _service.Group("/logs", _logsMw()...)
+			_logs.POST("/deleteAll", append(_deletelogsMw(), logs.DeleteLogs)...)
+			_logs.POST("/list", append(_getlogslistMw(), logs.GetLogsList)...)
 		}
 	}
 }
