@@ -5,14 +5,16 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/dgraph-io/ristretto"
 	"github.com/pkg/errors"
-	"kcers/app/dal/cache"
-	"kcers/app/pkg/do"
-	"kcers/config"
-	"kcers/infras"
-	"kcers/pkg/db/ent"
-	"kcers/pkg/db/ent/menu"
-	"kcers/pkg/db/ent/role"
-	"kcers/pkg/db/ent/user"
+	"kcers/biz/dal/cache"
+	"kcers/biz/dal/config"
+	db "kcers/biz/dal/db/mysql"
+	"kcers/biz/dal/db/mysql/ent"
+	"kcers/biz/dal/db/mysql/ent/menu"
+	"kcers/biz/dal/db/mysql/ent/role"
+	"kcers/biz/dal/db/mysql/ent/user"
+	"kcers/biz/infras/do"
+	"kcers/biz/pkg/utils"
+	"kcers/idl_gen/model/auth"
 	"strconv"
 	"time"
 )
@@ -25,7 +27,7 @@ type Role struct {
 	cache *ristretto.Cache
 }
 
-func (r Role) Create(req do.RoleInfo) error {
+func (r Role) Create(req *auth.RoleInfo) error {
 	roleEnt, err := r.db.Role.Create().
 		SetName(req.Name).
 		SetValue(req.Value).
@@ -44,7 +46,7 @@ func (r Role) Create(req do.RoleInfo) error {
 	return nil
 }
 
-func (r Role) Update(req do.RoleInfo) error {
+func (r Role) Update(req *auth.RoleInfo) error {
 	roleEnt, err := r.db.Role.UpdateOneID(req.ID).
 		SetName(req.Name).
 		SetValue(req.Value).
@@ -64,9 +66,9 @@ func (r Role) Update(req do.RoleInfo) error {
 	return nil
 }
 
-func (r Role) Delete(id int64) error {
+func (r Role) Delete(id *int64) error {
 	// whether role is used by user
-	exist, err := r.db.User.Query().Where(user.RoleIDEQ(id)).Exist(r.ctx)
+	exist, err := r.db.User.Query().Where(user.RoleIDEQ(*id)).Exist(r.ctx)
 	if err != nil {
 		err = errors.Wrap(err, "query user - role failed")
 		return err
@@ -75,21 +77,21 @@ func (r Role) Delete(id int64) error {
 		return errors.New("role is used by user")
 	}
 	// delete role from db
-	err = r.db.Role.DeleteOneID(id).Exec(r.ctx)
+	err = r.db.Role.DeleteOneID(*id).Exec(r.ctx)
 	if err != nil {
 		err = errors.Wrap(err, "delete Role failed")
 		return err
 	}
 	// delete role from cache
-	r.cache.Del("roleData" + strconv.Itoa(int(id)))
+	r.cache.Del("roleData" + strconv.Itoa(int(*id)))
 	return nil
 }
 
-func (r Role) RoleInfoByID(ID int64) (roleInfo *do.RoleInfo, err error) {
-	roleInterface, ok := r.cache.Get("roleData" + strconv.Itoa(int(ID)))
+func (r Role) RoleInfoByID(ID *int64) (roleInfo *auth.RoleInfo, err error) {
+	roleInterface, ok := r.cache.Get("roleData" + strconv.Itoa(int(*ID)))
 	if ok {
 		if l, ok := roleInterface.(*ent.Role); ok {
-			return &do.RoleInfo{
+			return &auth.RoleInfo{
 				ID:            l.ID,
 				Name:          l.Name,
 				Value:         l.Value,
@@ -103,15 +105,15 @@ func (r Role) RoleInfoByID(ID int64) (roleInfo *do.RoleInfo, err error) {
 		}
 	}
 	// get role from db
-	roleEnt, err := r.db.Role.Query().Where(role.IDEQ(ID)).Only(r.ctx)
+	roleEnt, err := r.db.Role.Query().Where(role.IDEQ(*ID)).Only(r.ctx)
 	if err != nil {
 		err = errors.Wrap(err, "get Role failed")
 		return nil, err
 	}
 	// set role to cache
-	r.cache.SetWithTTL("roleData"+strconv.Itoa(int(ID)), roleEnt, 1, 1*time.Hour)
+	r.cache.SetWithTTL("roleData"+strconv.Itoa(int(*ID)), roleEnt, 1, 1*time.Hour)
 	// convert to RoleInfo
-	roleInfo = &do.RoleInfo{
+	roleInfo = &auth.RoleInfo{
 		ID:            roleEnt.ID,
 		Name:          roleEnt.Name,
 		Value:         roleEnt.Value,
@@ -125,7 +127,7 @@ func (r Role) RoleInfoByID(ID int64) (roleInfo *do.RoleInfo, err error) {
 	return
 }
 
-func (r Role) List(req *do.RoleListReq) (roleInfoList []*do.RoleInfo, total int, err error) {
+func (r Role) List(req *auth.RoleListReq) (roleInfoList []*auth.RoleInfo, total int, err error) {
 
 	roleEntList, err := r.db.Role.Query().Order(ent.Asc(role.FieldOrderNo)).
 		Offset(int(req.Page-1) * int(req.PageSize)).
@@ -138,7 +140,7 @@ func (r Role) List(req *do.RoleListReq) (roleInfoList []*do.RoleInfo, total int,
 	for _, roleEnt := range roleEntList {
 		menuArr, _ := roleEnt.QueryMenus().GroupBy(menu.FieldID).Ints(r.ctx)
 
-		roleInfoList = append(roleInfoList, &do.RoleInfo{
+		roleInfoList = append(roleInfoList, &auth.RoleInfo{
 			ID:            roleEnt.ID,
 			Name:          roleEnt.Name,
 			Value:         roleEnt.Value,
@@ -148,23 +150,23 @@ func (r Role) List(req *do.RoleListReq) (roleInfoList []*do.RoleInfo, total int,
 			OrderNo:       roleEnt.OrderNo,
 			CreatedAt:     roleEnt.CreatedAt.Format(time.DateTime),
 			UpdatedAt:     roleEnt.UpdatedAt.Format(time.DateTime),
-			Menus:         menuArr,
-			Apis:          roleEnt.Apis,
+			Menus:         utils.ConvertIntSliceToInt64Slice(menuArr),
+			Apis:          utils.ConvertIntSliceToInt64Slice(roleEnt.Apis),
 		})
 	}
 	total, _ = r.db.Role.Query().Count(r.ctx)
 	return
 }
 
-func (r Role) UpdateStatus(ID int64, status int64) error {
+func (r Role) UpdateStatus(ID *int64, status *int64) error {
 
-	roleEnt, err := r.db.Role.UpdateOneID(ID).SetStatus(status).Save(r.ctx)
+	roleEnt, err := r.db.Role.UpdateOneID(*ID).SetStatus(*status).Save(r.ctx)
 	if err != nil {
 		err = errors.Wrap(err, "update Role status failed")
 		return err
 	}
 	// set role to cache
-	r.cache.SetWithTTL("roleData"+strconv.Itoa(int(ID)), roleEnt, 1, 1*time.Hour)
+	r.cache.SetWithTTL("roleData"+strconv.Itoa(int(*ID)), roleEnt, 1, 1*time.Hour)
 
 	return nil
 }
@@ -174,7 +176,7 @@ func NewRole(ctx context.Context, c *app.RequestContext) do.Role {
 		ctx:   ctx,
 		c:     c,
 		salt:  config.GlobalServerConfig.MySQLInfo.Salt,
-		db:    infras.DB,
+		db:    db.DB,
 		cache: cache.Cache,
 	}
 }

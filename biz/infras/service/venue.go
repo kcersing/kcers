@@ -6,14 +6,15 @@ import (
 	"github.com/dgraph-io/ristretto"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
-	"kcers/app/dal/cache"
-	"kcers/app/pkg/do"
-	"kcers/config"
-	"kcers/infras"
-	"kcers/pkg/db/ent"
-	"kcers/pkg/db/ent/predicate"
-	"kcers/pkg/db/ent/venue"
-	"kcers/pkg/db/ent/venueplace"
+	"kcers/biz/dal/cache"
+	"kcers/biz/dal/config"
+	db "kcers/biz/dal/db/mysql"
+	"kcers/biz/dal/db/mysql/ent"
+	"kcers/biz/dal/db/mysql/ent/predicate"
+	venue2 "kcers/biz/dal/db/mysql/ent/venue"
+	"kcers/biz/dal/db/mysql/ent/venueplace"
+	"kcers/biz/infras/do"
+	"kcers/idl_gen/model/venue"
 	"strconv"
 	"time"
 )
@@ -26,19 +27,19 @@ type Venue struct {
 	cache *ristretto.Cache
 }
 
-func (v Venue) VenueInfo(id int64) (info *do.VenueInfo, err error) {
+func (v Venue) VenueInfo(id int64) (info *venue.VenueInfo, err error) {
 	inter, exist := v.cache.Get("venueInfo" + strconv.Itoa(int(id)))
 	if exist {
-		if v, ok := inter.(*do.VenueInfo); ok {
+		if v, ok := inter.(*venue.VenueInfo); ok {
 			return v, nil
 		}
 	}
-	one, err := v.db.Venue.Query().Where(venue.IDEQ(id)).First(v.ctx)
+	one, err := v.db.Venue.Query().Where(venue2.IDEQ(id)).First(v.ctx)
 	if err != nil {
 		err = errors.Wrap(err, "get venue failed")
 		return info, err
 	}
-	info = &do.VenueInfo{
+	info = &venue.VenueInfo{
 		ID:        one.ID,
 		Name:      one.Name,
 		Address:   one.Address,
@@ -61,10 +62,10 @@ func (v Venue) VenueInfo(id int64) (info *do.VenueInfo, err error) {
 	return
 }
 
-func (v Venue) PlaceInfo(id int64) (info *do.VenuePlaceInfo, err error) {
+func (v Venue) PlaceInfo(id int64) (info *venue.VenuePlaceInfo, err error) {
 	inter, exist := v.cache.Get("placeInfo" + strconv.Itoa(int(id)))
 	if exist {
-		if v, ok := inter.(*do.VenuePlaceInfo); ok {
+		if v, ok := inter.(*venue.VenuePlaceInfo); ok {
 			return v, nil
 		}
 	}
@@ -84,7 +85,7 @@ func (v Venue) PlaceInfo(id int64) (info *do.VenuePlaceInfo, err error) {
 	return
 }
 
-func (v Venue) Create(req *do.VenueInfo) error {
+func (v Venue) Create(req *venue.VenueInfo) error {
 	_, err := v.db.Venue.Create().
 		SetName(req.Name).
 		SetAddress(req.Address).
@@ -104,9 +105,9 @@ func (v Venue) Create(req *do.VenueInfo) error {
 	return nil
 }
 
-func (v Venue) Update(req *do.VenueInfo) error {
+func (v Venue) Update(req *venue.VenueInfo) error {
 	_, err := v.db.Venue.Update().
-		Where(venue.IDEQ(req.ID)).
+		Where(venue2.IDEQ(req.ID)).
 		SetName(req.Name).
 		SetAddress(req.Address).
 		SetAddressDetail(req.AddressDetail).
@@ -126,11 +127,11 @@ func (v Venue) Update(req *do.VenueInfo) error {
 	return nil
 }
 
-func (v Venue) List(req *do.VenueListReq) (list []*do.VenueInfo, total int, err error) {
+func (v Venue) List(req *venue.VenueListReq) (list []*venue.VenueInfo, total int, err error) {
 	var predicates []predicate.Venue
 
 	if req.Name != "" {
-		predicates = append(predicates, venue.NameEQ(req.Name))
+		predicates = append(predicates, venue2.NameEQ(req.Name))
 	}
 
 	venueList, err := v.db.Venue.Query().Where(predicates...).
@@ -154,11 +155,11 @@ func (v Venue) List(req *do.VenueListReq) (list []*do.VenueInfo, total int, err 
 	return
 }
 
-func (v Venue) UpdateVenueStatus(id int64, status int64) error {
-	_, err := v.db.Venue.Update().Where(venue.IDEQ(id)).SetStatus(status).Save(v.ctx)
+func (v Venue) UpdateVenueStatus(id *int64, status *int64) error {
+	_, err := v.db.Venue.Update().Where(venue2.IDEQ(*id)).SetStatus(*status).Save(v.ctx)
 	return err
 }
-func (v Venue) CreatePlace(req *do.VenuePlaceInfo) error {
+func (v Venue) CreatePlace(req *venue.VenuePlaceInfo) error {
 	_, err := v.db.VenuePlace.Create().
 		SetName(req.Name).
 		SetPic(req.Pic).
@@ -173,7 +174,7 @@ func (v Venue) CreatePlace(req *do.VenuePlaceInfo) error {
 	return nil
 }
 
-func (v Venue) UpdatePlace(req *do.VenuePlaceInfo) error {
+func (v Venue) UpdatePlace(req *venue.VenuePlaceInfo) error {
 	_, err := v.db.VenuePlace.Update().
 		Where(venueplace.IDEQ(req.ID)).
 		SetName(req.Name).
@@ -190,7 +191,7 @@ func (v Venue) UpdatePlace(req *do.VenuePlaceInfo) error {
 	return nil
 }
 
-func (v Venue) PlaceList(req *do.VenuePlaceListReq) (list []*do.VenuePlaceInfo, total int, err error) {
+func (v Venue) PlaceList(req *venue.VenuePlaceListReq) (list []*venue.VenuePlaceInfo, total int, err error) {
 	var predicates []predicate.VenuePlace
 
 	if req.Name != "" {
@@ -214,8 +215,8 @@ func (v Venue) PlaceList(req *do.VenuePlaceListReq) (list []*do.VenuePlaceInfo, 
 	return
 }
 
-func (v Venue) UpdatePlaceStatus(id int64, status int64) error {
-	_, err := v.db.VenuePlace.Update().Where(venueplace.IDEQ(id)).SetStatus(status).Save(v.ctx)
+func (v Venue) UpdatePlaceStatus(id *int64, status *int64) error {
+	_, err := v.db.VenuePlace.Update().Where(venueplace.IDEQ(*id)).SetStatus(*status).Save(v.ctx)
 	return err
 }
 func NewVenue(ctx context.Context, c *app.RequestContext) do.Venue {
@@ -223,7 +224,7 @@ func NewVenue(ctx context.Context, c *app.RequestContext) do.Venue {
 		ctx:   ctx,
 		c:     c,
 		salt:  config.GlobalServerConfig.MySQLInfo.Salt,
-		db:    infras.DB,
+		db:    db.DB,
 		cache: cache.Cache,
 	}
 }

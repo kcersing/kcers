@@ -1,131 +1,152 @@
 namespace go user
 
 include "../base/base.thrift"
+include "dictionary.thrift"
+struct UserInfo {
+	1:i64 id (api.raw = "id")
+	2:i64 status (api.raw = "status")
+	3:string username (api.raw = "username")
+	4:string password (api.raw = "password")
+	5:string name (api.raw = "name")
+	7:string mobile (api.raw = "mobile")
+	8:string avatar (api.raw = "avatar")
+	9:string createdAt (api.raw = "createdAt")
+	10:string updatedAt  (api.raw = "updatedAt")
+	12: list<string> functions (api.raw = "functions")
+	13:string gender (api.raw = "gender")
+	15:string birthday (api.raw = "birthday")
+    16:string detail (api.raw = "detail")
+    17:optional i64 jobTime (api.raw = "jobTime")
+    18: list<dictionary.DictionaryDetail> userTags (api.raw = "userTags")
+    19: list<Venues> venues (api.raw = "venues")
+    20: optional i64 type=1 (api.raw = "type")
 
-// 用户基本信息
-struct UserInfo  {
-  1:  optional i64 id =0 (api.raw = "id")
-  2:  optional i64 status=0 (api.raw = "status")
-  3:  optional string username =""(api.raw = "username")
-  4:  optional string password="" (api.raw = "password")
-  5:  optional string name="" (api.raw = "name")
-  6:  optional string sideMode="" (api.raw = "sideMode")
-  7:  optional string baseColor="" (api.raw = "baseColor")
-  8:  optional string activeColor="" (api.raw = "activeColor")
-  9:  optional i64 roleId=0 (api.raw = "roleId")
-  10: optional string mobile =""(api.raw = "mobile")
-  11: optional string email="" (api.raw = "email")
-  12: optional string wecom =""(api.raw = "wecom")
-  13: optional string avatar="" (api.raw = "avatar")
-  14: optional string createdAt="" (api.raw = "createdAt")
-  15: optional string updatedAt="" (api.raw = "updatedAt")
-  16: optional string roleName =""(api.raw = "roleName")
-  17: optional string roleValue =""(api.raw = "roleValue")
-  18: optional string gender="" (api.raw = "gender")
-  19: optional i64 age =0(api.raw = "age")
-  20: optional string birthday="" (api.raw = "birthday")
-  21: optional string job =""(api.raw = "job")
-  22: optional string jobName =""(api.raw = "jobName")
-  23: optional string organization =""(api.raw = "organization")
-  24: optional string organizationName="" (api.raw = "organizationName")
-  25: optional i64 defaultVenueId =0(api.raw = "defaultVenueId")
+    21: list<UserRole> userRole (api.raw = "userRole")
+    22: list<i64> userRoleIds (api.raw = "userRoleIds")
+    254:i64 defaultVenueId (api.raw = "defaultVenueId")
+}
+struct Venues {
+    1: i64 id (api.raw = "id")
+    2: string name (api.raw = "name")
 }
 
-// 登录请求
-struct UserLoginReq {
-    1:  string username =""(api.raw = "username")
-    2:  string password =""(api.raw = "password")
-    3:  i64 captchaId=0 (api.raw = "captchaId")
-    4:  string captcha =""(api.raw = "captcha")
+// login request | 登录参数
+struct LoginReq {
+    1:  string username (api.raw = "username")
+    2:  string password (api.raw = "password")
+    3:  string captchaId (api.raw = "captchaId")
+    4:  string captcha (api.raw = "captcha")
+}
+struct LoginResp{
+    1:  i64 userId (api.raw = "userId")
+    2:  string username (api.raw = "username")
+    3:  list<UserRole> userRole (api.raw = "userRole")
+    4: list<i64> userRoleIds (api.raw = "userRoleIds")
+
+}
+struct UserRole{
+    1:optional  string name="" (api.raw = "name")
+    2:optional  string value="" (api.raw = "value")
+    3:optional  i64 id=0 (api.raw = "id")
 }
 
-// 注册请求
+// register request | 注册参数
 struct RegisterReq {
-    1:  optional string username =""(api.raw = "username")
-    2:  optional string password =""(api.raw = "password")
-    3:  optional i64 captchaId =0(api.raw = "captchaId")
-    4:  optional string captcha="" (api.raw = "captcha")
-    5:  optional string email =""(api.raw = "email")
+    1:  optional string username (api.raw = "username")
+    2:  optional string password (api.raw = "password")
+    3:  optional string captchaId (api.raw = "captchaId")
+    4:  optional string captcha (api.raw = "captcha")
+    5:  optional string email (api.raw = "email")
 }
 
-// 修改密码请求
+// change user's password request | 修改密码请求参数
 struct ChangePasswordReq {
-    1:  i64 userId=0 (api.raw = "userId")
-    2:  string newPassword="" (api.raw = "newPassword")
+    1: i64 userId (api.raw = "userId")
+    2: string newPassword (api.raw = "newPassword")
 }
 
-// 创建或更新用户信息请求
+// Create or update user information request | 创建或更新用户信息
 struct CreateOrUpdateUserReq {
-    1:  optional i64 id =0(api.raw = "id")
-    2:  optional string avatar =""(api.raw = "avatar")
-    4:  optional string mobile =""(api.raw = "mobile")
-    5:  optional string email =""(api.raw = "email")
-    6:  optional i64 status =0(api.raw = "status")
-    7:  optional string name =""(api.raw = "name")
-    8:  optional string gender="" (api.raw = "gender")
-    9:  optional string wecom="" (api.raw = "wecom")
-    10: optional i64 createId =0(api.raw = "createId")
-    11: optional string birthday="" (api.raw = "birthday")
-    251:  optional string createdAt = ""  (api.raw = "createdAt")
-    252:  optional string updatedAt = ""  (api.raw = "updatedAt")
-}
-
-// 获取用户列表请求
-struct UserListReq {
-    1:  optional i64 page =1(api.raw = "page")
-    2:  optional i64 pageSize=100 (api.raw = "pageSize")
-    3:  optional string username="" (api.raw = "username")
-    4:  optional string name =""(api.raw = "name")
-    5:  optional string email="" (api.raw = "email")
-    6:  optional string mobile="" (api.raw = "mobile")
-    7:  optional i64 roleId =0(api.raw = "roleId")
-}
-
-// 设置用户角色
-struct SetUserRole{
     1:  optional i64 id=0 (api.raw = "id")
-    2:  optional i64 roleId=0 (api.raw = "roleId")
+    2:  optional string avatar="" (api.raw = "avatar")
+    4:  optional string mobile="" (api.raw = "mobile")
+    6:  optional i64 status=1 (api.raw = "status")
+    7:  optional string name="" (api.raw = "name")
+    8:  optional string gender="" (api.raw = "gender")
+    9:  optional list<i64> roleId=0 (api.raw = "roleId")
+    10: optional i64 createId=0 (api.raw = "createId")
+    12: optional string password="" (api.raw = "password")
+    13:  optional string username="" (api.raw = "username")
+    14:  optional list<string> functions="" (api.raw = "functions")
+    15:  optional string detail="" (api.raw = "detail")
+    16:  optional i64 jobTime=0 (api.raw = "jobTime")
+    18: optional list<i64> userTags="" (api.raw = "userTags")
+    19:  optional i64 type=1 (api.raw = "type")
+    20: optional list<i64> venueId=0 (api.raw = "venueId")
+
+    254:optional i64 defaultVenueId=0 (api.raw = "defaultVenueId")
 }
 
-// 设置默认场馆
+
+// Get user list request | 获取用户列表请求参数
+struct UserListReq {
+    1:  optional i64 page=1 (api.raw = "page")
+    2:  optional i64 pageSize=100 (api.raw = "pageSize")
+    4:  optional string name="" (api.raw = "name")
+    5:  optional i64 jobTime=0 (api.raw = "jobTime")
+    6:  optional string mobile="" (api.raw = "mobile")
+    7:  optional i64 roleId=0 (api.raw = "roleId")
+    8:  optional i64 status=0 (api.raw = "status")
+    9:  optional i64 type=1 (api.raw = "type")
+    10:optional i64 venueId=0 (api.raw = "venueId")
+    /**职能*/
+    11: optional list<string> functions="" (api.raw = "functions")
+    /**标签*/
+    13: optional list<i64> tagId=0 (api.raw = "tagId" )
+}
+
+struct SetUserRole{
+    1:  optional i64 userId=0 (api.raw = "userId")
+    2:  optional list<i64> roleId=0 (api.raw = "roleId")
+}
+
 struct SetDefaultVenueReq{
-  1:  optional i64 venueId =0(api.raw = "venueId")
+    1: i64 userId (api.raw = "userId")
+    2: optional i64 venueId (api.raw = "venueId")
 }
 
 service UserService {
+  // 登录
+//  base.NilResponse Login(1: LoginReq req) (api.post = "/service/login")
+
   // 注册
-  base.NilResponse Register(1: RegisterReq req) (api.post = "/api/register")
+  //base.NilResponse Register(1: RegisterReq req) (api.post = "/service/register")
 
-  // 获取用户权限码
-  base.NilResponse UserPermCode(1: base.Empty req) (api.post = "/service/user/perm")
+  /**修改密码*/
+ base.NilResponse ChangePassword(1: ChangePasswordReq req) (api.post = "/service/user/change-password")
 
-  // 修改密码
-  base.NilResponse ChangePassword(1: ChangePasswordReq req) (api.post = "/service/user/change-password")
-
-  // 新增用户
+  /**新增用户*/
   base.NilResponse CreateUser(1: CreateOrUpdateUserReq req) (api.post = "/service/user/create")
 
-  // 更新用户
+  /**更新用户*/
   base.NilResponse UpdateUser(1: CreateOrUpdateUserReq req) (api.post = "/service/user/update")
 
-  // 获取用户基本信息
-  base.NilResponse UserInfo(1: base.Empty req) (api.get = "/service/user/info")
+  /**获取用户基本信息*/
+  base.NilResponse UserInfo(1: base.IDReq req)  (api.get = "/service/user/info")
 
-  // 获取用户列表
+  /**获取用户列表*/
   base.NilResponse UserList(1: UserListReq req) (api.post = "/service/user/list")
 
-  // 删除用户信息
+  /**删除用户信息*/
   base.NilResponse DeleteUser(1: base.IDReq req) (api.post = "/service/user")
 
-  // 获取用户个人信息
-  base.NilResponse UserProfile(1: base.Empty req) (api.get = "/service/user/profile")
-
-  // 更新用户状态
+  /**更新用户状态*/
   base.NilResponse UpdateUserStatus(1: base.StatusCodeReq req) (api.post = "/service/user/status")
 
-  // 设置用户角色
+  /**设置用户角色*/
   base.NilResponse SetUserRole(1: SetUserRole req) (api.post = "/service/user/set-role")
 
-  // 设置默认场馆
+  /** 设置用户默认场馆*/
   base.NilResponse SetDefaultVenue(1: SetDefaultVenueReq req) (api.post = "/service/user/set-default-venue")
+
 }

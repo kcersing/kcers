@@ -32,8 +32,12 @@ const (
 	FieldLongitude = "longitude"
 	// FieldMobile holds the string denoting the mobile field in the database.
 	FieldMobile = "mobile"
+	// FieldEmail holds the string denoting the email field in the database.
+	FieldEmail = "email"
 	// FieldPic holds the string denoting the pic field in the database.
 	FieldPic = "pic"
+	// FieldSeal holds the string denoting the seal field in the database.
+	FieldSeal = "seal"
 	// FieldInformation holds the string denoting the information field in the database.
 	FieldInformation = "information"
 	// EdgePlaces holds the string denoting the places edge name in mutations.
@@ -93,7 +97,9 @@ var Columns = []string{
 	FieldLatitude,
 	FieldLongitude,
 	FieldMobile,
+	FieldEmail,
 	FieldPic,
+	FieldSeal,
 	FieldInformation,
 }
 
@@ -180,9 +186,19 @@ func ByMobile(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMobile, opts...).ToFunc()
 }
 
+// ByEmail orders the results by the email field.
+func ByEmail(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEmail, opts...).ToFunc()
+}
+
 // ByPic orders the results by the pic field.
 func ByPic(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPic, opts...).ToFunc()
+}
+
+// BySeal orders the results by the seal field.
+func BySeal(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSeal, opts...).ToFunc()
 }
 
 // ByInformation orders the results by the information field.

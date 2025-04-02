@@ -4,8 +4,7 @@ import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"kcers/app/pkg/do"
-	"kcers/app/pkg/service/admin"
+	"kcers/idl_gen/model/logs"
 	"strconv"
 	"time"
 )
@@ -14,18 +13,18 @@ func LogMw() app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
 		start := time.Now()
 		c.Next(ctx)
-		var logs do.LogsInfo
-		logs.Type = "Interface"
-		logs.Method = string(c.Request.Method())
-		logs.Api = string(c.Request.Path())
-		logs.UserAgent = string(c.Request.Header.UserAgent())
-		logs.Ip = c.ClientIP()
+		var log logs.LogsInfo
+		log.Type = "Interface"
+		log.Method = string(c.Request.Method())
+		log.API = string(c.Request.Path())
+		log.UserAgent = string(c.Request.Header.UserAgent())
+		log.IP = c.ClientIP()
 
 		reqBodyStr := string(c.Request.Body())
 		if len(reqBodyStr) > 200 {
 			reqBodyStr = reqBodyStr[:200]
 		}
-		logs.ReqContent = reqBodyStr
+		log.ReqContent = reqBodyStr
 
 		respBodyStr := string(c.Request.Body())
 		if len(respBodyStr) > 200 {
@@ -33,11 +32,11 @@ func LogMw() app.HandlerFunc {
 		}
 
 		if c.Response.Header.StatusCode() == 200 {
-			logs.Success = true
+			log.Success = true
 		}
 
 		costTime := time.Since(start).Milliseconds()
-		logs.Time = int32(costTime)
+		log.Time = costTime
 
 		v, exist := c.Get("user_id")
 		if exist || v == nil {
@@ -61,7 +60,7 @@ func LogMw() app.HandlerFunc {
 			username = userInfo.Nickname
 		}
 
-		logs.Operator = username
+		log.Operators = username
 
 		err := admin.NewLogs(ctx, c).Create(&logs)
 

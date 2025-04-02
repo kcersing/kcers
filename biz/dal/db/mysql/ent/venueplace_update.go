@@ -9,10 +9,12 @@ import (
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	"kcers/biz/dal/db/mysql/ent/venue"
 	"kcers/biz/dal/db/mysql/ent/venueplace"
+	"kcers/idl_gen/model/base"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 )
 
@@ -122,6 +124,98 @@ func (vpu *VenuePlaceUpdate) ClearVenueID() *VenuePlaceUpdate {
 	return vpu
 }
 
+// SetNumber sets the "number" field.
+func (vpu *VenuePlaceUpdate) SetNumber(i int64) *VenuePlaceUpdate {
+	vpu.mutation.ResetNumber()
+	vpu.mutation.SetNumber(i)
+	return vpu
+}
+
+// SetNillableNumber sets the "number" field if the given value is not nil.
+func (vpu *VenuePlaceUpdate) SetNillableNumber(i *int64) *VenuePlaceUpdate {
+	if i != nil {
+		vpu.SetNumber(*i)
+	}
+	return vpu
+}
+
+// AddNumber adds i to the "number" field.
+func (vpu *VenuePlaceUpdate) AddNumber(i int64) *VenuePlaceUpdate {
+	vpu.mutation.AddNumber(i)
+	return vpu
+}
+
+// ClearNumber clears the value of the "number" field.
+func (vpu *VenuePlaceUpdate) ClearNumber() *VenuePlaceUpdate {
+	vpu.mutation.ClearNumber()
+	return vpu
+}
+
+// SetInformation sets the "information" field.
+func (vpu *VenuePlaceUpdate) SetInformation(s string) *VenuePlaceUpdate {
+	vpu.mutation.SetInformation(s)
+	return vpu
+}
+
+// SetNillableInformation sets the "information" field if the given value is not nil.
+func (vpu *VenuePlaceUpdate) SetNillableInformation(s *string) *VenuePlaceUpdate {
+	if s != nil {
+		vpu.SetInformation(*s)
+	}
+	return vpu
+}
+
+// ClearInformation clears the value of the "information" field.
+func (vpu *VenuePlaceUpdate) ClearInformation() *VenuePlaceUpdate {
+	vpu.mutation.ClearInformation()
+	return vpu
+}
+
+// SetIsBooking sets the "is_booking" field.
+func (vpu *VenuePlaceUpdate) SetIsBooking(i int64) *VenuePlaceUpdate {
+	vpu.mutation.ResetIsBooking()
+	vpu.mutation.SetIsBooking(i)
+	return vpu
+}
+
+// SetNillableIsBooking sets the "is_booking" field if the given value is not nil.
+func (vpu *VenuePlaceUpdate) SetNillableIsBooking(i *int64) *VenuePlaceUpdate {
+	if i != nil {
+		vpu.SetIsBooking(*i)
+	}
+	return vpu
+}
+
+// AddIsBooking adds i to the "is_booking" field.
+func (vpu *VenuePlaceUpdate) AddIsBooking(i int64) *VenuePlaceUpdate {
+	vpu.mutation.AddIsBooking(i)
+	return vpu
+}
+
+// ClearIsBooking clears the value of the "is_booking" field.
+func (vpu *VenuePlaceUpdate) ClearIsBooking() *VenuePlaceUpdate {
+	vpu.mutation.ClearIsBooking()
+	return vpu
+}
+
+// SetSeat sets the "seat" field.
+func (vpu *VenuePlaceUpdate) SetSeat(b [][]*base.Seat) *VenuePlaceUpdate {
+	vpu.mutation.SetSeat(b)
+	return vpu
+}
+
+// AppendSeat appends b to the "seat" field.
+func (vpu *VenuePlaceUpdate) AppendSeat(b [][]*base.Seat) *VenuePlaceUpdate {
+	vpu.mutation.AppendSeat(b)
+	return vpu
+}
+
+// ClearSeat clears the value of the "seat" field.
+func (vpu *VenuePlaceUpdate) ClearSeat() *VenuePlaceUpdate {
+	vpu.mutation.ClearSeat()
+	return vpu
+}
+
 // SetVenue sets the "venue" edge to the Venue entity.
 func (vpu *VenuePlaceUpdate) SetVenue(v *Venue) *VenuePlaceUpdate {
 	return vpu.SetVenueID(v.ID)
@@ -206,6 +300,41 @@ func (vpu *VenuePlaceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if vpu.mutation.PicCleared() {
 		_spec.ClearField(venueplace.FieldPic, field.TypeString)
+	}
+	if value, ok := vpu.mutation.Number(); ok {
+		_spec.SetField(venueplace.FieldNumber, field.TypeInt64, value)
+	}
+	if value, ok := vpu.mutation.AddedNumber(); ok {
+		_spec.AddField(venueplace.FieldNumber, field.TypeInt64, value)
+	}
+	if vpu.mutation.NumberCleared() {
+		_spec.ClearField(venueplace.FieldNumber, field.TypeInt64)
+	}
+	if value, ok := vpu.mutation.Information(); ok {
+		_spec.SetField(venueplace.FieldInformation, field.TypeString, value)
+	}
+	if vpu.mutation.InformationCleared() {
+		_spec.ClearField(venueplace.FieldInformation, field.TypeString)
+	}
+	if value, ok := vpu.mutation.IsBooking(); ok {
+		_spec.SetField(venueplace.FieldIsBooking, field.TypeInt64, value)
+	}
+	if value, ok := vpu.mutation.AddedIsBooking(); ok {
+		_spec.AddField(venueplace.FieldIsBooking, field.TypeInt64, value)
+	}
+	if vpu.mutation.IsBookingCleared() {
+		_spec.ClearField(venueplace.FieldIsBooking, field.TypeInt64)
+	}
+	if value, ok := vpu.mutation.Seat(); ok {
+		_spec.SetField(venueplace.FieldSeat, field.TypeJSON, value)
+	}
+	if value, ok := vpu.mutation.AppendedSeat(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, venueplace.FieldSeat, value)
+		})
+	}
+	if vpu.mutation.SeatCleared() {
+		_spec.ClearField(venueplace.FieldSeat, field.TypeJSON)
 	}
 	if vpu.mutation.VenueCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -349,6 +478,98 @@ func (vpuo *VenuePlaceUpdateOne) ClearVenueID() *VenuePlaceUpdateOne {
 	return vpuo
 }
 
+// SetNumber sets the "number" field.
+func (vpuo *VenuePlaceUpdateOne) SetNumber(i int64) *VenuePlaceUpdateOne {
+	vpuo.mutation.ResetNumber()
+	vpuo.mutation.SetNumber(i)
+	return vpuo
+}
+
+// SetNillableNumber sets the "number" field if the given value is not nil.
+func (vpuo *VenuePlaceUpdateOne) SetNillableNumber(i *int64) *VenuePlaceUpdateOne {
+	if i != nil {
+		vpuo.SetNumber(*i)
+	}
+	return vpuo
+}
+
+// AddNumber adds i to the "number" field.
+func (vpuo *VenuePlaceUpdateOne) AddNumber(i int64) *VenuePlaceUpdateOne {
+	vpuo.mutation.AddNumber(i)
+	return vpuo
+}
+
+// ClearNumber clears the value of the "number" field.
+func (vpuo *VenuePlaceUpdateOne) ClearNumber() *VenuePlaceUpdateOne {
+	vpuo.mutation.ClearNumber()
+	return vpuo
+}
+
+// SetInformation sets the "information" field.
+func (vpuo *VenuePlaceUpdateOne) SetInformation(s string) *VenuePlaceUpdateOne {
+	vpuo.mutation.SetInformation(s)
+	return vpuo
+}
+
+// SetNillableInformation sets the "information" field if the given value is not nil.
+func (vpuo *VenuePlaceUpdateOne) SetNillableInformation(s *string) *VenuePlaceUpdateOne {
+	if s != nil {
+		vpuo.SetInformation(*s)
+	}
+	return vpuo
+}
+
+// ClearInformation clears the value of the "information" field.
+func (vpuo *VenuePlaceUpdateOne) ClearInformation() *VenuePlaceUpdateOne {
+	vpuo.mutation.ClearInformation()
+	return vpuo
+}
+
+// SetIsBooking sets the "is_booking" field.
+func (vpuo *VenuePlaceUpdateOne) SetIsBooking(i int64) *VenuePlaceUpdateOne {
+	vpuo.mutation.ResetIsBooking()
+	vpuo.mutation.SetIsBooking(i)
+	return vpuo
+}
+
+// SetNillableIsBooking sets the "is_booking" field if the given value is not nil.
+func (vpuo *VenuePlaceUpdateOne) SetNillableIsBooking(i *int64) *VenuePlaceUpdateOne {
+	if i != nil {
+		vpuo.SetIsBooking(*i)
+	}
+	return vpuo
+}
+
+// AddIsBooking adds i to the "is_booking" field.
+func (vpuo *VenuePlaceUpdateOne) AddIsBooking(i int64) *VenuePlaceUpdateOne {
+	vpuo.mutation.AddIsBooking(i)
+	return vpuo
+}
+
+// ClearIsBooking clears the value of the "is_booking" field.
+func (vpuo *VenuePlaceUpdateOne) ClearIsBooking() *VenuePlaceUpdateOne {
+	vpuo.mutation.ClearIsBooking()
+	return vpuo
+}
+
+// SetSeat sets the "seat" field.
+func (vpuo *VenuePlaceUpdateOne) SetSeat(b [][]*base.Seat) *VenuePlaceUpdateOne {
+	vpuo.mutation.SetSeat(b)
+	return vpuo
+}
+
+// AppendSeat appends b to the "seat" field.
+func (vpuo *VenuePlaceUpdateOne) AppendSeat(b [][]*base.Seat) *VenuePlaceUpdateOne {
+	vpuo.mutation.AppendSeat(b)
+	return vpuo
+}
+
+// ClearSeat clears the value of the "seat" field.
+func (vpuo *VenuePlaceUpdateOne) ClearSeat() *VenuePlaceUpdateOne {
+	vpuo.mutation.ClearSeat()
+	return vpuo
+}
+
 // SetVenue sets the "venue" edge to the Venue entity.
 func (vpuo *VenuePlaceUpdateOne) SetVenue(v *Venue) *VenuePlaceUpdateOne {
 	return vpuo.SetVenueID(v.ID)
@@ -463,6 +684,41 @@ func (vpuo *VenuePlaceUpdateOne) sqlSave(ctx context.Context) (_node *VenuePlace
 	}
 	if vpuo.mutation.PicCleared() {
 		_spec.ClearField(venueplace.FieldPic, field.TypeString)
+	}
+	if value, ok := vpuo.mutation.Number(); ok {
+		_spec.SetField(venueplace.FieldNumber, field.TypeInt64, value)
+	}
+	if value, ok := vpuo.mutation.AddedNumber(); ok {
+		_spec.AddField(venueplace.FieldNumber, field.TypeInt64, value)
+	}
+	if vpuo.mutation.NumberCleared() {
+		_spec.ClearField(venueplace.FieldNumber, field.TypeInt64)
+	}
+	if value, ok := vpuo.mutation.Information(); ok {
+		_spec.SetField(venueplace.FieldInformation, field.TypeString, value)
+	}
+	if vpuo.mutation.InformationCleared() {
+		_spec.ClearField(venueplace.FieldInformation, field.TypeString)
+	}
+	if value, ok := vpuo.mutation.IsBooking(); ok {
+		_spec.SetField(venueplace.FieldIsBooking, field.TypeInt64, value)
+	}
+	if value, ok := vpuo.mutation.AddedIsBooking(); ok {
+		_spec.AddField(venueplace.FieldIsBooking, field.TypeInt64, value)
+	}
+	if vpuo.mutation.IsBookingCleared() {
+		_spec.ClearField(venueplace.FieldIsBooking, field.TypeInt64)
+	}
+	if value, ok := vpuo.mutation.Seat(); ok {
+		_spec.SetField(venueplace.FieldSeat, field.TypeJSON, value)
+	}
+	if value, ok := vpuo.mutation.AppendedSeat(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, venueplace.FieldSeat, value)
+		})
+	}
+	if vpuo.mutation.SeatCleared() {
+		_spec.ClearField(venueplace.FieldSeat, field.TypeJSON)
 	}
 	if vpuo.mutation.VenueCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -5,13 +5,14 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/dgraph-io/ristretto"
 	"github.com/pkg/errors"
-	"kcers/app/dal/cache"
-	"kcers/app/pkg/do"
-	"kcers/config"
-	"kcers/infras"
-	"kcers/pkg/db/ent"
-	"kcers/pkg/db/ent/logs"
-	"kcers/pkg/db/ent/predicate"
+	"kcers/biz/dal/cache"
+	"kcers/biz/dal/config"
+	db "kcers/biz/dal/db/mysql"
+	"kcers/biz/dal/db/mysql/ent"
+	logs2 "kcers/biz/dal/db/mysql/ent/logs"
+	"kcers/biz/dal/db/mysql/ent/predicate"
+	"kcers/biz/infras/do"
+	"kcers/idl_gen/model/logs"
 	"time"
 )
 
@@ -28,23 +29,23 @@ func NewLogs(ctx context.Context, c *app.RequestContext) do.Logs {
 		ctx:   ctx,
 		c:     c,
 		salt:  config.GlobalServerConfig.MySQLInfo.Salt,
-		db:    infras.DB,
+		db:    db.DB,
 		cache: cache.Cache,
 	}
 }
 
-func (l Logs) Create(logsReq *do.LogsInfo) error {
+func (l Logs) Create(logsReq *logs.LogsInfo) error {
 	err := l.db.Logs.Create().
 		SetType(logsReq.Type).
 		SetMethod(logsReq.Method).
-		SetAPI(logsReq.Api).
+		SetAPI(logsReq.API).
 		SetSuccess(logsReq.Success).
 		SetReqContent(logsReq.ReqContent).
 		SetRespContent(logsReq.RespContent).
-		SetIP(logsReq.Ip).
+		SetIP(logsReq.IP).
 		SetUserAgent(logsReq.UserAgent).
-		SetOperator(logsReq.Operator).
-		SetTime(int(logsReq.Time)).
+		SetOperator(logsReq.Operators).
+		SetTime(logsReq.Time).
 		Exec(l.ctx)
 	if err != nil {
 		err = errors.Wrap(err, "create logs failed")
@@ -53,42 +54,42 @@ func (l Logs) Create(logsReq *do.LogsInfo) error {
 	return nil
 }
 
-func (l Logs) List(req *do.LogsListReq) (list []*do.LogsInfo, total int, err error) {
+func (l Logs) List(req *logs.LogsListReq) (list []*logs.LogsInfo, total int, err error) {
 	var predicates []predicate.Logs
 	if req.Type != "" {
-		predicates = append(predicates, logs.TypeEQ(req.Type))
+		predicates = append(predicates, logs2.TypeEQ(req.Type))
 	}
 	if req.Method != "" {
-		predicates = append(predicates, logs.MethodEQ(req.Method))
+		predicates = append(predicates, logs2.MethodEQ(req.Method))
 	}
-	if req.Api != "" {
-		predicates = append(predicates, logs.APIContains(req.Api))
+	if req.API != "" {
+		predicates = append(predicates, logs2.APIContains(req.API))
 	}
-	if req.Operator != "" {
-		predicates = append(predicates, logs.OperatorContains(req.Operator))
+	if req.Operators != "" {
+		predicates = append(predicates, logs2.OperatorContains(req.Operators))
 	}
-	if req.Success != nil {
-		predicates = append(predicates, logs.SuccessEQ(*req.Success))
+	if req.Success != true {
+		predicates = append(predicates, logs2.SuccessEQ(req.Success))
 	}
 	logsData, err := l.db.Logs.Query().Where(predicates...).
 		Offset(int((req.Page - 1) * req.PageSize)).
 		Limit(int(req.PageSize)).
-		Order(ent.Desc(logs.FieldCreatedAt)).All(l.ctx)
+		Order(ent.Desc(logs2.FieldCreatedAt)).All(l.ctx)
 	if err != nil {
 		return nil, 0, errors.Wrap(err, "query logsData list failed")
 	}
 	for _, v := range logsData {
-		list = append(list, &do.LogsInfo{
+		list = append(list, &logs.LogsInfo{
 			Type:        v.Type,
 			Method:      v.Method,
-			Api:         v.API,
+			API:         v.API,
 			Success:     v.Success,
 			ReqContent:  v.ReqContent,
 			RespContent: v.RespContent,
-			Ip:          v.IP,
+			IP:          v.IP,
 			UserAgent:   v.UserAgent,
-			Operator:    v.Operator,
-			Time:        int32(v.Time),
+			Operators:   v.Operator,
+			Time:        v.Time,
 			CreatedAt:   v.CreatedAt.Format(time.DateTime),
 			UpdatedAt:   v.UpdatedAt.Format(time.DateTime),
 		})

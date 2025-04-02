@@ -191,14 +191,14 @@ func (lu *LogsUpdate) ClearOperator() *LogsUpdate {
 }
 
 // SetTime sets the "time" field.
-func (lu *LogsUpdate) SetTime(i int) *LogsUpdate {
+func (lu *LogsUpdate) SetTime(i int64) *LogsUpdate {
 	lu.mutation.ResetTime()
 	lu.mutation.SetTime(i)
 	return lu
 }
 
 // SetNillableTime sets the "time" field if the given value is not nil.
-func (lu *LogsUpdate) SetNillableTime(i *int) *LogsUpdate {
+func (lu *LogsUpdate) SetNillableTime(i *int64) *LogsUpdate {
 	if i != nil {
 		lu.SetTime(*i)
 	}
@@ -206,7 +206,7 @@ func (lu *LogsUpdate) SetNillableTime(i *int) *LogsUpdate {
 }
 
 // AddTime adds i to the "time" field.
-func (lu *LogsUpdate) AddTime(i int) *LogsUpdate {
+func (lu *LogsUpdate) AddTime(i int64) *LogsUpdate {
 	lu.mutation.AddTime(i)
 	return lu
 }
@@ -313,13 +313,13 @@ func (lu *LogsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.ClearField(logs.FieldOperator, field.TypeString)
 	}
 	if value, ok := lu.mutation.Time(); ok {
-		_spec.SetField(logs.FieldTime, field.TypeInt, value)
+		_spec.SetField(logs.FieldTime, field.TypeInt64, value)
 	}
 	if value, ok := lu.mutation.AddedTime(); ok {
-		_spec.AddField(logs.FieldTime, field.TypeInt, value)
+		_spec.AddField(logs.FieldTime, field.TypeInt64, value)
 	}
 	if lu.mutation.TimeCleared() {
-		_spec.ClearField(logs.FieldTime, field.TypeInt)
+		_spec.ClearField(logs.FieldTime, field.TypeInt64)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, lu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -504,14 +504,14 @@ func (luo *LogsUpdateOne) ClearOperator() *LogsUpdateOne {
 }
 
 // SetTime sets the "time" field.
-func (luo *LogsUpdateOne) SetTime(i int) *LogsUpdateOne {
+func (luo *LogsUpdateOne) SetTime(i int64) *LogsUpdateOne {
 	luo.mutation.ResetTime()
 	luo.mutation.SetTime(i)
 	return luo
 }
 
 // SetNillableTime sets the "time" field if the given value is not nil.
-func (luo *LogsUpdateOne) SetNillableTime(i *int) *LogsUpdateOne {
+func (luo *LogsUpdateOne) SetNillableTime(i *int64) *LogsUpdateOne {
 	if i != nil {
 		luo.SetTime(*i)
 	}
@@ -519,7 +519,7 @@ func (luo *LogsUpdateOne) SetNillableTime(i *int) *LogsUpdateOne {
 }
 
 // AddTime adds i to the "time" field.
-func (luo *LogsUpdateOne) AddTime(i int) *LogsUpdateOne {
+func (luo *LogsUpdateOne) AddTime(i int64) *LogsUpdateOne {
 	luo.mutation.AddTime(i)
 	return luo
 }
@@ -656,13 +656,13 @@ func (luo *LogsUpdateOne) sqlSave(ctx context.Context) (_node *Logs, err error) 
 		_spec.ClearField(logs.FieldOperator, field.TypeString)
 	}
 	if value, ok := luo.mutation.Time(); ok {
-		_spec.SetField(logs.FieldTime, field.TypeInt, value)
+		_spec.SetField(logs.FieldTime, field.TypeInt64, value)
 	}
 	if value, ok := luo.mutation.AddedTime(); ok {
-		_spec.AddField(logs.FieldTime, field.TypeInt, value)
+		_spec.AddField(logs.FieldTime, field.TypeInt64, value)
 	}
 	if luo.mutation.TimeCleared() {
-		_spec.ClearField(logs.FieldTime, field.TypeInt)
+		_spec.ClearField(logs.FieldTime, field.TypeInt64)
 	}
 	_node = &Logs{config: luo.config}
 	_spec.Assign = _node.assignValues

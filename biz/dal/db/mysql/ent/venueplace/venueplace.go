@@ -3,6 +3,7 @@
 package venueplace
 
 import (
+	"kcers/idl_gen/model/base"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -26,6 +27,14 @@ const (
 	FieldPic = "pic"
 	// FieldVenueID holds the string denoting the venue_id field in the database.
 	FieldVenueID = "venue_id"
+	// FieldNumber holds the string denoting the number field in the database.
+	FieldNumber = "number"
+	// FieldInformation holds the string denoting the information field in the database.
+	FieldInformation = "information"
+	// FieldIsBooking holds the string denoting the is_booking field in the database.
+	FieldIsBooking = "is_booking"
+	// FieldSeat holds the string denoting the seat field in the database.
+	FieldSeat = "seat"
 	// EdgeVenue holds the string denoting the venue edge name in mutations.
 	EdgeVenue = "venue"
 	// Table holds the table name of the venueplace in the database.
@@ -48,6 +57,10 @@ var Columns = []string{
 	FieldName,
 	FieldPic,
 	FieldVenueID,
+	FieldNumber,
+	FieldInformation,
+	FieldIsBooking,
+	FieldSeat,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -69,6 +82,10 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultStatus holds the default value on creation for the "status" field.
 	DefaultStatus int64
+	// DefaultIsBooking holds the default value on creation for the "is_booking" field.
+	DefaultIsBooking int64
+	// DefaultSeat holds the default value on creation for the "seat" field.
+	DefaultSeat [][]*base.Seat
 )
 
 // OrderOption defines the ordering options for the VenuePlace queries.
@@ -107,6 +124,21 @@ func ByPic(opts ...sql.OrderTermOption) OrderOption {
 // ByVenueID orders the results by the venue_id field.
 func ByVenueID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldVenueID, opts...).ToFunc()
+}
+
+// ByNumber orders the results by the number field.
+func ByNumber(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNumber, opts...).ToFunc()
+}
+
+// ByInformation orders the results by the information field.
+func ByInformation(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldInformation, opts...).ToFunc()
+}
+
+// ByIsBooking orders the results by the is_booking field.
+func ByIsBooking(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsBooking, opts...).ToFunc()
 }
 
 // ByVenueField orders the results by venue field.

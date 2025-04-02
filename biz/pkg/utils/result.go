@@ -3,7 +3,7 @@ package utils
 import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"kcers/pkg/errno"
+	"kcers/biz/pkg/errno"
 	"net/http"
 	"time"
 )

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/venue"
 	"kcers/biz/dal/db/mysql/ent/venueplace"
+	"kcers/idl_gen/model/base"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -105,6 +106,54 @@ func (vpc *VenuePlaceCreate) SetNillableVenueID(i *int64) *VenuePlaceCreate {
 	return vpc
 }
 
+// SetNumber sets the "number" field.
+func (vpc *VenuePlaceCreate) SetNumber(i int64) *VenuePlaceCreate {
+	vpc.mutation.SetNumber(i)
+	return vpc
+}
+
+// SetNillableNumber sets the "number" field if the given value is not nil.
+func (vpc *VenuePlaceCreate) SetNillableNumber(i *int64) *VenuePlaceCreate {
+	if i != nil {
+		vpc.SetNumber(*i)
+	}
+	return vpc
+}
+
+// SetInformation sets the "information" field.
+func (vpc *VenuePlaceCreate) SetInformation(s string) *VenuePlaceCreate {
+	vpc.mutation.SetInformation(s)
+	return vpc
+}
+
+// SetNillableInformation sets the "information" field if the given value is not nil.
+func (vpc *VenuePlaceCreate) SetNillableInformation(s *string) *VenuePlaceCreate {
+	if s != nil {
+		vpc.SetInformation(*s)
+	}
+	return vpc
+}
+
+// SetIsBooking sets the "is_booking" field.
+func (vpc *VenuePlaceCreate) SetIsBooking(i int64) *VenuePlaceCreate {
+	vpc.mutation.SetIsBooking(i)
+	return vpc
+}
+
+// SetNillableIsBooking sets the "is_booking" field if the given value is not nil.
+func (vpc *VenuePlaceCreate) SetNillableIsBooking(i *int64) *VenuePlaceCreate {
+	if i != nil {
+		vpc.SetIsBooking(*i)
+	}
+	return vpc
+}
+
+// SetSeat sets the "seat" field.
+func (vpc *VenuePlaceCreate) SetSeat(b [][]*base.Seat) *VenuePlaceCreate {
+	vpc.mutation.SetSeat(b)
+	return vpc
+}
+
 // SetID sets the "id" field.
 func (vpc *VenuePlaceCreate) SetID(i int64) *VenuePlaceCreate {
 	vpc.mutation.SetID(i)
@@ -162,6 +211,14 @@ func (vpc *VenuePlaceCreate) defaults() {
 	if _, ok := vpc.mutation.Status(); !ok {
 		v := venueplace.DefaultStatus
 		vpc.mutation.SetStatus(v)
+	}
+	if _, ok := vpc.mutation.IsBooking(); !ok {
+		v := venueplace.DefaultIsBooking
+		vpc.mutation.SetIsBooking(v)
+	}
+	if _, ok := vpc.mutation.Seat(); !ok {
+		v := venueplace.DefaultSeat
+		vpc.mutation.SetSeat(v)
 	}
 }
 
@@ -224,6 +281,22 @@ func (vpc *VenuePlaceCreate) createSpec() (*VenuePlace, *sqlgraph.CreateSpec) {
 	if value, ok := vpc.mutation.Pic(); ok {
 		_spec.SetField(venueplace.FieldPic, field.TypeString, value)
 		_node.Pic = value
+	}
+	if value, ok := vpc.mutation.Number(); ok {
+		_spec.SetField(venueplace.FieldNumber, field.TypeInt64, value)
+		_node.Number = value
+	}
+	if value, ok := vpc.mutation.Information(); ok {
+		_spec.SetField(venueplace.FieldInformation, field.TypeString, value)
+		_node.Information = value
+	}
+	if value, ok := vpc.mutation.IsBooking(); ok {
+		_spec.SetField(venueplace.FieldIsBooking, field.TypeInt64, value)
+		_node.IsBooking = value
+	}
+	if value, ok := vpc.mutation.Seat(); ok {
+		_spec.SetField(venueplace.FieldSeat, field.TypeJSON, value)
+		_node.Seat = value
 	}
 	if nodes := vpc.mutation.VenueIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

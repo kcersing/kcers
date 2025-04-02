@@ -6,15 +6,16 @@ import (
 	"github.com/dgraph-io/ristretto"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
-	"kcers/app/dal/cache"
-	"kcers/app/pkg/do"
-	"kcers/config"
-	"kcers/infras"
-	"kcers/pkg/db/ent"
-	"kcers/pkg/db/ent/predicate"
-	"kcers/pkg/db/ent/user"
-	"kcers/pkg/encrypt"
-	"kcers/pkg/minio"
+	"kcers/biz/dal/cache"
+	"kcers/biz/dal/config"
+	db "kcers/biz/dal/db/mysql"
+	"kcers/biz/dal/db/mysql/ent"
+	"kcers/biz/dal/db/mysql/ent/predicate"
+	user2 "kcers/biz/dal/db/mysql/ent/user"
+	"kcers/biz/infras/do"
+	"kcers/biz/pkg/encrypt"
+	"kcers/biz/pkg/minio"
+	"kcers/idl_gen/model/user"
 	"strconv"
 	"time"
 )
@@ -27,10 +28,10 @@ type User struct {
 	cache *ristretto.Cache
 }
 
-func (u User) SetDefaultVenue(id, venueId int64) error {
+func (u User) SetDefaultVenue(id, venueId *int64) error {
 	_, err := u.db.User.Update().
-		Where(user.IDEQ(id)).
-		SetDefaultVenueID(venueId).
+		Where(user2.IDEQ(*id)).
+		SetDefaultVenueID(*venueId).
 		Save(u.ctx)
 
 	if err != nil {
@@ -41,10 +42,10 @@ func (u User) SetDefaultVenue(id, venueId int64) error {
 	return nil
 }
 
-func (u User) SetRole(id, roleID int64) error {
+func (u User) SetRole(id, roleID *int64) error {
 	_, err := u.db.User.Update().
-		Where(user.IDEQ(id)).
-		SetRoleID(roleID).
+		Where(user2.IDEQ(*id)).
+		SetRoleID(*roleID).
 		Save(u.ctx)
 
 	if err != nil {
@@ -55,15 +56,15 @@ func (u User) SetRole(id, roleID int64) error {
 	return nil
 }
 
-func (u User) Info(id int64) (info *do.UserInfo, err error) {
-	info = new(do.UserInfo)
-	userInterface, exist := u.cache.Get("userInfo" + strconv.Itoa(int(id)))
+func (u User) Info(id *int64) (info *user.UserInfo, err error) {
+	info = new(user.UserInfo)
+	userInterface, exist := u.cache.Get("userInfo" + strconv.Itoa(int(*id)))
 	if exist {
-		if u, ok := userInterface.(*do.UserInfo); ok {
+		if u, ok := userInterface.(*user.UserInfo); ok {
 			return u, nil
 		}
 	}
-	userEnt, err := u.db.User.Query().Where(user.IDEQ(id)).First(u.ctx)
+	userEnt, err := u.db.User.Query().Where(user2.IDEQ(*id)).First(u.ctx)
 	if err != nil {
 		err = errors.Wrap(err, "get user failed")
 		return info, err
@@ -74,7 +75,7 @@ func (u User) Info(id int64) (info *do.UserInfo, err error) {
 		return info, err
 	}
 
-	roleInterface, exist := u.cache.Get("roleData" + strconv.Itoa(int(info.RoleID)))
+	roleInterface, exist := u.cache.Get("roleData" + strconv.Itoa(int(info.RoleId)))
 	if exist {
 		if role, ok := roleInterface.(*ent.Role); ok {
 			info.RoleName = role.Name
@@ -97,8 +98,7 @@ func (u User) Info(id int64) (info *do.UserInfo, err error) {
 	return
 }
 
-func (u User) Create(req do.CreateOrUpdateUserReq) error {
-	password, _ := encrypt.Crypt(req.Password)
+func (u User) Create(req *user.CreateOrUpdateUserReq) error {
 	var gender int64
 	if req.Gender == "女性" {
 		gender = 0
@@ -119,7 +119,6 @@ func (u User) Create(req do.CreateOrUpdateUserReq) error {
 		SetEmail(req.Email).
 		SetStatus(req.Status).
 		SetUsername(req.Mobile).
-		SetPassword(password).
 		SetNickname(req.Name).
 		SetBirthday(parsedTime).
 		SetGender(gender).
@@ -145,7 +144,7 @@ func (u User) Create(req do.CreateOrUpdateUserReq) error {
 	return nil
 }
 
-func (u User) Update(req do.CreateOrUpdateUserReq) error {
+func (u User) Update(req *user.CreateOrUpdateUserReq) error {
 
 	var gender int64
 	if req.Gender == "女性" {
@@ -157,15 +156,13 @@ func (u User) Update(req do.CreateOrUpdateUserReq) error {
 	}
 	parsedTime, _ := time.Parse(time.DateOnly, req.Birthday)
 
-	password, _ := encrypt.Crypt(req.Password)
 	_, err := u.db.User.Update().
-		Where(user.IDEQ(req.ID)).
+		Where(user2.IDEQ(req.ID)).
 		SetAvatar(req.Avatar).
 		SetMobile(req.Mobile).
 		SetEmail(req.Email).
 		SetStatus(req.Status).
 		SetUsername(req.Mobile).
-		SetPassword(password).
 		SetNickname(req.Name).
 		SetBirthday(parsedTime).
 		SetGender(gender).
@@ -181,7 +178,7 @@ func (u User) Update(req do.CreateOrUpdateUserReq) error {
 	return nil
 }
 
-func (u User) ChangePassword(userID int64, newPassword string) error {
+func (u User) ChangePassword(userID *int64, newPassword *string) error {
 	////get user info
 	//targetUser, err := u.db.User.Query().Where(user.IDEQ(userID)).First(u.ctx)
 	//if err != nil {
@@ -193,32 +190,32 @@ func (u User) ChangePassword(userID int64, newPassword string) error {
 	//	return err
 	//}
 	// update password
-	password, _ := encrypt.Crypt(newPassword)
-	_, err := u.db.User.Update().Where(user.IDEQ(userID)).SetPassword(password).Save(u.ctx)
+	password, _ := encrypt.Crypt(*newPassword)
+	_, err := u.db.User.Update().Where(user2.IDEQ(*userID)).SetPassword(password).Save(u.ctx)
 
 	return err
 }
 
-func (u User) List(req do.UserListReq) (userList []*do.UserInfo, total int, err error) {
+func (u User) List(req *user.UserListReq) (userList []*user.UserInfo, total int, err error) {
 	var predicates []predicate.User
 	if req.Mobile != "" {
-		predicates = append(predicates, user.MobileEQ(req.Mobile))
+		predicates = append(predicates, user2.MobileEQ(req.Mobile))
 	}
 
 	if req.Username != "" {
-		predicates = append(predicates, user.UsernameContains(req.Username))
+		predicates = append(predicates, user2.UsernameContains(req.Username))
 	}
 
 	if req.Email != "" {
-		predicates = append(predicates, user.EmailEQ(req.Email))
+		predicates = append(predicates, user2.EmailEQ(req.Email))
 	}
 
-	if req.Nickname != "" {
-		predicates = append(predicates, user.NicknameContains(req.Nickname))
+	if req.Username != "" {
+		predicates = append(predicates, user2.NicknameContains(req.Username))
 	}
 
-	if req.RoleID != 0 {
-		predicates = append(predicates, user.RoleIDEQ(req.RoleID))
+	if req.RoleId != 0 {
+		predicates = append(predicates, user2.RoleIDEQ(req.RoleId))
 	}
 
 	users, err := u.db.User.Query().Where(predicates...).
@@ -242,24 +239,13 @@ func (u User) List(req do.UserListReq) (userList []*do.UserInfo, total int, err 
 	return
 }
 
-func (u User) UpdateUserStatus(id int64, status int64) error {
-	_, err := u.db.User.Update().Where(user.IDEQ(id)).SetStatus(status).Save(u.ctx)
+func (u User) UpdateUserStatus(id *int64, status *int64) error {
+	_, err := u.db.User.Update().Where(user2.IDEQ(*id)).SetStatus(*status).Save(u.ctx)
 	return err
 }
 
-func (u User) DeleteUser(id int64) error {
-	_, err := u.db.User.Delete().Where(user.IDEQ(id)).Exec(u.ctx)
-	return err
-}
-
-func (u User) UpdateProfile(req do.UpdateUserProfileReq) error {
-	_, err := u.db.User.Update().
-		Where(user.IDEQ(req.ID)).
-		SetNickname(req.Nickname).
-		SetEmail(req.Email).
-		SetMobile(req.Mobile).
-		SetAvatar(req.Avatar).
-		Save(u.ctx)
+func (u User) DeleteUser(id *int64) error {
+	_, err := u.db.User.Delete().Where(user2.IDEQ(*id)).Exec(u.ctx)
 	return err
 }
 
@@ -268,7 +254,7 @@ func NewUser(ctx context.Context, c *app.RequestContext) do.User {
 		ctx:   ctx,
 		c:     c,
 		salt:  config.GlobalServerConfig.MySQLInfo.Salt,
-		db:    infras.DB,
+		db:    db.DB,
 		cache: cache.Cache,
 	}
 }

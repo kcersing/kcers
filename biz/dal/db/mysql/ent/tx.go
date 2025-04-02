@@ -14,6 +14,8 @@ type Tx struct {
 	config
 	// API is the client for interacting with the API builders.
 	API *APIClient
+	// Banner is the client for interacting with the Banner builders.
+	Banner *BannerClient
 	// Contract is the client for interacting with the Contract builders.
 	Contract *ContractClient
 	// Dictionary is the client for interacting with the Dictionary builders.
@@ -208,6 +210,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.API = NewAPIClient(tx.config)
+	tx.Banner = NewBannerClient(tx.config)
 	tx.Contract = NewContractClient(tx.config)
 	tx.Dictionary = NewDictionaryClient(tx.config)
 	tx.DictionaryDetail = NewDictionaryDetailClient(tx.config)

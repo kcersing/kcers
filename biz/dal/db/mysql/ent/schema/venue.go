@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
@@ -21,7 +22,9 @@ func (Venue) Fields() []ent.Field {
 		field.String("latitude").Comment("维度").Optional(),
 		field.String("longitude").Comment("经度").Optional(),
 		field.String("mobile").Comment("联系电话").Optional(),
-		field.String("pic").Comment("场馆照片").Optional(),
+		field.String("email").Comment("邮箱").Optional(),
+		field.String("pic").SchemaType(map[string]string{dialect.MySQL: "varchar(512)"}).Optional().Comment("照片"),
+		field.String("seal").SchemaType(map[string]string{dialect.MySQL: "varchar(512)"}).Optional().Comment("公章"),
 		field.String("information").Comment("详情").Optional(),
 	}
 }

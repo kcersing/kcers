@@ -33,6 +33,23 @@ var (
 			},
 		},
 	}
+	// BannerColumns holds the columns for the "banner" table.
+	BannerColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "primary key"},
+		{Name: "created_at", Type: field.TypeTime, Comment: "created time"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "last update time"},
+		{Name: "status", Type: field.TypeInt64, Nullable: true, Comment: "状态[0:禁用;1:正常]", Default: 1},
+		{Name: "name", Type: field.TypeString, Comment: "名称"},
+		{Name: "pic", Type: field.TypeString, Comment: "图片"},
+		{Name: "link", Type: field.TypeString, Comment: "跳转链接"},
+		{Name: "is_show", Type: field.TypeInt64, Nullable: true, Comment: "是否展示 1 展示 2 不展示", Default: 1},
+	}
+	// BannerTable holds the schema information for the "banner" table.
+	BannerTable = &schema.Table{
+		Name:       "banner",
+		Columns:    BannerColumns,
+		PrimaryKey: []*schema.Column{BannerColumns[0]},
+	}
 	// ContractsColumns holds the columns for the "contracts" table.
 	ContractsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "primary key"},
@@ -196,7 +213,7 @@ var (
 		{Name: "ip", Type: field.TypeString, Nullable: true, Comment: "ip of log | 日志IP"},
 		{Name: "user_agent", Type: field.TypeString, Nullable: true, Comment: "user_agent of log | 日志用户客户端"},
 		{Name: "operator", Type: field.TypeString, Nullable: true, Comment: "operator of log | 日志操作者"},
-		{Name: "time", Type: field.TypeInt, Nullable: true, Comment: "time of log(millisecond) | 日志时间(毫秒)"},
+		{Name: "time", Type: field.TypeInt64, Nullable: true, Comment: "time of log(millisecond) | 日志时间(毫秒)"},
 	}
 	// SysLogsTable holds the schema information for the "sys_logs" table.
 	SysLogsTable = &schema.Table{
@@ -512,8 +529,8 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Comment: "last update time"},
 		{Name: "path", Type: field.TypeString, Nullable: true, Comment: "index path | 菜单路由路径", Default: ""},
 		{Name: "name", Type: field.TypeString, Comment: "index name | 菜单名称"},
-		{Name: "order_no", Type: field.TypeInt32, Comment: "sorting numbers | 排序编号", Default: 0},
-		{Name: "disabled", Type: field.TypeInt32, Nullable: true, Comment: "disable status | 是否停用", Default: 0},
+		{Name: "order_no", Type: field.TypeInt64, Comment: "sorting numbers | 排序编号", Default: 0},
+		{Name: "disabled", Type: field.TypeInt64, Nullable: true, Comment: "disable status | 是否停用", Default: 0},
 		{Name: "ignore", Type: field.TypeBool, Nullable: true, Comment: "当前路由是否渲染菜单项，为 true 的话不会在菜单中显示，但可通过路由地址访问", Default: false},
 		{Name: "parent_id", Type: field.TypeInt64, Nullable: true, Comment: "parent menu ID | 父菜单ID"},
 	}
@@ -846,7 +863,7 @@ var (
 		{Name: "value", Type: field.TypeString, Unique: true, Comment: "role value for permission control in front end | 角色值，用于前端权限控制"},
 		{Name: "default_router", Type: field.TypeString, Comment: "default menu : dashboard | 默认登录页面", Default: "dashboard"},
 		{Name: "remark", Type: field.TypeString, Comment: "remark | 备注", Default: ""},
-		{Name: "order_no", Type: field.TypeInt32, Comment: "order number | 排序编号", Default: 0},
+		{Name: "order_no", Type: field.TypeInt64, Comment: "order number | 排序编号", Default: 0},
 		{Name: "apis", Type: field.TypeJSON, Comment: "apis"},
 	}
 	// SysRolesTable holds the schema information for the "sys_roles" table.
@@ -1091,7 +1108,9 @@ var (
 		{Name: "latitude", Type: field.TypeString, Nullable: true, Comment: "维度"},
 		{Name: "longitude", Type: field.TypeString, Nullable: true, Comment: "经度"},
 		{Name: "mobile", Type: field.TypeString, Nullable: true, Comment: "联系电话"},
-		{Name: "pic", Type: field.TypeString, Nullable: true, Comment: "场馆照片"},
+		{Name: "email", Type: field.TypeString, Nullable: true, Comment: "邮箱"},
+		{Name: "pic", Type: field.TypeString, Nullable: true, Comment: "照片", SchemaType: map[string]string{"mysql": "varchar(512)"}},
+		{Name: "seal", Type: field.TypeString, Nullable: true, Comment: "公章", SchemaType: map[string]string{"mysql": "varchar(512)"}},
 		{Name: "information", Type: field.TypeString, Nullable: true, Comment: "详情"},
 	}
 	// VenueTable holds the schema information for the "venue" table.
@@ -1107,7 +1126,11 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Comment: "last update time"},
 		{Name: "status", Type: field.TypeInt64, Nullable: true, Comment: "状态[0:禁用;1:正常]", Default: 1},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "名称"},
-		{Name: "pic", Type: field.TypeString, Nullable: true, Comment: "照片"},
+		{Name: "pic", Type: field.TypeString, Nullable: true, Comment: "pic | 照片", SchemaType: map[string]string{"mysql": "varchar(512)"}},
+		{Name: "number", Type: field.TypeInt64, Nullable: true, Comment: "可容纳人数"},
+		{Name: "information", Type: field.TypeString, Nullable: true, Comment: "详情"},
+		{Name: "is_booking", Type: field.TypeInt64, Nullable: true, Comment: "是否预约:1可预约;2不可", Default: 1},
+		{Name: "seat", Type: field.TypeJSON, Nullable: true, Comment: "座位"},
 		{Name: "venue_id", Type: field.TypeInt64, Nullable: true, Comment: "场馆id"},
 	}
 	// VenuePlaceTable holds the schema information for the "venue_place" table.
@@ -1118,7 +1141,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "venue_place_venue_places",
-				Columns:    []*schema.Column{VenuePlaceColumns[6]},
+				Columns:    []*schema.Column{VenuePlaceColumns[10]},
 				RefColumns: []*schema.Column{VenueColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -1127,7 +1150,7 @@ var (
 			{
 				Name:    "venueplace_venue_id",
 				Unique:  false,
-				Columns: []*schema.Column{VenuePlaceColumns[6]},
+				Columns: []*schema.Column{VenuePlaceColumns[10]},
 			},
 		},
 	}
@@ -1234,6 +1257,7 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		SysApisTable,
+		BannerTable,
 		ContractsTable,
 		SysDictionariesTable,
 		SysDictionaryDetailsTable,
@@ -1275,6 +1299,9 @@ var (
 func init() {
 	SysApisTable.Annotation = &entsql.Annotation{
 		Table: "sys_apis",
+	}
+	BannerTable.Annotation = &entsql.Annotation{
+		Table: "banner",
 	}
 	ContractsTable.Annotation = &entsql.Annotation{
 		Table:   "contracts",

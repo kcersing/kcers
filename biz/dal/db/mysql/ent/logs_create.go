@@ -143,13 +143,13 @@ func (lc *LogsCreate) SetNillableOperator(s *string) *LogsCreate {
 }
 
 // SetTime sets the "time" field.
-func (lc *LogsCreate) SetTime(i int) *LogsCreate {
+func (lc *LogsCreate) SetTime(i int64) *LogsCreate {
 	lc.mutation.SetTime(i)
 	return lc
 }
 
 // SetNillableTime sets the "time" field if the given value is not nil.
-func (lc *LogsCreate) SetNillableTime(i *int) *LogsCreate {
+func (lc *LogsCreate) SetNillableTime(i *int64) *LogsCreate {
 	if i != nil {
 		lc.SetTime(*i)
 	}
@@ -304,7 +304,7 @@ func (lc *LogsCreate) createSpec() (*Logs, *sqlgraph.CreateSpec) {
 		_node.Operator = value
 	}
 	if value, ok := lc.mutation.Time(); ok {
-		_spec.SetField(logs.FieldTime, field.TypeInt, value)
+		_spec.SetField(logs.FieldTime, field.TypeInt64, value)
 		_node.Time = value
 	}
 	return _node, _spec

@@ -27,7 +27,10 @@ struct Empty {
 
 }
 
-
+struct List {
+    1: optional i64 id= 0
+    2: optional string name =""
+}
 struct IDReq{
     1: i64 id,
 }
@@ -52,6 +55,25 @@ struct Tree  {
  4:	string method="" (api.raw = "method")
  5:	list<Tree> children={} (api.raw = "children")
 }
+
+struct Seat{
+    /**编号*/
+    1: optional i64 num = 0 (api.raw = "num" )
+    2: optional i64 x =0 (api.raw = "x" )
+    3: optional i64 y =0 (api.raw = "y" )
+}
+
+
+
+
+
+
+
+
+
+
+
+
 enum Err {
     Success            = 0,
     NoRoute            = 1,

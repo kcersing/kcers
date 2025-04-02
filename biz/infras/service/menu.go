@@ -6,13 +6,16 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/dgraph-io/ristretto"
 	"github.com/pkg/errors"
-	"kcers/app/dal/cache"
-	"kcers/app/pkg/do"
-	"kcers/config"
-	infras "kcers/infras"
-	"kcers/pkg/db/ent"
-	menu2 "kcers/pkg/db/ent/menu"
-	"kcers/pkg/db/ent/role"
+	"kcers/biz/dal/cache"
+	"kcers/biz/dal/config"
+	db "kcers/biz/dal/db/mysql"
+	"kcers/biz/dal/db/mysql/ent"
+	menu2 "kcers/biz/dal/db/mysql/ent/menu"
+	"kcers/biz/dal/db/mysql/ent/role"
+	"kcers/biz/infras/do"
+	"kcers/idl_gen/model/base"
+	"kcers/idl_gen/model/menu"
+	"strconv"
 	"time"
 )
 
@@ -24,11 +27,11 @@ type Menu struct {
 	cache *ristretto.Cache
 }
 
-func (m Menu) Create(menuReq *do.MenuInfo) error {
+func (m Menu) Create(menuReq *menu.MenuInfo) error {
 	// get menu level
-	if menuReq.ParentID == 0 {
+	if menuReq.ParentId == 0 {
 		// it is a first level menu
-		menuReq.ParentID = 1
+		menuReq.ParentId = 1
 		//menuReq.Level = 1
 	}
 	//else {
@@ -44,7 +47,7 @@ func (m Menu) Create(menuReq *do.MenuInfo) error {
 
 	// create menu
 	err := m.db.Menu.Create().
-		SetParentID(menuReq.ParentID).
+		SetParentID(menuReq.ParentId).
 		SetPath(menuReq.Path).
 		SetName(menuReq.Name).
 		SetOrderNo(menuReq.OrderNo).
@@ -76,17 +79,17 @@ func (m Menu) Create(menuReq *do.MenuInfo) error {
 	return nil
 }
 
-func (m Menu) Update(menuReq *do.MenuInfo) error {
+func (m Menu) Update(menuReq *menu.MenuInfo) error {
 	// get menu level
-	if menuReq.ParentID == 0 {
+	if menuReq.ParentId == 0 {
 		// it is a first level menu
-		menuReq.ParentID = 1
+		menuReq.ParentId = 1
 		//menuReq.Level = 1
 	}
 	//else {
 	//// it is a children level menu
 	//// get parent menu level
-	//parent, err := m.db.Menu.Query().Where(menu2.IDEQ(menuReq.ParentID)).First(m.ctx)
+	//parent, err := m.db.Menu.Query().Where(menu2.IDEQ(menuReq.ParentId)).First(m.ctx)
 	//if err != nil {
 	//	return errors.Wrap(err, "query menu failed")
 	//}
@@ -96,7 +99,7 @@ func (m Menu) Update(menuReq *do.MenuInfo) error {
 
 	// update menu
 	err := m.db.Menu.UpdateOneID(menuReq.ID).
-		SetParentID(menuReq.ParentID).
+		SetParentID(menuReq.ParentId).
 		SetPath(menuReq.Path).
 		SetName(menuReq.Name).
 		SetOrderNo(menuReq.OrderNo).
@@ -148,7 +151,7 @@ func (m Menu) Delete(id int64) error {
 	return nil
 }
 
-func (m Menu) ListByRole(roleID int64) (list []*do.MenuInfoTree, total int64, err error) {
+func (m Menu) ListByRole(roleID int64) (list []*menu.MenuInfoTree, total int64, err error) {
 
 	menus, err := m.db.Role.
 		Query().
@@ -168,7 +171,7 @@ func (m Menu) ListByRole(roleID int64) (list []*do.MenuInfoTree, total int64, er
 	return
 }
 
-func (m Menu) List(req *do.MenuListReq) (list []*do.MenuInfoTree, total int, err error) {
+func (m Menu) List(req *menu.MenuListReq) (list []*menu.MenuInfoTree, total int, err error) {
 	// query menu list
 	menus, err := m.db.Menu.Query().Order(ent.Asc(menu2.FieldOrderNo)).
 		Offset(int(req.Page-1) * int(req.PageSize)).
@@ -180,11 +183,11 @@ func (m Menu) List(req *do.MenuListReq) (list []*do.MenuInfoTree, total int, err
 	total, _ = m.db.Menu.Query().Count(m.ctx)
 	return
 }
-func (m Menu) MenuTree(req *do.MenuListReq) (list []*do.Tree, total int, err error) {
+func (m Menu) MenuTree(req *menu.MenuListReq) (list []*base.Tree, total int, err error) {
 
 	inter, exist := m.cache.Get("MenuTree")
 	if exist {
-		if v, ok := inter.([]*do.Tree); ok {
+		if v, ok := inter.([]*base.Tree); ok {
 			return v, len(v), nil
 		}
 	}
@@ -203,19 +206,19 @@ func (m Menu) MenuTree(req *do.MenuListReq) (list []*do.Tree, total int, err err
 	return
 }
 
-func (m Menu) CreateMenuParam(req *do.MenuParam) error {
+func (m Menu) CreateMenuParam(req *menu.MenuParam) error {
 	// check menu whether exist
-	exist, err := m.db.Menu.Query().Where(menu2.IDEQ(req.MenuID)).Exist(m.ctx)
+	exist, err := m.db.Menu.Query().Where(menu2.IDEQ(req.MenuId)).Exist(m.ctx)
 	if err != nil {
 		return errors.Wrap(err, "query menu failed")
 	}
 	if !exist {
-		return errors.New(fmt.Sprintf("menu not exist, menu id: %d", req.MenuID))
+		return errors.New(fmt.Sprintf("menu not exist, menu id: %d", req.MenuId))
 	}
 
 	// create menu param
 	err = m.db.MenuParam.Create().
-		SetMenusID(req.MenuID).
+		SetMenusID(req.MenuId).
 		SetType(req.Type).
 		SetKey(req.Key).
 		SetValue(req.Value).
@@ -227,19 +230,19 @@ func (m Menu) CreateMenuParam(req *do.MenuParam) error {
 
 }
 
-func (m Menu) UpdateMenuParam(req *do.MenuParam) error {
+func (m Menu) UpdateMenuParam(req *menu.MenuParam) error {
 	// check menu whether exist
-	exist, err := m.db.Menu.Query().Where(menu2.IDEQ(req.MenuID)).Exist(m.ctx)
+	exist, err := m.db.Menu.Query().Where(menu2.IDEQ(req.MenuId)).Exist(m.ctx)
 	if err != nil {
 		return errors.Wrap(err, "query menu failed")
 	}
 	if !exist {
-		return errors.New(fmt.Sprintf("menu not exist, menu id: %d", req.MenuID))
+		return errors.New(fmt.Sprintf("menu not exist, menu id: %d", req.MenuId))
 	}
 
 	// update menu param
 	err = m.db.MenuParam.UpdateOneID(req.ID).
-		SetMenusID(req.MenuID).
+		SetMenusID(req.MenuId).
 		SetType(req.Type).
 		SetKey(req.Key).
 		SetValue(req.Value).
@@ -259,7 +262,7 @@ func (m Menu) DeleteMenuParam(menuParamID int64) error {
 	return nil
 }
 
-func (m Menu) MenuParamListByMenuID(menuID int64) (list []do.MenuParam, total int64, err error) {
+func (m Menu) MenuParamListByMenuID(menuID int64) (list []menu.MenuParam, total int64, err error) {
 	// query menu param list
 	params, err := m.db.Menu.Query().Where(menu2.IDEQ(menuID)).QueryParams().All(m.ctx)
 	if err != nil {
@@ -268,7 +271,7 @@ func (m Menu) MenuParamListByMenuID(menuID int64) (list []do.MenuParam, total in
 
 	// convert to MenuParam
 	for _, v := range params {
-		var p do.MenuParam
+		var p menu.MenuParam
 		p.ID = v.ID
 		p.Type = v.Type
 		p.Key = v.Key
@@ -287,21 +290,21 @@ func NewMenu(ctx context.Context, c *app.RequestContext) do.Menu {
 		ctx:   ctx,
 		c:     c,
 		salt:  config.GlobalServerConfig.MySQLInfo.Salt,
-		db:    infras.DB,
+		db:    db.DB,
 		cache: cache.Cache,
 	}
 }
 
-func findMenuChildren(data []*ent.Menu, parentID int64) []*do.MenuInfoTree {
+func findMenuChildren(data []*ent.Menu, parentID int64) []*menu.MenuInfoTree {
 	if data == nil {
 		return nil
 	}
-	var result []*do.MenuInfoTree
+	var result []*menu.MenuInfoTree
 	for _, v := range data {
 		// discard the parent menu, only find the children menu
 
 		if v.ParentID == parentID && v.ID != parentID {
-			var m = new(do.MenuInfoTree)
+			var m = new(menu.MenuInfoTree)
 			m.ID = v.ID
 			m.Name = v.Name
 			m.Key = v.Path
@@ -313,12 +316,12 @@ func findMenuChildren(data []*ent.Menu, parentID int64) []*do.MenuInfoTree {
 			//m.Level = v.MenuLevel
 
 			//	Title:              v.Name,
-			//m.ParentID = v.ParentID
+			//m.ParentId = v.ParentId
 			//m.Path = v.Path
 			//m.Redirect = v.Redirect
 			//m.Component = v.Component
 
-			//m.Meta = &do.MenuMeta{
+			//m.Meta = &menu.MenuMeta{
 			//	Icon:               v.Icon,
 			//	HideMenu:           v.HideMenu,
 			//	HideBreadcrumb:     v.HideBreadcrumb,
@@ -340,17 +343,17 @@ func findMenuChildren(data []*ent.Menu, parentID int64) []*do.MenuInfoTree {
 	return result
 }
 
-func findMenuTreeChildren(data []*ent.Menu, parentID int64) []*do.Tree {
+func findMenuTreeChildren(data []*ent.Menu, parentID int64) []*base.Tree {
 	if data == nil {
 		return nil
 	}
-	var result []*do.Tree
+	var result []*base.Tree
 	for _, v := range data {
 		if v.ParentID == parentID && v.ID != parentID {
-			var m = new(do.Tree)
+			var m = new(base.Tree)
 			m.Title = v.Name
-			m.Value = v.ID
-			m.Key = v.ID
+			m.Value = strconv.FormatInt(v.ID, 10)
+			m.Key = strconv.FormatInt(v.ID, 10)
 			m.Children = findMenuTreeChildren(data, v.ID)
 			result = append(result, m)
 		}

@@ -3,6 +3,7 @@ IsProd: true
 Host: 0.0.0.0
 Port: 9039
 Timeout: 30000
+Domain: http://127.0.0.1:9039/
 
 Captcha:
   KeyLong: 5
@@ -15,9 +16,8 @@ Auth:
   AccessExpire: 259200 # seconds, 3 days
 
 Redis:
-  Host: 127.0.0.1
-  Port: 6379
-  Type: node
+  Host: r-2ze5p4rpj6b4iikdo2.redis.rds.aliyuncs.com:6379
+  Password: hIUc7JZguHSK4BtT1qDq
 
 MySQL:
   #  Host: root:X3MeAGAmPSZp8A3H@tcp(121.40.98.240:3306)/kcers?parseTime=True
@@ -41,22 +41,24 @@ Casbin:
     [matchers]
     m = r.sub == p.sub && keyMatch2(r.obj,p.obj) && r.act == p.act
 
-# 支付平台信息配置
+
 Payment:
+  Alipay:
+    appid:
+    private_key:
+    app_public_cert_content:
+    alipay_root_cert_content:
+    alipay_public_cert_content:
   Wechat:
-    appid: wx1234567890
+    appid:
     mch_id:
     api_key:
     api_v3_key:
     cert_file_content:
     key_file_content:
     pkcs12_file_content:
-  Alipay: # 以下配置文件为新沙箱环境配置
-    appid:
-    private_key:
-    app_public_cert_content:
-    alipay_root_cert_content:
-    alipay_public_cert_content:
+    serial_no:
+    notify_url:
 
 Minio:
   EndPoint : localhost:9000
@@ -67,7 +69,16 @@ Minio:
   ImgBucketName : imagebucket
   Url : http://localhost:9000
 
+Aliyun:
+  Access:
+    AccessKeyId:
+    AccessKeySecret:
+  Sms:
+    Captcha:
+      SignName:
+      TemplateCode :
+
 DouYin:
-  AppId : aw3v00he8vmgvzty
-  AppSecret : a853336c7feaa588a62f0250c465b2a1
-  AccountId : 7218069838395082791
+  AppId :
+  AppSecret :
+  AccountId :

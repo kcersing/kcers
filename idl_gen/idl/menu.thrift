@@ -44,8 +44,8 @@ struct MenuInfo {
 //        17:  string title (api.raw = "title" )
 //        19:optional string type="" (api.raw = "type")
        20:optional string key="" (api.raw = "key")
-       21:optional string orderNo="" (api.raw = "orderNo")
-       22:optional string disabled="" (api.raw = "disabled")
+       21:optional i64 orderNo=0 (api.raw = "orderNo")
+       22:optional i64 disabled=0 (api.raw = "disabled")
        23:optional string ignore="" (api.raw = "ignore")
 }
 
@@ -59,7 +59,7 @@ struct CreateOrUpdateMenuReq {
 //    6:  string redirect (api.raw = "redirect")
 //    7:  string component (api.raw = "component")
     8:  i64 orderNo (api.raw = "orderNo")
-    9:  bool disabled (api.raw = "disabled")
+    9:  i64 disabled (api.raw = "disabled")
 //    10:  string menuType (api.raw = "menuType")
 //    11:  Meta meta (api.raw = "meta")
 }

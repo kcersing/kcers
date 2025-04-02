@@ -36,8 +36,12 @@ type Venue struct {
 	Longitude string `json:"longitude,omitempty"`
 	// 联系电话
 	Mobile string `json:"mobile,omitempty"`
-	// 场馆照片
+	// 邮箱
+	Email string `json:"email,omitempty"`
+	// 照片
 	Pic string `json:"pic,omitempty"`
+	// 公章
+	Seal string `json:"seal,omitempty"`
 	// 详情
 	Information string `json:"information,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -115,7 +119,7 @@ func (*Venue) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case venue.FieldID, venue.FieldStatus:
 			values[i] = new(sql.NullInt64)
-		case venue.FieldName, venue.FieldAddress, venue.FieldAddressDetail, venue.FieldLatitude, venue.FieldLongitude, venue.FieldMobile, venue.FieldPic, venue.FieldInformation:
+		case venue.FieldName, venue.FieldAddress, venue.FieldAddressDetail, venue.FieldLatitude, venue.FieldLongitude, venue.FieldMobile, venue.FieldEmail, venue.FieldPic, venue.FieldSeal, venue.FieldInformation:
 			values[i] = new(sql.NullString)
 		case venue.FieldCreatedAt, venue.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -194,11 +198,23 @@ func (v *Venue) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				v.Mobile = value.String
 			}
+		case venue.FieldEmail:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field email", values[i])
+			} else if value.Valid {
+				v.Email = value.String
+			}
 		case venue.FieldPic:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field pic", values[i])
 			} else if value.Valid {
 				v.Pic = value.String
+			}
+		case venue.FieldSeal:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field seal", values[i])
+			} else if value.Valid {
+				v.Seal = value.String
 			}
 		case venue.FieldInformation:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -294,8 +310,14 @@ func (v *Venue) String() string {
 	builder.WriteString("mobile=")
 	builder.WriteString(v.Mobile)
 	builder.WriteString(", ")
+	builder.WriteString("email=")
+	builder.WriteString(v.Email)
+	builder.WriteString(", ")
 	builder.WriteString("pic=")
 	builder.WriteString(v.Pic)
+	builder.WriteString(", ")
+	builder.WriteString("seal=")
+	builder.WriteString(v.Seal)
 	builder.WriteString(", ")
 	builder.WriteString("information=")
 	builder.WriteString(v.Information)

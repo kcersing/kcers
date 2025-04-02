@@ -41,7 +41,7 @@ type Logs struct {
 	// operator of log | 日志操作者
 	Operator string `json:"operator,omitempty"`
 	// time of log(millisecond) | 日志时间(毫秒)
-	Time         int `json:"time,omitempty"`
+	Time         int64 `json:"time,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -149,7 +149,7 @@ func (l *Logs) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field time", values[i])
 			} else if value.Valid {
-				l.Time = int(value.Int64)
+				l.Time = value.Int64
 			}
 		default:
 			l.selectValues.Set(columns[i], values[i])

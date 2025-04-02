@@ -1,14 +1,13 @@
 module kcers
 
-go 1.23
-
-toolchain go1.24.0
+go 1.24.1
 
 replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
 
 require (
 	entgo.io/ent v0.14.4
 	github.com/apache/thrift v0.13.0
+	github.com/bytedance/sonic v1.12.2
 	github.com/casbin/casbin/v2 v2.82.0
 	github.com/casbin/ent-adapter v0.3.0
 	github.com/cloudwego/hertz v0.9.5
@@ -45,7 +44,6 @@ require (
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/bmatcuk/doublestar v1.3.4 // indirect
 	github.com/bytedance/gopkg v0.1.0 // indirect
-	github.com/bytedance/sonic v1.12.2 // indirect
 	github.com/bytedance/sonic/loader v0.2.0 // indirect
 	github.com/casbin/govaluate v1.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect

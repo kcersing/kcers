@@ -8,7 +8,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	"kcers/config"
+	"kcers/biz/dal/config"
 	"log"
 	"mime/multipart"
 	"net/url"

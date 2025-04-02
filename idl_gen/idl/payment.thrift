@@ -1,6 +1,6 @@
 namespace go payment
 
-include "../../base/base.thrift"
+include "../base/base.thrift"
 
 
 service PaymentService {

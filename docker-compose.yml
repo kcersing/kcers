@@ -6,9 +6,9 @@ services:
   golang:
     hostname: golang
     #    image: golang:latest  # 父镜像名称
-    image: golang:1.24.1
+    image: golang:1.23.4
     volumes: # 挂载卷
-      - /home/www/test/golang:/go
+      - /xingfufit/go:/go
     ports: # 端口映射
       - "9039:9039"
     stdin_open: true
@@ -30,8 +30,8 @@ services:
       MINIO_ACCESS_KEY: Yj123987
       MINIO_SECRET_KEY: Yj987123
     volumes:
-      - /home/www/minio/:/data
-      - /home/www/minio/:/root/.minio
+      - /xingfufit/go/minio/:/data
+      - /xingfufit/go/minio/:/root/.minio
     command: server --console-address ':9001' /data
     privileged: true
     restart: always

@@ -3,9 +3,11 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/venue"
 	"kcers/biz/dal/db/mysql/ent/venueplace"
+	"kcers/idl_gen/model/base"
 	"strings"
 	"time"
 
@@ -27,10 +29,18 @@ type VenuePlace struct {
 	Status int64 `json:"status,omitempty"`
 	// 名称
 	Name string `json:"name,omitempty"`
-	// 照片
+	// pic | 照片
 	Pic string `json:"pic,omitempty"`
 	// 场馆id
 	VenueID int64 `json:"venue_id,omitempty"`
+	// 可容纳人数
+	Number int64 `json:"number,omitempty"`
+	// 详情
+	Information string `json:"information,omitempty"`
+	// 是否预约:1可预约;2不可
+	IsBooking int64 `json:"is_booking,omitempty"`
+	// 座位
+	Seat [][]*base.Seat `json:"seat,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the VenuePlaceQuery when eager-loading is set.
 	Edges        VenuePlaceEdges `json:"edges"`
@@ -62,9 +72,11 @@ func (*VenuePlace) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case venueplace.FieldID, venueplace.FieldStatus, venueplace.FieldVenueID:
+		case venueplace.FieldSeat:
+			values[i] = new([]byte)
+		case venueplace.FieldID, venueplace.FieldStatus, venueplace.FieldVenueID, venueplace.FieldNumber, venueplace.FieldIsBooking:
 			values[i] = new(sql.NullInt64)
-		case venueplace.FieldName, venueplace.FieldPic:
+		case venueplace.FieldName, venueplace.FieldPic, venueplace.FieldInformation:
 			values[i] = new(sql.NullString)
 		case venueplace.FieldCreatedAt, venueplace.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -125,6 +137,32 @@ func (vp *VenuePlace) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				vp.VenueID = value.Int64
 			}
+		case venueplace.FieldNumber:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field number", values[i])
+			} else if value.Valid {
+				vp.Number = value.Int64
+			}
+		case venueplace.FieldInformation:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field information", values[i])
+			} else if value.Valid {
+				vp.Information = value.String
+			}
+		case venueplace.FieldIsBooking:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field is_booking", values[i])
+			} else if value.Valid {
+				vp.IsBooking = value.Int64
+			}
+		case venueplace.FieldSeat:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field seat", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &vp.Seat); err != nil {
+					return fmt.Errorf("unmarshal field seat: %w", err)
+				}
+			}
 		default:
 			vp.selectValues.Set(columns[i], values[i])
 		}
@@ -183,6 +221,18 @@ func (vp *VenuePlace) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("venue_id=")
 	builder.WriteString(fmt.Sprintf("%v", vp.VenueID))
+	builder.WriteString(", ")
+	builder.WriteString("number=")
+	builder.WriteString(fmt.Sprintf("%v", vp.Number))
+	builder.WriteString(", ")
+	builder.WriteString("information=")
+	builder.WriteString(vp.Information)
+	builder.WriteString(", ")
+	builder.WriteString("is_booking=")
+	builder.WriteString(fmt.Sprintf("%v", vp.IsBooking))
+	builder.WriteString(", ")
+	builder.WriteString("seat=")
+	builder.WriteString(fmt.Sprintf("%v", vp.Seat))
 	builder.WriteByte(')')
 	return builder.String()
 }

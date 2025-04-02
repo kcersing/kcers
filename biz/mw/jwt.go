@@ -8,9 +8,7 @@ import (
 	"github.com/hertz-contrib/jwt"
 	"github.com/spf13/cast"
 	"kcers/biz/dal/config"
-	"kcers/biz/infras/do"
-	"kcers/biz/infras/do/1"
-	"kcers/biz/infras/service"
+	"kcers/idl_gen/model/token"
 	"strconv"
 	"time"
 )
@@ -68,7 +66,7 @@ func newJWT(enforcer *casbin.Enforcer) (jwtMiddleware *jwt.HertzJWTMiddleware, e
 		},
 		// Authenticator is used to validate the login data.
 		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {
-			res := new(_.LoginResp)
+			res := new(login.LoginResp)
 
 			var loginVal jwtLogin
 			if err := c.BindAndValidate(&loginVal); err != nil {
@@ -85,9 +83,9 @@ func newJWT(enforcer *casbin.Enforcer) (jwtMiddleware *jwt.HertzJWTMiddleware, e
 				return nil, err
 			}
 			//jwt
-			var tokenInfo do.TokenInfo
-			tokenInfo.UserID = res.UserID
-			tokenInfo.UserName = res.Username
+			var tokenInfo token.TokenInfo
+			tokenInfo.UserId = res.UserID
+			tokenInfo.Username = res.Username
 			tokenInfo.ExpiredAt = time.Now().Add(time.Duration(config.GlobalServerConfig.Auth.AccessExpire) * time.Second).Format(time.DateTime)
 
 			err = admin.NewToken(ctx, c).Create(&tokenInfo)

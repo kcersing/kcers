@@ -853,8 +853,8 @@ type MenuInfo struct {
 	//        17:  string title (api.raw = "title" )
 	//        19:optional string type="" (api.raw = "type")
 	Key      string `thrift:"key,20,optional" form:"key" json:"key" query:"key"`
-	OrderNo  string `thrift:"orderNo,21,optional" form:"orderNo" json:"orderNo" query:"orderNo"`
-	Disabled string `thrift:"disabled,22,optional" form:"disabled" json:"disabled" query:"disabled"`
+	OrderNo  int64  `thrift:"orderNo,21,optional" form:"orderNo" json:"orderNo" query:"orderNo"`
+	Disabled int64  `thrift:"disabled,22,optional" form:"disabled" json:"disabled" query:"disabled"`
 	Ignore   string `thrift:"ignore,23,optional" form:"ignore" json:"ignore" query:"ignore"`
 }
 
@@ -862,16 +862,16 @@ func NewMenuInfo() *MenuInfo {
 	return &MenuInfo{
 
 		Key:      "",
-		OrderNo:  "",
-		Disabled: "",
+		OrderNo:  0,
+		Disabled: 0,
 		Ignore:   "",
 	}
 }
 
 func (p *MenuInfo) InitDefault() {
 	p.Key = ""
-	p.OrderNo = ""
-	p.Disabled = ""
+	p.OrderNo = 0
+	p.Disabled = 0
 	p.Ignore = ""
 }
 
@@ -904,18 +904,18 @@ func (p *MenuInfo) GetKey() (v string) {
 	return p.Key
 }
 
-var MenuInfo_OrderNo_DEFAULT string = ""
+var MenuInfo_OrderNo_DEFAULT int64 = 0
 
-func (p *MenuInfo) GetOrderNo() (v string) {
+func (p *MenuInfo) GetOrderNo() (v int64) {
 	if !p.IsSetOrderNo() {
 		return MenuInfo_OrderNo_DEFAULT
 	}
 	return p.OrderNo
 }
 
-var MenuInfo_Disabled_DEFAULT string = ""
+var MenuInfo_Disabled_DEFAULT int64 = 0
 
-func (p *MenuInfo) GetDisabled() (v string) {
+func (p *MenuInfo) GetDisabled() (v int64) {
 	if !p.IsSetDisabled() {
 		return MenuInfo_Disabled_DEFAULT
 	}
@@ -1027,7 +1027,7 @@ func (p *MenuInfo) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 21:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField21(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -1035,7 +1035,7 @@ func (p *MenuInfo) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 22:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField22(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -1159,8 +1159,8 @@ func (p *MenuInfo) ReadField20(iprot thrift.TProtocol) error {
 }
 func (p *MenuInfo) ReadField21(iprot thrift.TProtocol) error {
 
-	var _field string
-	if v, err := iprot.ReadString(); err != nil {
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
 		_field = v
@@ -1170,8 +1170,8 @@ func (p *MenuInfo) ReadField21(iprot thrift.TProtocol) error {
 }
 func (p *MenuInfo) ReadField22(iprot thrift.TProtocol) error {
 
-	var _field string
-	if v, err := iprot.ReadString(); err != nil {
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
 		_field = v
@@ -1365,10 +1365,10 @@ WriteFieldEndError:
 
 func (p *MenuInfo) writeField21(oprot thrift.TProtocol) (err error) {
 	if p.IsSetOrderNo() {
-		if err = oprot.WriteFieldBegin("orderNo", thrift.STRING, 21); err != nil {
+		if err = oprot.WriteFieldBegin("orderNo", thrift.I64, 21); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(p.OrderNo); err != nil {
+		if err := oprot.WriteI64(p.OrderNo); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -1384,10 +1384,10 @@ WriteFieldEndError:
 
 func (p *MenuInfo) writeField22(oprot thrift.TProtocol) (err error) {
 	if p.IsSetDisabled() {
-		if err = oprot.WriteFieldBegin("disabled", thrift.STRING, 22); err != nil {
+		if err = oprot.WriteFieldBegin("disabled", thrift.I64, 22); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(p.Disabled); err != nil {
+		if err := oprot.WriteI64(p.Disabled); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {

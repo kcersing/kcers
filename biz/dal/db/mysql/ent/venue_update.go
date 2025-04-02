@@ -186,6 +186,26 @@ func (vu *VenueUpdate) ClearMobile() *VenueUpdate {
 	return vu
 }
 
+// SetEmail sets the "email" field.
+func (vu *VenueUpdate) SetEmail(s string) *VenueUpdate {
+	vu.mutation.SetEmail(s)
+	return vu
+}
+
+// SetNillableEmail sets the "email" field if the given value is not nil.
+func (vu *VenueUpdate) SetNillableEmail(s *string) *VenueUpdate {
+	if s != nil {
+		vu.SetEmail(*s)
+	}
+	return vu
+}
+
+// ClearEmail clears the value of the "email" field.
+func (vu *VenueUpdate) ClearEmail() *VenueUpdate {
+	vu.mutation.ClearEmail()
+	return vu
+}
+
 // SetPic sets the "pic" field.
 func (vu *VenueUpdate) SetPic(s string) *VenueUpdate {
 	vu.mutation.SetPic(s)
@@ -203,6 +223,26 @@ func (vu *VenueUpdate) SetNillablePic(s *string) *VenueUpdate {
 // ClearPic clears the value of the "pic" field.
 func (vu *VenueUpdate) ClearPic() *VenueUpdate {
 	vu.mutation.ClearPic()
+	return vu
+}
+
+// SetSeal sets the "seal" field.
+func (vu *VenueUpdate) SetSeal(s string) *VenueUpdate {
+	vu.mutation.SetSeal(s)
+	return vu
+}
+
+// SetNillableSeal sets the "seal" field if the given value is not nil.
+func (vu *VenueUpdate) SetNillableSeal(s *string) *VenueUpdate {
+	if s != nil {
+		vu.SetSeal(*s)
+	}
+	return vu
+}
+
+// ClearSeal clears the value of the "seal" field.
+func (vu *VenueUpdate) ClearSeal() *VenueUpdate {
+	vu.mutation.ClearSeal()
 	return vu
 }
 
@@ -504,11 +544,23 @@ func (vu *VenueUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if vu.mutation.MobileCleared() {
 		_spec.ClearField(venue.FieldMobile, field.TypeString)
 	}
+	if value, ok := vu.mutation.Email(); ok {
+		_spec.SetField(venue.FieldEmail, field.TypeString, value)
+	}
+	if vu.mutation.EmailCleared() {
+		_spec.ClearField(venue.FieldEmail, field.TypeString)
+	}
 	if value, ok := vu.mutation.Pic(); ok {
 		_spec.SetField(venue.FieldPic, field.TypeString, value)
 	}
 	if vu.mutation.PicCleared() {
 		_spec.ClearField(venue.FieldPic, field.TypeString)
+	}
+	if value, ok := vu.mutation.Seal(); ok {
+		_spec.SetField(venue.FieldSeal, field.TypeString, value)
+	}
+	if vu.mutation.SealCleared() {
+		_spec.ClearField(venue.FieldSeal, field.TypeString)
 	}
 	if value, ok := vu.mutation.Information(); ok {
 		_spec.SetField(venue.FieldInformation, field.TypeString, value)
@@ -914,6 +966,26 @@ func (vuo *VenueUpdateOne) ClearMobile() *VenueUpdateOne {
 	return vuo
 }
 
+// SetEmail sets the "email" field.
+func (vuo *VenueUpdateOne) SetEmail(s string) *VenueUpdateOne {
+	vuo.mutation.SetEmail(s)
+	return vuo
+}
+
+// SetNillableEmail sets the "email" field if the given value is not nil.
+func (vuo *VenueUpdateOne) SetNillableEmail(s *string) *VenueUpdateOne {
+	if s != nil {
+		vuo.SetEmail(*s)
+	}
+	return vuo
+}
+
+// ClearEmail clears the value of the "email" field.
+func (vuo *VenueUpdateOne) ClearEmail() *VenueUpdateOne {
+	vuo.mutation.ClearEmail()
+	return vuo
+}
+
 // SetPic sets the "pic" field.
 func (vuo *VenueUpdateOne) SetPic(s string) *VenueUpdateOne {
 	vuo.mutation.SetPic(s)
@@ -931,6 +1003,26 @@ func (vuo *VenueUpdateOne) SetNillablePic(s *string) *VenueUpdateOne {
 // ClearPic clears the value of the "pic" field.
 func (vuo *VenueUpdateOne) ClearPic() *VenueUpdateOne {
 	vuo.mutation.ClearPic()
+	return vuo
+}
+
+// SetSeal sets the "seal" field.
+func (vuo *VenueUpdateOne) SetSeal(s string) *VenueUpdateOne {
+	vuo.mutation.SetSeal(s)
+	return vuo
+}
+
+// SetNillableSeal sets the "seal" field if the given value is not nil.
+func (vuo *VenueUpdateOne) SetNillableSeal(s *string) *VenueUpdateOne {
+	if s != nil {
+		vuo.SetSeal(*s)
+	}
+	return vuo
+}
+
+// ClearSeal clears the value of the "seal" field.
+func (vuo *VenueUpdateOne) ClearSeal() *VenueUpdateOne {
+	vuo.mutation.ClearSeal()
 	return vuo
 }
 
@@ -1262,11 +1354,23 @@ func (vuo *VenueUpdateOne) sqlSave(ctx context.Context) (_node *Venue, err error
 	if vuo.mutation.MobileCleared() {
 		_spec.ClearField(venue.FieldMobile, field.TypeString)
 	}
+	if value, ok := vuo.mutation.Email(); ok {
+		_spec.SetField(venue.FieldEmail, field.TypeString, value)
+	}
+	if vuo.mutation.EmailCleared() {
+		_spec.ClearField(venue.FieldEmail, field.TypeString)
+	}
 	if value, ok := vuo.mutation.Pic(); ok {
 		_spec.SetField(venue.FieldPic, field.TypeString, value)
 	}
 	if vuo.mutation.PicCleared() {
 		_spec.ClearField(venue.FieldPic, field.TypeString)
+	}
+	if value, ok := vuo.mutation.Seal(); ok {
+		_spec.SetField(venue.FieldSeal, field.TypeString, value)
+	}
+	if vuo.mutation.SealCleared() {
+		_spec.ClearField(venue.FieldSeal, field.TypeString)
 	}
 	if value, ok := vuo.mutation.Information(); ok {
 		_spec.SetField(venue.FieldInformation, field.TypeString, value)

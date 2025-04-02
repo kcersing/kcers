@@ -151,6 +151,20 @@ func (vc *VenueCreate) SetNillableMobile(s *string) *VenueCreate {
 	return vc
 }
 
+// SetEmail sets the "email" field.
+func (vc *VenueCreate) SetEmail(s string) *VenueCreate {
+	vc.mutation.SetEmail(s)
+	return vc
+}
+
+// SetNillableEmail sets the "email" field if the given value is not nil.
+func (vc *VenueCreate) SetNillableEmail(s *string) *VenueCreate {
+	if s != nil {
+		vc.SetEmail(*s)
+	}
+	return vc
+}
+
 // SetPic sets the "pic" field.
 func (vc *VenueCreate) SetPic(s string) *VenueCreate {
 	vc.mutation.SetPic(s)
@@ -161,6 +175,20 @@ func (vc *VenueCreate) SetPic(s string) *VenueCreate {
 func (vc *VenueCreate) SetNillablePic(s *string) *VenueCreate {
 	if s != nil {
 		vc.SetPic(*s)
+	}
+	return vc
+}
+
+// SetSeal sets the "seal" field.
+func (vc *VenueCreate) SetSeal(s string) *VenueCreate {
+	vc.mutation.SetSeal(s)
+	return vc
+}
+
+// SetNillableSeal sets the "seal" field if the given value is not nil.
+func (vc *VenueCreate) SetNillableSeal(s *string) *VenueCreate {
+	if s != nil {
+		vc.SetSeal(*s)
 	}
 	return vc
 }
@@ -385,9 +413,17 @@ func (vc *VenueCreate) createSpec() (*Venue, *sqlgraph.CreateSpec) {
 		_spec.SetField(venue.FieldMobile, field.TypeString, value)
 		_node.Mobile = value
 	}
+	if value, ok := vc.mutation.Email(); ok {
+		_spec.SetField(venue.FieldEmail, field.TypeString, value)
+		_node.Email = value
+	}
 	if value, ok := vc.mutation.Pic(); ok {
 		_spec.SetField(venue.FieldPic, field.TypeString, value)
 		_node.Pic = value
+	}
+	if value, ok := vc.mutation.Seal(); ok {
+		_spec.SetField(venue.FieldSeal, field.TypeString, value)
+		_node.Seal = value
 	}
 	if value, ok := vc.mutation.Information(); ok {
 		_spec.SetField(venue.FieldInformation, field.TypeString, value)

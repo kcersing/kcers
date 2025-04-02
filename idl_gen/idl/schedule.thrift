@@ -1,6 +1,6 @@
 namespace go admin.schedule
 
-include "../../base/base.thrift"
+include "../base/base.thrift"
 struct ScheduleInfo  {
 	1:optional i64 id =0 (api.raw = "id")
 	2:optional string type ="" (api.raw = "type")
@@ -179,7 +179,7 @@ service ScheduleService {
 
     base.NilResponse DateListSchedule(1: ScheduleListReq req )(api.post = "/service/schedule/date-list")
 
-    base.NilResponse GetScheduleById(1: base.IdReq req) (api.post = "/service/schedule/info")
+    base.NilResponse GetScheduleById(1: base.IDReq req) (api.post = "/service/schedule/info")
 
     base.NilResponse GetScheduleMemberList(1: ScheduleMemberListReq req) (api.post = "/service/schedule/schedule-member-list")
 

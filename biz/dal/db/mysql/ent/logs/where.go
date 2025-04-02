@@ -110,7 +110,7 @@ func Operator(v string) predicate.Logs {
 }
 
 // Time applies equality check predicate on the "time" field. It's identical to TimeEQ.
-func Time(v int) predicate.Logs {
+func Time(v int64) predicate.Logs {
 	return predicate.Logs(sql.FieldEQ(FieldTime, v))
 }
 
@@ -775,42 +775,42 @@ func OperatorContainsFold(v string) predicate.Logs {
 }
 
 // TimeEQ applies the EQ predicate on the "time" field.
-func TimeEQ(v int) predicate.Logs {
+func TimeEQ(v int64) predicate.Logs {
 	return predicate.Logs(sql.FieldEQ(FieldTime, v))
 }
 
 // TimeNEQ applies the NEQ predicate on the "time" field.
-func TimeNEQ(v int) predicate.Logs {
+func TimeNEQ(v int64) predicate.Logs {
 	return predicate.Logs(sql.FieldNEQ(FieldTime, v))
 }
 
 // TimeIn applies the In predicate on the "time" field.
-func TimeIn(vs ...int) predicate.Logs {
+func TimeIn(vs ...int64) predicate.Logs {
 	return predicate.Logs(sql.FieldIn(FieldTime, vs...))
 }
 
 // TimeNotIn applies the NotIn predicate on the "time" field.
-func TimeNotIn(vs ...int) predicate.Logs {
+func TimeNotIn(vs ...int64) predicate.Logs {
 	return predicate.Logs(sql.FieldNotIn(FieldTime, vs...))
 }
 
 // TimeGT applies the GT predicate on the "time" field.
-func TimeGT(v int) predicate.Logs {
+func TimeGT(v int64) predicate.Logs {
 	return predicate.Logs(sql.FieldGT(FieldTime, v))
 }
 
 // TimeGTE applies the GTE predicate on the "time" field.
-func TimeGTE(v int) predicate.Logs {
+func TimeGTE(v int64) predicate.Logs {
 	return predicate.Logs(sql.FieldGTE(FieldTime, v))
 }
 
 // TimeLT applies the LT predicate on the "time" field.
-func TimeLT(v int) predicate.Logs {
+func TimeLT(v int64) predicate.Logs {
 	return predicate.Logs(sql.FieldLT(FieldTime, v))
 }
 
 // TimeLTE applies the LTE predicate on the "time" field.
-func TimeLTE(v int) predicate.Logs {
+func TimeLTE(v int64) predicate.Logs {
 	return predicate.Logs(sql.FieldLTE(FieldTime, v))
 }
 

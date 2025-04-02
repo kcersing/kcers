@@ -27,3 +27,11 @@ func CreateCn() string {
 	return formatted + str[1:5]
 
 }
+
+func ConvertIntSliceToInt64Slice(intSlice []int) []int64 {
+	int64Slice := make([]int64, len(intSlice))
+	for i, v := range intSlice {
+		int64Slice[i] = int64(v)
+	}
+	return int64Slice
+}

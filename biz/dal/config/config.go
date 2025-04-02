@@ -6,6 +6,7 @@ type ServerConfig struct {
 	Port           int              `mapstructure:"Port" json:"Port"`
 	Timeout        int              `mapstructure:"Timeout" json:"Timeout"`
 	IsProd         bool             `mapstructure:"IsProd" json:"IsProd"`
+	Domain         string           `mapstructure:"Domain" json:"Domain"`
 	MySQLInfo      MySQLConfig      `mapstructure:"MySQL" json:"MySQL"`
 	PostgreSQLInfo PostgreSQLConfig `mapstructure:"PostgreSQL" json:"PostgreSQL"`
 	Captcha        Captcha          `mapstructure:"Captcha" json:"Captcha"`
@@ -15,6 +16,8 @@ type ServerConfig struct {
 	Payment        Payment          `mapstructure:"Payment" json:"Payment"`
 	Minio          Minio            `mapstructure:"Minio" json:"Minio"`
 	DouYin         DouYin           `mapstructure:"DouYin" json:"DouYin"`
+	Wechat         Wechat           `mapstructure:"Wechat" json:"Wechat"`
+	Aliyun         Aliyun           `mapstructure:"Aliyun" json:"Aliyun"`
 }
 
 type MySQLConfig struct {
@@ -37,9 +40,8 @@ type Auth struct {
 }
 
 type Redis struct {
-	Host string `mapstructure:"Host" json:"Host"`
-	Port int    `mapstructure:"Port" json:"Port"`
-	Type string `mapstructure:"Type" json:"Type"`
+	Host     string `mapstructure:"Host" json:"Host"`
+	Password string `mapstructure:"Password" json:"Password"`
 }
 
 type CasbinConf struct {
@@ -47,11 +49,11 @@ type CasbinConf struct {
 }
 
 type Payment struct {
-	Wechat *WechatPay `mapstructure:"Wechat" yaml:"Wechat"`
-	Alipay *AliPay    `mapstructure:"Alipay" yaml:"Alipay"`
+	Alipay    *AliPay    `mapstructure:"Alipay" yaml:"Alipay"`
+	Wechatpay *Wechatpay `mapstructure:"Wechatpay" json:"Wechatpay"`
 }
 
-type WechatPay struct {
+type Wechatpay struct {
 	Appid             string `mapstructure:"ModelText" yaml:"appid"`
 	MchId             string `mapstructure:"ModelText" yaml:"mch_id"`
 	ApiKey            string `mapstructure:"ModelText" yaml:"api_key"`
@@ -59,6 +61,14 @@ type WechatPay struct {
 	CertFileContent   string `mapstructure:"ModelText" yaml:"cert_file_content"`
 	KeyFileContent    string `mapstructure:"ModelText" yaml:"key_file_content"`
 	Pkcs12FileContent string `mapstructure:"ModelText" yaml:"pkcs12_file_content"`
+	SerialNo          string `mapstructure:"ModelText" yaml:"serial_no"`
+	NotifyUrl         string `mapstructure:"ModelText" yaml:"notify_url"`
+
+	CertificateKeyPath string `mapstructure:"certificate_key_path" yaml:"certificate_key_path"`
+	WechatPaySerial    string `mapstructure:"wechat_pay_serial" yaml:"wechat_pay_serial"`
+	RSAPublicKeyPath   string `mapstructure:"rsa_public_key_path" yaml:"rsa_public_key_path"`
+	SubMchID           string `mapstructure:"sub_mch_id" yaml:"sub_mch_id"`
+	SubAppID           string `mapstructure:"sub_app_id" yaml:"sub_app_id"`
 }
 
 type AliPay struct {
@@ -80,9 +90,37 @@ type Minio struct {
 
 	Url string `mapstructure:"Url" yaml:"Url"`
 }
-
 type DouYin struct {
-	AppId     string `mapstructure:"ModelText" yaml:"AppId"`
-	AppSecret string `mapstructure:"ModelText" yaml:"AppSecret"`
-	AccountId string `mapstructure:"ModelText" yaml:"AccountId"`
+	AppId     string `mapstructure:"AppId" yaml:"AppId"`
+	AppSecret string `mapstructure:"AppSecret" yaml:"AppSecret"`
+	AccountId string `mapstructure:"AccountId" yaml:"AccountId"`
+}
+
+type Wechat struct {
+	WXMiniProgram MiniProgram `mapstructure:"MiniProgram" yaml:"MiniProgram"`
+}
+type MiniProgram struct {
+	AppID  string `mapstructure:"appid" yaml:"appid"`
+	Secret string `mapstructure:"secret" yaml:"secret"`
+	Token  string `mapstructure:"token" yaml:"token"`
+	AESKey string `mapstructure:"aes_key" yaml:"aes_key"`
+
+	AppKey  string `mapstructure:"app_key" yaml:"app_key"`
+	OfferID string `mapstructure:"offer_id" yaml:"offer_id"`
+}
+
+type Aliyun struct {
+	Access Access `mapstructure:"Access" yaml:"Access"`
+	Sms    Sms    `mapstructure:"Sms" yaml:"Sms"`
+}
+type Access struct {
+	AccessKeyId     string `mapstructure:"AccessKeyId" yaml:"AccessKeyId"`
+	AccessKeySecret string `mapstructure:"AccessKeySecret" yaml:"AccessKeySecret"`
+}
+type Sms struct {
+	Captcha SmsTemplate `mapstructure:"Captcha" yaml:"Captcha"`
+}
+type SmsTemplate struct {
+	SignName     string `mapstructure:"SignName" yaml:"SignName"`
+	TemplateCode string `mapstructure:"TemplateCode" yaml:"TemplateCode"`
 }

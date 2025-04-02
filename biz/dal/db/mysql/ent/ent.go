@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/api"
+	"kcers/biz/dal/db/mysql/ent/banner"
 	"kcers/biz/dal/db/mysql/ent/contract"
 	"kcers/biz/dal/db/mysql/ent/dictionary"
 	"kcers/biz/dal/db/mysql/ent/dictionarydetail"
@@ -105,6 +106,7 @@ func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			api.Table:                   api.ValidColumn,
+			banner.Table:                banner.ValidColumn,
 			contract.Table:              contract.ValidColumn,
 			dictionary.Table:            dictionary.ValidColumn,
 			dictionarydetail.Table:      dictionarydetail.ValidColumn,

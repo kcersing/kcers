@@ -2,8 +2,8 @@ package utils
 
 import (
 	"github.com/pkg/errors"
+	"kcers/biz/pkg/errno"
 	"kcers/idl_gen/model/base"
-	"kcers/pkg/errno"
 )
 
 func BuildBaseResp(err error) *base.BaseResponse {

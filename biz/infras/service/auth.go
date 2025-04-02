@@ -9,8 +9,10 @@ import (
 	"github.com/dgraph-io/ristretto"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
+	"kcers/biz/dal/cache"
 	casbin2 "kcers/biz/dal/casbin"
 	"kcers/biz/dal/config"
+	db "kcers/biz/dal/db/mysql"
 	"kcers/biz/dal/db/mysql/ent"
 	"kcers/biz/dal/db/mysql/ent/api"
 	"kcers/biz/dal/db/mysql/ent/role"
@@ -52,12 +54,12 @@ func (a Auth) QueryApiAll(id *[]int64) (resp []*auth.ApiAuthInfo, err error) {
 
 }
 
-func (a Auth) UpdateApiAuth(roleIDStr string, apis []int64) error {
+func (a Auth) UpdateApiAuth(roleIDStr *string, apis *[]int64) error {
 	// clear old policies
 	var oldPolicies [][]string
-	oldPolicies = a.Cbs.GetFilteredPolicy(0, roleIDStr)
+	oldPolicies = a.Cbs.GetFilteredPolicy(0, *roleIDStr)
 	if len(oldPolicies) != 0 {
-		removeResult, err := a.Cbs.RemoveFilteredPolicy(0, roleIDStr)
+		removeResult, err := a.Cbs.RemoveFilteredPolicy(0, *roleIDStr)
 		if err != nil {
 			return err
 		}
@@ -69,7 +71,7 @@ func (a Auth) UpdateApiAuth(roleIDStr string, apis []int64) error {
 	// add new policies
 	var policies [][]string
 	for _, v := range infos {
-		policies = append(policies, []string{roleIDStr, v.Path, v.Method})
+		policies = append(policies, []string{*roleIDStr, v.Path, v.Method})
 	}
 	addResult, err := a.Cbs.AddPolicies(policies)
 	if err != nil {
@@ -78,7 +80,7 @@ func (a Auth) UpdateApiAuth(roleIDStr string, apis []int64) error {
 	if !addResult {
 		return errors.New("casbin policies add failed")
 	}
-	roleId, _ := strconv.ParseUint(roleIDStr, 10, 64)
+	roleId, _ := strconv.ParseUint(*roleIDStr, 10, 64)
 
 	jsonBytes, _ := json.Marshal(apis)
 	var intSlice []int
@@ -88,11 +90,11 @@ func (a Auth) UpdateApiAuth(roleIDStr string, apis []int64) error {
 	return nil
 }
 
-func (a Auth) ApiAuth(roleIDStr string) (infos []*do.ApiAuthInfo, err error) {
+func (a Auth) ApiAuth(roleIDStr *string) (infos []*auth.ApiAuthInfo, err error) {
 
-	policies := a.Cbs.GetFilteredPolicy(0, roleIDStr)
+	policies := a.Cbs.GetFilteredPolicy(0, *roleIDStr)
 	for _, v := range policies {
-		infos = append(infos, &do.ApiAuthInfo{
+		infos = append(infos, &auth.ApiAuthInfo{
 			Path:   v[1],
 			Method: v[2],
 		})
@@ -100,7 +102,7 @@ func (a Auth) ApiAuth(roleIDStr string) (infos []*do.ApiAuthInfo, err error) {
 	return
 }
 
-func (a Auth) UpdateMenuAuth(roleID int64, menuIDs []int64) error {
+func (a Auth) UpdateMenuAuth(roleID *int64, menuIDs *[]int64) error {
 	tx, err := a.db.Tx(a.ctx)
 	if err != nil {
 		return errors.Wrap(err, "starting a transaction err")
@@ -115,12 +117,12 @@ func (a Auth) UpdateMenuAuth(roleID int64, menuIDs []int64) error {
 	}()
 
 	//tx.Role.UpdateOneID(roleID).ClearMenus().Exec(a.ctx)
-	err = tx.Role.UpdateOneID(roleID).ClearMenus().Exec(a.ctx)
+	err = tx.Role.UpdateOneID(*roleID).ClearMenus().Exec(a.ctx)
 	if err != nil {
 		return errors.Wrap(err, "delete role's menu failed, error")
 	}
 
-	err = tx.Role.UpdateOneID(roleID).AddMenuIDs(menuIDs...).Exec(a.ctx)
+	err = tx.Role.UpdateOneID(*roleID).AddMenuIDs(*menuIDs...).Exec(a.ctx)
 	if err != nil {
 		return errors.Wrap(err, "add role's menu failed, error")
 	}
@@ -128,8 +130,8 @@ func (a Auth) UpdateMenuAuth(roleID int64, menuIDs []int64) error {
 	return tx.Commit()
 }
 
-func (a Auth) MenuAuth(roleID int64) (menuIDs []int64, err error) {
-	menus, err := a.db.Role.Query().Where(role.IDEQ(roleID)).QueryMenus().All(a.ctx)
+func (a Auth) MenuAuth(roleID *int64) (menuIDs []int64, err error) {
+	menus, err := a.db.Role.Query().Where(role.IDEQ(*roleID)).QueryMenus().All(a.ctx)
 	for _, v := range menus {
 		if v.ID != 1 {
 			menuIDs = append(menuIDs, v.ID)
@@ -143,7 +145,7 @@ func NewAuth(ctx context.Context, c *app.RequestContext) do.Auth {
 		ctx:   ctx,
 		c:     c,
 		salt:  config.GlobalServerConfig.MySQLInfo.Salt,
-		db:    infras.DB,
+		db:    db.DB,
 		cache: cache.Cache,
 		Cbs:   casbin2.CasbinEnforcer(),
 	}

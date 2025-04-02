@@ -4,6 +4,7 @@ package ent
 
 import (
 	"kcers/biz/dal/db/mysql/ent/api"
+	"kcers/biz/dal/db/mysql/ent/banner"
 	"kcers/biz/dal/db/mysql/ent/contract"
 	"kcers/biz/dal/db/mysql/ent/dictionary"
 	"kcers/biz/dal/db/mysql/ent/dictionarydetail"
@@ -36,6 +37,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/user"
 	"kcers/biz/dal/db/mysql/ent/venue"
 	"kcers/biz/dal/db/mysql/ent/venueplace"
+	"kcers/idl_gen/model/base"
 	"time"
 )
 
@@ -62,6 +64,31 @@ func init() {
 	apiDescMethod := apiFields[4].Descriptor()
 	// api.DefaultMethod holds the default value on creation for the method field.
 	api.DefaultMethod = apiDescMethod.Default.(string)
+	bannerMixin := schema.Banner{}.Mixin()
+	bannerMixinFields0 := bannerMixin[0].Fields()
+	_ = bannerMixinFields0
+	bannerMixinFields1 := bannerMixin[1].Fields()
+	_ = bannerMixinFields1
+	bannerFields := schema.Banner{}.Fields()
+	_ = bannerFields
+	// bannerDescCreatedAt is the schema descriptor for created_at field.
+	bannerDescCreatedAt := bannerMixinFields0[1].Descriptor()
+	// banner.DefaultCreatedAt holds the default value on creation for the created_at field.
+	banner.DefaultCreatedAt = bannerDescCreatedAt.Default.(func() time.Time)
+	// bannerDescUpdatedAt is the schema descriptor for updated_at field.
+	bannerDescUpdatedAt := bannerMixinFields0[2].Descriptor()
+	// banner.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	banner.DefaultUpdatedAt = bannerDescUpdatedAt.Default.(func() time.Time)
+	// banner.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	banner.UpdateDefaultUpdatedAt = bannerDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// bannerDescStatus is the schema descriptor for status field.
+	bannerDescStatus := bannerMixinFields1[0].Descriptor()
+	// banner.DefaultStatus holds the default value on creation for the status field.
+	banner.DefaultStatus = bannerDescStatus.Default.(int64)
+	// bannerDescIsShow is the schema descriptor for is_show field.
+	bannerDescIsShow := bannerFields[3].Descriptor()
+	// banner.DefaultIsShow holds the default value on creation for the is_show field.
+	banner.DefaultIsShow = bannerDescIsShow.Default.(int64)
 	contractMixin := schema.Contract{}.Mixin()
 	contractMixinFields0 := contractMixin[0].Fields()
 	_ = contractMixinFields0
@@ -403,11 +430,11 @@ func init() {
 	// menuDescOrderNo is the schema descriptor for order_no field.
 	menuDescOrderNo := menuFields[3].Descriptor()
 	// menu.DefaultOrderNo holds the default value on creation for the order_no field.
-	menu.DefaultOrderNo = menuDescOrderNo.Default.(int32)
+	menu.DefaultOrderNo = menuDescOrderNo.Default.(int64)
 	// menuDescDisabled is the schema descriptor for disabled field.
 	menuDescDisabled := menuFields[4].Descriptor()
 	// menu.DefaultDisabled holds the default value on creation for the disabled field.
-	menu.DefaultDisabled = menuDescDisabled.Default.(int32)
+	menu.DefaultDisabled = menuDescDisabled.Default.(int64)
 	// menuDescIgnore is the schema descriptor for ignore field.
 	menuDescIgnore := menuFields[5].Descriptor()
 	// menu.DefaultIgnore holds the default value on creation for the ignore field.
@@ -617,7 +644,7 @@ func init() {
 	// roleDescOrderNo is the schema descriptor for order_no field.
 	roleDescOrderNo := roleFields[4].Descriptor()
 	// role.DefaultOrderNo holds the default value on creation for the order_no field.
-	role.DefaultOrderNo = roleDescOrderNo.Default.(int32)
+	role.DefaultOrderNo = roleDescOrderNo.Default.(int64)
 	// roleDescApis is the schema descriptor for apis field.
 	roleDescApis := roleFields[5].Descriptor()
 	// role.DefaultApis holds the default value on creation for the apis field.
@@ -819,4 +846,12 @@ func init() {
 	venueplaceDescStatus := venueplaceMixinFields1[0].Descriptor()
 	// venueplace.DefaultStatus holds the default value on creation for the status field.
 	venueplace.DefaultStatus = venueplaceDescStatus.Default.(int64)
+	// venueplaceDescIsBooking is the schema descriptor for is_booking field.
+	venueplaceDescIsBooking := venueplaceFields[5].Descriptor()
+	// venueplace.DefaultIsBooking holds the default value on creation for the is_booking field.
+	venueplace.DefaultIsBooking = venueplaceDescIsBooking.Default.(int64)
+	// venueplaceDescSeat is the schema descriptor for seat field.
+	venueplaceDescSeat := venueplaceFields[6].Descriptor()
+	// venueplace.DefaultSeat holds the default value on creation for the seat field.
+	venueplace.DefaultSeat = venueplaceDescSeat.Default.([][]*base.Seat)
 }
