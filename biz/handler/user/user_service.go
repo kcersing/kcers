@@ -11,38 +11,6 @@ import (
 	user "kcers/idl_gen/model/user"
 )
 
-// Register .
-// @router /api/register [POST]
-func Register(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req user.RegisterReq
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(base.NilResponse)
-
-	c.JSON(consts.StatusOK, resp)
-}
-
-// UserPermCode .
-// @router /service/user/perm [POST]
-func UserPermCode(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req base.Empty
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(base.NilResponse)
-
-	c.JSON(consts.StatusOK, resp)
-}
-
 // ChangePassword .
 // @router /service/user/change-password [POST]
 func ChangePassword(ctx context.Context, c *app.RequestContext) {
@@ -95,7 +63,7 @@ func UpdateUser(ctx context.Context, c *app.RequestContext) {
 // @router /service/user/info [GET]
 func UserInfo(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req base.Empty
+	var req base.IDReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
@@ -128,22 +96,6 @@ func UserList(ctx context.Context, c *app.RequestContext) {
 func DeleteUser(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req base.IDReq
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(base.NilResponse)
-
-	c.JSON(consts.StatusOK, resp)
-}
-
-// UserProfile .
-// @router /service/user/profile [GET]
-func UserProfile(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req base.Empty
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())

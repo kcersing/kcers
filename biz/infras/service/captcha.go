@@ -4,9 +4,8 @@ import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/mojocn/base64Captcha"
-	"kcers/config"
-	//"kcers/infras"
-	"kcers/app/pkg/do"
+	"kcers/biz/dal/config"
+	"kcers/biz/infras/do"
 )
 
 type Captcha struct {

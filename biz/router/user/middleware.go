@@ -11,16 +11,6 @@ func rootMw() []app.HandlerFunc {
 	return nil
 }
 
-func _apiMw() []app.HandlerFunc {
-	// your code...
-	return nil
-}
-
-func _registerMw() []app.HandlerFunc {
-	// your code...
-	return nil
-}
-
 func _serviceMw() []app.HandlerFunc {
 	// your code...
 	return nil
@@ -32,11 +22,6 @@ func _userMw() []app.HandlerFunc {
 }
 
 func _deleteuserMw() []app.HandlerFunc {
-	// your code...
-	return nil
-}
-
-func _userprofileMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
@@ -77,11 +62,6 @@ func _userinfoMw() []app.HandlerFunc {
 }
 
 func _userlistMw() []app.HandlerFunc {
-	// your code...
-	return nil
-}
-
-func _userpermcodeMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }

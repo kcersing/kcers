@@ -12,7 +12,7 @@ import (
 )
 
 // Captcha .
-// @router /api/captcha [POST]
+// @router /service/captcha [POST]
 func Captcha(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req base.Empty

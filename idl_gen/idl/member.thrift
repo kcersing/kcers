@@ -80,14 +80,6 @@ struct MemberPrivacy {
      7: string facePicUpdatedTime (api.raw = "facePicUpdatedTime")
 }
 
-
-
-
-
-
-
-
-
 // Get user list request | 获取用户列表请求参数
 struct MemberListReq {
     1:  optional i64 page=1 (api.raw = "page")

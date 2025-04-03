@@ -1,7 +1,67 @@
 namespace go order
 
 include "../base/base.thrift"
+struct OrderInfo {
+    1:  optional i64 id=0 (api.raw = "id")
+    2:  optional string orderSn="" (api.raw = "orderSn")
+    3:  optional i64 status=0 (api.raw = "status")
+    4:  optional string source="" (api.raw = "source")
+    5:  optional string device="" (api.raw = "device")
+    6:  optional string nature="" (api.raw = "nature")
+    10: optional string productType="" (api.raw = "productType")
+    11:  optional i64 venueId=0 (api.raw = "venueId")
+    12:  optional i64 memberId=0 (api.raw = "memberId")
+    13:  optional i64 createId=0 (api.raw = "createId")
+    15:  optional string completionAt="" (api.raw = "completionAt")
+    16:  optional string createdAt="" (api.raw = "createdAt")
+    17:  optional string updatedAt="" (api.raw = "updatedAt")
+    18:  optional string memberName="" (api.raw = "memberName")
+    19:  optional string memberMobile="" (api.raw = "memberMobile")
+    250: optional OrderAmount orderAmount={} (api.raw = "orderAmount")
+    251: optional OrderItem orderItem={} (api.raw = "orderItem")
+    252: optional list<OrderPay> orderPay={} (api.raw = "orderPay")
+    253: optional list<OrderSales> orderSales={} (api.raw = "orderSales")
 
+    20:  optional string statusName="" (api.raw = "statusName")
+    21:  optional string sourceName="" (api.raw = "sourceName")
+    22: optional string productSubType="" (api.raw = "productSubType")
+
+}
+ struct OrderCountInfo{
+     1: optional i64 venueId=0 (api.raw = "venueId")
+     2: optional string venueName="" (api.raw = "venueName")
+     3: optional double actual=0 (api.raw = "actual")
+ }
+struct OrderSales{
+    1:  optional i64 id=0 (api.raw = "id")
+    2:  optional i64 salesId=0 (api.raw = "salesId")
+    3:  optional i64 ratio=0 (api.raw = "ratio")
+    6:  optional i64 orderId=0 (api.raw = "orderId")
+}
+struct OrderPay{
+    1:  optional i64 id=0 (api.raw = "id")
+    2:  optional double pay=0 (api.raw = "pay")
+    3:  optional double remission=0 (api.raw = "remission")
+    6:  optional i64 orderId=0 (api.raw = "orderId")
+    7:  optional string payWay="" (api.raw = "payWay")
+    8:  optional string paySn="" (api.raw = "paySn")
+    9:  optional string prepayId="" (api.raw = "prepayId")
+    10:  optional string payExtra="" (api.raw = "payExtra")
+    16:  optional string createdAt="" (api.raw = "createdAt")
+    17:  optional string note="" (api.raw = "note")
+    18:  optional string updatedAt="" (api.raw = "updatedAt")
+    19:  optional string payAt="" (api.raw = "payAt")
+}
+struct OrderAmount {
+    1:  optional i64 id=0 (api.raw = "id")
+    2:  optional double total=0 (api.raw = "total")
+    3:  optional double actual=0 (api.raw = "actual")
+    4:  optional double residue=0 (api.raw = "residue")
+    5:  optional double remission=0 (api.raw = "remission")
+    6:  optional i64 orderId=0 (api.raw = "orderId")
+    16:  optional string createdAt="" (api.raw = "createdAt")
+    17:  optional string updatedAt="" (api.raw = "updatedAt")
+}
 
 struct OrderItem {
         1:  optional i64 id=0 (api.raw = "id")
@@ -14,8 +74,6 @@ struct OrderItem {
         17:  optional string updatedAt="" (api.raw = "updatedAt")
         9: optional i64 number=1 (api.raw = "number")
 }
-
-
 
 struct propertyItem{
     1:optional i64 propertyId=0 (api.raw = "property")

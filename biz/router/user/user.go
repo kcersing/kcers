@@ -18,14 +18,9 @@ func Register(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
 	{
-		_api := root.Group("/api", _apiMw()...)
-		_api.POST("/register", append(_registerMw(), user.Register)...)
-	}
-	{
 		_service := root.Group("/service", _serviceMw()...)
 		_service.POST("/user", append(_deleteuserMw(), user.DeleteUser)...)
 		_user := _service.Group("/user", _userMw()...)
-		_user.GET("/profile", append(_userprofileMw(), user.UserProfile)...)
 		_user.POST("/set-default-venue", append(_setdefaultvenueMw(), user.SetDefaultVenue)...)
 		_user.POST("/set-role", append(_setuserroleMw(), user.SetUserRole)...)
 		_user.POST("/status", append(_updateuserstatusMw(), user.UpdateUserStatus)...)
@@ -35,7 +30,6 @@ func Register(r *server.Hertz) {
 			_user0.POST("/create", append(_createuserMw(), user.CreateUser)...)
 			_user0.GET("/info", append(_userinfoMw(), user.UserInfo)...)
 			_user0.POST("/list", append(_userlistMw(), user.UserList)...)
-			_user0.POST("/perm", append(_userpermcodeMw(), user.UserPermCode)...)
 			_user0.POST("/update", append(_updateuserMw(), user.UpdateUser)...)
 		}
 	}

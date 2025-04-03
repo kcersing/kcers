@@ -1438,7 +1438,7 @@ type CreateOrUpdateMenuReq struct {
 	//    6:  string redirect (api.raw = "redirect")
 	//    7:  string component (api.raw = "component")
 	OrderNo  int64 `thrift:"orderNo,8" form:"orderNo" json:"orderNo" query:"orderNo"`
-	Disabled bool  `thrift:"disabled,9" form:"disabled" json:"disabled" query:"disabled"`
+	Disabled int64 `thrift:"disabled,9" form:"disabled" json:"disabled" query:"disabled"`
 }
 
 func NewCreateOrUpdateMenuReq() *CreateOrUpdateMenuReq {
@@ -1468,7 +1468,7 @@ func (p *CreateOrUpdateMenuReq) GetOrderNo() (v int64) {
 	return p.OrderNo
 }
 
-func (p *CreateOrUpdateMenuReq) GetDisabled() (v bool) {
+func (p *CreateOrUpdateMenuReq) GetDisabled() (v int64) {
 	return p.Disabled
 }
 
@@ -1541,7 +1541,7 @@ func (p *CreateOrUpdateMenuReq) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 9:
-			if fieldTypeId == thrift.BOOL {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField9(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -1634,8 +1634,8 @@ func (p *CreateOrUpdateMenuReq) ReadField8(iprot thrift.TProtocol) error {
 }
 func (p *CreateOrUpdateMenuReq) ReadField9(iprot thrift.TProtocol) error {
 
-	var _field bool
-	if v, err := iprot.ReadBool(); err != nil {
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
 		_field = v
@@ -1778,10 +1778,10 @@ WriteFieldEndError:
 }
 
 func (p *CreateOrUpdateMenuReq) writeField9(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("disabled", thrift.BOOL, 9); err != nil {
+	if err = oprot.WriteFieldBegin("disabled", thrift.I64, 9); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteBool(p.Disabled); err != nil {
+	if err := oprot.WriteI64(p.Disabled); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {

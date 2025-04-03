@@ -6,7 +6,7 @@ import (
 
 // Audit 审计日志
 type Audit interface {
-	LogEvent(event AuditEvent) error
+	LogEvent(event *AuditEvent) error
 }
 type AuditEvent struct {
 	OrderId     int64

@@ -1,16 +1,18 @@
 package do
 
-type Member interface {
-	Create(req CreateOrUpdateMemberReq) error
-	Update(req CreateOrUpdateMemberReq) error
-	Delete(id int64) error
-	List(req MemberListReq) (resp []*MemberInfo, total int, err error)
-	Info(id int64) (info *MemberInfo, err error)
-	ChangePassword(ID int64, oldPassword, newPassword string) error
-	UpdateStatus(ID int64, status int64) error
-	Search(option string, value string) (memberInfo *MemberInfo, err error)
+import "kcers/idl_gen/model/member"
 
-	ProductSearch(members []int64) (info *ProductInfo, err error)
+type Member interface {
+	Create(req *member.CreateOrUpdateMemberReq) error
+	Update(req *member.CreateOrUpdateMemberReq) error
+	Delete(id int64) error
+	List(req *member.MemberListReq) (resp []*member.MemberInfo, total int, err error)
+	Info(id int64) (info *member.MemberInfo, err error)
+	ChangePassword(id int64, oldPassword, newPassword string) error
+	UpdateStatus(id, status int64) error
+	Search(option, value string) (memberInfo *member.MemberInfo, err error)
+
+	ProductSearch(members []int64) (info *MemberProductInfo, err error)
 	PropertySearch(memberProducts []int64) (info *PropertyInfo, err error)
 }
 
