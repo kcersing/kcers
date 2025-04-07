@@ -18,8 +18,8 @@ type ScheduleInfo struct {
 	Num                       int64                 `thrift:"num,6,optional" form:"num" json:"num" query:"num"`
 	NumSurplus                int64                 `thrift:"numSurplus,7,optional" form:"numSurplus" json:"numSurplus" query:"numSurplus"`
 	Data                      string                `thrift:"data,8,optional" form:"data" json:"data" query:"data"`
-	StartTime                 string                `thrift:"startTime,9,optional" form:"startTime" json:"startTime" query:"startTime"`
-	EndTime                   string                `thrift:"endTime,10,optional" form:"endTime" json:"endTime" query:"endTime"`
+	StartAt                   string                `thrift:"startAt,9,optional" form:"startAt" json:"startAt" query:"startAt"`
+	EndAt                     string                `thrift:"endAt,10,optional" form:"endAt" json:"endAt" query:"endAt"`
 	Price                     float64               `thrift:"price,11,optional" form:"price" json:"price" query:"price"`
 	Name                      string                `thrift:"name,12,optional" form:"name" json:"name" query:"name"`
 	Remark                    string                `thrift:"remark,13,optional" form:"remark" json:"remark" query:"remark"`
@@ -52,8 +52,8 @@ func NewScheduleInfo() *ScheduleInfo {
 		Num:                       0,
 		NumSurplus:                0,
 		Data:                      "",
-		StartTime:                 "",
-		EndTime:                   "",
+		StartAt:                   "",
+		EndAt:                     "",
 		Price:                     0.0,
 		Name:                      "",
 		Remark:                    "",
@@ -85,8 +85,8 @@ func (p *ScheduleInfo) InitDefault() {
 	p.Num = 0
 	p.NumSurplus = 0
 	p.Data = ""
-	p.StartTime = ""
-	p.EndTime = ""
+	p.StartAt = ""
+	p.EndAt = ""
 	p.Price = 0.0
 	p.Name = ""
 	p.Remark = ""
@@ -180,22 +180,22 @@ func (p *ScheduleInfo) GetData() (v string) {
 	return p.Data
 }
 
-var ScheduleInfo_StartTime_DEFAULT string = ""
+var ScheduleInfo_StartAt_DEFAULT string = ""
 
-func (p *ScheduleInfo) GetStartTime() (v string) {
-	if !p.IsSetStartTime() {
-		return ScheduleInfo_StartTime_DEFAULT
+func (p *ScheduleInfo) GetStartAt() (v string) {
+	if !p.IsSetStartAt() {
+		return ScheduleInfo_StartAt_DEFAULT
 	}
-	return p.StartTime
+	return p.StartAt
 }
 
-var ScheduleInfo_EndTime_DEFAULT string = ""
+var ScheduleInfo_EndAt_DEFAULT string = ""
 
-func (p *ScheduleInfo) GetEndTime() (v string) {
-	if !p.IsSetEndTime() {
-		return ScheduleInfo_EndTime_DEFAULT
+func (p *ScheduleInfo) GetEndAt() (v string) {
+	if !p.IsSetEndAt() {
+		return ScheduleInfo_EndAt_DEFAULT
 	}
-	return p.EndTime
+	return p.EndAt
 }
 
 var ScheduleInfo_Price_DEFAULT float64 = 0.0
@@ -378,8 +378,8 @@ var fieldIDToName_ScheduleInfo = map[int16]string{
 	6:   "num",
 	7:   "numSurplus",
 	8:   "data",
-	9:   "startTime",
-	10:  "endTime",
+	9:   "startAt",
+	10:  "endAt",
 	11:  "price",
 	12:  "name",
 	13:  "remark",
@@ -433,12 +433,12 @@ func (p *ScheduleInfo) IsSetData() bool {
 	return p.Data != ScheduleInfo_Data_DEFAULT
 }
 
-func (p *ScheduleInfo) IsSetStartTime() bool {
-	return p.StartTime != ScheduleInfo_StartTime_DEFAULT
+func (p *ScheduleInfo) IsSetStartAt() bool {
+	return p.StartAt != ScheduleInfo_StartAt_DEFAULT
 }
 
-func (p *ScheduleInfo) IsSetEndTime() bool {
-	return p.EndTime != ScheduleInfo_EndTime_DEFAULT
+func (p *ScheduleInfo) IsSetEndAt() bool {
+	return p.EndAt != ScheduleInfo_EndAt_DEFAULT
 }
 
 func (p *ScheduleInfo) IsSetPrice() bool {
@@ -893,7 +893,7 @@ func (p *ScheduleInfo) ReadField9(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.StartTime = _field
+	p.StartAt = _field
 	return nil
 }
 func (p *ScheduleInfo) ReadField10(iprot thrift.TProtocol) error {
@@ -904,7 +904,7 @@ func (p *ScheduleInfo) ReadField10(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.EndTime = _field
+	p.EndAt = _field
 	return nil
 }
 func (p *ScheduleInfo) ReadField11(iprot thrift.TProtocol) error {
@@ -1434,11 +1434,11 @@ WriteFieldEndError:
 }
 
 func (p *ScheduleInfo) writeField9(oprot thrift.TProtocol) (err error) {
-	if p.IsSetStartTime() {
-		if err = oprot.WriteFieldBegin("startTime", thrift.STRING, 9); err != nil {
+	if p.IsSetStartAt() {
+		if err = oprot.WriteFieldBegin("startAt", thrift.STRING, 9); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(p.StartTime); err != nil {
+		if err := oprot.WriteString(p.StartAt); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -1453,11 +1453,11 @@ WriteFieldEndError:
 }
 
 func (p *ScheduleInfo) writeField10(oprot thrift.TProtocol) (err error) {
-	if p.IsSetEndTime() {
-		if err = oprot.WriteFieldBegin("endTime", thrift.STRING, 10); err != nil {
+	if p.IsSetEndAt() {
+		if err = oprot.WriteFieldBegin("endAt", thrift.STRING, 10); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(p.EndTime); err != nil {
+		if err := oprot.WriteString(p.EndAt); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -1865,10 +1865,10 @@ type ScheduleMemberInfo struct {
 	ScheduleId                int64  `thrift:"scheduleId,6,optional" form:"scheduleId" json:"scheduleId" query:"scheduleId"`
 	ScheduleName              string `thrift:"scheduleName,7,optional" form:"scheduleName" json:"scheduleName" query:"scheduleName"`
 	Type                      string `thrift:"type,8,optional" form:"type" json:"type" query:"type"`
-	StartTime                 string `thrift:"startTime,9,optional" form:"startTime" json:"startTime" query:"startTime"`
-	EndTime                   string `thrift:"endTime,10,optional" form:"endTime" json:"endTime" query:"endTime"`
-	SignStartTime             string `thrift:"signStartTime,11,optional" form:"signStartTime" json:"signStartTime" query:"signStartTime"`
-	SignEndTime               string `thrift:"signEndTime,12,optional" form:"signEndTime" json:"signEndTime" query:"signEndTime"`
+	StartAt                   string `thrift:"startAt,9,optional" form:"startAt" json:"startAt" query:"startAt"`
+	EndAt                     string `thrift:"endAt,10,optional" form:"endAt" json:"endAt" query:"endAt"`
+	SignStartAt               string `thrift:"signStartAt,11,optional" form:"signStartAt" json:"signStartAt" query:"signStartAt"`
+	SignEndAt                 string `thrift:"signEndAt,12,optional" form:"signEndAt" json:"signEndAt" query:"signEndAt"`
 	Status                    int64  `thrift:"status,13,optional" form:"status" json:"status" query:"status"`
 	MemberProductId           int64  `thrift:"memberProductId,14,optional" form:"memberProductId" json:"memberProductId" query:"memberProductId"`
 	MemberProductItemId       int64  `thrift:"memberProductItemId,15,optional" form:"memberProductItemId" json:"memberProductItemId" query:"memberProductItemId"`
@@ -1894,10 +1894,10 @@ func NewScheduleMemberInfo() *ScheduleMemberInfo {
 		ScheduleId:                0,
 		ScheduleName:              "",
 		Type:                      "",
-		StartTime:                 "",
-		EndTime:                   "",
-		SignStartTime:             "",
-		SignEndTime:               "",
+		StartAt:                   "",
+		EndAt:                     "",
+		SignStartAt:               "",
+		SignEndAt:                 "",
 		Status:                    0,
 		MemberProductId:           0,
 		MemberProductItemId:       0,
@@ -1922,10 +1922,10 @@ func (p *ScheduleMemberInfo) InitDefault() {
 	p.ScheduleId = 0
 	p.ScheduleName = ""
 	p.Type = ""
-	p.StartTime = ""
-	p.EndTime = ""
-	p.SignStartTime = ""
-	p.SignEndTime = ""
+	p.StartAt = ""
+	p.EndAt = ""
+	p.SignStartAt = ""
+	p.SignEndAt = ""
 	p.Status = 0
 	p.MemberProductId = 0
 	p.MemberProductItemId = 0
@@ -2012,40 +2012,40 @@ func (p *ScheduleMemberInfo) GetType() (v string) {
 	return p.Type
 }
 
-var ScheduleMemberInfo_StartTime_DEFAULT string = ""
+var ScheduleMemberInfo_StartAt_DEFAULT string = ""
 
-func (p *ScheduleMemberInfo) GetStartTime() (v string) {
-	if !p.IsSetStartTime() {
-		return ScheduleMemberInfo_StartTime_DEFAULT
+func (p *ScheduleMemberInfo) GetStartAt() (v string) {
+	if !p.IsSetStartAt() {
+		return ScheduleMemberInfo_StartAt_DEFAULT
 	}
-	return p.StartTime
+	return p.StartAt
 }
 
-var ScheduleMemberInfo_EndTime_DEFAULT string = ""
+var ScheduleMemberInfo_EndAt_DEFAULT string = ""
 
-func (p *ScheduleMemberInfo) GetEndTime() (v string) {
-	if !p.IsSetEndTime() {
-		return ScheduleMemberInfo_EndTime_DEFAULT
+func (p *ScheduleMemberInfo) GetEndAt() (v string) {
+	if !p.IsSetEndAt() {
+		return ScheduleMemberInfo_EndAt_DEFAULT
 	}
-	return p.EndTime
+	return p.EndAt
 }
 
-var ScheduleMemberInfo_SignStartTime_DEFAULT string = ""
+var ScheduleMemberInfo_SignStartAt_DEFAULT string = ""
 
-func (p *ScheduleMemberInfo) GetSignStartTime() (v string) {
-	if !p.IsSetSignStartTime() {
-		return ScheduleMemberInfo_SignStartTime_DEFAULT
+func (p *ScheduleMemberInfo) GetSignStartAt() (v string) {
+	if !p.IsSetSignStartAt() {
+		return ScheduleMemberInfo_SignStartAt_DEFAULT
 	}
-	return p.SignStartTime
+	return p.SignStartAt
 }
 
-var ScheduleMemberInfo_SignEndTime_DEFAULT string = ""
+var ScheduleMemberInfo_SignEndAt_DEFAULT string = ""
 
-func (p *ScheduleMemberInfo) GetSignEndTime() (v string) {
-	if !p.IsSetSignEndTime() {
-		return ScheduleMemberInfo_SignEndTime_DEFAULT
+func (p *ScheduleMemberInfo) GetSignEndAt() (v string) {
+	if !p.IsSetSignEndAt() {
+		return ScheduleMemberInfo_SignEndAt_DEFAULT
 	}
-	return p.SignEndTime
+	return p.SignEndAt
 }
 
 var ScheduleMemberInfo_Status_DEFAULT int64 = 0
@@ -2165,10 +2165,10 @@ var fieldIDToName_ScheduleMemberInfo = map[int16]string{
 	6:   "scheduleId",
 	7:   "scheduleName",
 	8:   "type",
-	9:   "startTime",
-	10:  "endTime",
-	11:  "signStartTime",
-	12:  "signEndTime",
+	9:   "startAt",
+	10:  "endAt",
+	11:  "signStartAt",
+	12:  "signEndAt",
 	13:  "status",
 	14:  "memberProductId",
 	15:  "memberProductItemId",
@@ -2215,20 +2215,20 @@ func (p *ScheduleMemberInfo) IsSetType() bool {
 	return p.Type != ScheduleMemberInfo_Type_DEFAULT
 }
 
-func (p *ScheduleMemberInfo) IsSetStartTime() bool {
-	return p.StartTime != ScheduleMemberInfo_StartTime_DEFAULT
+func (p *ScheduleMemberInfo) IsSetStartAt() bool {
+	return p.StartAt != ScheduleMemberInfo_StartAt_DEFAULT
 }
 
-func (p *ScheduleMemberInfo) IsSetEndTime() bool {
-	return p.EndTime != ScheduleMemberInfo_EndTime_DEFAULT
+func (p *ScheduleMemberInfo) IsSetEndAt() bool {
+	return p.EndAt != ScheduleMemberInfo_EndAt_DEFAULT
 }
 
-func (p *ScheduleMemberInfo) IsSetSignStartTime() bool {
-	return p.SignStartTime != ScheduleMemberInfo_SignStartTime_DEFAULT
+func (p *ScheduleMemberInfo) IsSetSignStartAt() bool {
+	return p.SignStartAt != ScheduleMemberInfo_SignStartAt_DEFAULT
 }
 
-func (p *ScheduleMemberInfo) IsSetSignEndTime() bool {
-	return p.SignEndTime != ScheduleMemberInfo_SignEndTime_DEFAULT
+func (p *ScheduleMemberInfo) IsSetSignEndAt() bool {
+	return p.SignEndAt != ScheduleMemberInfo_SignEndAt_DEFAULT
 }
 
 func (p *ScheduleMemberInfo) IsSetStatus() bool {
@@ -2615,7 +2615,7 @@ func (p *ScheduleMemberInfo) ReadField9(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.StartTime = _field
+	p.StartAt = _field
 	return nil
 }
 func (p *ScheduleMemberInfo) ReadField10(iprot thrift.TProtocol) error {
@@ -2626,7 +2626,7 @@ func (p *ScheduleMemberInfo) ReadField10(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.EndTime = _field
+	p.EndAt = _field
 	return nil
 }
 func (p *ScheduleMemberInfo) ReadField11(iprot thrift.TProtocol) error {
@@ -2637,7 +2637,7 @@ func (p *ScheduleMemberInfo) ReadField11(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.SignStartTime = _field
+	p.SignStartAt = _field
 	return nil
 }
 func (p *ScheduleMemberInfo) ReadField12(iprot thrift.TProtocol) error {
@@ -2648,7 +2648,7 @@ func (p *ScheduleMemberInfo) ReadField12(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.SignEndTime = _field
+	p.SignEndAt = _field
 	return nil
 }
 func (p *ScheduleMemberInfo) ReadField13(iprot thrift.TProtocol) error {
@@ -3057,11 +3057,11 @@ WriteFieldEndError:
 }
 
 func (p *ScheduleMemberInfo) writeField9(oprot thrift.TProtocol) (err error) {
-	if p.IsSetStartTime() {
-		if err = oprot.WriteFieldBegin("startTime", thrift.STRING, 9); err != nil {
+	if p.IsSetStartAt() {
+		if err = oprot.WriteFieldBegin("startAt", thrift.STRING, 9); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(p.StartTime); err != nil {
+		if err := oprot.WriteString(p.StartAt); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -3076,11 +3076,11 @@ WriteFieldEndError:
 }
 
 func (p *ScheduleMemberInfo) writeField10(oprot thrift.TProtocol) (err error) {
-	if p.IsSetEndTime() {
-		if err = oprot.WriteFieldBegin("endTime", thrift.STRING, 10); err != nil {
+	if p.IsSetEndAt() {
+		if err = oprot.WriteFieldBegin("endAt", thrift.STRING, 10); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(p.EndTime); err != nil {
+		if err := oprot.WriteString(p.EndAt); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -3095,11 +3095,11 @@ WriteFieldEndError:
 }
 
 func (p *ScheduleMemberInfo) writeField11(oprot thrift.TProtocol) (err error) {
-	if p.IsSetSignStartTime() {
-		if err = oprot.WriteFieldBegin("signStartTime", thrift.STRING, 11); err != nil {
+	if p.IsSetSignStartAt() {
+		if err = oprot.WriteFieldBegin("signStartAt", thrift.STRING, 11); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(p.SignStartTime); err != nil {
+		if err := oprot.WriteString(p.SignStartAt); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -3114,11 +3114,11 @@ WriteFieldEndError:
 }
 
 func (p *ScheduleMemberInfo) writeField12(oprot thrift.TProtocol) (err error) {
-	if p.IsSetSignEndTime() {
-		if err = oprot.WriteFieldBegin("signEndTime", thrift.STRING, 12); err != nil {
+	if p.IsSetSignEndAt() {
+		if err = oprot.WriteFieldBegin("signEndAt", thrift.STRING, 12); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(p.SignEndTime); err != nil {
+		if err := oprot.WriteString(p.SignEndAt); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -3375,7 +3375,7 @@ type CreateOrUpdateScheduleReq struct {
 	VenueId                 int64   `thrift:"venueId,4,optional" form:"venueId" json:"venueId" query:"venueId"`
 	PlaceId                 int64   `thrift:"placeId,5,optional" form:"placeId" json:"placeId" query:"placeId"`
 	Num                     int64   `thrift:"num,6,optional" form:"num" json:"num" query:"num"`
-	StartTime               string  `thrift:"startTime,7,optional" form:"startTime" json:"startTime" query:"startTime"`
+	StartAt                 string  `thrift:"startAt,7,optional" form:"startAt" json:"startAt" query:"startAt"`
 	Price                   float64 `thrift:"price,8,optional" form:"price" json:"price" query:"price"`
 	Remark                  string  `thrift:"remark,9,optional" form:"remark" json:"remark" query:"remark"`
 	CoachId                 int64   `thrift:"coachId,10,optional" form:"coachId" json:"coachId" query:"coachId"`
@@ -3393,7 +3393,7 @@ func NewCreateOrUpdateScheduleReq() *CreateOrUpdateScheduleReq {
 		VenueId:                 0,
 		PlaceId:                 0,
 		Num:                     0,
-		StartTime:               "",
+		StartAt:                 "",
 		Price:                   0.0,
 		Remark:                  "",
 		CoachId:                 0,
@@ -3410,7 +3410,7 @@ func (p *CreateOrUpdateScheduleReq) InitDefault() {
 	p.VenueId = 0
 	p.PlaceId = 0
 	p.Num = 0
-	p.StartTime = ""
+	p.StartAt = ""
 	p.Price = 0.0
 	p.Remark = ""
 	p.CoachId = 0
@@ -3473,13 +3473,13 @@ func (p *CreateOrUpdateScheduleReq) GetNum() (v int64) {
 	return p.Num
 }
 
-var CreateOrUpdateScheduleReq_StartTime_DEFAULT string = ""
+var CreateOrUpdateScheduleReq_StartAt_DEFAULT string = ""
 
-func (p *CreateOrUpdateScheduleReq) GetStartTime() (v string) {
-	if !p.IsSetStartTime() {
-		return CreateOrUpdateScheduleReq_StartTime_DEFAULT
+func (p *CreateOrUpdateScheduleReq) GetStartAt() (v string) {
+	if !p.IsSetStartAt() {
+		return CreateOrUpdateScheduleReq_StartAt_DEFAULT
 	}
-	return p.StartTime
+	return p.StartAt
 }
 
 var CreateOrUpdateScheduleReq_Price_DEFAULT float64 = 0.0
@@ -3543,7 +3543,7 @@ var fieldIDToName_CreateOrUpdateScheduleReq = map[int16]string{
 	4:  "venueId",
 	5:  "placeId",
 	6:  "num",
-	7:  "startTime",
+	7:  "startAt",
 	8:  "price",
 	9:  "remark",
 	10: "coachId",
@@ -3576,8 +3576,8 @@ func (p *CreateOrUpdateScheduleReq) IsSetNum() bool {
 	return p.Num != CreateOrUpdateScheduleReq_Num_DEFAULT
 }
 
-func (p *CreateOrUpdateScheduleReq) IsSetStartTime() bool {
-	return p.StartTime != CreateOrUpdateScheduleReq_StartTime_DEFAULT
+func (p *CreateOrUpdateScheduleReq) IsSetStartAt() bool {
+	return p.StartAt != CreateOrUpdateScheduleReq_StartAt_DEFAULT
 }
 
 func (p *CreateOrUpdateScheduleReq) IsSetPrice() bool {
@@ -3830,7 +3830,7 @@ func (p *CreateOrUpdateScheduleReq) ReadField7(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.StartTime = _field
+	p.StartAt = _field
 	return nil
 }
 func (p *CreateOrUpdateScheduleReq) ReadField8(iprot thrift.TProtocol) error {
@@ -4091,11 +4091,11 @@ WriteFieldEndError:
 }
 
 func (p *CreateOrUpdateScheduleReq) writeField7(oprot thrift.TProtocol) (err error) {
-	if p.IsSetStartTime() {
-		if err = oprot.WriteFieldBegin("startTime", thrift.STRING, 7); err != nil {
+	if p.IsSetStartAt() {
+		if err = oprot.WriteFieldBegin("startAt", thrift.STRING, 7); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(p.StartTime); err != nil {
+		if err := oprot.WriteString(p.StartAt); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -4862,7 +4862,7 @@ type ScheduleListReq struct {
 	ProductIds  []int64 `thrift:"productIds,5,optional" form:"productIds" json:"productIds" query:"productIds"`
 	VenueId     int64   `thrift:"venueId,6,optional" form:"venueId" json:"venueId" query:"venueId"`
 	PropertyIds []int64 `thrift:"propertyIds,7,optional" form:"propertyIds" json:"propertyIds" query:"propertyIds"`
-	StartTime   string  `thrift:"startTime,8,optional" form:"startTime" json:"startTime" query:"startTime"`
+	StartAt     string  `thrift:"startAt,8,optional" form:"startAt" json:"startAt" query:"startAt"`
 	Type        string  `thrift:"type,9,optional" form:"type" json:"type" query:"type"`
 	Page        int64   `thrift:"page,101,optional" form:"page" json:"page" query:"page"`
 	PageSize    int64   `thrift:"pageSize,102,optional" form:"pageSize" json:"pageSize" query:"pageSize"`
@@ -4876,7 +4876,7 @@ func NewScheduleListReq() *ScheduleListReq {
 		ProductIds:  []int64{},
 		VenueId:     0,
 		PropertyIds: []int64{},
-		StartTime:   "",
+		StartAt:     "",
 		Type:        "",
 		Page:        0,
 		PageSize:    0,
@@ -4889,7 +4889,7 @@ func (p *ScheduleListReq) InitDefault() {
 	p.ProductIds = []int64{}
 	p.VenueId = 0
 	p.PropertyIds = []int64{}
-	p.StartTime = ""
+	p.StartAt = ""
 	p.Type = ""
 	p.Page = 0
 	p.PageSize = 0
@@ -4940,13 +4940,13 @@ func (p *ScheduleListReq) GetPropertyIds() (v []int64) {
 	return p.PropertyIds
 }
 
-var ScheduleListReq_StartTime_DEFAULT string = ""
+var ScheduleListReq_StartAt_DEFAULT string = ""
 
-func (p *ScheduleListReq) GetStartTime() (v string) {
-	if !p.IsSetStartTime() {
-		return ScheduleListReq_StartTime_DEFAULT
+func (p *ScheduleListReq) GetStartAt() (v string) {
+	if !p.IsSetStartAt() {
+		return ScheduleListReq_StartAt_DEFAULT
 	}
-	return p.StartTime
+	return p.StartAt
 }
 
 var ScheduleListReq_Type_DEFAULT string = ""
@@ -4982,7 +4982,7 @@ var fieldIDToName_ScheduleListReq = map[int16]string{
 	5:   "productIds",
 	6:   "venueId",
 	7:   "propertyIds",
-	8:   "startTime",
+	8:   "startAt",
 	9:   "type",
 	101: "page",
 	102: "pageSize",
@@ -5008,8 +5008,8 @@ func (p *ScheduleListReq) IsSetPropertyIds() bool {
 	return p.PropertyIds != nil
 }
 
-func (p *ScheduleListReq) IsSetStartTime() bool {
-	return p.StartTime != ScheduleListReq_StartTime_DEFAULT
+func (p *ScheduleListReq) IsSetStartAt() bool {
+	return p.StartAt != ScheduleListReq_StartAt_DEFAULT
 }
 
 func (p *ScheduleListReq) IsSetType() bool {
@@ -5243,7 +5243,7 @@ func (p *ScheduleListReq) ReadField8(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.StartTime = _field
+	p.StartAt = _field
 	return nil
 }
 func (p *ScheduleListReq) ReadField9(iprot thrift.TProtocol) error {
@@ -5460,11 +5460,11 @@ WriteFieldEndError:
 }
 
 func (p *ScheduleListReq) writeField8(oprot thrift.TProtocol) (err error) {
-	if p.IsSetStartTime() {
-		if err = oprot.WriteFieldBegin("startTime", thrift.STRING, 8); err != nil {
+	if p.IsSetStartAt() {
+		if err = oprot.WriteFieldBegin("startAt", thrift.STRING, 8); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(p.StartTime); err != nil {
+		if err := oprot.WriteString(p.StartAt); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -6334,10 +6334,10 @@ type ScheduleCoachInfo struct {
 	ScheduleId                int64  `thrift:"scheduleId,6,optional" form:"scheduleId" json:"scheduleId" query:"scheduleId"`
 	Type                      string `thrift:"type,7,optional" form:"type" json:"type" query:"type"`
 	Date                      string `thrift:"date,8,optional" form:"date" json:"date" query:"date"`
-	StartTime                 string `thrift:"startTime,9,optional" form:"startTime" json:"startTime" query:"startTime"`
-	EndTime                   string `thrift:"endTime,10,optional" form:"endTime" json:"endTime" query:"endTime"`
-	SignStartTime             string `thrift:"signStartTime,11,optional" form:"signStartTime" json:"signStartTime" query:"signStartTime"`
-	SignEndTime               string `thrift:"signEndTime,12,optional" form:"signEndTime" json:"signEndTime" query:"signEndTime"`
+	StartAt                   string `thrift:"startAt,9,optional" form:"startAt" json:"startAt" query:"startAt"`
+	EndAt                     string `thrift:"endAt,10,optional" form:"endAt" json:"endAt" query:"endAt"`
+	SignStartAt               string `thrift:"signStartAt,11,optional" form:"signStartAt" json:"signStartAt" query:"signStartAt"`
+	SignEndAt                 string `thrift:"signEndAt,12,optional" form:"signEndAt" json:"signEndAt" query:"signEndAt"`
 	Status                    int64  `thrift:"status,13,optional" form:"status" json:"status" query:"status"`
 	ScheduleName              string `thrift:"scheduleName,14,optional" form:"scheduleName" json:"scheduleName" query:"scheduleName"`
 	PropertyName              string `thrift:"propertyName,15,optional" form:"propertyName" json:"propertyName" query:"propertyName"`
@@ -6367,10 +6367,10 @@ func NewScheduleCoachInfo() *ScheduleCoachInfo {
 		ScheduleId:                0,
 		Type:                      "",
 		Date:                      "",
-		StartTime:                 "",
-		EndTime:                   "",
-		SignStartTime:             "",
-		SignEndTime:               "",
+		StartAt:                   "",
+		EndAt:                     "",
+		SignStartAt:               "",
+		SignEndAt:                 "",
 		Status:                    0,
 		ScheduleName:              "",
 		PropertyName:              "",
@@ -6399,10 +6399,10 @@ func (p *ScheduleCoachInfo) InitDefault() {
 	p.ScheduleId = 0
 	p.Type = ""
 	p.Date = ""
-	p.StartTime = ""
-	p.EndTime = ""
-	p.SignStartTime = ""
-	p.SignEndTime = ""
+	p.StartAt = ""
+	p.EndAt = ""
+	p.SignStartAt = ""
+	p.SignEndAt = ""
 	p.Status = 0
 	p.ScheduleName = ""
 	p.PropertyName = ""
@@ -6493,40 +6493,40 @@ func (p *ScheduleCoachInfo) GetDate() (v string) {
 	return p.Date
 }
 
-var ScheduleCoachInfo_StartTime_DEFAULT string = ""
+var ScheduleCoachInfo_StartAt_DEFAULT string = ""
 
-func (p *ScheduleCoachInfo) GetStartTime() (v string) {
-	if !p.IsSetStartTime() {
-		return ScheduleCoachInfo_StartTime_DEFAULT
+func (p *ScheduleCoachInfo) GetStartAt() (v string) {
+	if !p.IsSetStartAt() {
+		return ScheduleCoachInfo_StartAt_DEFAULT
 	}
-	return p.StartTime
+	return p.StartAt
 }
 
-var ScheduleCoachInfo_EndTime_DEFAULT string = ""
+var ScheduleCoachInfo_EndAt_DEFAULT string = ""
 
-func (p *ScheduleCoachInfo) GetEndTime() (v string) {
-	if !p.IsSetEndTime() {
-		return ScheduleCoachInfo_EndTime_DEFAULT
+func (p *ScheduleCoachInfo) GetEndAt() (v string) {
+	if !p.IsSetEndAt() {
+		return ScheduleCoachInfo_EndAt_DEFAULT
 	}
-	return p.EndTime
+	return p.EndAt
 }
 
-var ScheduleCoachInfo_SignStartTime_DEFAULT string = ""
+var ScheduleCoachInfo_SignStartAt_DEFAULT string = ""
 
-func (p *ScheduleCoachInfo) GetSignStartTime() (v string) {
-	if !p.IsSetSignStartTime() {
-		return ScheduleCoachInfo_SignStartTime_DEFAULT
+func (p *ScheduleCoachInfo) GetSignStartAt() (v string) {
+	if !p.IsSetSignStartAt() {
+		return ScheduleCoachInfo_SignStartAt_DEFAULT
 	}
-	return p.SignStartTime
+	return p.SignStartAt
 }
 
-var ScheduleCoachInfo_SignEndTime_DEFAULT string = ""
+var ScheduleCoachInfo_SignEndAt_DEFAULT string = ""
 
-func (p *ScheduleCoachInfo) GetSignEndTime() (v string) {
-	if !p.IsSetSignEndTime() {
-		return ScheduleCoachInfo_SignEndTime_DEFAULT
+func (p *ScheduleCoachInfo) GetSignEndAt() (v string) {
+	if !p.IsSetSignEndAt() {
+		return ScheduleCoachInfo_SignEndAt_DEFAULT
 	}
-	return p.SignEndTime
+	return p.SignEndAt
 }
 
 var ScheduleCoachInfo_Status_DEFAULT int64 = 0
@@ -6682,10 +6682,10 @@ var fieldIDToName_ScheduleCoachInfo = map[int16]string{
 	6:   "scheduleId",
 	7:   "type",
 	8:   "date",
-	9:   "startTime",
-	10:  "endTime",
-	11:  "signStartTime",
-	12:  "signEndTime",
+	9:   "startAt",
+	10:  "endAt",
+	11:  "signStartAt",
+	12:  "signEndAt",
 	13:  "status",
 	14:  "scheduleName",
 	15:  "propertyName",
@@ -6736,20 +6736,20 @@ func (p *ScheduleCoachInfo) IsSetDate() bool {
 	return p.Date != ScheduleCoachInfo_Date_DEFAULT
 }
 
-func (p *ScheduleCoachInfo) IsSetStartTime() bool {
-	return p.StartTime != ScheduleCoachInfo_StartTime_DEFAULT
+func (p *ScheduleCoachInfo) IsSetStartAt() bool {
+	return p.StartAt != ScheduleCoachInfo_StartAt_DEFAULT
 }
 
-func (p *ScheduleCoachInfo) IsSetEndTime() bool {
-	return p.EndTime != ScheduleCoachInfo_EndTime_DEFAULT
+func (p *ScheduleCoachInfo) IsSetEndAt() bool {
+	return p.EndAt != ScheduleCoachInfo_EndAt_DEFAULT
 }
 
-func (p *ScheduleCoachInfo) IsSetSignStartTime() bool {
-	return p.SignStartTime != ScheduleCoachInfo_SignStartTime_DEFAULT
+func (p *ScheduleCoachInfo) IsSetSignStartAt() bool {
+	return p.SignStartAt != ScheduleCoachInfo_SignStartAt_DEFAULT
 }
 
-func (p *ScheduleCoachInfo) IsSetSignEndTime() bool {
-	return p.SignEndTime != ScheduleCoachInfo_SignEndTime_DEFAULT
+func (p *ScheduleCoachInfo) IsSetSignEndAt() bool {
+	return p.SignEndAt != ScheduleCoachInfo_SignEndAt_DEFAULT
 }
 
 func (p *ScheduleCoachInfo) IsSetStatus() bool {
@@ -7184,7 +7184,7 @@ func (p *ScheduleCoachInfo) ReadField9(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.StartTime = _field
+	p.StartAt = _field
 	return nil
 }
 func (p *ScheduleCoachInfo) ReadField10(iprot thrift.TProtocol) error {
@@ -7195,7 +7195,7 @@ func (p *ScheduleCoachInfo) ReadField10(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.EndTime = _field
+	p.EndAt = _field
 	return nil
 }
 func (p *ScheduleCoachInfo) ReadField11(iprot thrift.TProtocol) error {
@@ -7206,7 +7206,7 @@ func (p *ScheduleCoachInfo) ReadField11(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.SignStartTime = _field
+	p.SignStartAt = _field
 	return nil
 }
 func (p *ScheduleCoachInfo) ReadField12(iprot thrift.TProtocol) error {
@@ -7217,7 +7217,7 @@ func (p *ScheduleCoachInfo) ReadField12(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.SignEndTime = _field
+	p.SignEndAt = _field
 	return nil
 }
 func (p *ScheduleCoachInfo) ReadField13(iprot thrift.TProtocol) error {
@@ -7686,11 +7686,11 @@ WriteFieldEndError:
 }
 
 func (p *ScheduleCoachInfo) writeField9(oprot thrift.TProtocol) (err error) {
-	if p.IsSetStartTime() {
-		if err = oprot.WriteFieldBegin("startTime", thrift.STRING, 9); err != nil {
+	if p.IsSetStartAt() {
+		if err = oprot.WriteFieldBegin("startAt", thrift.STRING, 9); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(p.StartTime); err != nil {
+		if err := oprot.WriteString(p.StartAt); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -7705,11 +7705,11 @@ WriteFieldEndError:
 }
 
 func (p *ScheduleCoachInfo) writeField10(oprot thrift.TProtocol) (err error) {
-	if p.IsSetEndTime() {
-		if err = oprot.WriteFieldBegin("endTime", thrift.STRING, 10); err != nil {
+	if p.IsSetEndAt() {
+		if err = oprot.WriteFieldBegin("endAt", thrift.STRING, 10); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(p.EndTime); err != nil {
+		if err := oprot.WriteString(p.EndAt); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -7724,11 +7724,11 @@ WriteFieldEndError:
 }
 
 func (p *ScheduleCoachInfo) writeField11(oprot thrift.TProtocol) (err error) {
-	if p.IsSetSignStartTime() {
-		if err = oprot.WriteFieldBegin("signStartTime", thrift.STRING, 11); err != nil {
+	if p.IsSetSignStartAt() {
+		if err = oprot.WriteFieldBegin("signStartAt", thrift.STRING, 11); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(p.SignStartTime); err != nil {
+		if err := oprot.WriteString(p.SignStartAt); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -7743,11 +7743,11 @@ WriteFieldEndError:
 }
 
 func (p *ScheduleCoachInfo) writeField12(oprot thrift.TProtocol) (err error) {
-	if p.IsSetSignEndTime() {
-		if err = oprot.WriteFieldBegin("signEndTime", thrift.STRING, 12); err != nil {
+	if p.IsSetSignEndAt() {
+		if err = oprot.WriteFieldBegin("signEndAt", thrift.STRING, 12); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(p.SignEndTime); err != nil {
+		if err := oprot.WriteString(p.SignEndAt); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {

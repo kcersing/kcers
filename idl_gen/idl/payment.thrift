@@ -19,7 +19,7 @@ struct PayReq {
 
 struct NotifyReq {
     1: string id (api.raw = "id")
-    2: string createTime (api.raw = "create_time")
+    2: string createAt (api.raw = "create_time")
     3: string resourceType (api.raw = "resource_type")
     4: string eventType (api.raw = "event_type")
     5: string summary (api.raw = "summary")

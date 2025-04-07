@@ -108,7 +108,7 @@ struct ListReq {
     3: optional string name="" (api.raw = "name")
     4: optional list<i64> status =0 (api.raw = "status")
     5: optional list<i64> venueId =0  (api.raw = "venue")
-    6: optional list<string> createdTime=0  (api.raw = "createdTime")
+    6: optional list<string> createdAt=0  (api.raw = "createdAt")
     7: optional string type ="" (api.raw = "type")
 }
 struct PropertyListReq{
@@ -117,7 +117,7 @@ struct PropertyListReq{
     3: optional string name (api.raw = "name")
     4: optional list<i64> status =0(api.raw = "status")
     5: optional list<i64> venueId =0  (api.raw = "venue")
-    6: optional list<string> createdTime=0  (api.raw = "createdTime")
+    6: optional list<string> createdAt=0  (api.raw = "createdAt")
     7: optional string type ="" (api.raw = "type")
 }
 

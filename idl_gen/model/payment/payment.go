@@ -341,7 +341,7 @@ func (p *PayReq) String() string {
 
 type NotifyReq struct {
 	ID           string    `thrift:"id,1" form:"id" json:"id" query:"id"`
-	CreateTime   string    `thrift:"createTime,2" form:"createTime" json:"createTime" query:"createTime"`
+	CreateAt     string    `thrift:"createAt,2" form:"createAt" json:"createAt" query:"createAt"`
 	ResourceType string    `thrift:"resourceType,3" form:"resourceType" json:"resourceType" query:"resourceType"`
 	EventType    string    `thrift:"eventType,4" form:"eventType" json:"eventType" query:"eventType"`
 	Summary      string    `thrift:"summary,5" form:"summary" json:"summary" query:"summary"`
@@ -359,8 +359,8 @@ func (p *NotifyReq) GetID() (v string) {
 	return p.ID
 }
 
-func (p *NotifyReq) GetCreateTime() (v string) {
-	return p.CreateTime
+func (p *NotifyReq) GetCreateAt() (v string) {
+	return p.CreateAt
 }
 
 func (p *NotifyReq) GetResourceType() (v string) {
@@ -386,7 +386,7 @@ func (p *NotifyReq) GetResource() (v *Resource) {
 
 var fieldIDToName_NotifyReq = map[int16]string{
 	1: "id",
-	2: "createTime",
+	2: "createAt",
 	3: "resourceType",
 	4: "eventType",
 	5: "summary",
@@ -512,7 +512,7 @@ func (p *NotifyReq) ReadField2(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.CreateTime = _field
+	p.CreateAt = _field
 	return nil
 }
 func (p *NotifyReq) ReadField3(iprot thrift.TProtocol) error {
@@ -623,10 +623,10 @@ WriteFieldEndError:
 }
 
 func (p *NotifyReq) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("createTime", thrift.STRING, 2); err != nil {
+	if err = oprot.WriteFieldBegin("createAt", thrift.STRING, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.CreateTime); err != nil {
+	if err := oprot.WriteString(p.CreateAt); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {

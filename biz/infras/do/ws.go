@@ -19,10 +19,10 @@ type Entity struct {
 type Message struct {
 	Entity *Entity `json:"entity"`
 	//Service        string  `json:"service"`
-	Content        string `json:"content"`
-	Face           *Face  `json:"face"`
-	Time           string `json:"time"`
-	ClientSentTime string `json:"client_sent_time"`
+	Content      string `json:"content"`
+	Face         *Face  `json:"face"`
+	Time         string `json:"time"`
+	ClientSentAt string `json:"client_sent_at"`
 }
 
 // Face 人脸信息
@@ -41,7 +41,7 @@ type Face struct {
 	//人脸特征值
 	FaceEigenvalue string `json:"face_eigenvalue"`
 	//人脸更新时间
-	FacePicUpdatedTime string `json:"face_pic_updated_time"`
+	FacePicUpdatedAt string `json:"face_pic_updated_at"`
 }
 
 // SendMsg 发送信息

@@ -24,7 +24,7 @@ type UserInfo struct {
 	Gender         string                         `thrift:"gender,13" form:"gender" json:"gender" query:"gender"`
 	Birthday       string                         `thrift:"birthday,15" form:"birthday" json:"birthday" query:"birthday"`
 	Detail         string                         `thrift:"detail,16" form:"detail" json:"detail" query:"detail"`
-	JobTime        *int64                         `thrift:"jobTime,17,optional" form:"jobTime" json:"jobTime" query:"jobTime"`
+	JobAt          *int64                         `thrift:"jobAt,17,optional" form:"jobAt" json:"jobAt" query:"jobAt"`
 	UserTags       []*dictionary.DictionaryDetail `thrift:"userTags,18" form:"userTags" json:"userTags" query:"userTags"`
 	Venues         []*Venues                      `thrift:"venues,19" form:"venues" json:"venues" query:"venues"`
 	Type           int64                          `thrift:"type,20,optional" form:"type" json:"type" query:"type"`
@@ -96,13 +96,13 @@ func (p *UserInfo) GetDetail() (v string) {
 	return p.Detail
 }
 
-var UserInfo_JobTime_DEFAULT int64
+var UserInfo_JobAt_DEFAULT int64
 
-func (p *UserInfo) GetJobTime() (v int64) {
-	if !p.IsSetJobTime() {
-		return UserInfo_JobTime_DEFAULT
+func (p *UserInfo) GetJobAt() (v int64) {
+	if !p.IsSetJobAt() {
+		return UserInfo_JobAt_DEFAULT
 	}
-	return *p.JobTime
+	return *p.JobAt
 }
 
 func (p *UserInfo) GetUserTags() (v []*dictionary.DictionaryDetail) {
@@ -148,7 +148,7 @@ var fieldIDToName_UserInfo = map[int16]string{
 	13:  "gender",
 	15:  "birthday",
 	16:  "detail",
-	17:  "jobTime",
+	17:  "jobAt",
 	18:  "userTags",
 	19:  "venues",
 	20:  "type",
@@ -157,8 +157,8 @@ var fieldIDToName_UserInfo = map[int16]string{
 	254: "defaultVenueId",
 }
 
-func (p *UserInfo) IsSetJobTime() bool {
-	return p.JobTime != nil
+func (p *UserInfo) IsSetJobAt() bool {
+	return p.JobAt != nil
 }
 
 func (p *UserInfo) IsSetType() bool {
@@ -536,7 +536,7 @@ func (p *UserInfo) ReadField17(iprot thrift.TProtocol) error {
 	} else {
 		_field = &v
 	}
-	p.JobTime = _field
+	p.JobAt = _field
 	return nil
 }
 func (p *UserInfo) ReadField18(iprot thrift.TProtocol) error {
@@ -988,11 +988,11 @@ WriteFieldEndError:
 }
 
 func (p *UserInfo) writeField17(oprot thrift.TProtocol) (err error) {
-	if p.IsSetJobTime() {
-		if err = oprot.WriteFieldBegin("jobTime", thrift.I64, 17); err != nil {
+	if p.IsSetJobAt() {
+		if err = oprot.WriteFieldBegin("jobAt", thrift.I64, 17); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI64(*p.JobTime); err != nil {
+		if err := oprot.WriteI64(*p.JobAt); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -2787,7 +2787,7 @@ type CreateOrUpdateUserReq struct {
 	Username       string   `thrift:"username,13,optional" form:"username" json:"username" query:"username"`
 	Functions      []string `thrift:"functions,14,optional" form:"functions" json:"functions" query:"functions"`
 	Detail         string   `thrift:"detail,15,optional" form:"detail" json:"detail" query:"detail"`
-	JobTime        int64    `thrift:"jobTime,16,optional" form:"jobTime" json:"jobTime" query:"jobTime"`
+	JobAt          int64    `thrift:"jobAt,16,optional" form:"jobAt" json:"jobAt" query:"jobAt"`
 	UserTags       []int64  `thrift:"userTags,18,optional" form:"userTags" json:"userTags" query:"userTags"`
 	Type           int64    `thrift:"type,19,optional" form:"type" json:"type" query:"type"`
 	VenueId        []int64  `thrift:"venueId,20,optional" form:"venueId" json:"venueId" query:"venueId"`
@@ -2809,7 +2809,7 @@ func NewCreateOrUpdateUserReq() *CreateOrUpdateUserReq {
 		Username:       "",
 		Functions:      []string{},
 		Detail:         "",
-		JobTime:        0,
+		JobAt:          0,
 		UserTags:       []int64{},
 		Type:           1,
 		VenueId:        []int64{},
@@ -2830,7 +2830,7 @@ func (p *CreateOrUpdateUserReq) InitDefault() {
 	p.Username = ""
 	p.Functions = []string{}
 	p.Detail = ""
-	p.JobTime = 0
+	p.JobAt = 0
 	p.UserTags = []int64{}
 	p.Type = 1
 	p.VenueId = []int64{}
@@ -2945,13 +2945,13 @@ func (p *CreateOrUpdateUserReq) GetDetail() (v string) {
 	return p.Detail
 }
 
-var CreateOrUpdateUserReq_JobTime_DEFAULT int64 = 0
+var CreateOrUpdateUserReq_JobAt_DEFAULT int64 = 0
 
-func (p *CreateOrUpdateUserReq) GetJobTime() (v int64) {
-	if !p.IsSetJobTime() {
-		return CreateOrUpdateUserReq_JobTime_DEFAULT
+func (p *CreateOrUpdateUserReq) GetJobAt() (v int64) {
+	if !p.IsSetJobAt() {
+		return CreateOrUpdateUserReq_JobAt_DEFAULT
 	}
-	return p.JobTime
+	return p.JobAt
 }
 
 var CreateOrUpdateUserReq_UserTags_DEFAULT []int64 = []int64{}
@@ -3003,7 +3003,7 @@ var fieldIDToName_CreateOrUpdateUserReq = map[int16]string{
 	13:  "username",
 	14:  "functions",
 	15:  "detail",
-	16:  "jobTime",
+	16:  "jobAt",
 	18:  "userTags",
 	19:  "type",
 	20:  "venueId",
@@ -3058,8 +3058,8 @@ func (p *CreateOrUpdateUserReq) IsSetDetail() bool {
 	return p.Detail != CreateOrUpdateUserReq_Detail_DEFAULT
 }
 
-func (p *CreateOrUpdateUserReq) IsSetJobTime() bool {
-	return p.JobTime != CreateOrUpdateUserReq_JobTime_DEFAULT
+func (p *CreateOrUpdateUserReq) IsSetJobAt() bool {
+	return p.JobAt != CreateOrUpdateUserReq_JobAt_DEFAULT
 }
 
 func (p *CreateOrUpdateUserReq) IsSetUserTags() bool {
@@ -3426,7 +3426,7 @@ func (p *CreateOrUpdateUserReq) ReadField16(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.JobTime = _field
+	p.JobAt = _field
 	return nil
 }
 func (p *CreateOrUpdateUserReq) ReadField18(iprot thrift.TProtocol) error {
@@ -3835,11 +3835,11 @@ WriteFieldEndError:
 }
 
 func (p *CreateOrUpdateUserReq) writeField16(oprot thrift.TProtocol) (err error) {
-	if p.IsSetJobTime() {
-		if err = oprot.WriteFieldBegin("jobTime", thrift.I64, 16); err != nil {
+	if p.IsSetJobAt() {
+		if err = oprot.WriteFieldBegin("jobAt", thrift.I64, 16); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI64(p.JobTime); err != nil {
+		if err := oprot.WriteI64(p.JobAt); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -3958,7 +3958,7 @@ type UserListReq struct {
 	Page     int64  `thrift:"page,1,optional" form:"page" json:"page" query:"page"`
 	PageSize int64  `thrift:"pageSize,2,optional" form:"pageSize" json:"pageSize" query:"pageSize"`
 	Name     string `thrift:"name,4,optional" form:"name" json:"name" query:"name"`
-	JobTime  int64  `thrift:"jobTime,5,optional" form:"jobTime" json:"jobTime" query:"jobTime"`
+	JobAt    int64  `thrift:"jobAt,5,optional" form:"jobAt" json:"jobAt" query:"jobAt"`
 	Mobile   string `thrift:"mobile,6,optional" form:"mobile" json:"mobile" query:"mobile"`
 	RoleId   int64  `thrift:"roleId,7,optional" form:"roleId" json:"roleId" query:"roleId"`
 	Status   int64  `thrift:"status,8,optional" form:"status" json:"status" query:"status"`
@@ -3976,7 +3976,7 @@ func NewUserListReq() *UserListReq {
 		Page:      1,
 		PageSize:  100,
 		Name:      "",
-		JobTime:   0,
+		JobAt:     0,
 		Mobile:    "",
 		RoleId:    0,
 		Status:    0,
@@ -3991,7 +3991,7 @@ func (p *UserListReq) InitDefault() {
 	p.Page = 1
 	p.PageSize = 100
 	p.Name = ""
-	p.JobTime = 0
+	p.JobAt = 0
 	p.Mobile = ""
 	p.RoleId = 0
 	p.Status = 0
@@ -4028,13 +4028,13 @@ func (p *UserListReq) GetName() (v string) {
 	return p.Name
 }
 
-var UserListReq_JobTime_DEFAULT int64 = 0
+var UserListReq_JobAt_DEFAULT int64 = 0
 
-func (p *UserListReq) GetJobTime() (v int64) {
-	if !p.IsSetJobTime() {
-		return UserListReq_JobTime_DEFAULT
+func (p *UserListReq) GetJobAt() (v int64) {
+	if !p.IsSetJobAt() {
+		return UserListReq_JobAt_DEFAULT
 	}
-	return p.JobTime
+	return p.JobAt
 }
 
 var UserListReq_Mobile_DEFAULT string = ""
@@ -4104,7 +4104,7 @@ var fieldIDToName_UserListReq = map[int16]string{
 	1:  "page",
 	2:  "pageSize",
 	4:  "name",
-	5:  "jobTime",
+	5:  "jobAt",
 	6:  "mobile",
 	7:  "roleId",
 	8:  "status",
@@ -4126,8 +4126,8 @@ func (p *UserListReq) IsSetName() bool {
 	return p.Name != UserListReq_Name_DEFAULT
 }
 
-func (p *UserListReq) IsSetJobTime() bool {
-	return p.JobTime != UserListReq_JobTime_DEFAULT
+func (p *UserListReq) IsSetJobAt() bool {
+	return p.JobAt != UserListReq_JobAt_DEFAULT
 }
 
 func (p *UserListReq) IsSetMobile() bool {
@@ -4335,7 +4335,7 @@ func (p *UserListReq) ReadField5(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.JobTime = _field
+	p.JobAt = _field
 	return nil
 }
 func (p *UserListReq) ReadField6(iprot thrift.TProtocol) error {
@@ -4566,11 +4566,11 @@ WriteFieldEndError:
 }
 
 func (p *UserListReq) writeField5(oprot thrift.TProtocol) (err error) {
-	if p.IsSetJobTime() {
-		if err = oprot.WriteFieldBegin("jobTime", thrift.I64, 5); err != nil {
+	if p.IsSetJobAt() {
+		if err = oprot.WriteFieldBegin("jobAt", thrift.I64, 5); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI64(p.JobTime); err != nil {
+		if err := oprot.WriteI64(p.JobAt); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {

@@ -23,10 +23,10 @@ func (EntryLogs) Fields() []ent.Field {
 		field.Int64("member_product_id").Comment("用户产品id").Optional(),
 		field.Int64("member_property_id").Comment("属性id").Optional(),
 
-		field.Time("entry_time").
+		field.Time("entry_at").
 			Comment("进场时间").
 			Optional(),
-		field.Time("leaving_time").
+		field.Time("leaving_at").
 			Comment("离场时间").
 			Optional(),
 	}

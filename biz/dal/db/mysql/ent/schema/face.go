@@ -43,7 +43,7 @@ func (Face) Fields() []ent.Field {
 			Default("").
 			Comment("人脸特征值"),
 
-		field.Time("face_pic_updated_time").
+		field.Time("face_pic_updated_at").
 			Immutable().
 			Optional().
 			Default(time.Now).

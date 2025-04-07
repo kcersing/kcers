@@ -2,10 +2,8 @@ namespace go member
 
 include "../base/base.thrift"
 
-
 // Create or update user information request | 创建或更新用户信息
 struct CreateOrUpdateMemberReq {
-
    1:  optional i64 id=0 (api.raw = "id")
     2:  optional string name="" (api.raw = "name")
     4:  optional string mobile="" (api.raw = "mobile")
@@ -20,10 +18,12 @@ struct CreateOrUpdateMemberReq {
     13: optional i64 createId (api.raw = "createId")
 
 }
+
 struct CreateOrUpdateMemberAvatarReq {
     1:  optional i64 memberId=0 (api.raw = "memberId")
     2:  optional string avatar="" (api.raw = "avatar")
 }
+
 struct MemberInfo {
      1:optional i64 id=0  (api.raw = "id")
      2:optional	string name ="" (api.raw = "name")
@@ -41,7 +41,6 @@ struct MemberInfo {
 }
 
 struct MemberProfile{
-
     2:  optional string fatherName="" (api.raw = "fatherName")
     3:  optional string motherName="" (api.raw = "motherName")
     4:  optional i64 grade=0 (api.raw = "grade")
@@ -76,8 +75,8 @@ struct MemberPrivacy {
         //特征值
      5: string faceEigenvalue (api.raw = "faceEigenvalue")
         //人脸更新时间
-     6: string faceUpdateTime (api.raw = "faceUpdateTime")
-     7: string facePicUpdatedTime (api.raw = "facePicUpdatedTime")
+     6: string faceUpdateAt (api.raw = "faceUpdateAt")
+     7: string facePicUpdatedAt (api.raw = "facePicUpdatedAt")
 }
 
 // Get user list request | 获取用户列表请求参数
@@ -107,15 +106,16 @@ struct MemberProductListReq {
     6:  optional i64 status (api.raw = "status")
    
 }
+
 struct MemberPropertyListReq{
-    1:  optional i64 page (api.raw = "page")
-    2:  optional i64 pageSize (api.raw = "pageSize")
-    3:  optional i64 memberId (api.raw = "memberId")
-    4:  optional string type (api.raw = "type")
-    5:  optional string name (api.raw = "name")
-    6:  optional i64 venueId (api.raw = "venueId")
-    7:  optional i64 status (api.raw = "status")
-    8:  optional i64 memberProductId (api.raw = "memberProductId")
+    1:  optional i64 page=1 (api.raw = "page")
+    2:  optional i64 pageSize=10 (api.raw = "pageSize")
+    3:  optional i64 memberId=0 (api.raw = "memberId")
+    4:  optional string type="" (api.raw = "type")
+    5:  optional string name="" (api.raw = "name")
+    6:  optional i64 venueId=0 (api.raw = "venueId")
+    7:  optional i64 status=0 (api.raw = "status")
+    8:  optional i64 memberProductId=0 (api.raw = "memberProductId")
 }
 
 struct MemberContractListReq{
@@ -141,16 +141,86 @@ struct MemberContractInfo{
     13:optional string createdAt ="" (api.raw = "createdAt")
     14:optional string updatedAt  =""(api.raw = "updatedAt")
 }
+
+
 struct MemberProductSearchReq{
     1:  optional list<i64> members (api.raw = "members")
 }
+
 struct MemberPropertySearchReq{
     1:  optional list<i64> memberProductIds (api.raw = "memberProductIds")
 }
+
 struct UpdateMemberFollowReq{
     1:  optional list<i64> memberId=0 (api.raw = "memberId")
     2:  optional i64 followId=0 (api.raw = "followId")
 }
+
+struct MemberProductInfo  {
+	1: optional i64 id=0 (api.raw ="id")
+	2: optional string name="" (api.raw ="name")
+	3: optional double price=0 (api.raw ="price")
+	4: optional i64 status=0 (api.raw ="status")
+	5: optional string statusName="" (api.raw ="statusName")
+	6: optional string createdAt="" (api.raw ="createdAt")
+	7: optional string sn="" (api.raw ="sn")
+	8: optional i64 memberId=0 (api.raw ="memberId")
+	9: optional i64 orderId=0 (api.raw ="orderId")
+	10: optional i64 venueId=0 (api.raw ="venueId")
+	11: optional string venueName="" (api.raw ="venueName")
+	12: optional i64 productId=0 (api.raw ="productId")
+	13: optional list<MemberPropertyInfo> propertys=0 (api.raw ="propertys")
+}
+
+
+
+struct MemberPropertyInfo  {
+	1: optional i64 id=0 (api.raw ="id")
+	2: optional string sn="" (api.raw ="sn")
+	3: optional i64 memberId=0 (api.raw ="memberId")
+	4: optional i64 memberProductId=0 (api.raw ="memberProductId")
+	5: optional i64 propertyId=0 (api.raw ="propertyId")
+	6: optional string name="" (api.raw ="name")
+	7: optional double price=0 (api.raw ="price")
+	8: optional i64 duration=0 (api.raw ="duration")
+	9: optional i64 length=0 (api.raw ="length")
+	10: optional i64 count=0 (api.raw ="count")
+	11: optional i64 countSurplus=0 (api.raw ="countSurplus")
+	12: optional string type="" (api.raw ="type")
+	13: optional i64 status=0 (api.raw ="status")
+	14: optional string createdAt="" (api.raw ="createdAt")
+	15: optional string validityAt="" (api.raw ="validityAt")
+	16: optional string cancelAt="" (api.raw ="cancelAt")
+	17: optional list<PropertyVenue> venue={} (api.raw ="venue")
+	18: optional list<i64> venueId=0 (api.raw ="venueId")
+	19: optional string venues="" (api.raw ="venues")
+}
+struct PropertyVenue  {
+	1: optional i64 venueId=0 (api.raw ="venueId")
+	2: optional string venueName="" (api.raw ="venueName")
+}
+
+struct MemberEntryInfo  {
+	1: optional i64 id=0 (api.raw ="id")
+	2: optional string createdAt="" (api.raw ="createdAt")
+	3: optional i64 memberPropertyId=0 (api.raw ="memberPropertyId")
+	4: optional string entryAt="" (api.raw ="entryAt")
+	5: optional string leavingAt="" (api.raw ="leavingAt")
+	6: optional i64 memberId=0 (api.raw ="memberId")
+	7: optional i64 memberProductId=0 (api.raw ="memberProductId")
+	8: optional i64 userId=0 (api.raw ="userId")
+	9: optional i64 venueId=0 (api.raw ="venueId")
+}
+
+
+
+
+
+
+
+
+
+
 service MemberService {
 
   // 新增用户

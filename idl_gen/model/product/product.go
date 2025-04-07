@@ -3322,25 +3322,25 @@ func (p *CreateOrUpdateReq) String() string {
 }
 
 type ListReq struct {
-	Page        int64    `thrift:"page,1" form:"page" json:"page" query:"page"`
-	PageSize    int64    `thrift:"pageSize,2" form:"pageSize" json:"pageSize" query:"pageSize"`
-	Name        string   `thrift:"name,3,optional" form:"name" json:"name" query:"name"`
-	Status      []int64  `thrift:"status,4,optional" form:"status" json:"status" query:"status"`
-	VenueId     []int64  `thrift:"venueId,5,optional" form:"venueId" json:"venueId" query:"venueId"`
-	CreatedTime []string `thrift:"createdTime,6,optional" form:"createdTime" json:"createdTime" query:"createdTime"`
-	Type        string   `thrift:"type,7,optional" form:"type" json:"type" query:"type"`
+	Page      int64    `thrift:"page,1" form:"page" json:"page" query:"page"`
+	PageSize  int64    `thrift:"pageSize,2" form:"pageSize" json:"pageSize" query:"pageSize"`
+	Name      string   `thrift:"name,3,optional" form:"name" json:"name" query:"name"`
+	Status    []int64  `thrift:"status,4,optional" form:"status" json:"status" query:"status"`
+	VenueId   []int64  `thrift:"venueId,5,optional" form:"venueId" json:"venueId" query:"venueId"`
+	CreatedAt []string `thrift:"createdAt,6,optional" form:"createdAt" json:"createdAt" query:"createdAt"`
+	Type      string   `thrift:"type,7,optional" form:"type" json:"type" query:"type"`
 }
 
 func NewListReq() *ListReq {
 	return &ListReq{
 
-		Page:        0,
-		PageSize:    10,
-		Name:        "",
-		Status:      []int64{},
-		VenueId:     []int64{},
-		CreatedTime: []string{},
-		Type:        "",
+		Page:      0,
+		PageSize:  10,
+		Name:      "",
+		Status:    []int64{},
+		VenueId:   []int64{},
+		CreatedAt: []string{},
+		Type:      "",
 	}
 }
 
@@ -3350,7 +3350,7 @@ func (p *ListReq) InitDefault() {
 	p.Name = ""
 	p.Status = []int64{}
 	p.VenueId = []int64{}
-	p.CreatedTime = []string{}
+	p.CreatedAt = []string{}
 	p.Type = ""
 }
 
@@ -3389,13 +3389,13 @@ func (p *ListReq) GetVenueId() (v []int64) {
 	return p.VenueId
 }
 
-var ListReq_CreatedTime_DEFAULT []string = []string{}
+var ListReq_CreatedAt_DEFAULT []string = []string{}
 
-func (p *ListReq) GetCreatedTime() (v []string) {
-	if !p.IsSetCreatedTime() {
-		return ListReq_CreatedTime_DEFAULT
+func (p *ListReq) GetCreatedAt() (v []string) {
+	if !p.IsSetCreatedAt() {
+		return ListReq_CreatedAt_DEFAULT
 	}
-	return p.CreatedTime
+	return p.CreatedAt
 }
 
 var ListReq_Type_DEFAULT string = ""
@@ -3413,7 +3413,7 @@ var fieldIDToName_ListReq = map[int16]string{
 	3: "name",
 	4: "status",
 	5: "venueId",
-	6: "createdTime",
+	6: "createdAt",
 	7: "type",
 }
 
@@ -3429,8 +3429,8 @@ func (p *ListReq) IsSetVenueId() bool {
 	return p.VenueId != nil
 }
 
-func (p *ListReq) IsSetCreatedTime() bool {
-	return p.CreatedTime != nil
+func (p *ListReq) IsSetCreatedAt() bool {
+	return p.CreatedAt != nil
 }
 
 func (p *ListReq) IsSetType() bool {
@@ -3640,7 +3640,7 @@ func (p *ListReq) ReadField6(iprot thrift.TProtocol) error {
 	if err := iprot.ReadListEnd(); err != nil {
 		return err
 	}
-	p.CreatedTime = _field
+	p.CreatedAt = _field
 	return nil
 }
 func (p *ListReq) ReadField7(iprot thrift.TProtocol) error {
@@ -3815,14 +3815,14 @@ WriteFieldEndError:
 }
 
 func (p *ListReq) writeField6(oprot thrift.TProtocol) (err error) {
-	if p.IsSetCreatedTime() {
-		if err = oprot.WriteFieldBegin("createdTime", thrift.LIST, 6); err != nil {
+	if p.IsSetCreatedAt() {
+		if err = oprot.WriteFieldBegin("createdAt", thrift.LIST, 6); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteListBegin(thrift.STRING, len(p.CreatedTime)); err != nil {
+		if err := oprot.WriteListBegin(thrift.STRING, len(p.CreatedAt)); err != nil {
 			return err
 		}
-		for _, v := range p.CreatedTime {
+		for _, v := range p.CreatedAt {
 			if err := oprot.WriteString(v); err != nil {
 				return err
 			}
@@ -3869,24 +3869,24 @@ func (p *ListReq) String() string {
 }
 
 type PropertyListReq struct {
-	Page        int64    `thrift:"page,1" form:"page" json:"page" query:"page"`
-	PageSize    int64    `thrift:"pageSize,2" form:"pageSize" json:"pageSize" query:"pageSize"`
-	Name        *string  `thrift:"name,3,optional" form:"name" json:"name" query:"name"`
-	Status      []int64  `thrift:"status,4,optional" form:"status" json:"status" query:"status"`
-	VenueId     []int64  `thrift:"venueId,5,optional" form:"venueId" json:"venueId" query:"venueId"`
-	CreatedTime []string `thrift:"createdTime,6,optional" form:"createdTime" json:"createdTime" query:"createdTime"`
-	Type        string   `thrift:"type,7,optional" form:"type" json:"type" query:"type"`
+	Page      int64    `thrift:"page,1" form:"page" json:"page" query:"page"`
+	PageSize  int64    `thrift:"pageSize,2" form:"pageSize" json:"pageSize" query:"pageSize"`
+	Name      *string  `thrift:"name,3,optional" form:"name" json:"name" query:"name"`
+	Status    []int64  `thrift:"status,4,optional" form:"status" json:"status" query:"status"`
+	VenueId   []int64  `thrift:"venueId,5,optional" form:"venueId" json:"venueId" query:"venueId"`
+	CreatedAt []string `thrift:"createdAt,6,optional" form:"createdAt" json:"createdAt" query:"createdAt"`
+	Type      string   `thrift:"type,7,optional" form:"type" json:"type" query:"type"`
 }
 
 func NewPropertyListReq() *PropertyListReq {
 	return &PropertyListReq{
 
-		Page:        0,
-		PageSize:    10,
-		Status:      []int64{},
-		VenueId:     []int64{},
-		CreatedTime: []string{},
-		Type:        "",
+		Page:      0,
+		PageSize:  10,
+		Status:    []int64{},
+		VenueId:   []int64{},
+		CreatedAt: []string{},
+		Type:      "",
 	}
 }
 
@@ -3895,7 +3895,7 @@ func (p *PropertyListReq) InitDefault() {
 	p.PageSize = 10
 	p.Status = []int64{}
 	p.VenueId = []int64{}
-	p.CreatedTime = []string{}
+	p.CreatedAt = []string{}
 	p.Type = ""
 }
 
@@ -3934,13 +3934,13 @@ func (p *PropertyListReq) GetVenueId() (v []int64) {
 	return p.VenueId
 }
 
-var PropertyListReq_CreatedTime_DEFAULT []string = []string{}
+var PropertyListReq_CreatedAt_DEFAULT []string = []string{}
 
-func (p *PropertyListReq) GetCreatedTime() (v []string) {
-	if !p.IsSetCreatedTime() {
-		return PropertyListReq_CreatedTime_DEFAULT
+func (p *PropertyListReq) GetCreatedAt() (v []string) {
+	if !p.IsSetCreatedAt() {
+		return PropertyListReq_CreatedAt_DEFAULT
 	}
-	return p.CreatedTime
+	return p.CreatedAt
 }
 
 var PropertyListReq_Type_DEFAULT string = ""
@@ -3958,7 +3958,7 @@ var fieldIDToName_PropertyListReq = map[int16]string{
 	3: "name",
 	4: "status",
 	5: "venueId",
-	6: "createdTime",
+	6: "createdAt",
 	7: "type",
 }
 
@@ -3974,8 +3974,8 @@ func (p *PropertyListReq) IsSetVenueId() bool {
 	return p.VenueId != nil
 }
 
-func (p *PropertyListReq) IsSetCreatedTime() bool {
-	return p.CreatedTime != nil
+func (p *PropertyListReq) IsSetCreatedAt() bool {
+	return p.CreatedAt != nil
 }
 
 func (p *PropertyListReq) IsSetType() bool {
@@ -4185,7 +4185,7 @@ func (p *PropertyListReq) ReadField6(iprot thrift.TProtocol) error {
 	if err := iprot.ReadListEnd(); err != nil {
 		return err
 	}
-	p.CreatedTime = _field
+	p.CreatedAt = _field
 	return nil
 }
 func (p *PropertyListReq) ReadField7(iprot thrift.TProtocol) error {
@@ -4360,14 +4360,14 @@ WriteFieldEndError:
 }
 
 func (p *PropertyListReq) writeField6(oprot thrift.TProtocol) (err error) {
-	if p.IsSetCreatedTime() {
-		if err = oprot.WriteFieldBegin("createdTime", thrift.LIST, 6); err != nil {
+	if p.IsSetCreatedAt() {
+		if err = oprot.WriteFieldBegin("createdAt", thrift.LIST, 6); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteListBegin(thrift.STRING, len(p.CreatedTime)); err != nil {
+		if err := oprot.WriteListBegin(thrift.STRING, len(p.CreatedAt)); err != nil {
 			return err
 		}
-		for _, v := range p.CreatedTime {
+		for _, v := range p.CreatedAt {
 			if err := oprot.WriteString(v); err != nil {
 				return err
 			}

@@ -33,11 +33,11 @@ func (MemberDetails) Fields() []ent.Field {
 
 		field.Int64("entry_sum").Default(0).Comment("进馆总次数").Optional(),
 
-		field.Time("entry_last_time").Optional().Comment("最后一次进馆时间"),
+		field.Time("entry_last_at").Optional().Comment("最后一次进馆时间"),
 
-		field.Time("entry_deadline_time").Optional().Comment("进馆最后期限时间"),
+		field.Time("entry_deadline_at").Optional().Comment("进馆最后期限时间"),
 
-		field.Time("class_last_time").Optional().Comment("最后一次上课时间"),
+		field.Time("class_last_at").Optional().Comment("最后一次上课时间"),
 
 		field.Int64("relation_uid").Default(0).Comment("关联员工").Optional(),
 		field.String("relation_uname").Comment("关联员工").Optional(),
