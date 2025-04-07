@@ -22,6 +22,10 @@ type Schedule struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// last update time
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// last delete  1:已删除
+	Delete int64 `json:"delete,omitempty"`
+	// created
+	CreatedID int64 `json:"created_id,omitempty"`
 	// 状态[0:禁用;1:正常]
 	Status int64 `json:"status,omitempty"`
 	// 类型
@@ -43,9 +47,9 @@ type Schedule struct {
 	// 日期
 	Date string `json:"date,omitempty"`
 	// 开始时间
-	StartTime time.Time `json:"start_time,omitempty"`
+	StartAt time.Time `json:"start_at,omitempty"`
 	// 开始时间
-	EndTime time.Time `json:"end_time,omitempty"`
+	EndAt time.Time `json:"end_at,omitempty"`
 	// 课程价格
 	Price float64 `json:"price,omitempty"`
 	// 备注
@@ -96,11 +100,11 @@ func (*Schedule) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case schedule.FieldPrice:
 			values[i] = new(sql.NullFloat64)
-		case schedule.FieldID, schedule.FieldStatus, schedule.FieldVenueID, schedule.FieldPropertyID, schedule.FieldLength, schedule.FieldPlaceID, schedule.FieldNum, schedule.FieldNumSurplus:
+		case schedule.FieldID, schedule.FieldDelete, schedule.FieldCreatedID, schedule.FieldStatus, schedule.FieldVenueID, schedule.FieldPropertyID, schedule.FieldLength, schedule.FieldPlaceID, schedule.FieldNum, schedule.FieldNumSurplus:
 			values[i] = new(sql.NullInt64)
 		case schedule.FieldType, schedule.FieldName, schedule.FieldDate, schedule.FieldRemark, schedule.FieldVenueName, schedule.FieldPlaceName:
 			values[i] = new(sql.NullString)
-		case schedule.FieldCreatedAt, schedule.FieldUpdatedAt, schedule.FieldStartTime, schedule.FieldEndTime:
+		case schedule.FieldCreatedAt, schedule.FieldUpdatedAt, schedule.FieldStartAt, schedule.FieldEndAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -134,6 +138,18 @@ func (s *Schedule) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				s.UpdatedAt = value.Time
+			}
+		case schedule.FieldDelete:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field delete", values[i])
+			} else if value.Valid {
+				s.Delete = value.Int64
+			}
+		case schedule.FieldCreatedID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field created_id", values[i])
+			} else if value.Valid {
+				s.CreatedID = value.Int64
 			}
 		case schedule.FieldStatus:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -195,17 +211,17 @@ func (s *Schedule) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				s.Date = value.String
 			}
-		case schedule.FieldStartTime:
+		case schedule.FieldStartAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field start_time", values[i])
+				return fmt.Errorf("unexpected type %T for field start_at", values[i])
 			} else if value.Valid {
-				s.StartTime = value.Time
+				s.StartAt = value.Time
 			}
-		case schedule.FieldEndTime:
+		case schedule.FieldEndAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field end_time", values[i])
+				return fmt.Errorf("unexpected type %T for field end_at", values[i])
 			} else if value.Valid {
-				s.EndTime = value.Time
+				s.EndAt = value.Time
 			}
 		case schedule.FieldPrice:
 			if value, ok := values[i].(*sql.NullFloat64); !ok {
@@ -283,6 +299,12 @@ func (s *Schedule) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(s.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
+	builder.WriteString("delete=")
+	builder.WriteString(fmt.Sprintf("%v", s.Delete))
+	builder.WriteString(", ")
+	builder.WriteString("created_id=")
+	builder.WriteString(fmt.Sprintf("%v", s.CreatedID))
+	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", s.Status))
 	builder.WriteString(", ")
@@ -313,11 +335,11 @@ func (s *Schedule) String() string {
 	builder.WriteString("date=")
 	builder.WriteString(s.Date)
 	builder.WriteString(", ")
-	builder.WriteString("start_time=")
-	builder.WriteString(s.StartTime.Format(time.ANSIC))
+	builder.WriteString("start_at=")
+	builder.WriteString(s.StartAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("end_time=")
-	builder.WriteString(s.EndTime.Format(time.ANSIC))
+	builder.WriteString("end_at=")
+	builder.WriteString(s.EndAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("price=")
 	builder.WriteString(fmt.Sprintf("%v", s.Price))

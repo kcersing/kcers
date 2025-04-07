@@ -65,6 +65,16 @@ func UpdatedAt(v time.Time) predicate.MemberDetails {
 	return predicate.MemberDetails(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
+// Delete applies equality check predicate on the "delete" field. It's identical to DeleteEQ.
+func Delete(v int64) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldEQ(FieldDelete, v))
+}
+
+// CreatedID applies equality check predicate on the "created_id" field. It's identical to CreatedIDEQ.
+func CreatedID(v int64) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldEQ(FieldCreatedID, v))
+}
+
 // MemberID applies equality check predicate on the "member_id" field. It's identical to MemberIDEQ.
 func MemberID(v int64) predicate.MemberDetails {
 	return predicate.MemberDetails(sql.FieldEQ(FieldMemberID, v))
@@ -120,19 +130,19 @@ func EntrySum(v int64) predicate.MemberDetails {
 	return predicate.MemberDetails(sql.FieldEQ(FieldEntrySum, v))
 }
 
-// EntryLastTime applies equality check predicate on the "entry_last_time" field. It's identical to EntryLastTimeEQ.
-func EntryLastTime(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldEQ(FieldEntryLastTime, v))
+// EntryLastAt applies equality check predicate on the "entry_last_at" field. It's identical to EntryLastAtEQ.
+func EntryLastAt(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldEQ(FieldEntryLastAt, v))
 }
 
-// EntryDeadlineTime applies equality check predicate on the "entry_deadline_time" field. It's identical to EntryDeadlineTimeEQ.
-func EntryDeadlineTime(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldEQ(FieldEntryDeadlineTime, v))
+// EntryDeadlineAt applies equality check predicate on the "entry_deadline_at" field. It's identical to EntryDeadlineAtEQ.
+func EntryDeadlineAt(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldEQ(FieldEntryDeadlineAt, v))
 }
 
-// ClassLastTime applies equality check predicate on the "class_last_time" field. It's identical to ClassLastTimeEQ.
-func ClassLastTime(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldEQ(FieldClassLastTime, v))
+// ClassLastAt applies equality check predicate on the "class_last_at" field. It's identical to ClassLastAtEQ.
+func ClassLastAt(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldEQ(FieldClassLastAt, v))
 }
 
 // RelationUID applies equality check predicate on the "relation_uid" field. It's identical to RelationUIDEQ.
@@ -205,6 +215,16 @@ func CreatedAtLTE(v time.Time) predicate.MemberDetails {
 	return predicate.MemberDetails(sql.FieldLTE(FieldCreatedAt, v))
 }
 
+// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
+func CreatedAtIsNil() predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldIsNull(FieldCreatedAt))
+}
+
+// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
+func CreatedAtNotNil() predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldNotNull(FieldCreatedAt))
+}
+
 // UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
 func UpdatedAtEQ(v time.Time) predicate.MemberDetails {
 	return predicate.MemberDetails(sql.FieldEQ(FieldUpdatedAt, v))
@@ -243,6 +263,116 @@ func UpdatedAtLT(v time.Time) predicate.MemberDetails {
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.MemberDetails {
 	return predicate.MemberDetails(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldIsNull(FieldUpdatedAt))
+}
+
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldNotNull(FieldUpdatedAt))
+}
+
+// DeleteEQ applies the EQ predicate on the "delete" field.
+func DeleteEQ(v int64) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldEQ(FieldDelete, v))
+}
+
+// DeleteNEQ applies the NEQ predicate on the "delete" field.
+func DeleteNEQ(v int64) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldNEQ(FieldDelete, v))
+}
+
+// DeleteIn applies the In predicate on the "delete" field.
+func DeleteIn(vs ...int64) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldIn(FieldDelete, vs...))
+}
+
+// DeleteNotIn applies the NotIn predicate on the "delete" field.
+func DeleteNotIn(vs ...int64) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldNotIn(FieldDelete, vs...))
+}
+
+// DeleteGT applies the GT predicate on the "delete" field.
+func DeleteGT(v int64) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldGT(FieldDelete, v))
+}
+
+// DeleteGTE applies the GTE predicate on the "delete" field.
+func DeleteGTE(v int64) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldGTE(FieldDelete, v))
+}
+
+// DeleteLT applies the LT predicate on the "delete" field.
+func DeleteLT(v int64) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldLT(FieldDelete, v))
+}
+
+// DeleteLTE applies the LTE predicate on the "delete" field.
+func DeleteLTE(v int64) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldLTE(FieldDelete, v))
+}
+
+// DeleteIsNil applies the IsNil predicate on the "delete" field.
+func DeleteIsNil() predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldIsNull(FieldDelete))
+}
+
+// DeleteNotNil applies the NotNil predicate on the "delete" field.
+func DeleteNotNil() predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldNotNull(FieldDelete))
+}
+
+// CreatedIDEQ applies the EQ predicate on the "created_id" field.
+func CreatedIDEQ(v int64) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldEQ(FieldCreatedID, v))
+}
+
+// CreatedIDNEQ applies the NEQ predicate on the "created_id" field.
+func CreatedIDNEQ(v int64) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldNEQ(FieldCreatedID, v))
+}
+
+// CreatedIDIn applies the In predicate on the "created_id" field.
+func CreatedIDIn(vs ...int64) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldIn(FieldCreatedID, vs...))
+}
+
+// CreatedIDNotIn applies the NotIn predicate on the "created_id" field.
+func CreatedIDNotIn(vs ...int64) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldNotIn(FieldCreatedID, vs...))
+}
+
+// CreatedIDGT applies the GT predicate on the "created_id" field.
+func CreatedIDGT(v int64) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldGT(FieldCreatedID, v))
+}
+
+// CreatedIDGTE applies the GTE predicate on the "created_id" field.
+func CreatedIDGTE(v int64) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldGTE(FieldCreatedID, v))
+}
+
+// CreatedIDLT applies the LT predicate on the "created_id" field.
+func CreatedIDLT(v int64) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldLT(FieldCreatedID, v))
+}
+
+// CreatedIDLTE applies the LTE predicate on the "created_id" field.
+func CreatedIDLTE(v int64) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldLTE(FieldCreatedID, v))
+}
+
+// CreatedIDIsNil applies the IsNil predicate on the "created_id" field.
+func CreatedIDIsNil() predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldIsNull(FieldCreatedID))
+}
+
+// CreatedIDNotNil applies the NotNil predicate on the "created_id" field.
+func CreatedIDNotNil() predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldNotNull(FieldCreatedID))
 }
 
 // MemberIDEQ applies the EQ predicate on the "member_id" field.
@@ -875,154 +1005,154 @@ func EntrySumNotNil() predicate.MemberDetails {
 	return predicate.MemberDetails(sql.FieldNotNull(FieldEntrySum))
 }
 
-// EntryLastTimeEQ applies the EQ predicate on the "entry_last_time" field.
-func EntryLastTimeEQ(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldEQ(FieldEntryLastTime, v))
+// EntryLastAtEQ applies the EQ predicate on the "entry_last_at" field.
+func EntryLastAtEQ(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldEQ(FieldEntryLastAt, v))
 }
 
-// EntryLastTimeNEQ applies the NEQ predicate on the "entry_last_time" field.
-func EntryLastTimeNEQ(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldNEQ(FieldEntryLastTime, v))
+// EntryLastAtNEQ applies the NEQ predicate on the "entry_last_at" field.
+func EntryLastAtNEQ(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldNEQ(FieldEntryLastAt, v))
 }
 
-// EntryLastTimeIn applies the In predicate on the "entry_last_time" field.
-func EntryLastTimeIn(vs ...time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldIn(FieldEntryLastTime, vs...))
+// EntryLastAtIn applies the In predicate on the "entry_last_at" field.
+func EntryLastAtIn(vs ...time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldIn(FieldEntryLastAt, vs...))
 }
 
-// EntryLastTimeNotIn applies the NotIn predicate on the "entry_last_time" field.
-func EntryLastTimeNotIn(vs ...time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldNotIn(FieldEntryLastTime, vs...))
+// EntryLastAtNotIn applies the NotIn predicate on the "entry_last_at" field.
+func EntryLastAtNotIn(vs ...time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldNotIn(FieldEntryLastAt, vs...))
 }
 
-// EntryLastTimeGT applies the GT predicate on the "entry_last_time" field.
-func EntryLastTimeGT(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldGT(FieldEntryLastTime, v))
+// EntryLastAtGT applies the GT predicate on the "entry_last_at" field.
+func EntryLastAtGT(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldGT(FieldEntryLastAt, v))
 }
 
-// EntryLastTimeGTE applies the GTE predicate on the "entry_last_time" field.
-func EntryLastTimeGTE(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldGTE(FieldEntryLastTime, v))
+// EntryLastAtGTE applies the GTE predicate on the "entry_last_at" field.
+func EntryLastAtGTE(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldGTE(FieldEntryLastAt, v))
 }
 
-// EntryLastTimeLT applies the LT predicate on the "entry_last_time" field.
-func EntryLastTimeLT(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldLT(FieldEntryLastTime, v))
+// EntryLastAtLT applies the LT predicate on the "entry_last_at" field.
+func EntryLastAtLT(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldLT(FieldEntryLastAt, v))
 }
 
-// EntryLastTimeLTE applies the LTE predicate on the "entry_last_time" field.
-func EntryLastTimeLTE(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldLTE(FieldEntryLastTime, v))
+// EntryLastAtLTE applies the LTE predicate on the "entry_last_at" field.
+func EntryLastAtLTE(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldLTE(FieldEntryLastAt, v))
 }
 
-// EntryLastTimeIsNil applies the IsNil predicate on the "entry_last_time" field.
-func EntryLastTimeIsNil() predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldIsNull(FieldEntryLastTime))
+// EntryLastAtIsNil applies the IsNil predicate on the "entry_last_at" field.
+func EntryLastAtIsNil() predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldIsNull(FieldEntryLastAt))
 }
 
-// EntryLastTimeNotNil applies the NotNil predicate on the "entry_last_time" field.
-func EntryLastTimeNotNil() predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldNotNull(FieldEntryLastTime))
+// EntryLastAtNotNil applies the NotNil predicate on the "entry_last_at" field.
+func EntryLastAtNotNil() predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldNotNull(FieldEntryLastAt))
 }
 
-// EntryDeadlineTimeEQ applies the EQ predicate on the "entry_deadline_time" field.
-func EntryDeadlineTimeEQ(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldEQ(FieldEntryDeadlineTime, v))
+// EntryDeadlineAtEQ applies the EQ predicate on the "entry_deadline_at" field.
+func EntryDeadlineAtEQ(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldEQ(FieldEntryDeadlineAt, v))
 }
 
-// EntryDeadlineTimeNEQ applies the NEQ predicate on the "entry_deadline_time" field.
-func EntryDeadlineTimeNEQ(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldNEQ(FieldEntryDeadlineTime, v))
+// EntryDeadlineAtNEQ applies the NEQ predicate on the "entry_deadline_at" field.
+func EntryDeadlineAtNEQ(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldNEQ(FieldEntryDeadlineAt, v))
 }
 
-// EntryDeadlineTimeIn applies the In predicate on the "entry_deadline_time" field.
-func EntryDeadlineTimeIn(vs ...time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldIn(FieldEntryDeadlineTime, vs...))
+// EntryDeadlineAtIn applies the In predicate on the "entry_deadline_at" field.
+func EntryDeadlineAtIn(vs ...time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldIn(FieldEntryDeadlineAt, vs...))
 }
 
-// EntryDeadlineTimeNotIn applies the NotIn predicate on the "entry_deadline_time" field.
-func EntryDeadlineTimeNotIn(vs ...time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldNotIn(FieldEntryDeadlineTime, vs...))
+// EntryDeadlineAtNotIn applies the NotIn predicate on the "entry_deadline_at" field.
+func EntryDeadlineAtNotIn(vs ...time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldNotIn(FieldEntryDeadlineAt, vs...))
 }
 
-// EntryDeadlineTimeGT applies the GT predicate on the "entry_deadline_time" field.
-func EntryDeadlineTimeGT(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldGT(FieldEntryDeadlineTime, v))
+// EntryDeadlineAtGT applies the GT predicate on the "entry_deadline_at" field.
+func EntryDeadlineAtGT(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldGT(FieldEntryDeadlineAt, v))
 }
 
-// EntryDeadlineTimeGTE applies the GTE predicate on the "entry_deadline_time" field.
-func EntryDeadlineTimeGTE(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldGTE(FieldEntryDeadlineTime, v))
+// EntryDeadlineAtGTE applies the GTE predicate on the "entry_deadline_at" field.
+func EntryDeadlineAtGTE(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldGTE(FieldEntryDeadlineAt, v))
 }
 
-// EntryDeadlineTimeLT applies the LT predicate on the "entry_deadline_time" field.
-func EntryDeadlineTimeLT(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldLT(FieldEntryDeadlineTime, v))
+// EntryDeadlineAtLT applies the LT predicate on the "entry_deadline_at" field.
+func EntryDeadlineAtLT(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldLT(FieldEntryDeadlineAt, v))
 }
 
-// EntryDeadlineTimeLTE applies the LTE predicate on the "entry_deadline_time" field.
-func EntryDeadlineTimeLTE(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldLTE(FieldEntryDeadlineTime, v))
+// EntryDeadlineAtLTE applies the LTE predicate on the "entry_deadline_at" field.
+func EntryDeadlineAtLTE(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldLTE(FieldEntryDeadlineAt, v))
 }
 
-// EntryDeadlineTimeIsNil applies the IsNil predicate on the "entry_deadline_time" field.
-func EntryDeadlineTimeIsNil() predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldIsNull(FieldEntryDeadlineTime))
+// EntryDeadlineAtIsNil applies the IsNil predicate on the "entry_deadline_at" field.
+func EntryDeadlineAtIsNil() predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldIsNull(FieldEntryDeadlineAt))
 }
 
-// EntryDeadlineTimeNotNil applies the NotNil predicate on the "entry_deadline_time" field.
-func EntryDeadlineTimeNotNil() predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldNotNull(FieldEntryDeadlineTime))
+// EntryDeadlineAtNotNil applies the NotNil predicate on the "entry_deadline_at" field.
+func EntryDeadlineAtNotNil() predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldNotNull(FieldEntryDeadlineAt))
 }
 
-// ClassLastTimeEQ applies the EQ predicate on the "class_last_time" field.
-func ClassLastTimeEQ(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldEQ(FieldClassLastTime, v))
+// ClassLastAtEQ applies the EQ predicate on the "class_last_at" field.
+func ClassLastAtEQ(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldEQ(FieldClassLastAt, v))
 }
 
-// ClassLastTimeNEQ applies the NEQ predicate on the "class_last_time" field.
-func ClassLastTimeNEQ(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldNEQ(FieldClassLastTime, v))
+// ClassLastAtNEQ applies the NEQ predicate on the "class_last_at" field.
+func ClassLastAtNEQ(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldNEQ(FieldClassLastAt, v))
 }
 
-// ClassLastTimeIn applies the In predicate on the "class_last_time" field.
-func ClassLastTimeIn(vs ...time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldIn(FieldClassLastTime, vs...))
+// ClassLastAtIn applies the In predicate on the "class_last_at" field.
+func ClassLastAtIn(vs ...time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldIn(FieldClassLastAt, vs...))
 }
 
-// ClassLastTimeNotIn applies the NotIn predicate on the "class_last_time" field.
-func ClassLastTimeNotIn(vs ...time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldNotIn(FieldClassLastTime, vs...))
+// ClassLastAtNotIn applies the NotIn predicate on the "class_last_at" field.
+func ClassLastAtNotIn(vs ...time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldNotIn(FieldClassLastAt, vs...))
 }
 
-// ClassLastTimeGT applies the GT predicate on the "class_last_time" field.
-func ClassLastTimeGT(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldGT(FieldClassLastTime, v))
+// ClassLastAtGT applies the GT predicate on the "class_last_at" field.
+func ClassLastAtGT(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldGT(FieldClassLastAt, v))
 }
 
-// ClassLastTimeGTE applies the GTE predicate on the "class_last_time" field.
-func ClassLastTimeGTE(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldGTE(FieldClassLastTime, v))
+// ClassLastAtGTE applies the GTE predicate on the "class_last_at" field.
+func ClassLastAtGTE(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldGTE(FieldClassLastAt, v))
 }
 
-// ClassLastTimeLT applies the LT predicate on the "class_last_time" field.
-func ClassLastTimeLT(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldLT(FieldClassLastTime, v))
+// ClassLastAtLT applies the LT predicate on the "class_last_at" field.
+func ClassLastAtLT(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldLT(FieldClassLastAt, v))
 }
 
-// ClassLastTimeLTE applies the LTE predicate on the "class_last_time" field.
-func ClassLastTimeLTE(v time.Time) predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldLTE(FieldClassLastTime, v))
+// ClassLastAtLTE applies the LTE predicate on the "class_last_at" field.
+func ClassLastAtLTE(v time.Time) predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldLTE(FieldClassLastAt, v))
 }
 
-// ClassLastTimeIsNil applies the IsNil predicate on the "class_last_time" field.
-func ClassLastTimeIsNil() predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldIsNull(FieldClassLastTime))
+// ClassLastAtIsNil applies the IsNil predicate on the "class_last_at" field.
+func ClassLastAtIsNil() predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldIsNull(FieldClassLastAt))
 }
 
-// ClassLastTimeNotNil applies the NotNil predicate on the "class_last_time" field.
-func ClassLastTimeNotNil() predicate.MemberDetails {
-	return predicate.MemberDetails(sql.FieldNotNull(FieldClassLastTime))
+// ClassLastAtNotNil applies the NotNil predicate on the "class_last_at" field.
+func ClassLastAtNotNil() predicate.MemberDetails {
+	return predicate.MemberDetails(sql.FieldNotNull(FieldClassLastAt))
 }
 
 // RelationUIDEQ applies the EQ predicate on the "relation_uid" field.

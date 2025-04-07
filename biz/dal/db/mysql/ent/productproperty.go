@@ -22,6 +22,10 @@ type ProductProperty struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// last update time
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// last delete  1:已删除
+	Delete int64 `json:"delete,omitempty"`
+	// created
+	CreatedID int64 `json:"created_id,omitempty"`
 	// 状态[0:禁用;1:正常]
 	Status int64 `json:"status,omitempty"`
 	// 类型
@@ -82,7 +86,7 @@ func (*ProductProperty) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case productproperty.FieldPrice:
 			values[i] = new(sql.NullFloat64)
-		case productproperty.FieldID, productproperty.FieldStatus, productproperty.FieldDuration, productproperty.FieldLength, productproperty.FieldCount, productproperty.FieldCreateID:
+		case productproperty.FieldID, productproperty.FieldDelete, productproperty.FieldCreatedID, productproperty.FieldStatus, productproperty.FieldDuration, productproperty.FieldLength, productproperty.FieldCount, productproperty.FieldCreateID:
 			values[i] = new(sql.NullInt64)
 		case productproperty.FieldType, productproperty.FieldName, productproperty.FieldData:
 			values[i] = new(sql.NullString)
@@ -120,6 +124,18 @@ func (pp *ProductProperty) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				pp.UpdatedAt = value.Time
+			}
+		case productproperty.FieldDelete:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field delete", values[i])
+			} else if value.Valid {
+				pp.Delete = value.Int64
+			}
+		case productproperty.FieldCreatedID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field created_id", values[i])
+			} else if value.Valid {
+				pp.CreatedID = value.Int64
 			}
 		case productproperty.FieldStatus:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -226,6 +242,12 @@ func (pp *ProductProperty) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(pp.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("delete=")
+	builder.WriteString(fmt.Sprintf("%v", pp.Delete))
+	builder.WriteString(", ")
+	builder.WriteString("created_id=")
+	builder.WriteString(fmt.Sprintf("%v", pp.CreatedID))
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", pp.Status))

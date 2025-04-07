@@ -50,6 +50,34 @@ func (mc *MenuCreate) SetNillableUpdatedAt(t *time.Time) *MenuCreate {
 	return mc
 }
 
+// SetDelete sets the "delete" field.
+func (mc *MenuCreate) SetDelete(i int64) *MenuCreate {
+	mc.mutation.SetDelete(i)
+	return mc
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (mc *MenuCreate) SetNillableDelete(i *int64) *MenuCreate {
+	if i != nil {
+		mc.SetDelete(*i)
+	}
+	return mc
+}
+
+// SetCreatedID sets the "created_id" field.
+func (mc *MenuCreate) SetCreatedID(i int64) *MenuCreate {
+	mc.mutation.SetCreatedID(i)
+	return mc
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (mc *MenuCreate) SetNillableCreatedID(i *int64) *MenuCreate {
+	if i != nil {
+		mc.SetCreatedID(*i)
+	}
+	return mc
+}
+
 // SetParentID sets the "parent_id" field.
 func (mc *MenuCreate) SetParentID(i int64) *MenuCreate {
 	mc.mutation.SetParentID(i)
@@ -225,6 +253,14 @@ func (mc *MenuCreate) defaults() {
 		v := menu.DefaultUpdatedAt()
 		mc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := mc.mutation.Delete(); !ok {
+		v := menu.DefaultDelete
+		mc.mutation.SetDelete(v)
+	}
+	if _, ok := mc.mutation.CreatedID(); !ok {
+		v := menu.DefaultCreatedID
+		mc.mutation.SetCreatedID(v)
+	}
 	if _, ok := mc.mutation.Path(); !ok {
 		v := menu.DefaultPath
 		mc.mutation.SetPath(v)
@@ -245,12 +281,6 @@ func (mc *MenuCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (mc *MenuCreate) check() error {
-	if _, ok := mc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Menu.created_at"`)}
-	}
-	if _, ok := mc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Menu.updated_at"`)}
-	}
 	if _, ok := mc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Menu.name"`)}
 	}
@@ -296,6 +326,14 @@ func (mc *MenuCreate) createSpec() (*Menu, *sqlgraph.CreateSpec) {
 	if value, ok := mc.mutation.UpdatedAt(); ok {
 		_spec.SetField(menu.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := mc.mutation.Delete(); ok {
+		_spec.SetField(menu.FieldDelete, field.TypeInt64, value)
+		_node.Delete = value
+	}
+	if value, ok := mc.mutation.CreatedID(); ok {
+		_spec.SetField(menu.FieldCreatedID, field.TypeInt64, value)
+		_node.CreatedID = value
 	}
 	if value, ok := mc.mutation.Path(); ok {
 		_spec.SetField(menu.FieldPath, field.TypeString, value)

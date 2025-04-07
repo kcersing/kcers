@@ -36,6 +36,66 @@ func (fu *FaceUpdate) SetUpdatedAt(t time.Time) *FaceUpdate {
 	return fu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (fu *FaceUpdate) ClearUpdatedAt() *FaceUpdate {
+	fu.mutation.ClearUpdatedAt()
+	return fu
+}
+
+// SetDelete sets the "delete" field.
+func (fu *FaceUpdate) SetDelete(i int64) *FaceUpdate {
+	fu.mutation.ResetDelete()
+	fu.mutation.SetDelete(i)
+	return fu
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (fu *FaceUpdate) SetNillableDelete(i *int64) *FaceUpdate {
+	if i != nil {
+		fu.SetDelete(*i)
+	}
+	return fu
+}
+
+// AddDelete adds i to the "delete" field.
+func (fu *FaceUpdate) AddDelete(i int64) *FaceUpdate {
+	fu.mutation.AddDelete(i)
+	return fu
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (fu *FaceUpdate) ClearDelete() *FaceUpdate {
+	fu.mutation.ClearDelete()
+	return fu
+}
+
+// SetCreatedID sets the "created_id" field.
+func (fu *FaceUpdate) SetCreatedID(i int64) *FaceUpdate {
+	fu.mutation.ResetCreatedID()
+	fu.mutation.SetCreatedID(i)
+	return fu
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (fu *FaceUpdate) SetNillableCreatedID(i *int64) *FaceUpdate {
+	if i != nil {
+		fu.SetCreatedID(*i)
+	}
+	return fu
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (fu *FaceUpdate) AddCreatedID(i int64) *FaceUpdate {
+	fu.mutation.AddCreatedID(i)
+	return fu
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (fu *FaceUpdate) ClearCreatedID() *FaceUpdate {
+	fu.mutation.ClearCreatedID()
+	return fu
+}
+
 // SetMemberID sets the "member_id" field.
 func (fu *FaceUpdate) SetMemberID(i int64) *FaceUpdate {
 	fu.mutation.SetMemberID(i)
@@ -261,7 +321,7 @@ func (fu *FaceUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (fu *FaceUpdate) defaults() {
-	if _, ok := fu.mutation.UpdatedAt(); !ok {
+	if _, ok := fu.mutation.UpdatedAt(); !ok && !fu.mutation.UpdatedAtCleared() {
 		v := face.UpdateDefaultUpdatedAt()
 		fu.mutation.SetUpdatedAt(v)
 	}
@@ -276,8 +336,32 @@ func (fu *FaceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if fu.mutation.CreatedAtCleared() {
+		_spec.ClearField(face.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := fu.mutation.UpdatedAt(); ok {
 		_spec.SetField(face.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if fu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(face.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := fu.mutation.Delete(); ok {
+		_spec.SetField(face.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := fu.mutation.AddedDelete(); ok {
+		_spec.AddField(face.FieldDelete, field.TypeInt64, value)
+	}
+	if fu.mutation.DeleteCleared() {
+		_spec.ClearField(face.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := fu.mutation.CreatedID(); ok {
+		_spec.SetField(face.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := fu.mutation.AddedCreatedID(); ok {
+		_spec.AddField(face.FieldCreatedID, field.TypeInt64, value)
+	}
+	if fu.mutation.CreatedIDCleared() {
+		_spec.ClearField(face.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := fu.mutation.IdentityCard(); ok {
 		_spec.SetField(face.FieldIdentityCard, field.TypeString, value)
@@ -309,8 +393,8 @@ func (fu *FaceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if fu.mutation.FaceEigenvalueCleared() {
 		_spec.ClearField(face.FieldFaceEigenvalue, field.TypeString)
 	}
-	if fu.mutation.FacePicUpdatedTimeCleared() {
-		_spec.ClearField(face.FieldFacePicUpdatedTime, field.TypeTime)
+	if fu.mutation.FacePicUpdatedAtCleared() {
+		_spec.ClearField(face.FieldFacePicUpdatedAt, field.TypeTime)
 	}
 	if fu.mutation.MemberFacesCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -393,6 +477,66 @@ type FaceUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (fuo *FaceUpdateOne) SetUpdatedAt(t time.Time) *FaceUpdateOne {
 	fuo.mutation.SetUpdatedAt(t)
+	return fuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (fuo *FaceUpdateOne) ClearUpdatedAt() *FaceUpdateOne {
+	fuo.mutation.ClearUpdatedAt()
+	return fuo
+}
+
+// SetDelete sets the "delete" field.
+func (fuo *FaceUpdateOne) SetDelete(i int64) *FaceUpdateOne {
+	fuo.mutation.ResetDelete()
+	fuo.mutation.SetDelete(i)
+	return fuo
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (fuo *FaceUpdateOne) SetNillableDelete(i *int64) *FaceUpdateOne {
+	if i != nil {
+		fuo.SetDelete(*i)
+	}
+	return fuo
+}
+
+// AddDelete adds i to the "delete" field.
+func (fuo *FaceUpdateOne) AddDelete(i int64) *FaceUpdateOne {
+	fuo.mutation.AddDelete(i)
+	return fuo
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (fuo *FaceUpdateOne) ClearDelete() *FaceUpdateOne {
+	fuo.mutation.ClearDelete()
+	return fuo
+}
+
+// SetCreatedID sets the "created_id" field.
+func (fuo *FaceUpdateOne) SetCreatedID(i int64) *FaceUpdateOne {
+	fuo.mutation.ResetCreatedID()
+	fuo.mutation.SetCreatedID(i)
+	return fuo
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (fuo *FaceUpdateOne) SetNillableCreatedID(i *int64) *FaceUpdateOne {
+	if i != nil {
+		fuo.SetCreatedID(*i)
+	}
+	return fuo
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (fuo *FaceUpdateOne) AddCreatedID(i int64) *FaceUpdateOne {
+	fuo.mutation.AddCreatedID(i)
+	return fuo
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (fuo *FaceUpdateOne) ClearCreatedID() *FaceUpdateOne {
+	fuo.mutation.ClearCreatedID()
 	return fuo
 }
 
@@ -634,7 +778,7 @@ func (fuo *FaceUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (fuo *FaceUpdateOne) defaults() {
-	if _, ok := fuo.mutation.UpdatedAt(); !ok {
+	if _, ok := fuo.mutation.UpdatedAt(); !ok && !fuo.mutation.UpdatedAtCleared() {
 		v := face.UpdateDefaultUpdatedAt()
 		fuo.mutation.SetUpdatedAt(v)
 	}
@@ -666,8 +810,32 @@ func (fuo *FaceUpdateOne) sqlSave(ctx context.Context) (_node *Face, err error) 
 			}
 		}
 	}
+	if fuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(face.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := fuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(face.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if fuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(face.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := fuo.mutation.Delete(); ok {
+		_spec.SetField(face.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := fuo.mutation.AddedDelete(); ok {
+		_spec.AddField(face.FieldDelete, field.TypeInt64, value)
+	}
+	if fuo.mutation.DeleteCleared() {
+		_spec.ClearField(face.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := fuo.mutation.CreatedID(); ok {
+		_spec.SetField(face.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := fuo.mutation.AddedCreatedID(); ok {
+		_spec.AddField(face.FieldCreatedID, field.TypeInt64, value)
+	}
+	if fuo.mutation.CreatedIDCleared() {
+		_spec.ClearField(face.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := fuo.mutation.IdentityCard(); ok {
 		_spec.SetField(face.FieldIdentityCard, field.TypeString, value)
@@ -699,8 +867,8 @@ func (fuo *FaceUpdateOne) sqlSave(ctx context.Context) (_node *Face, err error) 
 	if fuo.mutation.FaceEigenvalueCleared() {
 		_spec.ClearField(face.FieldFaceEigenvalue, field.TypeString)
 	}
-	if fuo.mutation.FacePicUpdatedTimeCleared() {
-		_spec.ClearField(face.FieldFacePicUpdatedTime, field.TypeTime)
+	if fuo.mutation.FacePicUpdatedAtCleared() {
+		_spec.ClearField(face.FieldFacePicUpdatedAt, field.TypeTime)
 	}
 	if fuo.mutation.MemberFacesCleared() {
 		edge := &sqlgraph.EdgeSpec{

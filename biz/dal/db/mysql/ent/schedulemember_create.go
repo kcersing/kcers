@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/schedule"
 	"kcers/biz/dal/db/mysql/ent/schedulemember"
@@ -45,6 +44,34 @@ func (smc *ScheduleMemberCreate) SetUpdatedAt(t time.Time) *ScheduleMemberCreate
 func (smc *ScheduleMemberCreate) SetNillableUpdatedAt(t *time.Time) *ScheduleMemberCreate {
 	if t != nil {
 		smc.SetUpdatedAt(*t)
+	}
+	return smc
+}
+
+// SetDelete sets the "delete" field.
+func (smc *ScheduleMemberCreate) SetDelete(i int64) *ScheduleMemberCreate {
+	smc.mutation.SetDelete(i)
+	return smc
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (smc *ScheduleMemberCreate) SetNillableDelete(i *int64) *ScheduleMemberCreate {
+	if i != nil {
+		smc.SetDelete(*i)
+	}
+	return smc
+}
+
+// SetCreatedID sets the "created_id" field.
+func (smc *ScheduleMemberCreate) SetCreatedID(i int64) *ScheduleMemberCreate {
+	smc.mutation.SetCreatedID(i)
+	return smc
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (smc *ScheduleMemberCreate) SetNillableCreatedID(i *int64) *ScheduleMemberCreate {
+	if i != nil {
+		smc.SetCreatedID(*i)
 	}
 	return smc
 }
@@ -161,58 +188,58 @@ func (smc *ScheduleMemberCreate) SetNillableType(s *string) *ScheduleMemberCreat
 	return smc
 }
 
-// SetStartTime sets the "start_time" field.
-func (smc *ScheduleMemberCreate) SetStartTime(t time.Time) *ScheduleMemberCreate {
-	smc.mutation.SetStartTime(t)
+// SetStartAt sets the "start_at" field.
+func (smc *ScheduleMemberCreate) SetStartAt(t time.Time) *ScheduleMemberCreate {
+	smc.mutation.SetStartAt(t)
 	return smc
 }
 
-// SetNillableStartTime sets the "start_time" field if the given value is not nil.
-func (smc *ScheduleMemberCreate) SetNillableStartTime(t *time.Time) *ScheduleMemberCreate {
+// SetNillableStartAt sets the "start_at" field if the given value is not nil.
+func (smc *ScheduleMemberCreate) SetNillableStartAt(t *time.Time) *ScheduleMemberCreate {
 	if t != nil {
-		smc.SetStartTime(*t)
+		smc.SetStartAt(*t)
 	}
 	return smc
 }
 
-// SetEndTime sets the "end_time" field.
-func (smc *ScheduleMemberCreate) SetEndTime(t time.Time) *ScheduleMemberCreate {
-	smc.mutation.SetEndTime(t)
+// SetEndAt sets the "end_at" field.
+func (smc *ScheduleMemberCreate) SetEndAt(t time.Time) *ScheduleMemberCreate {
+	smc.mutation.SetEndAt(t)
 	return smc
 }
 
-// SetNillableEndTime sets the "end_time" field if the given value is not nil.
-func (smc *ScheduleMemberCreate) SetNillableEndTime(t *time.Time) *ScheduleMemberCreate {
+// SetNillableEndAt sets the "end_at" field if the given value is not nil.
+func (smc *ScheduleMemberCreate) SetNillableEndAt(t *time.Time) *ScheduleMemberCreate {
 	if t != nil {
-		smc.SetEndTime(*t)
+		smc.SetEndAt(*t)
 	}
 	return smc
 }
 
-// SetSignStartTime sets the "sign_start_time" field.
-func (smc *ScheduleMemberCreate) SetSignStartTime(t time.Time) *ScheduleMemberCreate {
-	smc.mutation.SetSignStartTime(t)
+// SetSignStartAt sets the "sign_start_at" field.
+func (smc *ScheduleMemberCreate) SetSignStartAt(t time.Time) *ScheduleMemberCreate {
+	smc.mutation.SetSignStartAt(t)
 	return smc
 }
 
-// SetNillableSignStartTime sets the "sign_start_time" field if the given value is not nil.
-func (smc *ScheduleMemberCreate) SetNillableSignStartTime(t *time.Time) *ScheduleMemberCreate {
+// SetNillableSignStartAt sets the "sign_start_at" field if the given value is not nil.
+func (smc *ScheduleMemberCreate) SetNillableSignStartAt(t *time.Time) *ScheduleMemberCreate {
 	if t != nil {
-		smc.SetSignStartTime(*t)
+		smc.SetSignStartAt(*t)
 	}
 	return smc
 }
 
-// SetSignEndTime sets the "sign_end_time" field.
-func (smc *ScheduleMemberCreate) SetSignEndTime(t time.Time) *ScheduleMemberCreate {
-	smc.mutation.SetSignEndTime(t)
+// SetSignEndAt sets the "sign_end_at" field.
+func (smc *ScheduleMemberCreate) SetSignEndAt(t time.Time) *ScheduleMemberCreate {
+	smc.mutation.SetSignEndAt(t)
 	return smc
 }
 
-// SetNillableSignEndTime sets the "sign_end_time" field if the given value is not nil.
-func (smc *ScheduleMemberCreate) SetNillableSignEndTime(t *time.Time) *ScheduleMemberCreate {
+// SetNillableSignEndAt sets the "sign_end_at" field if the given value is not nil.
+func (smc *ScheduleMemberCreate) SetNillableSignEndAt(t *time.Time) *ScheduleMemberCreate {
 	if t != nil {
-		smc.SetSignEndTime(*t)
+		smc.SetSignEndAt(*t)
 	}
 	return smc
 }
@@ -327,36 +354,38 @@ func (smc *ScheduleMemberCreate) defaults() {
 		v := schedulemember.DefaultUpdatedAt()
 		smc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := smc.mutation.Delete(); !ok {
+		v := schedulemember.DefaultDelete
+		smc.mutation.SetDelete(v)
+	}
+	if _, ok := smc.mutation.CreatedID(); !ok {
+		v := schedulemember.DefaultCreatedID
+		smc.mutation.SetCreatedID(v)
+	}
 	if _, ok := smc.mutation.Status(); !ok {
 		v := schedulemember.DefaultStatus
 		smc.mutation.SetStatus(v)
 	}
-	if _, ok := smc.mutation.StartTime(); !ok {
-		v := schedulemember.DefaultStartTime()
-		smc.mutation.SetStartTime(v)
+	if _, ok := smc.mutation.StartAt(); !ok {
+		v := schedulemember.DefaultStartAt()
+		smc.mutation.SetStartAt(v)
 	}
-	if _, ok := smc.mutation.EndTime(); !ok {
-		v := schedulemember.DefaultEndTime()
-		smc.mutation.SetEndTime(v)
+	if _, ok := smc.mutation.EndAt(); !ok {
+		v := schedulemember.DefaultEndAt()
+		smc.mutation.SetEndAt(v)
 	}
-	if _, ok := smc.mutation.SignStartTime(); !ok {
-		v := schedulemember.DefaultSignStartTime()
-		smc.mutation.SetSignStartTime(v)
+	if _, ok := smc.mutation.SignStartAt(); !ok {
+		v := schedulemember.DefaultSignStartAt()
+		smc.mutation.SetSignStartAt(v)
 	}
-	if _, ok := smc.mutation.SignEndTime(); !ok {
-		v := schedulemember.DefaultSignEndTime()
-		smc.mutation.SetSignEndTime(v)
+	if _, ok := smc.mutation.SignEndAt(); !ok {
+		v := schedulemember.DefaultSignEndAt()
+		smc.mutation.SetSignEndAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (smc *ScheduleMemberCreate) check() error {
-	if _, ok := smc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "ScheduleMember.created_at"`)}
-	}
-	if _, ok := smc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "ScheduleMember.updated_at"`)}
-	}
 	return nil
 }
 
@@ -397,6 +426,14 @@ func (smc *ScheduleMemberCreate) createSpec() (*ScheduleMember, *sqlgraph.Create
 		_spec.SetField(schedulemember.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
+	if value, ok := smc.mutation.Delete(); ok {
+		_spec.SetField(schedulemember.FieldDelete, field.TypeInt64, value)
+		_node.Delete = value
+	}
+	if value, ok := smc.mutation.CreatedID(); ok {
+		_spec.SetField(schedulemember.FieldCreatedID, field.TypeInt64, value)
+		_node.CreatedID = value
+	}
 	if value, ok := smc.mutation.Status(); ok {
 		_spec.SetField(schedulemember.FieldStatus, field.TypeInt64, value)
 		_node.Status = value
@@ -425,21 +462,21 @@ func (smc *ScheduleMemberCreate) createSpec() (*ScheduleMember, *sqlgraph.Create
 		_spec.SetField(schedulemember.FieldType, field.TypeString, value)
 		_node.Type = value
 	}
-	if value, ok := smc.mutation.StartTime(); ok {
-		_spec.SetField(schedulemember.FieldStartTime, field.TypeTime, value)
-		_node.StartTime = value
+	if value, ok := smc.mutation.StartAt(); ok {
+		_spec.SetField(schedulemember.FieldStartAt, field.TypeTime, value)
+		_node.StartAt = value
 	}
-	if value, ok := smc.mutation.EndTime(); ok {
-		_spec.SetField(schedulemember.FieldEndTime, field.TypeTime, value)
-		_node.EndTime = value
+	if value, ok := smc.mutation.EndAt(); ok {
+		_spec.SetField(schedulemember.FieldEndAt, field.TypeTime, value)
+		_node.EndAt = value
 	}
-	if value, ok := smc.mutation.SignStartTime(); ok {
-		_spec.SetField(schedulemember.FieldSignStartTime, field.TypeTime, value)
-		_node.SignStartTime = value
+	if value, ok := smc.mutation.SignStartAt(); ok {
+		_spec.SetField(schedulemember.FieldSignStartAt, field.TypeTime, value)
+		_node.SignStartAt = value
 	}
-	if value, ok := smc.mutation.SignEndTime(); ok {
-		_spec.SetField(schedulemember.FieldSignEndTime, field.TypeTime, value)
-		_node.SignEndTime = value
+	if value, ok := smc.mutation.SignEndAt(); ok {
+		_spec.SetField(schedulemember.FieldSignEndAt, field.TypeTime, value)
+		_node.SignEndAt = value
 	}
 	if value, ok := smc.mutation.MemberName(); ok {
 		_spec.SetField(schedulemember.FieldMemberName, field.TypeString, value)

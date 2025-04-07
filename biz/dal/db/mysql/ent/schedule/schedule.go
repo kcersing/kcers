@@ -18,6 +18,10 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
+	// FieldDelete holds the string denoting the delete field in the database.
+	FieldDelete = "delete"
+	// FieldCreatedID holds the string denoting the created_id field in the database.
+	FieldCreatedID = "created_id"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldType holds the string denoting the type field in the database.
@@ -38,10 +42,10 @@ const (
 	FieldNumSurplus = "num_surplus"
 	// FieldDate holds the string denoting the date field in the database.
 	FieldDate = "date"
-	// FieldStartTime holds the string denoting the start_time field in the database.
-	FieldStartTime = "start_time"
-	// FieldEndTime holds the string denoting the end_time field in the database.
-	FieldEndTime = "end_time"
+	// FieldStartAt holds the string denoting the start_at field in the database.
+	FieldStartAt = "start_at"
+	// FieldEndAt holds the string denoting the end_at field in the database.
+	FieldEndAt = "end_at"
 	// FieldPrice holds the string denoting the price field in the database.
 	FieldPrice = "price"
 	// FieldRemark holds the string denoting the remark field in the database.
@@ -77,6 +81,8 @@ var Columns = []string{
 	FieldID,
 	FieldCreatedAt,
 	FieldUpdatedAt,
+	FieldDelete,
+	FieldCreatedID,
 	FieldStatus,
 	FieldType,
 	FieldName,
@@ -87,8 +93,8 @@ var Columns = []string{
 	FieldNum,
 	FieldNumSurplus,
 	FieldDate,
-	FieldStartTime,
-	FieldEndTime,
+	FieldStartAt,
+	FieldEndAt,
 	FieldPrice,
 	FieldRemark,
 	FieldVenueName,
@@ -112,6 +118,10 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultDelete holds the default value on creation for the "delete" field.
+	DefaultDelete int64
+	// DefaultCreatedID holds the default value on creation for the "created_id" field.
+	DefaultCreatedID int64
 	// DefaultStatus holds the default value on creation for the "status" field.
 	DefaultStatus int64
 	// DefaultPrice holds the default value on creation for the "price" field.
@@ -134,6 +144,16 @@ func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdatedAt orders the results by the updated_at field.
 func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByDelete orders the results by the delete field.
+func ByDelete(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDelete, opts...).ToFunc()
+}
+
+// ByCreatedID orders the results by the created_id field.
+func ByCreatedID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedID, opts...).ToFunc()
 }
 
 // ByStatus orders the results by the status field.
@@ -186,14 +206,14 @@ func ByDate(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDate, opts...).ToFunc()
 }
 
-// ByStartTime orders the results by the start_time field.
-func ByStartTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldStartTime, opts...).ToFunc()
+// ByStartAt orders the results by the start_at field.
+func ByStartAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStartAt, opts...).ToFunc()
 }
 
-// ByEndTime orders the results by the end_time field.
-func ByEndTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldEndTime, opts...).ToFunc()
+// ByEndAt orders the results by the end_at field.
+func ByEndAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEndAt, opts...).ToFunc()
 }
 
 // ByPrice orders the results by the price field.

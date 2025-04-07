@@ -18,6 +18,10 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
+	// FieldDelete holds the string denoting the delete field in the database.
+	FieldDelete = "delete"
+	// FieldCreatedID holds the string denoting the created_id field in the database.
+	FieldCreatedID = "created_id"
 	// FieldOrderID holds the string denoting the order_id field in the database.
 	FieldOrderID = "order_id"
 	// FieldRemission holds the string denoting the remission field in the database.
@@ -48,6 +52,8 @@ var Columns = []string{
 	FieldID,
 	FieldCreatedAt,
 	FieldUpdatedAt,
+	FieldDelete,
+	FieldCreatedID,
 	FieldOrderID,
 	FieldRemission,
 	FieldPay,
@@ -73,6 +79,10 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultDelete holds the default value on creation for the "delete" field.
+	DefaultDelete int64
+	// DefaultCreatedID holds the default value on creation for the "created_id" field.
+	DefaultCreatedID int64
 )
 
 // OrderOption defines the ordering options for the OrderPay queries.
@@ -91,6 +101,16 @@ func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdatedAt orders the results by the updated_at field.
 func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByDelete orders the results by the delete field.
+func ByDelete(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDelete, opts...).ToFunc()
+}
+
+// ByCreatedID orders the results by the created_id field.
+func ByCreatedID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedID, opts...).ToFunc()
 }
 
 // ByOrderID orders the results by the order_id field.

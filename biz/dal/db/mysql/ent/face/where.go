@@ -65,6 +65,16 @@ func UpdatedAt(v time.Time) predicate.Face {
 	return predicate.Face(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
+// Delete applies equality check predicate on the "delete" field. It's identical to DeleteEQ.
+func Delete(v int64) predicate.Face {
+	return predicate.Face(sql.FieldEQ(FieldDelete, v))
+}
+
+// CreatedID applies equality check predicate on the "created_id" field. It's identical to CreatedIDEQ.
+func CreatedID(v int64) predicate.Face {
+	return predicate.Face(sql.FieldEQ(FieldCreatedID, v))
+}
+
 // MemberID applies equality check predicate on the "member_id" field. It's identical to MemberIDEQ.
 func MemberID(v int64) predicate.Face {
 	return predicate.Face(sql.FieldEQ(FieldMemberID, v))
@@ -100,9 +110,9 @@ func FaceEigenvalue(v string) predicate.Face {
 	return predicate.Face(sql.FieldEQ(FieldFaceEigenvalue, v))
 }
 
-// FacePicUpdatedTime applies equality check predicate on the "face_pic_updated_time" field. It's identical to FacePicUpdatedTimeEQ.
-func FacePicUpdatedTime(v time.Time) predicate.Face {
-	return predicate.Face(sql.FieldEQ(FieldFacePicUpdatedTime, v))
+// FacePicUpdatedAt applies equality check predicate on the "face_pic_updated_at" field. It's identical to FacePicUpdatedAtEQ.
+func FacePicUpdatedAt(v time.Time) predicate.Face {
+	return predicate.Face(sql.FieldEQ(FieldFacePicUpdatedAt, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -145,6 +155,16 @@ func CreatedAtLTE(v time.Time) predicate.Face {
 	return predicate.Face(sql.FieldLTE(FieldCreatedAt, v))
 }
 
+// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
+func CreatedAtIsNil() predicate.Face {
+	return predicate.Face(sql.FieldIsNull(FieldCreatedAt))
+}
+
+// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
+func CreatedAtNotNil() predicate.Face {
+	return predicate.Face(sql.FieldNotNull(FieldCreatedAt))
+}
+
 // UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
 func UpdatedAtEQ(v time.Time) predicate.Face {
 	return predicate.Face(sql.FieldEQ(FieldUpdatedAt, v))
@@ -183,6 +203,116 @@ func UpdatedAtLT(v time.Time) predicate.Face {
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.Face {
 	return predicate.Face(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.Face {
+	return predicate.Face(sql.FieldIsNull(FieldUpdatedAt))
+}
+
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.Face {
+	return predicate.Face(sql.FieldNotNull(FieldUpdatedAt))
+}
+
+// DeleteEQ applies the EQ predicate on the "delete" field.
+func DeleteEQ(v int64) predicate.Face {
+	return predicate.Face(sql.FieldEQ(FieldDelete, v))
+}
+
+// DeleteNEQ applies the NEQ predicate on the "delete" field.
+func DeleteNEQ(v int64) predicate.Face {
+	return predicate.Face(sql.FieldNEQ(FieldDelete, v))
+}
+
+// DeleteIn applies the In predicate on the "delete" field.
+func DeleteIn(vs ...int64) predicate.Face {
+	return predicate.Face(sql.FieldIn(FieldDelete, vs...))
+}
+
+// DeleteNotIn applies the NotIn predicate on the "delete" field.
+func DeleteNotIn(vs ...int64) predicate.Face {
+	return predicate.Face(sql.FieldNotIn(FieldDelete, vs...))
+}
+
+// DeleteGT applies the GT predicate on the "delete" field.
+func DeleteGT(v int64) predicate.Face {
+	return predicate.Face(sql.FieldGT(FieldDelete, v))
+}
+
+// DeleteGTE applies the GTE predicate on the "delete" field.
+func DeleteGTE(v int64) predicate.Face {
+	return predicate.Face(sql.FieldGTE(FieldDelete, v))
+}
+
+// DeleteLT applies the LT predicate on the "delete" field.
+func DeleteLT(v int64) predicate.Face {
+	return predicate.Face(sql.FieldLT(FieldDelete, v))
+}
+
+// DeleteLTE applies the LTE predicate on the "delete" field.
+func DeleteLTE(v int64) predicate.Face {
+	return predicate.Face(sql.FieldLTE(FieldDelete, v))
+}
+
+// DeleteIsNil applies the IsNil predicate on the "delete" field.
+func DeleteIsNil() predicate.Face {
+	return predicate.Face(sql.FieldIsNull(FieldDelete))
+}
+
+// DeleteNotNil applies the NotNil predicate on the "delete" field.
+func DeleteNotNil() predicate.Face {
+	return predicate.Face(sql.FieldNotNull(FieldDelete))
+}
+
+// CreatedIDEQ applies the EQ predicate on the "created_id" field.
+func CreatedIDEQ(v int64) predicate.Face {
+	return predicate.Face(sql.FieldEQ(FieldCreatedID, v))
+}
+
+// CreatedIDNEQ applies the NEQ predicate on the "created_id" field.
+func CreatedIDNEQ(v int64) predicate.Face {
+	return predicate.Face(sql.FieldNEQ(FieldCreatedID, v))
+}
+
+// CreatedIDIn applies the In predicate on the "created_id" field.
+func CreatedIDIn(vs ...int64) predicate.Face {
+	return predicate.Face(sql.FieldIn(FieldCreatedID, vs...))
+}
+
+// CreatedIDNotIn applies the NotIn predicate on the "created_id" field.
+func CreatedIDNotIn(vs ...int64) predicate.Face {
+	return predicate.Face(sql.FieldNotIn(FieldCreatedID, vs...))
+}
+
+// CreatedIDGT applies the GT predicate on the "created_id" field.
+func CreatedIDGT(v int64) predicate.Face {
+	return predicate.Face(sql.FieldGT(FieldCreatedID, v))
+}
+
+// CreatedIDGTE applies the GTE predicate on the "created_id" field.
+func CreatedIDGTE(v int64) predicate.Face {
+	return predicate.Face(sql.FieldGTE(FieldCreatedID, v))
+}
+
+// CreatedIDLT applies the LT predicate on the "created_id" field.
+func CreatedIDLT(v int64) predicate.Face {
+	return predicate.Face(sql.FieldLT(FieldCreatedID, v))
+}
+
+// CreatedIDLTE applies the LTE predicate on the "created_id" field.
+func CreatedIDLTE(v int64) predicate.Face {
+	return predicate.Face(sql.FieldLTE(FieldCreatedID, v))
+}
+
+// CreatedIDIsNil applies the IsNil predicate on the "created_id" field.
+func CreatedIDIsNil() predicate.Face {
+	return predicate.Face(sql.FieldIsNull(FieldCreatedID))
+}
+
+// CreatedIDNotNil applies the NotNil predicate on the "created_id" field.
+func CreatedIDNotNil() predicate.Face {
+	return predicate.Face(sql.FieldNotNull(FieldCreatedID))
 }
 
 // MemberIDEQ applies the EQ predicate on the "member_id" field.
@@ -620,54 +750,54 @@ func FaceEigenvalueContainsFold(v string) predicate.Face {
 	return predicate.Face(sql.FieldContainsFold(FieldFaceEigenvalue, v))
 }
 
-// FacePicUpdatedTimeEQ applies the EQ predicate on the "face_pic_updated_time" field.
-func FacePicUpdatedTimeEQ(v time.Time) predicate.Face {
-	return predicate.Face(sql.FieldEQ(FieldFacePicUpdatedTime, v))
+// FacePicUpdatedAtEQ applies the EQ predicate on the "face_pic_updated_at" field.
+func FacePicUpdatedAtEQ(v time.Time) predicate.Face {
+	return predicate.Face(sql.FieldEQ(FieldFacePicUpdatedAt, v))
 }
 
-// FacePicUpdatedTimeNEQ applies the NEQ predicate on the "face_pic_updated_time" field.
-func FacePicUpdatedTimeNEQ(v time.Time) predicate.Face {
-	return predicate.Face(sql.FieldNEQ(FieldFacePicUpdatedTime, v))
+// FacePicUpdatedAtNEQ applies the NEQ predicate on the "face_pic_updated_at" field.
+func FacePicUpdatedAtNEQ(v time.Time) predicate.Face {
+	return predicate.Face(sql.FieldNEQ(FieldFacePicUpdatedAt, v))
 }
 
-// FacePicUpdatedTimeIn applies the In predicate on the "face_pic_updated_time" field.
-func FacePicUpdatedTimeIn(vs ...time.Time) predicate.Face {
-	return predicate.Face(sql.FieldIn(FieldFacePicUpdatedTime, vs...))
+// FacePicUpdatedAtIn applies the In predicate on the "face_pic_updated_at" field.
+func FacePicUpdatedAtIn(vs ...time.Time) predicate.Face {
+	return predicate.Face(sql.FieldIn(FieldFacePicUpdatedAt, vs...))
 }
 
-// FacePicUpdatedTimeNotIn applies the NotIn predicate on the "face_pic_updated_time" field.
-func FacePicUpdatedTimeNotIn(vs ...time.Time) predicate.Face {
-	return predicate.Face(sql.FieldNotIn(FieldFacePicUpdatedTime, vs...))
+// FacePicUpdatedAtNotIn applies the NotIn predicate on the "face_pic_updated_at" field.
+func FacePicUpdatedAtNotIn(vs ...time.Time) predicate.Face {
+	return predicate.Face(sql.FieldNotIn(FieldFacePicUpdatedAt, vs...))
 }
 
-// FacePicUpdatedTimeGT applies the GT predicate on the "face_pic_updated_time" field.
-func FacePicUpdatedTimeGT(v time.Time) predicate.Face {
-	return predicate.Face(sql.FieldGT(FieldFacePicUpdatedTime, v))
+// FacePicUpdatedAtGT applies the GT predicate on the "face_pic_updated_at" field.
+func FacePicUpdatedAtGT(v time.Time) predicate.Face {
+	return predicate.Face(sql.FieldGT(FieldFacePicUpdatedAt, v))
 }
 
-// FacePicUpdatedTimeGTE applies the GTE predicate on the "face_pic_updated_time" field.
-func FacePicUpdatedTimeGTE(v time.Time) predicate.Face {
-	return predicate.Face(sql.FieldGTE(FieldFacePicUpdatedTime, v))
+// FacePicUpdatedAtGTE applies the GTE predicate on the "face_pic_updated_at" field.
+func FacePicUpdatedAtGTE(v time.Time) predicate.Face {
+	return predicate.Face(sql.FieldGTE(FieldFacePicUpdatedAt, v))
 }
 
-// FacePicUpdatedTimeLT applies the LT predicate on the "face_pic_updated_time" field.
-func FacePicUpdatedTimeLT(v time.Time) predicate.Face {
-	return predicate.Face(sql.FieldLT(FieldFacePicUpdatedTime, v))
+// FacePicUpdatedAtLT applies the LT predicate on the "face_pic_updated_at" field.
+func FacePicUpdatedAtLT(v time.Time) predicate.Face {
+	return predicate.Face(sql.FieldLT(FieldFacePicUpdatedAt, v))
 }
 
-// FacePicUpdatedTimeLTE applies the LTE predicate on the "face_pic_updated_time" field.
-func FacePicUpdatedTimeLTE(v time.Time) predicate.Face {
-	return predicate.Face(sql.FieldLTE(FieldFacePicUpdatedTime, v))
+// FacePicUpdatedAtLTE applies the LTE predicate on the "face_pic_updated_at" field.
+func FacePicUpdatedAtLTE(v time.Time) predicate.Face {
+	return predicate.Face(sql.FieldLTE(FieldFacePicUpdatedAt, v))
 }
 
-// FacePicUpdatedTimeIsNil applies the IsNil predicate on the "face_pic_updated_time" field.
-func FacePicUpdatedTimeIsNil() predicate.Face {
-	return predicate.Face(sql.FieldIsNull(FieldFacePicUpdatedTime))
+// FacePicUpdatedAtIsNil applies the IsNil predicate on the "face_pic_updated_at" field.
+func FacePicUpdatedAtIsNil() predicate.Face {
+	return predicate.Face(sql.FieldIsNull(FieldFacePicUpdatedAt))
 }
 
-// FacePicUpdatedTimeNotNil applies the NotNil predicate on the "face_pic_updated_time" field.
-func FacePicUpdatedTimeNotNil() predicate.Face {
-	return predicate.Face(sql.FieldNotNull(FieldFacePicUpdatedTime))
+// FacePicUpdatedAtNotNil applies the NotNil predicate on the "face_pic_updated_at" field.
+func FacePicUpdatedAtNotNil() predicate.Face {
+	return predicate.Face(sql.FieldNotNull(FieldFacePicUpdatedAt))
 }
 
 // HasMemberFaces applies the HasEdge predicate on the "member_faces" edge.

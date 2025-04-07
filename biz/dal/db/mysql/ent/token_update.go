@@ -35,6 +35,66 @@ func (tu *TokenUpdate) SetUpdatedAt(t time.Time) *TokenUpdate {
 	return tu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (tu *TokenUpdate) ClearUpdatedAt() *TokenUpdate {
+	tu.mutation.ClearUpdatedAt()
+	return tu
+}
+
+// SetDelete sets the "delete" field.
+func (tu *TokenUpdate) SetDelete(i int64) *TokenUpdate {
+	tu.mutation.ResetDelete()
+	tu.mutation.SetDelete(i)
+	return tu
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (tu *TokenUpdate) SetNillableDelete(i *int64) *TokenUpdate {
+	if i != nil {
+		tu.SetDelete(*i)
+	}
+	return tu
+}
+
+// AddDelete adds i to the "delete" field.
+func (tu *TokenUpdate) AddDelete(i int64) *TokenUpdate {
+	tu.mutation.AddDelete(i)
+	return tu
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (tu *TokenUpdate) ClearDelete() *TokenUpdate {
+	tu.mutation.ClearDelete()
+	return tu
+}
+
+// SetCreatedID sets the "created_id" field.
+func (tu *TokenUpdate) SetCreatedID(i int64) *TokenUpdate {
+	tu.mutation.ResetCreatedID()
+	tu.mutation.SetCreatedID(i)
+	return tu
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (tu *TokenUpdate) SetNillableCreatedID(i *int64) *TokenUpdate {
+	if i != nil {
+		tu.SetCreatedID(*i)
+	}
+	return tu
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (tu *TokenUpdate) AddCreatedID(i int64) *TokenUpdate {
+	tu.mutation.AddCreatedID(i)
+	return tu
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (tu *TokenUpdate) ClearCreatedID() *TokenUpdate {
+	tu.mutation.ClearCreatedID()
+	return tu
+}
+
 // SetUserID sets the "user_id" field.
 func (tu *TokenUpdate) SetUserID(i int64) *TokenUpdate {
 	tu.mutation.ResetUserID()
@@ -158,7 +218,7 @@ func (tu *TokenUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tu *TokenUpdate) defaults() {
-	if _, ok := tu.mutation.UpdatedAt(); !ok {
+	if _, ok := tu.mutation.UpdatedAt(); !ok && !tu.mutation.UpdatedAtCleared() {
 		v := token.UpdateDefaultUpdatedAt()
 		tu.mutation.SetUpdatedAt(v)
 	}
@@ -173,8 +233,32 @@ func (tu *TokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if tu.mutation.CreatedAtCleared() {
+		_spec.ClearField(token.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := tu.mutation.UpdatedAt(); ok {
 		_spec.SetField(token.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if tu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(token.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := tu.mutation.Delete(); ok {
+		_spec.SetField(token.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := tu.mutation.AddedDelete(); ok {
+		_spec.AddField(token.FieldDelete, field.TypeInt64, value)
+	}
+	if tu.mutation.DeleteCleared() {
+		_spec.ClearField(token.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := tu.mutation.CreatedID(); ok {
+		_spec.SetField(token.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := tu.mutation.AddedCreatedID(); ok {
+		_spec.AddField(token.FieldCreatedID, field.TypeInt64, value)
+	}
+	if tu.mutation.CreatedIDCleared() {
+		_spec.ClearField(token.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := tu.mutation.UserID(); ok {
 		_spec.SetField(token.FieldUserID, field.TypeInt64, value)
@@ -243,6 +327,66 @@ type TokenUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (tuo *TokenUpdateOne) SetUpdatedAt(t time.Time) *TokenUpdateOne {
 	tuo.mutation.SetUpdatedAt(t)
+	return tuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (tuo *TokenUpdateOne) ClearUpdatedAt() *TokenUpdateOne {
+	tuo.mutation.ClearUpdatedAt()
+	return tuo
+}
+
+// SetDelete sets the "delete" field.
+func (tuo *TokenUpdateOne) SetDelete(i int64) *TokenUpdateOne {
+	tuo.mutation.ResetDelete()
+	tuo.mutation.SetDelete(i)
+	return tuo
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (tuo *TokenUpdateOne) SetNillableDelete(i *int64) *TokenUpdateOne {
+	if i != nil {
+		tuo.SetDelete(*i)
+	}
+	return tuo
+}
+
+// AddDelete adds i to the "delete" field.
+func (tuo *TokenUpdateOne) AddDelete(i int64) *TokenUpdateOne {
+	tuo.mutation.AddDelete(i)
+	return tuo
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (tuo *TokenUpdateOne) ClearDelete() *TokenUpdateOne {
+	tuo.mutation.ClearDelete()
+	return tuo
+}
+
+// SetCreatedID sets the "created_id" field.
+func (tuo *TokenUpdateOne) SetCreatedID(i int64) *TokenUpdateOne {
+	tuo.mutation.ResetCreatedID()
+	tuo.mutation.SetCreatedID(i)
+	return tuo
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (tuo *TokenUpdateOne) SetNillableCreatedID(i *int64) *TokenUpdateOne {
+	if i != nil {
+		tuo.SetCreatedID(*i)
+	}
+	return tuo
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (tuo *TokenUpdateOne) AddCreatedID(i int64) *TokenUpdateOne {
+	tuo.mutation.AddCreatedID(i)
+	return tuo
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (tuo *TokenUpdateOne) ClearCreatedID() *TokenUpdateOne {
+	tuo.mutation.ClearCreatedID()
 	return tuo
 }
 
@@ -382,7 +526,7 @@ func (tuo *TokenUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tuo *TokenUpdateOne) defaults() {
-	if _, ok := tuo.mutation.UpdatedAt(); !ok {
+	if _, ok := tuo.mutation.UpdatedAt(); !ok && !tuo.mutation.UpdatedAtCleared() {
 		v := token.UpdateDefaultUpdatedAt()
 		tuo.mutation.SetUpdatedAt(v)
 	}
@@ -414,8 +558,32 @@ func (tuo *TokenUpdateOne) sqlSave(ctx context.Context) (_node *Token, err error
 			}
 		}
 	}
+	if tuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(token.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := tuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(token.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if tuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(token.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := tuo.mutation.Delete(); ok {
+		_spec.SetField(token.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := tuo.mutation.AddedDelete(); ok {
+		_spec.AddField(token.FieldDelete, field.TypeInt64, value)
+	}
+	if tuo.mutation.DeleteCleared() {
+		_spec.ClearField(token.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := tuo.mutation.CreatedID(); ok {
+		_spec.SetField(token.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := tuo.mutation.AddedCreatedID(); ok {
+		_spec.AddField(token.FieldCreatedID, field.TypeInt64, value)
+	}
+	if tuo.mutation.CreatedIDCleared() {
+		_spec.ClearField(token.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := tuo.mutation.UserID(); ok {
 		_spec.SetField(token.FieldUserID, field.TypeInt64, value)

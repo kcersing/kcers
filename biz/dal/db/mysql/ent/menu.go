@@ -22,6 +22,10 @@ type Menu struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// last update time
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// last delete  1:已删除
+	Delete int64 `json:"delete,omitempty"`
+	// created
+	CreatedID int64 `json:"created_id,omitempty"`
 	// parent menu ID | 父菜单ID
 	ParentID int64 `json:"parent_id,omitempty"`
 	// index path | 菜单路由路径
@@ -100,7 +104,7 @@ func (*Menu) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case menu.FieldIgnore:
 			values[i] = new(sql.NullBool)
-		case menu.FieldID, menu.FieldParentID, menu.FieldOrderNo, menu.FieldDisabled:
+		case menu.FieldID, menu.FieldDelete, menu.FieldCreatedID, menu.FieldParentID, menu.FieldOrderNo, menu.FieldDisabled:
 			values[i] = new(sql.NullInt64)
 		case menu.FieldPath, menu.FieldName:
 			values[i] = new(sql.NullString)
@@ -138,6 +142,18 @@ func (m *Menu) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				m.UpdatedAt = value.Time
+			}
+		case menu.FieldDelete:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field delete", values[i])
+			} else if value.Valid {
+				m.Delete = value.Int64
+			}
+		case menu.FieldCreatedID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field created_id", values[i])
+			} else if value.Valid {
+				m.CreatedID = value.Int64
 			}
 		case menu.FieldParentID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -236,6 +252,12 @@ func (m *Menu) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(m.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("delete=")
+	builder.WriteString(fmt.Sprintf("%v", m.Delete))
+	builder.WriteString(", ")
+	builder.WriteString("created_id=")
+	builder.WriteString(fmt.Sprintf("%v", m.CreatedID))
 	builder.WriteString(", ")
 	builder.WriteString("parent_id=")
 	builder.WriteString(fmt.Sprintf("%v", m.ParentID))

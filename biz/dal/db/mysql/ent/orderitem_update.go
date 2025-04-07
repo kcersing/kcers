@@ -35,6 +35,66 @@ func (oiu *OrderItemUpdate) SetUpdatedAt(t time.Time) *OrderItemUpdate {
 	return oiu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (oiu *OrderItemUpdate) ClearUpdatedAt() *OrderItemUpdate {
+	oiu.mutation.ClearUpdatedAt()
+	return oiu
+}
+
+// SetDelete sets the "delete" field.
+func (oiu *OrderItemUpdate) SetDelete(i int64) *OrderItemUpdate {
+	oiu.mutation.ResetDelete()
+	oiu.mutation.SetDelete(i)
+	return oiu
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (oiu *OrderItemUpdate) SetNillableDelete(i *int64) *OrderItemUpdate {
+	if i != nil {
+		oiu.SetDelete(*i)
+	}
+	return oiu
+}
+
+// AddDelete adds i to the "delete" field.
+func (oiu *OrderItemUpdate) AddDelete(i int64) *OrderItemUpdate {
+	oiu.mutation.AddDelete(i)
+	return oiu
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (oiu *OrderItemUpdate) ClearDelete() *OrderItemUpdate {
+	oiu.mutation.ClearDelete()
+	return oiu
+}
+
+// SetCreatedID sets the "created_id" field.
+func (oiu *OrderItemUpdate) SetCreatedID(i int64) *OrderItemUpdate {
+	oiu.mutation.ResetCreatedID()
+	oiu.mutation.SetCreatedID(i)
+	return oiu
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (oiu *OrderItemUpdate) SetNillableCreatedID(i *int64) *OrderItemUpdate {
+	if i != nil {
+		oiu.SetCreatedID(*i)
+	}
+	return oiu
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (oiu *OrderItemUpdate) AddCreatedID(i int64) *OrderItemUpdate {
+	oiu.mutation.AddCreatedID(i)
+	return oiu
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (oiu *OrderItemUpdate) ClearCreatedID() *OrderItemUpdate {
+	oiu.mutation.ClearCreatedID()
+	return oiu
+}
+
 // SetOrderID sets the "order_id" field.
 func (oiu *OrderItemUpdate) SetOrderID(i int64) *OrderItemUpdate {
 	oiu.mutation.SetOrderID(i)
@@ -155,7 +215,7 @@ func (oiu *OrderItemUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (oiu *OrderItemUpdate) defaults() {
-	if _, ok := oiu.mutation.UpdatedAt(); !ok {
+	if _, ok := oiu.mutation.UpdatedAt(); !ok && !oiu.mutation.UpdatedAtCleared() {
 		v := orderitem.UpdateDefaultUpdatedAt()
 		oiu.mutation.SetUpdatedAt(v)
 	}
@@ -170,8 +230,32 @@ func (oiu *OrderItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if oiu.mutation.CreatedAtCleared() {
+		_spec.ClearField(orderitem.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := oiu.mutation.UpdatedAt(); ok {
 		_spec.SetField(orderitem.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if oiu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(orderitem.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := oiu.mutation.Delete(); ok {
+		_spec.SetField(orderitem.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := oiu.mutation.AddedDelete(); ok {
+		_spec.AddField(orderitem.FieldDelete, field.TypeInt64, value)
+	}
+	if oiu.mutation.DeleteCleared() {
+		_spec.ClearField(orderitem.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := oiu.mutation.CreatedID(); ok {
+		_spec.SetField(orderitem.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := oiu.mutation.AddedCreatedID(); ok {
+		_spec.AddField(orderitem.FieldCreatedID, field.TypeInt64, value)
+	}
+	if oiu.mutation.CreatedIDCleared() {
+		_spec.ClearField(orderitem.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := oiu.mutation.ProductID(); ok {
 		_spec.SetField(orderitem.FieldProductID, field.TypeInt64, value)
@@ -243,6 +327,66 @@ type OrderItemUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (oiuo *OrderItemUpdateOne) SetUpdatedAt(t time.Time) *OrderItemUpdateOne {
 	oiuo.mutation.SetUpdatedAt(t)
+	return oiuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (oiuo *OrderItemUpdateOne) ClearUpdatedAt() *OrderItemUpdateOne {
+	oiuo.mutation.ClearUpdatedAt()
+	return oiuo
+}
+
+// SetDelete sets the "delete" field.
+func (oiuo *OrderItemUpdateOne) SetDelete(i int64) *OrderItemUpdateOne {
+	oiuo.mutation.ResetDelete()
+	oiuo.mutation.SetDelete(i)
+	return oiuo
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (oiuo *OrderItemUpdateOne) SetNillableDelete(i *int64) *OrderItemUpdateOne {
+	if i != nil {
+		oiuo.SetDelete(*i)
+	}
+	return oiuo
+}
+
+// AddDelete adds i to the "delete" field.
+func (oiuo *OrderItemUpdateOne) AddDelete(i int64) *OrderItemUpdateOne {
+	oiuo.mutation.AddDelete(i)
+	return oiuo
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (oiuo *OrderItemUpdateOne) ClearDelete() *OrderItemUpdateOne {
+	oiuo.mutation.ClearDelete()
+	return oiuo
+}
+
+// SetCreatedID sets the "created_id" field.
+func (oiuo *OrderItemUpdateOne) SetCreatedID(i int64) *OrderItemUpdateOne {
+	oiuo.mutation.ResetCreatedID()
+	oiuo.mutation.SetCreatedID(i)
+	return oiuo
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (oiuo *OrderItemUpdateOne) SetNillableCreatedID(i *int64) *OrderItemUpdateOne {
+	if i != nil {
+		oiuo.SetCreatedID(*i)
+	}
+	return oiuo
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (oiuo *OrderItemUpdateOne) AddCreatedID(i int64) *OrderItemUpdateOne {
+	oiuo.mutation.AddCreatedID(i)
+	return oiuo
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (oiuo *OrderItemUpdateOne) ClearCreatedID() *OrderItemUpdateOne {
+	oiuo.mutation.ClearCreatedID()
 	return oiuo
 }
 
@@ -379,7 +523,7 @@ func (oiuo *OrderItemUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (oiuo *OrderItemUpdateOne) defaults() {
-	if _, ok := oiuo.mutation.UpdatedAt(); !ok {
+	if _, ok := oiuo.mutation.UpdatedAt(); !ok && !oiuo.mutation.UpdatedAtCleared() {
 		v := orderitem.UpdateDefaultUpdatedAt()
 		oiuo.mutation.SetUpdatedAt(v)
 	}
@@ -411,8 +555,32 @@ func (oiuo *OrderItemUpdateOne) sqlSave(ctx context.Context) (_node *OrderItem, 
 			}
 		}
 	}
+	if oiuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(orderitem.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := oiuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(orderitem.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if oiuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(orderitem.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := oiuo.mutation.Delete(); ok {
+		_spec.SetField(orderitem.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := oiuo.mutation.AddedDelete(); ok {
+		_spec.AddField(orderitem.FieldDelete, field.TypeInt64, value)
+	}
+	if oiuo.mutation.DeleteCleared() {
+		_spec.ClearField(orderitem.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := oiuo.mutation.CreatedID(); ok {
+		_spec.SetField(orderitem.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := oiuo.mutation.AddedCreatedID(); ok {
+		_spec.AddField(orderitem.FieldCreatedID, field.TypeInt64, value)
+	}
+	if oiuo.mutation.CreatedIDCleared() {
+		_spec.ClearField(orderitem.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := oiuo.mutation.ProductID(); ok {
 		_spec.SetField(orderitem.FieldProductID, field.TypeInt64, value)

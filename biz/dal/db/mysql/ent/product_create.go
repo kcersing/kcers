@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/product"
 	"kcers/biz/dal/db/mysql/ent/productproperty"
@@ -45,6 +44,34 @@ func (pc *ProductCreate) SetUpdatedAt(t time.Time) *ProductCreate {
 func (pc *ProductCreate) SetNillableUpdatedAt(t *time.Time) *ProductCreate {
 	if t != nil {
 		pc.SetUpdatedAt(*t)
+	}
+	return pc
+}
+
+// SetDelete sets the "delete" field.
+func (pc *ProductCreate) SetDelete(i int64) *ProductCreate {
+	pc.mutation.SetDelete(i)
+	return pc
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (pc *ProductCreate) SetNillableDelete(i *int64) *ProductCreate {
+	if i != nil {
+		pc.SetDelete(*i)
+	}
+	return pc
+}
+
+// SetCreatedID sets the "created_id" field.
+func (pc *ProductCreate) SetCreatedID(i int64) *ProductCreate {
+	pc.mutation.SetCreatedID(i)
+	return pc
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (pc *ProductCreate) SetNillableCreatedID(i *int64) *ProductCreate {
+	if i != nil {
+		pc.SetCreatedID(*i)
 	}
 	return pc
 }
@@ -211,6 +238,14 @@ func (pc *ProductCreate) defaults() {
 		v := product.DefaultUpdatedAt()
 		pc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := pc.mutation.Delete(); !ok {
+		v := product.DefaultDelete
+		pc.mutation.SetDelete(v)
+	}
+	if _, ok := pc.mutation.CreatedID(); !ok {
+		v := product.DefaultCreatedID
+		pc.mutation.SetCreatedID(v)
+	}
 	if _, ok := pc.mutation.Status(); !ok {
 		v := product.DefaultStatus
 		pc.mutation.SetStatus(v)
@@ -219,12 +254,6 @@ func (pc *ProductCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (pc *ProductCreate) check() error {
-	if _, ok := pc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Product.created_at"`)}
-	}
-	if _, ok := pc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Product.updated_at"`)}
-	}
 	return nil
 }
 
@@ -264,6 +293,14 @@ func (pc *ProductCreate) createSpec() (*Product, *sqlgraph.CreateSpec) {
 	if value, ok := pc.mutation.UpdatedAt(); ok {
 		_spec.SetField(product.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := pc.mutation.Delete(); ok {
+		_spec.SetField(product.FieldDelete, field.TypeInt64, value)
+		_node.Delete = value
+	}
+	if value, ok := pc.mutation.CreatedID(); ok {
+		_spec.SetField(product.FieldCreatedID, field.TypeInt64, value)
+		_node.CreatedID = value
 	}
 	if value, ok := pc.mutation.Status(); ok {
 		_spec.SetField(product.FieldStatus, field.TypeInt64, value)

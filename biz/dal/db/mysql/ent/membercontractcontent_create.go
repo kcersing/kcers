@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/membercontract"
 	"kcers/biz/dal/db/mysql/ent/membercontractcontent"
@@ -45,6 +44,34 @@ func (mccc *MemberContractContentCreate) SetUpdatedAt(t time.Time) *MemberContra
 func (mccc *MemberContractContentCreate) SetNillableUpdatedAt(t *time.Time) *MemberContractContentCreate {
 	if t != nil {
 		mccc.SetUpdatedAt(*t)
+	}
+	return mccc
+}
+
+// SetDelete sets the "delete" field.
+func (mccc *MemberContractContentCreate) SetDelete(i int64) *MemberContractContentCreate {
+	mccc.mutation.SetDelete(i)
+	return mccc
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (mccc *MemberContractContentCreate) SetNillableDelete(i *int64) *MemberContractContentCreate {
+	if i != nil {
+		mccc.SetDelete(*i)
+	}
+	return mccc
+}
+
+// SetCreatedID sets the "created_id" field.
+func (mccc *MemberContractContentCreate) SetCreatedID(i int64) *MemberContractContentCreate {
+	mccc.mutation.SetCreatedID(i)
+	return mccc
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (mccc *MemberContractContentCreate) SetNillableCreatedID(i *int64) *MemberContractContentCreate {
+	if i != nil {
+		mccc.SetCreatedID(*i)
 	}
 	return mccc
 }
@@ -159,16 +186,18 @@ func (mccc *MemberContractContentCreate) defaults() {
 		v := membercontractcontent.DefaultUpdatedAt()
 		mccc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := mccc.mutation.Delete(); !ok {
+		v := membercontractcontent.DefaultDelete
+		mccc.mutation.SetDelete(v)
+	}
+	if _, ok := mccc.mutation.CreatedID(); !ok {
+		v := membercontractcontent.DefaultCreatedID
+		mccc.mutation.SetCreatedID(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (mccc *MemberContractContentCreate) check() error {
-	if _, ok := mccc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "MemberContractContent.created_at"`)}
-	}
-	if _, ok := mccc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "MemberContractContent.updated_at"`)}
-	}
 	return nil
 }
 
@@ -208,6 +237,14 @@ func (mccc *MemberContractContentCreate) createSpec() (*MemberContractContent, *
 	if value, ok := mccc.mutation.UpdatedAt(); ok {
 		_spec.SetField(membercontractcontent.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := mccc.mutation.Delete(); ok {
+		_spec.SetField(membercontractcontent.FieldDelete, field.TypeInt64, value)
+		_node.Delete = value
+	}
+	if value, ok := mccc.mutation.CreatedID(); ok {
+		_spec.SetField(membercontractcontent.FieldCreatedID, field.TypeInt64, value)
+		_node.CreatedID = value
 	}
 	if value, ok := mccc.mutation.Content(); ok {
 		_spec.SetField(membercontractcontent.FieldContent, field.TypeString, value)

@@ -35,6 +35,66 @@ func (pu *ProductUpdate) SetUpdatedAt(t time.Time) *ProductUpdate {
 	return pu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (pu *ProductUpdate) ClearUpdatedAt() *ProductUpdate {
+	pu.mutation.ClearUpdatedAt()
+	return pu
+}
+
+// SetDelete sets the "delete" field.
+func (pu *ProductUpdate) SetDelete(i int64) *ProductUpdate {
+	pu.mutation.ResetDelete()
+	pu.mutation.SetDelete(i)
+	return pu
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (pu *ProductUpdate) SetNillableDelete(i *int64) *ProductUpdate {
+	if i != nil {
+		pu.SetDelete(*i)
+	}
+	return pu
+}
+
+// AddDelete adds i to the "delete" field.
+func (pu *ProductUpdate) AddDelete(i int64) *ProductUpdate {
+	pu.mutation.AddDelete(i)
+	return pu
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (pu *ProductUpdate) ClearDelete() *ProductUpdate {
+	pu.mutation.ClearDelete()
+	return pu
+}
+
+// SetCreatedID sets the "created_id" field.
+func (pu *ProductUpdate) SetCreatedID(i int64) *ProductUpdate {
+	pu.mutation.ResetCreatedID()
+	pu.mutation.SetCreatedID(i)
+	return pu
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (pu *ProductUpdate) SetNillableCreatedID(i *int64) *ProductUpdate {
+	if i != nil {
+		pu.SetCreatedID(*i)
+	}
+	return pu
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (pu *ProductUpdate) AddCreatedID(i int64) *ProductUpdate {
+	pu.mutation.AddCreatedID(i)
+	return pu
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (pu *ProductUpdate) ClearCreatedID() *ProductUpdate {
+	pu.mutation.ClearCreatedID()
+	return pu
+}
+
 // SetStatus sets the "status" field.
 func (pu *ProductUpdate) SetStatus(i int64) *ProductUpdate {
 	pu.mutation.ResetStatus()
@@ -274,7 +334,7 @@ func (pu *ProductUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (pu *ProductUpdate) defaults() {
-	if _, ok := pu.mutation.UpdatedAt(); !ok {
+	if _, ok := pu.mutation.UpdatedAt(); !ok && !pu.mutation.UpdatedAtCleared() {
 		v := product.UpdateDefaultUpdatedAt()
 		pu.mutation.SetUpdatedAt(v)
 	}
@@ -289,8 +349,32 @@ func (pu *ProductUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if pu.mutation.CreatedAtCleared() {
+		_spec.ClearField(product.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := pu.mutation.UpdatedAt(); ok {
 		_spec.SetField(product.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if pu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(product.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := pu.mutation.Delete(); ok {
+		_spec.SetField(product.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := pu.mutation.AddedDelete(); ok {
+		_spec.AddField(product.FieldDelete, field.TypeInt64, value)
+	}
+	if pu.mutation.DeleteCleared() {
+		_spec.ClearField(product.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := pu.mutation.CreatedID(); ok {
+		_spec.SetField(product.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := pu.mutation.AddedCreatedID(); ok {
+		_spec.AddField(product.FieldCreatedID, field.TypeInt64, value)
+	}
+	if pu.mutation.CreatedIDCleared() {
+		_spec.ClearField(product.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := pu.mutation.Status(); ok {
 		_spec.SetField(product.FieldStatus, field.TypeInt64, value)
@@ -414,6 +498,66 @@ type ProductUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (puo *ProductUpdateOne) SetUpdatedAt(t time.Time) *ProductUpdateOne {
 	puo.mutation.SetUpdatedAt(t)
+	return puo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (puo *ProductUpdateOne) ClearUpdatedAt() *ProductUpdateOne {
+	puo.mutation.ClearUpdatedAt()
+	return puo
+}
+
+// SetDelete sets the "delete" field.
+func (puo *ProductUpdateOne) SetDelete(i int64) *ProductUpdateOne {
+	puo.mutation.ResetDelete()
+	puo.mutation.SetDelete(i)
+	return puo
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (puo *ProductUpdateOne) SetNillableDelete(i *int64) *ProductUpdateOne {
+	if i != nil {
+		puo.SetDelete(*i)
+	}
+	return puo
+}
+
+// AddDelete adds i to the "delete" field.
+func (puo *ProductUpdateOne) AddDelete(i int64) *ProductUpdateOne {
+	puo.mutation.AddDelete(i)
+	return puo
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (puo *ProductUpdateOne) ClearDelete() *ProductUpdateOne {
+	puo.mutation.ClearDelete()
+	return puo
+}
+
+// SetCreatedID sets the "created_id" field.
+func (puo *ProductUpdateOne) SetCreatedID(i int64) *ProductUpdateOne {
+	puo.mutation.ResetCreatedID()
+	puo.mutation.SetCreatedID(i)
+	return puo
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (puo *ProductUpdateOne) SetNillableCreatedID(i *int64) *ProductUpdateOne {
+	if i != nil {
+		puo.SetCreatedID(*i)
+	}
+	return puo
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (puo *ProductUpdateOne) AddCreatedID(i int64) *ProductUpdateOne {
+	puo.mutation.AddCreatedID(i)
+	return puo
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (puo *ProductUpdateOne) ClearCreatedID() *ProductUpdateOne {
+	puo.mutation.ClearCreatedID()
 	return puo
 }
 
@@ -669,7 +813,7 @@ func (puo *ProductUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (puo *ProductUpdateOne) defaults() {
-	if _, ok := puo.mutation.UpdatedAt(); !ok {
+	if _, ok := puo.mutation.UpdatedAt(); !ok && !puo.mutation.UpdatedAtCleared() {
 		v := product.UpdateDefaultUpdatedAt()
 		puo.mutation.SetUpdatedAt(v)
 	}
@@ -701,8 +845,32 @@ func (puo *ProductUpdateOne) sqlSave(ctx context.Context) (_node *Product, err e
 			}
 		}
 	}
+	if puo.mutation.CreatedAtCleared() {
+		_spec.ClearField(product.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := puo.mutation.UpdatedAt(); ok {
 		_spec.SetField(product.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if puo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(product.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := puo.mutation.Delete(); ok {
+		_spec.SetField(product.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := puo.mutation.AddedDelete(); ok {
+		_spec.AddField(product.FieldDelete, field.TypeInt64, value)
+	}
+	if puo.mutation.DeleteCleared() {
+		_spec.ClearField(product.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := puo.mutation.CreatedID(); ok {
+		_spec.SetField(product.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := puo.mutation.AddedCreatedID(); ok {
+		_spec.AddField(product.FieldCreatedID, field.TypeInt64, value)
+	}
+	if puo.mutation.CreatedIDCleared() {
+		_spec.ClearField(product.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := puo.mutation.Status(); ok {
 		_spec.SetField(product.FieldStatus, field.TypeInt64, value)

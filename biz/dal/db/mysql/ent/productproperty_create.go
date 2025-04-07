@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/product"
 	"kcers/biz/dal/db/mysql/ent/productproperty"
@@ -46,6 +45,34 @@ func (ppc *ProductPropertyCreate) SetUpdatedAt(t time.Time) *ProductPropertyCrea
 func (ppc *ProductPropertyCreate) SetNillableUpdatedAt(t *time.Time) *ProductPropertyCreate {
 	if t != nil {
 		ppc.SetUpdatedAt(*t)
+	}
+	return ppc
+}
+
+// SetDelete sets the "delete" field.
+func (ppc *ProductPropertyCreate) SetDelete(i int64) *ProductPropertyCreate {
+	ppc.mutation.SetDelete(i)
+	return ppc
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (ppc *ProductPropertyCreate) SetNillableDelete(i *int64) *ProductPropertyCreate {
+	if i != nil {
+		ppc.SetDelete(*i)
+	}
+	return ppc
+}
+
+// SetCreatedID sets the "created_id" field.
+func (ppc *ProductPropertyCreate) SetCreatedID(i int64) *ProductPropertyCreate {
+	ppc.mutation.SetCreatedID(i)
+	return ppc
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (ppc *ProductPropertyCreate) SetNillableCreatedID(i *int64) *ProductPropertyCreate {
+	if i != nil {
+		ppc.SetCreatedID(*i)
 	}
 	return ppc
 }
@@ -255,6 +282,14 @@ func (ppc *ProductPropertyCreate) defaults() {
 		v := productproperty.DefaultUpdatedAt()
 		ppc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := ppc.mutation.Delete(); !ok {
+		v := productproperty.DefaultDelete
+		ppc.mutation.SetDelete(v)
+	}
+	if _, ok := ppc.mutation.CreatedID(); !ok {
+		v := productproperty.DefaultCreatedID
+		ppc.mutation.SetCreatedID(v)
+	}
 	if _, ok := ppc.mutation.Status(); !ok {
 		v := productproperty.DefaultStatus
 		ppc.mutation.SetStatus(v)
@@ -263,12 +298,6 @@ func (ppc *ProductPropertyCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (ppc *ProductPropertyCreate) check() error {
-	if _, ok := ppc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "ProductProperty.created_at"`)}
-	}
-	if _, ok := ppc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "ProductProperty.updated_at"`)}
-	}
 	return nil
 }
 
@@ -308,6 +337,14 @@ func (ppc *ProductPropertyCreate) createSpec() (*ProductProperty, *sqlgraph.Crea
 	if value, ok := ppc.mutation.UpdatedAt(); ok {
 		_spec.SetField(productproperty.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := ppc.mutation.Delete(); ok {
+		_spec.SetField(productproperty.FieldDelete, field.TypeInt64, value)
+		_node.Delete = value
+	}
+	if value, ok := ppc.mutation.CreatedID(); ok {
+		_spec.SetField(productproperty.FieldCreatedID, field.TypeInt64, value)
+		_node.CreatedID = value
 	}
 	if value, ok := ppc.mutation.Status(); ok {
 		_spec.SetField(productproperty.FieldStatus, field.TypeInt64, value)

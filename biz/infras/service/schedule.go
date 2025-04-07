@@ -2,21 +2,20 @@ package service
 
 import (
 	"context"
-	"kcers/app/dal/cache"
-	casbin2 "kcers/app/dal/casbin"
-	"kcers/app/pkg/do"
-	"kcers/config"
-	"kcers/infras"
-	"kcers/pkg/db/ent"
-	"kcers/pkg/db/ent/predicate"
-	"kcers/pkg/db/ent/schedule"
-	"time"
-
 	"github.com/casbin/casbin/v2"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/dgraph-io/ristretto"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
+	"kcers/biz/dal/cache"
+	casbin2 "kcers/biz/dal/casbin"
+	"kcers/biz/dal/config"
+	db "kcers/biz/dal/db/mysql"
+	"kcers/biz/dal/db/mysql/ent"
+	"kcers/biz/dal/db/mysql/ent/predicate"
+	"kcers/biz/dal/db/mysql/ent/schedule"
+	"kcers/biz/infras/do"
+	"time"
 )
 
 type Schedule struct {
@@ -33,7 +32,7 @@ func NewSchedule(ctx context.Context, c *app.RequestContext) do.Schedule {
 		ctx:   ctx,
 		c:     c,
 		salt:  config.GlobalServerConfig.MySQLInfo.Salt,
-		db:    infras.DB,
+		db:    db.DB,
 		cache: cache.Cache,
 		Cbs:   casbin2.CasbinEnforcer(),
 	}

@@ -6,14 +6,14 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/dgraph-io/ristretto"
 	"github.com/pkg/errors"
-	"kcers/app/dal/cache"
-	"kcers/app/pkg/do"
-	"kcers/config"
-	"kcers/infras"
-	"kcers/pkg/db/ent"
-	"kcers/pkg/db/ent/dictionary"
-	"kcers/pkg/db/ent/dictionarydetail"
-	"kcers/pkg/db/ent/predicate"
+	"kcers/biz/dal/cache"
+	"kcers/biz/dal/config"
+	db "kcers/biz/dal/db/mysql"
+	"kcers/biz/dal/db/mysql/ent"
+	"kcers/biz/dal/db/mysql/ent/dictionary"
+	"kcers/biz/dal/db/mysql/ent/dictionarydetail"
+	"kcers/biz/dal/db/mysql/ent/predicate"
+	"kcers/biz/infras/do"
 	"time"
 )
 
@@ -286,7 +286,7 @@ func NewDictionary(ctx context.Context, c *app.RequestContext) do.Dictionary {
 		ctx:   ctx,
 		c:     c,
 		salt:  config.GlobalServerConfig.MySQLInfo.Salt,
-		db:    infras.DB,
+		db:    db.DB,
 		cache: cache.Cache,
 	}
 }

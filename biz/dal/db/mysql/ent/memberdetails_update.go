@@ -35,6 +35,66 @@ func (mdu *MemberDetailsUpdate) SetUpdatedAt(t time.Time) *MemberDetailsUpdate {
 	return mdu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (mdu *MemberDetailsUpdate) ClearUpdatedAt() *MemberDetailsUpdate {
+	mdu.mutation.ClearUpdatedAt()
+	return mdu
+}
+
+// SetDelete sets the "delete" field.
+func (mdu *MemberDetailsUpdate) SetDelete(i int64) *MemberDetailsUpdate {
+	mdu.mutation.ResetDelete()
+	mdu.mutation.SetDelete(i)
+	return mdu
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (mdu *MemberDetailsUpdate) SetNillableDelete(i *int64) *MemberDetailsUpdate {
+	if i != nil {
+		mdu.SetDelete(*i)
+	}
+	return mdu
+}
+
+// AddDelete adds i to the "delete" field.
+func (mdu *MemberDetailsUpdate) AddDelete(i int64) *MemberDetailsUpdate {
+	mdu.mutation.AddDelete(i)
+	return mdu
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (mdu *MemberDetailsUpdate) ClearDelete() *MemberDetailsUpdate {
+	mdu.mutation.ClearDelete()
+	return mdu
+}
+
+// SetCreatedID sets the "created_id" field.
+func (mdu *MemberDetailsUpdate) SetCreatedID(i int64) *MemberDetailsUpdate {
+	mdu.mutation.ResetCreatedID()
+	mdu.mutation.SetCreatedID(i)
+	return mdu
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (mdu *MemberDetailsUpdate) SetNillableCreatedID(i *int64) *MemberDetailsUpdate {
+	if i != nil {
+		mdu.SetCreatedID(*i)
+	}
+	return mdu
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (mdu *MemberDetailsUpdate) AddCreatedID(i int64) *MemberDetailsUpdate {
+	mdu.mutation.AddCreatedID(i)
+	return mdu
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (mdu *MemberDetailsUpdate) ClearCreatedID() *MemberDetailsUpdate {
+	mdu.mutation.ClearCreatedID()
+	return mdu
+}
+
 // SetMemberID sets the "member_id" field.
 func (mdu *MemberDetailsUpdate) SetMemberID(i int64) *MemberDetailsUpdate {
 	mdu.mutation.SetMemberID(i)
@@ -290,63 +350,63 @@ func (mdu *MemberDetailsUpdate) ClearEntrySum() *MemberDetailsUpdate {
 	return mdu
 }
 
-// SetEntryLastTime sets the "entry_last_time" field.
-func (mdu *MemberDetailsUpdate) SetEntryLastTime(t time.Time) *MemberDetailsUpdate {
-	mdu.mutation.SetEntryLastTime(t)
+// SetEntryLastAt sets the "entry_last_at" field.
+func (mdu *MemberDetailsUpdate) SetEntryLastAt(t time.Time) *MemberDetailsUpdate {
+	mdu.mutation.SetEntryLastAt(t)
 	return mdu
 }
 
-// SetNillableEntryLastTime sets the "entry_last_time" field if the given value is not nil.
-func (mdu *MemberDetailsUpdate) SetNillableEntryLastTime(t *time.Time) *MemberDetailsUpdate {
+// SetNillableEntryLastAt sets the "entry_last_at" field if the given value is not nil.
+func (mdu *MemberDetailsUpdate) SetNillableEntryLastAt(t *time.Time) *MemberDetailsUpdate {
 	if t != nil {
-		mdu.SetEntryLastTime(*t)
+		mdu.SetEntryLastAt(*t)
 	}
 	return mdu
 }
 
-// ClearEntryLastTime clears the value of the "entry_last_time" field.
-func (mdu *MemberDetailsUpdate) ClearEntryLastTime() *MemberDetailsUpdate {
-	mdu.mutation.ClearEntryLastTime()
+// ClearEntryLastAt clears the value of the "entry_last_at" field.
+func (mdu *MemberDetailsUpdate) ClearEntryLastAt() *MemberDetailsUpdate {
+	mdu.mutation.ClearEntryLastAt()
 	return mdu
 }
 
-// SetEntryDeadlineTime sets the "entry_deadline_time" field.
-func (mdu *MemberDetailsUpdate) SetEntryDeadlineTime(t time.Time) *MemberDetailsUpdate {
-	mdu.mutation.SetEntryDeadlineTime(t)
+// SetEntryDeadlineAt sets the "entry_deadline_at" field.
+func (mdu *MemberDetailsUpdate) SetEntryDeadlineAt(t time.Time) *MemberDetailsUpdate {
+	mdu.mutation.SetEntryDeadlineAt(t)
 	return mdu
 }
 
-// SetNillableEntryDeadlineTime sets the "entry_deadline_time" field if the given value is not nil.
-func (mdu *MemberDetailsUpdate) SetNillableEntryDeadlineTime(t *time.Time) *MemberDetailsUpdate {
+// SetNillableEntryDeadlineAt sets the "entry_deadline_at" field if the given value is not nil.
+func (mdu *MemberDetailsUpdate) SetNillableEntryDeadlineAt(t *time.Time) *MemberDetailsUpdate {
 	if t != nil {
-		mdu.SetEntryDeadlineTime(*t)
+		mdu.SetEntryDeadlineAt(*t)
 	}
 	return mdu
 }
 
-// ClearEntryDeadlineTime clears the value of the "entry_deadline_time" field.
-func (mdu *MemberDetailsUpdate) ClearEntryDeadlineTime() *MemberDetailsUpdate {
-	mdu.mutation.ClearEntryDeadlineTime()
+// ClearEntryDeadlineAt clears the value of the "entry_deadline_at" field.
+func (mdu *MemberDetailsUpdate) ClearEntryDeadlineAt() *MemberDetailsUpdate {
+	mdu.mutation.ClearEntryDeadlineAt()
 	return mdu
 }
 
-// SetClassLastTime sets the "class_last_time" field.
-func (mdu *MemberDetailsUpdate) SetClassLastTime(t time.Time) *MemberDetailsUpdate {
-	mdu.mutation.SetClassLastTime(t)
+// SetClassLastAt sets the "class_last_at" field.
+func (mdu *MemberDetailsUpdate) SetClassLastAt(t time.Time) *MemberDetailsUpdate {
+	mdu.mutation.SetClassLastAt(t)
 	return mdu
 }
 
-// SetNillableClassLastTime sets the "class_last_time" field if the given value is not nil.
-func (mdu *MemberDetailsUpdate) SetNillableClassLastTime(t *time.Time) *MemberDetailsUpdate {
+// SetNillableClassLastAt sets the "class_last_at" field if the given value is not nil.
+func (mdu *MemberDetailsUpdate) SetNillableClassLastAt(t *time.Time) *MemberDetailsUpdate {
 	if t != nil {
-		mdu.SetClassLastTime(*t)
+		mdu.SetClassLastAt(*t)
 	}
 	return mdu
 }
 
-// ClearClassLastTime clears the value of the "class_last_time" field.
-func (mdu *MemberDetailsUpdate) ClearClassLastTime() *MemberDetailsUpdate {
-	mdu.mutation.ClearClassLastTime()
+// ClearClassLastAt clears the value of the "class_last_at" field.
+func (mdu *MemberDetailsUpdate) ClearClassLastAt() *MemberDetailsUpdate {
+	mdu.mutation.ClearClassLastAt()
 	return mdu
 }
 
@@ -551,7 +611,7 @@ func (mdu *MemberDetailsUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (mdu *MemberDetailsUpdate) defaults() {
-	if _, ok := mdu.mutation.UpdatedAt(); !ok {
+	if _, ok := mdu.mutation.UpdatedAt(); !ok && !mdu.mutation.UpdatedAtCleared() {
 		v := memberdetails.UpdateDefaultUpdatedAt()
 		mdu.mutation.SetUpdatedAt(v)
 	}
@@ -566,8 +626,32 @@ func (mdu *MemberDetailsUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			}
 		}
 	}
+	if mdu.mutation.CreatedAtCleared() {
+		_spec.ClearField(memberdetails.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := mdu.mutation.UpdatedAt(); ok {
 		_spec.SetField(memberdetails.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if mdu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(memberdetails.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := mdu.mutation.Delete(); ok {
+		_spec.SetField(memberdetails.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := mdu.mutation.AddedDelete(); ok {
+		_spec.AddField(memberdetails.FieldDelete, field.TypeInt64, value)
+	}
+	if mdu.mutation.DeleteCleared() {
+		_spec.ClearField(memberdetails.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := mdu.mutation.CreatedID(); ok {
+		_spec.SetField(memberdetails.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := mdu.mutation.AddedCreatedID(); ok {
+		_spec.AddField(memberdetails.FieldCreatedID, field.TypeInt64, value)
+	}
+	if mdu.mutation.CreatedIDCleared() {
+		_spec.ClearField(memberdetails.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := mdu.mutation.Email(); ok {
 		_spec.SetField(memberdetails.FieldEmail, field.TypeString, value)
@@ -644,23 +728,23 @@ func (mdu *MemberDetailsUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	if mdu.mutation.EntrySumCleared() {
 		_spec.ClearField(memberdetails.FieldEntrySum, field.TypeInt64)
 	}
-	if value, ok := mdu.mutation.EntryLastTime(); ok {
-		_spec.SetField(memberdetails.FieldEntryLastTime, field.TypeTime, value)
+	if value, ok := mdu.mutation.EntryLastAt(); ok {
+		_spec.SetField(memberdetails.FieldEntryLastAt, field.TypeTime, value)
 	}
-	if mdu.mutation.EntryLastTimeCleared() {
-		_spec.ClearField(memberdetails.FieldEntryLastTime, field.TypeTime)
+	if mdu.mutation.EntryLastAtCleared() {
+		_spec.ClearField(memberdetails.FieldEntryLastAt, field.TypeTime)
 	}
-	if value, ok := mdu.mutation.EntryDeadlineTime(); ok {
-		_spec.SetField(memberdetails.FieldEntryDeadlineTime, field.TypeTime, value)
+	if value, ok := mdu.mutation.EntryDeadlineAt(); ok {
+		_spec.SetField(memberdetails.FieldEntryDeadlineAt, field.TypeTime, value)
 	}
-	if mdu.mutation.EntryDeadlineTimeCleared() {
-		_spec.ClearField(memberdetails.FieldEntryDeadlineTime, field.TypeTime)
+	if mdu.mutation.EntryDeadlineAtCleared() {
+		_spec.ClearField(memberdetails.FieldEntryDeadlineAt, field.TypeTime)
 	}
-	if value, ok := mdu.mutation.ClassLastTime(); ok {
-		_spec.SetField(memberdetails.FieldClassLastTime, field.TypeTime, value)
+	if value, ok := mdu.mutation.ClassLastAt(); ok {
+		_spec.SetField(memberdetails.FieldClassLastAt, field.TypeTime, value)
 	}
-	if mdu.mutation.ClassLastTimeCleared() {
-		_spec.ClearField(memberdetails.FieldClassLastTime, field.TypeTime)
+	if mdu.mutation.ClassLastAtCleared() {
+		_spec.ClearField(memberdetails.FieldClassLastAt, field.TypeTime)
 	}
 	if value, ok := mdu.mutation.RelationUID(); ok {
 		_spec.SetField(memberdetails.FieldRelationUID, field.TypeInt64, value)
@@ -759,6 +843,66 @@ type MemberDetailsUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (mduo *MemberDetailsUpdateOne) SetUpdatedAt(t time.Time) *MemberDetailsUpdateOne {
 	mduo.mutation.SetUpdatedAt(t)
+	return mduo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (mduo *MemberDetailsUpdateOne) ClearUpdatedAt() *MemberDetailsUpdateOne {
+	mduo.mutation.ClearUpdatedAt()
+	return mduo
+}
+
+// SetDelete sets the "delete" field.
+func (mduo *MemberDetailsUpdateOne) SetDelete(i int64) *MemberDetailsUpdateOne {
+	mduo.mutation.ResetDelete()
+	mduo.mutation.SetDelete(i)
+	return mduo
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (mduo *MemberDetailsUpdateOne) SetNillableDelete(i *int64) *MemberDetailsUpdateOne {
+	if i != nil {
+		mduo.SetDelete(*i)
+	}
+	return mduo
+}
+
+// AddDelete adds i to the "delete" field.
+func (mduo *MemberDetailsUpdateOne) AddDelete(i int64) *MemberDetailsUpdateOne {
+	mduo.mutation.AddDelete(i)
+	return mduo
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (mduo *MemberDetailsUpdateOne) ClearDelete() *MemberDetailsUpdateOne {
+	mduo.mutation.ClearDelete()
+	return mduo
+}
+
+// SetCreatedID sets the "created_id" field.
+func (mduo *MemberDetailsUpdateOne) SetCreatedID(i int64) *MemberDetailsUpdateOne {
+	mduo.mutation.ResetCreatedID()
+	mduo.mutation.SetCreatedID(i)
+	return mduo
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (mduo *MemberDetailsUpdateOne) SetNillableCreatedID(i *int64) *MemberDetailsUpdateOne {
+	if i != nil {
+		mduo.SetCreatedID(*i)
+	}
+	return mduo
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (mduo *MemberDetailsUpdateOne) AddCreatedID(i int64) *MemberDetailsUpdateOne {
+	mduo.mutation.AddCreatedID(i)
+	return mduo
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (mduo *MemberDetailsUpdateOne) ClearCreatedID() *MemberDetailsUpdateOne {
+	mduo.mutation.ClearCreatedID()
 	return mduo
 }
 
@@ -1017,63 +1161,63 @@ func (mduo *MemberDetailsUpdateOne) ClearEntrySum() *MemberDetailsUpdateOne {
 	return mduo
 }
 
-// SetEntryLastTime sets the "entry_last_time" field.
-func (mduo *MemberDetailsUpdateOne) SetEntryLastTime(t time.Time) *MemberDetailsUpdateOne {
-	mduo.mutation.SetEntryLastTime(t)
+// SetEntryLastAt sets the "entry_last_at" field.
+func (mduo *MemberDetailsUpdateOne) SetEntryLastAt(t time.Time) *MemberDetailsUpdateOne {
+	mduo.mutation.SetEntryLastAt(t)
 	return mduo
 }
 
-// SetNillableEntryLastTime sets the "entry_last_time" field if the given value is not nil.
-func (mduo *MemberDetailsUpdateOne) SetNillableEntryLastTime(t *time.Time) *MemberDetailsUpdateOne {
+// SetNillableEntryLastAt sets the "entry_last_at" field if the given value is not nil.
+func (mduo *MemberDetailsUpdateOne) SetNillableEntryLastAt(t *time.Time) *MemberDetailsUpdateOne {
 	if t != nil {
-		mduo.SetEntryLastTime(*t)
+		mduo.SetEntryLastAt(*t)
 	}
 	return mduo
 }
 
-// ClearEntryLastTime clears the value of the "entry_last_time" field.
-func (mduo *MemberDetailsUpdateOne) ClearEntryLastTime() *MemberDetailsUpdateOne {
-	mduo.mutation.ClearEntryLastTime()
+// ClearEntryLastAt clears the value of the "entry_last_at" field.
+func (mduo *MemberDetailsUpdateOne) ClearEntryLastAt() *MemberDetailsUpdateOne {
+	mduo.mutation.ClearEntryLastAt()
 	return mduo
 }
 
-// SetEntryDeadlineTime sets the "entry_deadline_time" field.
-func (mduo *MemberDetailsUpdateOne) SetEntryDeadlineTime(t time.Time) *MemberDetailsUpdateOne {
-	mduo.mutation.SetEntryDeadlineTime(t)
+// SetEntryDeadlineAt sets the "entry_deadline_at" field.
+func (mduo *MemberDetailsUpdateOne) SetEntryDeadlineAt(t time.Time) *MemberDetailsUpdateOne {
+	mduo.mutation.SetEntryDeadlineAt(t)
 	return mduo
 }
 
-// SetNillableEntryDeadlineTime sets the "entry_deadline_time" field if the given value is not nil.
-func (mduo *MemberDetailsUpdateOne) SetNillableEntryDeadlineTime(t *time.Time) *MemberDetailsUpdateOne {
+// SetNillableEntryDeadlineAt sets the "entry_deadline_at" field if the given value is not nil.
+func (mduo *MemberDetailsUpdateOne) SetNillableEntryDeadlineAt(t *time.Time) *MemberDetailsUpdateOne {
 	if t != nil {
-		mduo.SetEntryDeadlineTime(*t)
+		mduo.SetEntryDeadlineAt(*t)
 	}
 	return mduo
 }
 
-// ClearEntryDeadlineTime clears the value of the "entry_deadline_time" field.
-func (mduo *MemberDetailsUpdateOne) ClearEntryDeadlineTime() *MemberDetailsUpdateOne {
-	mduo.mutation.ClearEntryDeadlineTime()
+// ClearEntryDeadlineAt clears the value of the "entry_deadline_at" field.
+func (mduo *MemberDetailsUpdateOne) ClearEntryDeadlineAt() *MemberDetailsUpdateOne {
+	mduo.mutation.ClearEntryDeadlineAt()
 	return mduo
 }
 
-// SetClassLastTime sets the "class_last_time" field.
-func (mduo *MemberDetailsUpdateOne) SetClassLastTime(t time.Time) *MemberDetailsUpdateOne {
-	mduo.mutation.SetClassLastTime(t)
+// SetClassLastAt sets the "class_last_at" field.
+func (mduo *MemberDetailsUpdateOne) SetClassLastAt(t time.Time) *MemberDetailsUpdateOne {
+	mduo.mutation.SetClassLastAt(t)
 	return mduo
 }
 
-// SetNillableClassLastTime sets the "class_last_time" field if the given value is not nil.
-func (mduo *MemberDetailsUpdateOne) SetNillableClassLastTime(t *time.Time) *MemberDetailsUpdateOne {
+// SetNillableClassLastAt sets the "class_last_at" field if the given value is not nil.
+func (mduo *MemberDetailsUpdateOne) SetNillableClassLastAt(t *time.Time) *MemberDetailsUpdateOne {
 	if t != nil {
-		mduo.SetClassLastTime(*t)
+		mduo.SetClassLastAt(*t)
 	}
 	return mduo
 }
 
-// ClearClassLastTime clears the value of the "class_last_time" field.
-func (mduo *MemberDetailsUpdateOne) ClearClassLastTime() *MemberDetailsUpdateOne {
-	mduo.mutation.ClearClassLastTime()
+// ClearClassLastAt clears the value of the "class_last_at" field.
+func (mduo *MemberDetailsUpdateOne) ClearClassLastAt() *MemberDetailsUpdateOne {
+	mduo.mutation.ClearClassLastAt()
 	return mduo
 }
 
@@ -1291,7 +1435,7 @@ func (mduo *MemberDetailsUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (mduo *MemberDetailsUpdateOne) defaults() {
-	if _, ok := mduo.mutation.UpdatedAt(); !ok {
+	if _, ok := mduo.mutation.UpdatedAt(); !ok && !mduo.mutation.UpdatedAtCleared() {
 		v := memberdetails.UpdateDefaultUpdatedAt()
 		mduo.mutation.SetUpdatedAt(v)
 	}
@@ -1323,8 +1467,32 @@ func (mduo *MemberDetailsUpdateOne) sqlSave(ctx context.Context) (_node *MemberD
 			}
 		}
 	}
+	if mduo.mutation.CreatedAtCleared() {
+		_spec.ClearField(memberdetails.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := mduo.mutation.UpdatedAt(); ok {
 		_spec.SetField(memberdetails.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if mduo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(memberdetails.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := mduo.mutation.Delete(); ok {
+		_spec.SetField(memberdetails.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := mduo.mutation.AddedDelete(); ok {
+		_spec.AddField(memberdetails.FieldDelete, field.TypeInt64, value)
+	}
+	if mduo.mutation.DeleteCleared() {
+		_spec.ClearField(memberdetails.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := mduo.mutation.CreatedID(); ok {
+		_spec.SetField(memberdetails.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := mduo.mutation.AddedCreatedID(); ok {
+		_spec.AddField(memberdetails.FieldCreatedID, field.TypeInt64, value)
+	}
+	if mduo.mutation.CreatedIDCleared() {
+		_spec.ClearField(memberdetails.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := mduo.mutation.Email(); ok {
 		_spec.SetField(memberdetails.FieldEmail, field.TypeString, value)
@@ -1401,23 +1569,23 @@ func (mduo *MemberDetailsUpdateOne) sqlSave(ctx context.Context) (_node *MemberD
 	if mduo.mutation.EntrySumCleared() {
 		_spec.ClearField(memberdetails.FieldEntrySum, field.TypeInt64)
 	}
-	if value, ok := mduo.mutation.EntryLastTime(); ok {
-		_spec.SetField(memberdetails.FieldEntryLastTime, field.TypeTime, value)
+	if value, ok := mduo.mutation.EntryLastAt(); ok {
+		_spec.SetField(memberdetails.FieldEntryLastAt, field.TypeTime, value)
 	}
-	if mduo.mutation.EntryLastTimeCleared() {
-		_spec.ClearField(memberdetails.FieldEntryLastTime, field.TypeTime)
+	if mduo.mutation.EntryLastAtCleared() {
+		_spec.ClearField(memberdetails.FieldEntryLastAt, field.TypeTime)
 	}
-	if value, ok := mduo.mutation.EntryDeadlineTime(); ok {
-		_spec.SetField(memberdetails.FieldEntryDeadlineTime, field.TypeTime, value)
+	if value, ok := mduo.mutation.EntryDeadlineAt(); ok {
+		_spec.SetField(memberdetails.FieldEntryDeadlineAt, field.TypeTime, value)
 	}
-	if mduo.mutation.EntryDeadlineTimeCleared() {
-		_spec.ClearField(memberdetails.FieldEntryDeadlineTime, field.TypeTime)
+	if mduo.mutation.EntryDeadlineAtCleared() {
+		_spec.ClearField(memberdetails.FieldEntryDeadlineAt, field.TypeTime)
 	}
-	if value, ok := mduo.mutation.ClassLastTime(); ok {
-		_spec.SetField(memberdetails.FieldClassLastTime, field.TypeTime, value)
+	if value, ok := mduo.mutation.ClassLastAt(); ok {
+		_spec.SetField(memberdetails.FieldClassLastAt, field.TypeTime, value)
 	}
-	if mduo.mutation.ClassLastTimeCleared() {
-		_spec.ClearField(memberdetails.FieldClassLastTime, field.TypeTime)
+	if mduo.mutation.ClassLastAtCleared() {
+		_spec.ClearField(memberdetails.FieldClassLastAt, field.TypeTime)
 	}
 	if value, ok := mduo.mutation.RelationUID(); ok {
 		_spec.SetField(memberdetails.FieldRelationUID, field.TypeInt64, value)

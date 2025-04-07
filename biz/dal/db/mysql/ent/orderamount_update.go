@@ -35,6 +35,66 @@ func (oau *OrderAmountUpdate) SetUpdatedAt(t time.Time) *OrderAmountUpdate {
 	return oau
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (oau *OrderAmountUpdate) ClearUpdatedAt() *OrderAmountUpdate {
+	oau.mutation.ClearUpdatedAt()
+	return oau
+}
+
+// SetDelete sets the "delete" field.
+func (oau *OrderAmountUpdate) SetDelete(i int64) *OrderAmountUpdate {
+	oau.mutation.ResetDelete()
+	oau.mutation.SetDelete(i)
+	return oau
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (oau *OrderAmountUpdate) SetNillableDelete(i *int64) *OrderAmountUpdate {
+	if i != nil {
+		oau.SetDelete(*i)
+	}
+	return oau
+}
+
+// AddDelete adds i to the "delete" field.
+func (oau *OrderAmountUpdate) AddDelete(i int64) *OrderAmountUpdate {
+	oau.mutation.AddDelete(i)
+	return oau
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (oau *OrderAmountUpdate) ClearDelete() *OrderAmountUpdate {
+	oau.mutation.ClearDelete()
+	return oau
+}
+
+// SetCreatedID sets the "created_id" field.
+func (oau *OrderAmountUpdate) SetCreatedID(i int64) *OrderAmountUpdate {
+	oau.mutation.ResetCreatedID()
+	oau.mutation.SetCreatedID(i)
+	return oau
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (oau *OrderAmountUpdate) SetNillableCreatedID(i *int64) *OrderAmountUpdate {
+	if i != nil {
+		oau.SetCreatedID(*i)
+	}
+	return oau
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (oau *OrderAmountUpdate) AddCreatedID(i int64) *OrderAmountUpdate {
+	oau.mutation.AddCreatedID(i)
+	return oau
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (oau *OrderAmountUpdate) ClearCreatedID() *OrderAmountUpdate {
+	oau.mutation.ClearCreatedID()
+	return oau
+}
+
 // SetOrderID sets the "order_id" field.
 func (oau *OrderAmountUpdate) SetOrderID(i int64) *OrderAmountUpdate {
 	oau.mutation.SetOrderID(i)
@@ -209,7 +269,7 @@ func (oau *OrderAmountUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (oau *OrderAmountUpdate) defaults() {
-	if _, ok := oau.mutation.UpdatedAt(); !ok {
+	if _, ok := oau.mutation.UpdatedAt(); !ok && !oau.mutation.UpdatedAtCleared() {
 		v := orderamount.UpdateDefaultUpdatedAt()
 		oau.mutation.SetUpdatedAt(v)
 	}
@@ -237,8 +297,32 @@ func (oau *OrderAmountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if oau.mutation.CreatedAtCleared() {
+		_spec.ClearField(orderamount.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := oau.mutation.UpdatedAt(); ok {
 		_spec.SetField(orderamount.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if oau.mutation.UpdatedAtCleared() {
+		_spec.ClearField(orderamount.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := oau.mutation.Delete(); ok {
+		_spec.SetField(orderamount.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := oau.mutation.AddedDelete(); ok {
+		_spec.AddField(orderamount.FieldDelete, field.TypeInt64, value)
+	}
+	if oau.mutation.DeleteCleared() {
+		_spec.ClearField(orderamount.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := oau.mutation.CreatedID(); ok {
+		_spec.SetField(orderamount.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := oau.mutation.AddedCreatedID(); ok {
+		_spec.AddField(orderamount.FieldCreatedID, field.TypeInt64, value)
+	}
+	if oau.mutation.CreatedIDCleared() {
+		_spec.ClearField(orderamount.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := oau.mutation.Total(); ok {
 		_spec.SetField(orderamount.FieldTotal, field.TypeFloat64, value)
@@ -328,6 +412,66 @@ type OrderAmountUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (oauo *OrderAmountUpdateOne) SetUpdatedAt(t time.Time) *OrderAmountUpdateOne {
 	oauo.mutation.SetUpdatedAt(t)
+	return oauo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (oauo *OrderAmountUpdateOne) ClearUpdatedAt() *OrderAmountUpdateOne {
+	oauo.mutation.ClearUpdatedAt()
+	return oauo
+}
+
+// SetDelete sets the "delete" field.
+func (oauo *OrderAmountUpdateOne) SetDelete(i int64) *OrderAmountUpdateOne {
+	oauo.mutation.ResetDelete()
+	oauo.mutation.SetDelete(i)
+	return oauo
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (oauo *OrderAmountUpdateOne) SetNillableDelete(i *int64) *OrderAmountUpdateOne {
+	if i != nil {
+		oauo.SetDelete(*i)
+	}
+	return oauo
+}
+
+// AddDelete adds i to the "delete" field.
+func (oauo *OrderAmountUpdateOne) AddDelete(i int64) *OrderAmountUpdateOne {
+	oauo.mutation.AddDelete(i)
+	return oauo
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (oauo *OrderAmountUpdateOne) ClearDelete() *OrderAmountUpdateOne {
+	oauo.mutation.ClearDelete()
+	return oauo
+}
+
+// SetCreatedID sets the "created_id" field.
+func (oauo *OrderAmountUpdateOne) SetCreatedID(i int64) *OrderAmountUpdateOne {
+	oauo.mutation.ResetCreatedID()
+	oauo.mutation.SetCreatedID(i)
+	return oauo
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (oauo *OrderAmountUpdateOne) SetNillableCreatedID(i *int64) *OrderAmountUpdateOne {
+	if i != nil {
+		oauo.SetCreatedID(*i)
+	}
+	return oauo
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (oauo *OrderAmountUpdateOne) AddCreatedID(i int64) *OrderAmountUpdateOne {
+	oauo.mutation.AddCreatedID(i)
+	return oauo
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (oauo *OrderAmountUpdateOne) ClearCreatedID() *OrderAmountUpdateOne {
+	oauo.mutation.ClearCreatedID()
 	return oauo
 }
 
@@ -518,7 +662,7 @@ func (oauo *OrderAmountUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (oauo *OrderAmountUpdateOne) defaults() {
-	if _, ok := oauo.mutation.UpdatedAt(); !ok {
+	if _, ok := oauo.mutation.UpdatedAt(); !ok && !oauo.mutation.UpdatedAtCleared() {
 		v := orderamount.UpdateDefaultUpdatedAt()
 		oauo.mutation.SetUpdatedAt(v)
 	}
@@ -563,8 +707,32 @@ func (oauo *OrderAmountUpdateOne) sqlSave(ctx context.Context) (_node *OrderAmou
 			}
 		}
 	}
+	if oauo.mutation.CreatedAtCleared() {
+		_spec.ClearField(orderamount.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := oauo.mutation.UpdatedAt(); ok {
 		_spec.SetField(orderamount.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if oauo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(orderamount.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := oauo.mutation.Delete(); ok {
+		_spec.SetField(orderamount.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := oauo.mutation.AddedDelete(); ok {
+		_spec.AddField(orderamount.FieldDelete, field.TypeInt64, value)
+	}
+	if oauo.mutation.DeleteCleared() {
+		_spec.ClearField(orderamount.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := oauo.mutation.CreatedID(); ok {
+		_spec.SetField(orderamount.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := oauo.mutation.AddedCreatedID(); ok {
+		_spec.AddField(orderamount.FieldCreatedID, field.TypeInt64, value)
+	}
+	if oauo.mutation.CreatedIDCleared() {
+		_spec.ClearField(orderamount.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := oauo.mutation.Total(); ok {
 		_spec.SetField(orderamount.FieldTotal, field.TypeFloat64, value)

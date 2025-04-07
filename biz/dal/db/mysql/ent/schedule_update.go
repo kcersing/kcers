@@ -36,6 +36,66 @@ func (su *ScheduleUpdate) SetUpdatedAt(t time.Time) *ScheduleUpdate {
 	return su
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (su *ScheduleUpdate) ClearUpdatedAt() *ScheduleUpdate {
+	su.mutation.ClearUpdatedAt()
+	return su
+}
+
+// SetDelete sets the "delete" field.
+func (su *ScheduleUpdate) SetDelete(i int64) *ScheduleUpdate {
+	su.mutation.ResetDelete()
+	su.mutation.SetDelete(i)
+	return su
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (su *ScheduleUpdate) SetNillableDelete(i *int64) *ScheduleUpdate {
+	if i != nil {
+		su.SetDelete(*i)
+	}
+	return su
+}
+
+// AddDelete adds i to the "delete" field.
+func (su *ScheduleUpdate) AddDelete(i int64) *ScheduleUpdate {
+	su.mutation.AddDelete(i)
+	return su
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (su *ScheduleUpdate) ClearDelete() *ScheduleUpdate {
+	su.mutation.ClearDelete()
+	return su
+}
+
+// SetCreatedID sets the "created_id" field.
+func (su *ScheduleUpdate) SetCreatedID(i int64) *ScheduleUpdate {
+	su.mutation.ResetCreatedID()
+	su.mutation.SetCreatedID(i)
+	return su
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (su *ScheduleUpdate) SetNillableCreatedID(i *int64) *ScheduleUpdate {
+	if i != nil {
+		su.SetCreatedID(*i)
+	}
+	return su
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (su *ScheduleUpdate) AddCreatedID(i int64) *ScheduleUpdate {
+	su.mutation.AddCreatedID(i)
+	return su
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (su *ScheduleUpdate) ClearCreatedID() *ScheduleUpdate {
+	su.mutation.ClearCreatedID()
+	return su
+}
+
 // SetStatus sets the "status" field.
 func (su *ScheduleUpdate) SetStatus(i int64) *ScheduleUpdate {
 	su.mutation.ResetStatus()
@@ -285,43 +345,43 @@ func (su *ScheduleUpdate) ClearDate() *ScheduleUpdate {
 	return su
 }
 
-// SetStartTime sets the "start_time" field.
-func (su *ScheduleUpdate) SetStartTime(t time.Time) *ScheduleUpdate {
-	su.mutation.SetStartTime(t)
+// SetStartAt sets the "start_at" field.
+func (su *ScheduleUpdate) SetStartAt(t time.Time) *ScheduleUpdate {
+	su.mutation.SetStartAt(t)
 	return su
 }
 
-// SetNillableStartTime sets the "start_time" field if the given value is not nil.
-func (su *ScheduleUpdate) SetNillableStartTime(t *time.Time) *ScheduleUpdate {
+// SetNillableStartAt sets the "start_at" field if the given value is not nil.
+func (su *ScheduleUpdate) SetNillableStartAt(t *time.Time) *ScheduleUpdate {
 	if t != nil {
-		su.SetStartTime(*t)
+		su.SetStartAt(*t)
 	}
 	return su
 }
 
-// ClearStartTime clears the value of the "start_time" field.
-func (su *ScheduleUpdate) ClearStartTime() *ScheduleUpdate {
-	su.mutation.ClearStartTime()
+// ClearStartAt clears the value of the "start_at" field.
+func (su *ScheduleUpdate) ClearStartAt() *ScheduleUpdate {
+	su.mutation.ClearStartAt()
 	return su
 }
 
-// SetEndTime sets the "end_time" field.
-func (su *ScheduleUpdate) SetEndTime(t time.Time) *ScheduleUpdate {
-	su.mutation.SetEndTime(t)
+// SetEndAt sets the "end_at" field.
+func (su *ScheduleUpdate) SetEndAt(t time.Time) *ScheduleUpdate {
+	su.mutation.SetEndAt(t)
 	return su
 }
 
-// SetNillableEndTime sets the "end_time" field if the given value is not nil.
-func (su *ScheduleUpdate) SetNillableEndTime(t *time.Time) *ScheduleUpdate {
+// SetNillableEndAt sets the "end_at" field if the given value is not nil.
+func (su *ScheduleUpdate) SetNillableEndAt(t *time.Time) *ScheduleUpdate {
 	if t != nil {
-		su.SetEndTime(*t)
+		su.SetEndAt(*t)
 	}
 	return su
 }
 
-// ClearEndTime clears the value of the "end_time" field.
-func (su *ScheduleUpdate) ClearEndTime() *ScheduleUpdate {
-	su.mutation.ClearEndTime()
+// ClearEndAt clears the value of the "end_at" field.
+func (su *ScheduleUpdate) ClearEndAt() *ScheduleUpdate {
+	su.mutation.ClearEndAt()
 	return su
 }
 
@@ -519,7 +579,7 @@ func (su *ScheduleUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (su *ScheduleUpdate) defaults() {
-	if _, ok := su.mutation.UpdatedAt(); !ok {
+	if _, ok := su.mutation.UpdatedAt(); !ok && !su.mutation.UpdatedAtCleared() {
 		v := schedule.UpdateDefaultUpdatedAt()
 		su.mutation.SetUpdatedAt(v)
 	}
@@ -534,8 +594,32 @@ func (su *ScheduleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if su.mutation.CreatedAtCleared() {
+		_spec.ClearField(schedule.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := su.mutation.UpdatedAt(); ok {
 		_spec.SetField(schedule.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if su.mutation.UpdatedAtCleared() {
+		_spec.ClearField(schedule.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := su.mutation.Delete(); ok {
+		_spec.SetField(schedule.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := su.mutation.AddedDelete(); ok {
+		_spec.AddField(schedule.FieldDelete, field.TypeInt64, value)
+	}
+	if su.mutation.DeleteCleared() {
+		_spec.ClearField(schedule.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := su.mutation.CreatedID(); ok {
+		_spec.SetField(schedule.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := su.mutation.AddedCreatedID(); ok {
+		_spec.AddField(schedule.FieldCreatedID, field.TypeInt64, value)
+	}
+	if su.mutation.CreatedIDCleared() {
+		_spec.ClearField(schedule.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := su.mutation.Status(); ok {
 		_spec.SetField(schedule.FieldStatus, field.TypeInt64, value)
@@ -618,17 +702,17 @@ func (su *ScheduleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if su.mutation.DateCleared() {
 		_spec.ClearField(schedule.FieldDate, field.TypeString)
 	}
-	if value, ok := su.mutation.StartTime(); ok {
-		_spec.SetField(schedule.FieldStartTime, field.TypeTime, value)
+	if value, ok := su.mutation.StartAt(); ok {
+		_spec.SetField(schedule.FieldStartAt, field.TypeTime, value)
 	}
-	if su.mutation.StartTimeCleared() {
-		_spec.ClearField(schedule.FieldStartTime, field.TypeTime)
+	if su.mutation.StartAtCleared() {
+		_spec.ClearField(schedule.FieldStartAt, field.TypeTime)
 	}
-	if value, ok := su.mutation.EndTime(); ok {
-		_spec.SetField(schedule.FieldEndTime, field.TypeTime, value)
+	if value, ok := su.mutation.EndAt(); ok {
+		_spec.SetField(schedule.FieldEndAt, field.TypeTime, value)
 	}
-	if su.mutation.EndTimeCleared() {
-		_spec.ClearField(schedule.FieldEndTime, field.TypeTime)
+	if su.mutation.EndAtCleared() {
+		_spec.ClearField(schedule.FieldEndAt, field.TypeTime)
 	}
 	if value, ok := su.mutation.Price(); ok {
 		_spec.SetField(schedule.FieldPrice, field.TypeFloat64, value)
@@ -770,6 +854,66 @@ type ScheduleUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (suo *ScheduleUpdateOne) SetUpdatedAt(t time.Time) *ScheduleUpdateOne {
 	suo.mutation.SetUpdatedAt(t)
+	return suo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (suo *ScheduleUpdateOne) ClearUpdatedAt() *ScheduleUpdateOne {
+	suo.mutation.ClearUpdatedAt()
+	return suo
+}
+
+// SetDelete sets the "delete" field.
+func (suo *ScheduleUpdateOne) SetDelete(i int64) *ScheduleUpdateOne {
+	suo.mutation.ResetDelete()
+	suo.mutation.SetDelete(i)
+	return suo
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (suo *ScheduleUpdateOne) SetNillableDelete(i *int64) *ScheduleUpdateOne {
+	if i != nil {
+		suo.SetDelete(*i)
+	}
+	return suo
+}
+
+// AddDelete adds i to the "delete" field.
+func (suo *ScheduleUpdateOne) AddDelete(i int64) *ScheduleUpdateOne {
+	suo.mutation.AddDelete(i)
+	return suo
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (suo *ScheduleUpdateOne) ClearDelete() *ScheduleUpdateOne {
+	suo.mutation.ClearDelete()
+	return suo
+}
+
+// SetCreatedID sets the "created_id" field.
+func (suo *ScheduleUpdateOne) SetCreatedID(i int64) *ScheduleUpdateOne {
+	suo.mutation.ResetCreatedID()
+	suo.mutation.SetCreatedID(i)
+	return suo
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (suo *ScheduleUpdateOne) SetNillableCreatedID(i *int64) *ScheduleUpdateOne {
+	if i != nil {
+		suo.SetCreatedID(*i)
+	}
+	return suo
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (suo *ScheduleUpdateOne) AddCreatedID(i int64) *ScheduleUpdateOne {
+	suo.mutation.AddCreatedID(i)
+	return suo
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (suo *ScheduleUpdateOne) ClearCreatedID() *ScheduleUpdateOne {
+	suo.mutation.ClearCreatedID()
 	return suo
 }
 
@@ -1022,43 +1166,43 @@ func (suo *ScheduleUpdateOne) ClearDate() *ScheduleUpdateOne {
 	return suo
 }
 
-// SetStartTime sets the "start_time" field.
-func (suo *ScheduleUpdateOne) SetStartTime(t time.Time) *ScheduleUpdateOne {
-	suo.mutation.SetStartTime(t)
+// SetStartAt sets the "start_at" field.
+func (suo *ScheduleUpdateOne) SetStartAt(t time.Time) *ScheduleUpdateOne {
+	suo.mutation.SetStartAt(t)
 	return suo
 }
 
-// SetNillableStartTime sets the "start_time" field if the given value is not nil.
-func (suo *ScheduleUpdateOne) SetNillableStartTime(t *time.Time) *ScheduleUpdateOne {
+// SetNillableStartAt sets the "start_at" field if the given value is not nil.
+func (suo *ScheduleUpdateOne) SetNillableStartAt(t *time.Time) *ScheduleUpdateOne {
 	if t != nil {
-		suo.SetStartTime(*t)
+		suo.SetStartAt(*t)
 	}
 	return suo
 }
 
-// ClearStartTime clears the value of the "start_time" field.
-func (suo *ScheduleUpdateOne) ClearStartTime() *ScheduleUpdateOne {
-	suo.mutation.ClearStartTime()
+// ClearStartAt clears the value of the "start_at" field.
+func (suo *ScheduleUpdateOne) ClearStartAt() *ScheduleUpdateOne {
+	suo.mutation.ClearStartAt()
 	return suo
 }
 
-// SetEndTime sets the "end_time" field.
-func (suo *ScheduleUpdateOne) SetEndTime(t time.Time) *ScheduleUpdateOne {
-	suo.mutation.SetEndTime(t)
+// SetEndAt sets the "end_at" field.
+func (suo *ScheduleUpdateOne) SetEndAt(t time.Time) *ScheduleUpdateOne {
+	suo.mutation.SetEndAt(t)
 	return suo
 }
 
-// SetNillableEndTime sets the "end_time" field if the given value is not nil.
-func (suo *ScheduleUpdateOne) SetNillableEndTime(t *time.Time) *ScheduleUpdateOne {
+// SetNillableEndAt sets the "end_at" field if the given value is not nil.
+func (suo *ScheduleUpdateOne) SetNillableEndAt(t *time.Time) *ScheduleUpdateOne {
 	if t != nil {
-		suo.SetEndTime(*t)
+		suo.SetEndAt(*t)
 	}
 	return suo
 }
 
-// ClearEndTime clears the value of the "end_time" field.
-func (suo *ScheduleUpdateOne) ClearEndTime() *ScheduleUpdateOne {
-	suo.mutation.ClearEndTime()
+// ClearEndAt clears the value of the "end_at" field.
+func (suo *ScheduleUpdateOne) ClearEndAt() *ScheduleUpdateOne {
+	suo.mutation.ClearEndAt()
 	return suo
 }
 
@@ -1269,7 +1413,7 @@ func (suo *ScheduleUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (suo *ScheduleUpdateOne) defaults() {
-	if _, ok := suo.mutation.UpdatedAt(); !ok {
+	if _, ok := suo.mutation.UpdatedAt(); !ok && !suo.mutation.UpdatedAtCleared() {
 		v := schedule.UpdateDefaultUpdatedAt()
 		suo.mutation.SetUpdatedAt(v)
 	}
@@ -1301,8 +1445,32 @@ func (suo *ScheduleUpdateOne) sqlSave(ctx context.Context) (_node *Schedule, err
 			}
 		}
 	}
+	if suo.mutation.CreatedAtCleared() {
+		_spec.ClearField(schedule.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := suo.mutation.UpdatedAt(); ok {
 		_spec.SetField(schedule.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if suo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(schedule.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := suo.mutation.Delete(); ok {
+		_spec.SetField(schedule.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := suo.mutation.AddedDelete(); ok {
+		_spec.AddField(schedule.FieldDelete, field.TypeInt64, value)
+	}
+	if suo.mutation.DeleteCleared() {
+		_spec.ClearField(schedule.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := suo.mutation.CreatedID(); ok {
+		_spec.SetField(schedule.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := suo.mutation.AddedCreatedID(); ok {
+		_spec.AddField(schedule.FieldCreatedID, field.TypeInt64, value)
+	}
+	if suo.mutation.CreatedIDCleared() {
+		_spec.ClearField(schedule.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := suo.mutation.Status(); ok {
 		_spec.SetField(schedule.FieldStatus, field.TypeInt64, value)
@@ -1385,17 +1553,17 @@ func (suo *ScheduleUpdateOne) sqlSave(ctx context.Context) (_node *Schedule, err
 	if suo.mutation.DateCleared() {
 		_spec.ClearField(schedule.FieldDate, field.TypeString)
 	}
-	if value, ok := suo.mutation.StartTime(); ok {
-		_spec.SetField(schedule.FieldStartTime, field.TypeTime, value)
+	if value, ok := suo.mutation.StartAt(); ok {
+		_spec.SetField(schedule.FieldStartAt, field.TypeTime, value)
 	}
-	if suo.mutation.StartTimeCleared() {
-		_spec.ClearField(schedule.FieldStartTime, field.TypeTime)
+	if suo.mutation.StartAtCleared() {
+		_spec.ClearField(schedule.FieldStartAt, field.TypeTime)
 	}
-	if value, ok := suo.mutation.EndTime(); ok {
-		_spec.SetField(schedule.FieldEndTime, field.TypeTime, value)
+	if value, ok := suo.mutation.EndAt(); ok {
+		_spec.SetField(schedule.FieldEndAt, field.TypeTime, value)
 	}
-	if suo.mutation.EndTimeCleared() {
-		_spec.ClearField(schedule.FieldEndTime, field.TypeTime)
+	if suo.mutation.EndAtCleared() {
+		_spec.ClearField(schedule.FieldEndAt, field.TypeTime)
 	}
 	if value, ok := suo.mutation.Price(); ok {
 		_spec.SetField(schedule.FieldPrice, field.TypeFloat64, value)

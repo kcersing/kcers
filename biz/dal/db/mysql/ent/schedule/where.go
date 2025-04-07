@@ -65,6 +65,16 @@ func UpdatedAt(v time.Time) predicate.Schedule {
 	return predicate.Schedule(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
+// Delete applies equality check predicate on the "delete" field. It's identical to DeleteEQ.
+func Delete(v int64) predicate.Schedule {
+	return predicate.Schedule(sql.FieldEQ(FieldDelete, v))
+}
+
+// CreatedID applies equality check predicate on the "created_id" field. It's identical to CreatedIDEQ.
+func CreatedID(v int64) predicate.Schedule {
+	return predicate.Schedule(sql.FieldEQ(FieldCreatedID, v))
+}
+
 // Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
 func Status(v int64) predicate.Schedule {
 	return predicate.Schedule(sql.FieldEQ(FieldStatus, v))
@@ -115,14 +125,14 @@ func Date(v string) predicate.Schedule {
 	return predicate.Schedule(sql.FieldEQ(FieldDate, v))
 }
 
-// StartTime applies equality check predicate on the "start_time" field. It's identical to StartTimeEQ.
-func StartTime(v time.Time) predicate.Schedule {
-	return predicate.Schedule(sql.FieldEQ(FieldStartTime, v))
+// StartAt applies equality check predicate on the "start_at" field. It's identical to StartAtEQ.
+func StartAt(v time.Time) predicate.Schedule {
+	return predicate.Schedule(sql.FieldEQ(FieldStartAt, v))
 }
 
-// EndTime applies equality check predicate on the "end_time" field. It's identical to EndTimeEQ.
-func EndTime(v time.Time) predicate.Schedule {
-	return predicate.Schedule(sql.FieldEQ(FieldEndTime, v))
+// EndAt applies equality check predicate on the "end_at" field. It's identical to EndAtEQ.
+func EndAt(v time.Time) predicate.Schedule {
+	return predicate.Schedule(sql.FieldEQ(FieldEndAt, v))
 }
 
 // Price applies equality check predicate on the "price" field. It's identical to PriceEQ.
@@ -185,6 +195,16 @@ func CreatedAtLTE(v time.Time) predicate.Schedule {
 	return predicate.Schedule(sql.FieldLTE(FieldCreatedAt, v))
 }
 
+// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
+func CreatedAtIsNil() predicate.Schedule {
+	return predicate.Schedule(sql.FieldIsNull(FieldCreatedAt))
+}
+
+// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
+func CreatedAtNotNil() predicate.Schedule {
+	return predicate.Schedule(sql.FieldNotNull(FieldCreatedAt))
+}
+
 // UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
 func UpdatedAtEQ(v time.Time) predicate.Schedule {
 	return predicate.Schedule(sql.FieldEQ(FieldUpdatedAt, v))
@@ -223,6 +243,116 @@ func UpdatedAtLT(v time.Time) predicate.Schedule {
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.Schedule {
 	return predicate.Schedule(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.Schedule {
+	return predicate.Schedule(sql.FieldIsNull(FieldUpdatedAt))
+}
+
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.Schedule {
+	return predicate.Schedule(sql.FieldNotNull(FieldUpdatedAt))
+}
+
+// DeleteEQ applies the EQ predicate on the "delete" field.
+func DeleteEQ(v int64) predicate.Schedule {
+	return predicate.Schedule(sql.FieldEQ(FieldDelete, v))
+}
+
+// DeleteNEQ applies the NEQ predicate on the "delete" field.
+func DeleteNEQ(v int64) predicate.Schedule {
+	return predicate.Schedule(sql.FieldNEQ(FieldDelete, v))
+}
+
+// DeleteIn applies the In predicate on the "delete" field.
+func DeleteIn(vs ...int64) predicate.Schedule {
+	return predicate.Schedule(sql.FieldIn(FieldDelete, vs...))
+}
+
+// DeleteNotIn applies the NotIn predicate on the "delete" field.
+func DeleteNotIn(vs ...int64) predicate.Schedule {
+	return predicate.Schedule(sql.FieldNotIn(FieldDelete, vs...))
+}
+
+// DeleteGT applies the GT predicate on the "delete" field.
+func DeleteGT(v int64) predicate.Schedule {
+	return predicate.Schedule(sql.FieldGT(FieldDelete, v))
+}
+
+// DeleteGTE applies the GTE predicate on the "delete" field.
+func DeleteGTE(v int64) predicate.Schedule {
+	return predicate.Schedule(sql.FieldGTE(FieldDelete, v))
+}
+
+// DeleteLT applies the LT predicate on the "delete" field.
+func DeleteLT(v int64) predicate.Schedule {
+	return predicate.Schedule(sql.FieldLT(FieldDelete, v))
+}
+
+// DeleteLTE applies the LTE predicate on the "delete" field.
+func DeleteLTE(v int64) predicate.Schedule {
+	return predicate.Schedule(sql.FieldLTE(FieldDelete, v))
+}
+
+// DeleteIsNil applies the IsNil predicate on the "delete" field.
+func DeleteIsNil() predicate.Schedule {
+	return predicate.Schedule(sql.FieldIsNull(FieldDelete))
+}
+
+// DeleteNotNil applies the NotNil predicate on the "delete" field.
+func DeleteNotNil() predicate.Schedule {
+	return predicate.Schedule(sql.FieldNotNull(FieldDelete))
+}
+
+// CreatedIDEQ applies the EQ predicate on the "created_id" field.
+func CreatedIDEQ(v int64) predicate.Schedule {
+	return predicate.Schedule(sql.FieldEQ(FieldCreatedID, v))
+}
+
+// CreatedIDNEQ applies the NEQ predicate on the "created_id" field.
+func CreatedIDNEQ(v int64) predicate.Schedule {
+	return predicate.Schedule(sql.FieldNEQ(FieldCreatedID, v))
+}
+
+// CreatedIDIn applies the In predicate on the "created_id" field.
+func CreatedIDIn(vs ...int64) predicate.Schedule {
+	return predicate.Schedule(sql.FieldIn(FieldCreatedID, vs...))
+}
+
+// CreatedIDNotIn applies the NotIn predicate on the "created_id" field.
+func CreatedIDNotIn(vs ...int64) predicate.Schedule {
+	return predicate.Schedule(sql.FieldNotIn(FieldCreatedID, vs...))
+}
+
+// CreatedIDGT applies the GT predicate on the "created_id" field.
+func CreatedIDGT(v int64) predicate.Schedule {
+	return predicate.Schedule(sql.FieldGT(FieldCreatedID, v))
+}
+
+// CreatedIDGTE applies the GTE predicate on the "created_id" field.
+func CreatedIDGTE(v int64) predicate.Schedule {
+	return predicate.Schedule(sql.FieldGTE(FieldCreatedID, v))
+}
+
+// CreatedIDLT applies the LT predicate on the "created_id" field.
+func CreatedIDLT(v int64) predicate.Schedule {
+	return predicate.Schedule(sql.FieldLT(FieldCreatedID, v))
+}
+
+// CreatedIDLTE applies the LTE predicate on the "created_id" field.
+func CreatedIDLTE(v int64) predicate.Schedule {
+	return predicate.Schedule(sql.FieldLTE(FieldCreatedID, v))
+}
+
+// CreatedIDIsNil applies the IsNil predicate on the "created_id" field.
+func CreatedIDIsNil() predicate.Schedule {
+	return predicate.Schedule(sql.FieldIsNull(FieldCreatedID))
+}
+
+// CreatedIDNotNil applies the NotNil predicate on the "created_id" field.
+func CreatedIDNotNil() predicate.Schedule {
+	return predicate.Schedule(sql.FieldNotNull(FieldCreatedID))
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
@@ -800,104 +930,104 @@ func DateContainsFold(v string) predicate.Schedule {
 	return predicate.Schedule(sql.FieldContainsFold(FieldDate, v))
 }
 
-// StartTimeEQ applies the EQ predicate on the "start_time" field.
-func StartTimeEQ(v time.Time) predicate.Schedule {
-	return predicate.Schedule(sql.FieldEQ(FieldStartTime, v))
+// StartAtEQ applies the EQ predicate on the "start_at" field.
+func StartAtEQ(v time.Time) predicate.Schedule {
+	return predicate.Schedule(sql.FieldEQ(FieldStartAt, v))
 }
 
-// StartTimeNEQ applies the NEQ predicate on the "start_time" field.
-func StartTimeNEQ(v time.Time) predicate.Schedule {
-	return predicate.Schedule(sql.FieldNEQ(FieldStartTime, v))
+// StartAtNEQ applies the NEQ predicate on the "start_at" field.
+func StartAtNEQ(v time.Time) predicate.Schedule {
+	return predicate.Schedule(sql.FieldNEQ(FieldStartAt, v))
 }
 
-// StartTimeIn applies the In predicate on the "start_time" field.
-func StartTimeIn(vs ...time.Time) predicate.Schedule {
-	return predicate.Schedule(sql.FieldIn(FieldStartTime, vs...))
+// StartAtIn applies the In predicate on the "start_at" field.
+func StartAtIn(vs ...time.Time) predicate.Schedule {
+	return predicate.Schedule(sql.FieldIn(FieldStartAt, vs...))
 }
 
-// StartTimeNotIn applies the NotIn predicate on the "start_time" field.
-func StartTimeNotIn(vs ...time.Time) predicate.Schedule {
-	return predicate.Schedule(sql.FieldNotIn(FieldStartTime, vs...))
+// StartAtNotIn applies the NotIn predicate on the "start_at" field.
+func StartAtNotIn(vs ...time.Time) predicate.Schedule {
+	return predicate.Schedule(sql.FieldNotIn(FieldStartAt, vs...))
 }
 
-// StartTimeGT applies the GT predicate on the "start_time" field.
-func StartTimeGT(v time.Time) predicate.Schedule {
-	return predicate.Schedule(sql.FieldGT(FieldStartTime, v))
+// StartAtGT applies the GT predicate on the "start_at" field.
+func StartAtGT(v time.Time) predicate.Schedule {
+	return predicate.Schedule(sql.FieldGT(FieldStartAt, v))
 }
 
-// StartTimeGTE applies the GTE predicate on the "start_time" field.
-func StartTimeGTE(v time.Time) predicate.Schedule {
-	return predicate.Schedule(sql.FieldGTE(FieldStartTime, v))
+// StartAtGTE applies the GTE predicate on the "start_at" field.
+func StartAtGTE(v time.Time) predicate.Schedule {
+	return predicate.Schedule(sql.FieldGTE(FieldStartAt, v))
 }
 
-// StartTimeLT applies the LT predicate on the "start_time" field.
-func StartTimeLT(v time.Time) predicate.Schedule {
-	return predicate.Schedule(sql.FieldLT(FieldStartTime, v))
+// StartAtLT applies the LT predicate on the "start_at" field.
+func StartAtLT(v time.Time) predicate.Schedule {
+	return predicate.Schedule(sql.FieldLT(FieldStartAt, v))
 }
 
-// StartTimeLTE applies the LTE predicate on the "start_time" field.
-func StartTimeLTE(v time.Time) predicate.Schedule {
-	return predicate.Schedule(sql.FieldLTE(FieldStartTime, v))
+// StartAtLTE applies the LTE predicate on the "start_at" field.
+func StartAtLTE(v time.Time) predicate.Schedule {
+	return predicate.Schedule(sql.FieldLTE(FieldStartAt, v))
 }
 
-// StartTimeIsNil applies the IsNil predicate on the "start_time" field.
-func StartTimeIsNil() predicate.Schedule {
-	return predicate.Schedule(sql.FieldIsNull(FieldStartTime))
+// StartAtIsNil applies the IsNil predicate on the "start_at" field.
+func StartAtIsNil() predicate.Schedule {
+	return predicate.Schedule(sql.FieldIsNull(FieldStartAt))
 }
 
-// StartTimeNotNil applies the NotNil predicate on the "start_time" field.
-func StartTimeNotNil() predicate.Schedule {
-	return predicate.Schedule(sql.FieldNotNull(FieldStartTime))
+// StartAtNotNil applies the NotNil predicate on the "start_at" field.
+func StartAtNotNil() predicate.Schedule {
+	return predicate.Schedule(sql.FieldNotNull(FieldStartAt))
 }
 
-// EndTimeEQ applies the EQ predicate on the "end_time" field.
-func EndTimeEQ(v time.Time) predicate.Schedule {
-	return predicate.Schedule(sql.FieldEQ(FieldEndTime, v))
+// EndAtEQ applies the EQ predicate on the "end_at" field.
+func EndAtEQ(v time.Time) predicate.Schedule {
+	return predicate.Schedule(sql.FieldEQ(FieldEndAt, v))
 }
 
-// EndTimeNEQ applies the NEQ predicate on the "end_time" field.
-func EndTimeNEQ(v time.Time) predicate.Schedule {
-	return predicate.Schedule(sql.FieldNEQ(FieldEndTime, v))
+// EndAtNEQ applies the NEQ predicate on the "end_at" field.
+func EndAtNEQ(v time.Time) predicate.Schedule {
+	return predicate.Schedule(sql.FieldNEQ(FieldEndAt, v))
 }
 
-// EndTimeIn applies the In predicate on the "end_time" field.
-func EndTimeIn(vs ...time.Time) predicate.Schedule {
-	return predicate.Schedule(sql.FieldIn(FieldEndTime, vs...))
+// EndAtIn applies the In predicate on the "end_at" field.
+func EndAtIn(vs ...time.Time) predicate.Schedule {
+	return predicate.Schedule(sql.FieldIn(FieldEndAt, vs...))
 }
 
-// EndTimeNotIn applies the NotIn predicate on the "end_time" field.
-func EndTimeNotIn(vs ...time.Time) predicate.Schedule {
-	return predicate.Schedule(sql.FieldNotIn(FieldEndTime, vs...))
+// EndAtNotIn applies the NotIn predicate on the "end_at" field.
+func EndAtNotIn(vs ...time.Time) predicate.Schedule {
+	return predicate.Schedule(sql.FieldNotIn(FieldEndAt, vs...))
 }
 
-// EndTimeGT applies the GT predicate on the "end_time" field.
-func EndTimeGT(v time.Time) predicate.Schedule {
-	return predicate.Schedule(sql.FieldGT(FieldEndTime, v))
+// EndAtGT applies the GT predicate on the "end_at" field.
+func EndAtGT(v time.Time) predicate.Schedule {
+	return predicate.Schedule(sql.FieldGT(FieldEndAt, v))
 }
 
-// EndTimeGTE applies the GTE predicate on the "end_time" field.
-func EndTimeGTE(v time.Time) predicate.Schedule {
-	return predicate.Schedule(sql.FieldGTE(FieldEndTime, v))
+// EndAtGTE applies the GTE predicate on the "end_at" field.
+func EndAtGTE(v time.Time) predicate.Schedule {
+	return predicate.Schedule(sql.FieldGTE(FieldEndAt, v))
 }
 
-// EndTimeLT applies the LT predicate on the "end_time" field.
-func EndTimeLT(v time.Time) predicate.Schedule {
-	return predicate.Schedule(sql.FieldLT(FieldEndTime, v))
+// EndAtLT applies the LT predicate on the "end_at" field.
+func EndAtLT(v time.Time) predicate.Schedule {
+	return predicate.Schedule(sql.FieldLT(FieldEndAt, v))
 }
 
-// EndTimeLTE applies the LTE predicate on the "end_time" field.
-func EndTimeLTE(v time.Time) predicate.Schedule {
-	return predicate.Schedule(sql.FieldLTE(FieldEndTime, v))
+// EndAtLTE applies the LTE predicate on the "end_at" field.
+func EndAtLTE(v time.Time) predicate.Schedule {
+	return predicate.Schedule(sql.FieldLTE(FieldEndAt, v))
 }
 
-// EndTimeIsNil applies the IsNil predicate on the "end_time" field.
-func EndTimeIsNil() predicate.Schedule {
-	return predicate.Schedule(sql.FieldIsNull(FieldEndTime))
+// EndAtIsNil applies the IsNil predicate on the "end_at" field.
+func EndAtIsNil() predicate.Schedule {
+	return predicate.Schedule(sql.FieldIsNull(FieldEndAt))
 }
 
-// EndTimeNotNil applies the NotNil predicate on the "end_time" field.
-func EndTimeNotNil() predicate.Schedule {
-	return predicate.Schedule(sql.FieldNotNull(FieldEndTime))
+// EndAtNotNil applies the NotNil predicate on the "end_at" field.
+func EndAtNotNil() predicate.Schedule {
+	return predicate.Schedule(sql.FieldNotNull(FieldEndAt))
 }
 
 // PriceEQ applies the EQ predicate on the "price" field.

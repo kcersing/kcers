@@ -18,6 +18,10 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
+	// FieldDelete holds the string denoting the delete field in the database.
+	FieldDelete = "delete"
+	// FieldCreatedID holds the string denoting the created_id field in the database.
+	FieldCreatedID = "created_id"
 	// FieldMemberID holds the string denoting the member_id field in the database.
 	FieldMemberID = "member_id"
 	// FieldEmail holds the string denoting the email field in the database.
@@ -40,12 +44,12 @@ const (
 	FieldProductVenueName = "product_venue_name"
 	// FieldEntrySum holds the string denoting the entry_sum field in the database.
 	FieldEntrySum = "entry_sum"
-	// FieldEntryLastTime holds the string denoting the entry_last_time field in the database.
-	FieldEntryLastTime = "entry_last_time"
-	// FieldEntryDeadlineTime holds the string denoting the entry_deadline_time field in the database.
-	FieldEntryDeadlineTime = "entry_deadline_time"
-	// FieldClassLastTime holds the string denoting the class_last_time field in the database.
-	FieldClassLastTime = "class_last_time"
+	// FieldEntryLastAt holds the string denoting the entry_last_at field in the database.
+	FieldEntryLastAt = "entry_last_at"
+	// FieldEntryDeadlineAt holds the string denoting the entry_deadline_at field in the database.
+	FieldEntryDeadlineAt = "entry_deadline_at"
+	// FieldClassLastAt holds the string denoting the class_last_at field in the database.
+	FieldClassLastAt = "class_last_at"
 	// FieldRelationUID holds the string denoting the relation_uid field in the database.
 	FieldRelationUID = "relation_uid"
 	// FieldRelationUname holds the string denoting the relation_uname field in the database.
@@ -76,6 +80,8 @@ var Columns = []string{
 	FieldID,
 	FieldCreatedAt,
 	FieldUpdatedAt,
+	FieldDelete,
+	FieldCreatedID,
 	FieldMemberID,
 	FieldEmail,
 	FieldWecom,
@@ -87,9 +93,9 @@ var Columns = []string{
 	FieldProductVenue,
 	FieldProductVenueName,
 	FieldEntrySum,
-	FieldEntryLastTime,
-	FieldEntryDeadlineTime,
-	FieldClassLastTime,
+	FieldEntryLastAt,
+	FieldEntryDeadlineAt,
+	FieldClassLastAt,
 	FieldRelationUID,
 	FieldRelationUname,
 	FieldRelationMid,
@@ -115,6 +121,10 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultDelete holds the default value on creation for the "delete" field.
+	DefaultDelete int64
+	// DefaultCreatedID holds the default value on creation for the "created_id" field.
+	DefaultCreatedID int64
 	// DefaultGender holds the default value on creation for the "gender" field.
 	DefaultGender int64
 	// DefaultMoneySum holds the default value on creation for the "money_sum" field.
@@ -147,6 +157,16 @@ func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdatedAt orders the results by the updated_at field.
 func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByDelete orders the results by the delete field.
+func ByDelete(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDelete, opts...).ToFunc()
+}
+
+// ByCreatedID orders the results by the created_id field.
+func ByCreatedID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedID, opts...).ToFunc()
 }
 
 // ByMemberID orders the results by the member_id field.
@@ -204,19 +224,19 @@ func ByEntrySum(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEntrySum, opts...).ToFunc()
 }
 
-// ByEntryLastTime orders the results by the entry_last_time field.
-func ByEntryLastTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldEntryLastTime, opts...).ToFunc()
+// ByEntryLastAt orders the results by the entry_last_at field.
+func ByEntryLastAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEntryLastAt, opts...).ToFunc()
 }
 
-// ByEntryDeadlineTime orders the results by the entry_deadline_time field.
-func ByEntryDeadlineTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldEntryDeadlineTime, opts...).ToFunc()
+// ByEntryDeadlineAt orders the results by the entry_deadline_at field.
+func ByEntryDeadlineAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEntryDeadlineAt, opts...).ToFunc()
 }
 
-// ByClassLastTime orders the results by the class_last_time field.
-func ByClassLastTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldClassLastTime, opts...).ToFunc()
+// ByClassLastAt orders the results by the class_last_at field.
+func ByClassLastAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldClassLastAt, opts...).ToFunc()
 }
 
 // ByRelationUID orders the results by the relation_uid field.

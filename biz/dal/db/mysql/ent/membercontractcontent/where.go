@@ -65,6 +65,16 @@ func UpdatedAt(v time.Time) predicate.MemberContractContent {
 	return predicate.MemberContractContent(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
+// Delete applies equality check predicate on the "delete" field. It's identical to DeleteEQ.
+func Delete(v int64) predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldEQ(FieldDelete, v))
+}
+
+// CreatedID applies equality check predicate on the "created_id" field. It's identical to CreatedIDEQ.
+func CreatedID(v int64) predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldEQ(FieldCreatedID, v))
+}
+
 // MemberContractID applies equality check predicate on the "member_contract_id" field. It's identical to MemberContractIDEQ.
 func MemberContractID(v int64) predicate.MemberContractContent {
 	return predicate.MemberContractContent(sql.FieldEQ(FieldMemberContractID, v))
@@ -120,6 +130,16 @@ func CreatedAtLTE(v time.Time) predicate.MemberContractContent {
 	return predicate.MemberContractContent(sql.FieldLTE(FieldCreatedAt, v))
 }
 
+// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
+func CreatedAtIsNil() predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldIsNull(FieldCreatedAt))
+}
+
+// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
+func CreatedAtNotNil() predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldNotNull(FieldCreatedAt))
+}
+
 // UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
 func UpdatedAtEQ(v time.Time) predicate.MemberContractContent {
 	return predicate.MemberContractContent(sql.FieldEQ(FieldUpdatedAt, v))
@@ -158,6 +178,116 @@ func UpdatedAtLT(v time.Time) predicate.MemberContractContent {
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.MemberContractContent {
 	return predicate.MemberContractContent(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldIsNull(FieldUpdatedAt))
+}
+
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldNotNull(FieldUpdatedAt))
+}
+
+// DeleteEQ applies the EQ predicate on the "delete" field.
+func DeleteEQ(v int64) predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldEQ(FieldDelete, v))
+}
+
+// DeleteNEQ applies the NEQ predicate on the "delete" field.
+func DeleteNEQ(v int64) predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldNEQ(FieldDelete, v))
+}
+
+// DeleteIn applies the In predicate on the "delete" field.
+func DeleteIn(vs ...int64) predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldIn(FieldDelete, vs...))
+}
+
+// DeleteNotIn applies the NotIn predicate on the "delete" field.
+func DeleteNotIn(vs ...int64) predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldNotIn(FieldDelete, vs...))
+}
+
+// DeleteGT applies the GT predicate on the "delete" field.
+func DeleteGT(v int64) predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldGT(FieldDelete, v))
+}
+
+// DeleteGTE applies the GTE predicate on the "delete" field.
+func DeleteGTE(v int64) predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldGTE(FieldDelete, v))
+}
+
+// DeleteLT applies the LT predicate on the "delete" field.
+func DeleteLT(v int64) predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldLT(FieldDelete, v))
+}
+
+// DeleteLTE applies the LTE predicate on the "delete" field.
+func DeleteLTE(v int64) predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldLTE(FieldDelete, v))
+}
+
+// DeleteIsNil applies the IsNil predicate on the "delete" field.
+func DeleteIsNil() predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldIsNull(FieldDelete))
+}
+
+// DeleteNotNil applies the NotNil predicate on the "delete" field.
+func DeleteNotNil() predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldNotNull(FieldDelete))
+}
+
+// CreatedIDEQ applies the EQ predicate on the "created_id" field.
+func CreatedIDEQ(v int64) predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldEQ(FieldCreatedID, v))
+}
+
+// CreatedIDNEQ applies the NEQ predicate on the "created_id" field.
+func CreatedIDNEQ(v int64) predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldNEQ(FieldCreatedID, v))
+}
+
+// CreatedIDIn applies the In predicate on the "created_id" field.
+func CreatedIDIn(vs ...int64) predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldIn(FieldCreatedID, vs...))
+}
+
+// CreatedIDNotIn applies the NotIn predicate on the "created_id" field.
+func CreatedIDNotIn(vs ...int64) predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldNotIn(FieldCreatedID, vs...))
+}
+
+// CreatedIDGT applies the GT predicate on the "created_id" field.
+func CreatedIDGT(v int64) predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldGT(FieldCreatedID, v))
+}
+
+// CreatedIDGTE applies the GTE predicate on the "created_id" field.
+func CreatedIDGTE(v int64) predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldGTE(FieldCreatedID, v))
+}
+
+// CreatedIDLT applies the LT predicate on the "created_id" field.
+func CreatedIDLT(v int64) predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldLT(FieldCreatedID, v))
+}
+
+// CreatedIDLTE applies the LTE predicate on the "created_id" field.
+func CreatedIDLTE(v int64) predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldLTE(FieldCreatedID, v))
+}
+
+// CreatedIDIsNil applies the IsNil predicate on the "created_id" field.
+func CreatedIDIsNil() predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldIsNull(FieldCreatedID))
+}
+
+// CreatedIDNotNil applies the NotNil predicate on the "created_id" field.
+func CreatedIDNotNil() predicate.MemberContractContent {
+	return predicate.MemberContractContent(sql.FieldNotNull(FieldCreatedID))
 }
 
 // MemberContractIDEQ applies the EQ predicate on the "member_contract_id" field.

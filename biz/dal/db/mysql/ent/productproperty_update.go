@@ -36,6 +36,66 @@ func (ppu *ProductPropertyUpdate) SetUpdatedAt(t time.Time) *ProductPropertyUpda
 	return ppu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (ppu *ProductPropertyUpdate) ClearUpdatedAt() *ProductPropertyUpdate {
+	ppu.mutation.ClearUpdatedAt()
+	return ppu
+}
+
+// SetDelete sets the "delete" field.
+func (ppu *ProductPropertyUpdate) SetDelete(i int64) *ProductPropertyUpdate {
+	ppu.mutation.ResetDelete()
+	ppu.mutation.SetDelete(i)
+	return ppu
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (ppu *ProductPropertyUpdate) SetNillableDelete(i *int64) *ProductPropertyUpdate {
+	if i != nil {
+		ppu.SetDelete(*i)
+	}
+	return ppu
+}
+
+// AddDelete adds i to the "delete" field.
+func (ppu *ProductPropertyUpdate) AddDelete(i int64) *ProductPropertyUpdate {
+	ppu.mutation.AddDelete(i)
+	return ppu
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (ppu *ProductPropertyUpdate) ClearDelete() *ProductPropertyUpdate {
+	ppu.mutation.ClearDelete()
+	return ppu
+}
+
+// SetCreatedID sets the "created_id" field.
+func (ppu *ProductPropertyUpdate) SetCreatedID(i int64) *ProductPropertyUpdate {
+	ppu.mutation.ResetCreatedID()
+	ppu.mutation.SetCreatedID(i)
+	return ppu
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (ppu *ProductPropertyUpdate) SetNillableCreatedID(i *int64) *ProductPropertyUpdate {
+	if i != nil {
+		ppu.SetCreatedID(*i)
+	}
+	return ppu
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (ppu *ProductPropertyUpdate) AddCreatedID(i int64) *ProductPropertyUpdate {
+	ppu.mutation.AddCreatedID(i)
+	return ppu
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (ppu *ProductPropertyUpdate) ClearCreatedID() *ProductPropertyUpdate {
+	ppu.mutation.ClearCreatedID()
+	return ppu
+}
+
 // SetStatus sets the "status" field.
 func (ppu *ProductPropertyUpdate) SetStatus(i int64) *ProductPropertyUpdate {
 	ppu.mutation.ResetStatus()
@@ -365,7 +425,7 @@ func (ppu *ProductPropertyUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (ppu *ProductPropertyUpdate) defaults() {
-	if _, ok := ppu.mutation.UpdatedAt(); !ok {
+	if _, ok := ppu.mutation.UpdatedAt(); !ok && !ppu.mutation.UpdatedAtCleared() {
 		v := productproperty.UpdateDefaultUpdatedAt()
 		ppu.mutation.SetUpdatedAt(v)
 	}
@@ -380,8 +440,32 @@ func (ppu *ProductPropertyUpdate) sqlSave(ctx context.Context) (n int, err error
 			}
 		}
 	}
+	if ppu.mutation.CreatedAtCleared() {
+		_spec.ClearField(productproperty.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := ppu.mutation.UpdatedAt(); ok {
 		_spec.SetField(productproperty.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if ppu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(productproperty.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := ppu.mutation.Delete(); ok {
+		_spec.SetField(productproperty.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := ppu.mutation.AddedDelete(); ok {
+		_spec.AddField(productproperty.FieldDelete, field.TypeInt64, value)
+	}
+	if ppu.mutation.DeleteCleared() {
+		_spec.ClearField(productproperty.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := ppu.mutation.CreatedID(); ok {
+		_spec.SetField(productproperty.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := ppu.mutation.AddedCreatedID(); ok {
+		_spec.AddField(productproperty.FieldCreatedID, field.TypeInt64, value)
+	}
+	if ppu.mutation.CreatedIDCleared() {
+		_spec.ClearField(productproperty.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := ppu.mutation.Status(); ok {
 		_spec.SetField(productproperty.FieldStatus, field.TypeInt64, value)
@@ -568,6 +652,66 @@ type ProductPropertyUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (ppuo *ProductPropertyUpdateOne) SetUpdatedAt(t time.Time) *ProductPropertyUpdateOne {
 	ppuo.mutation.SetUpdatedAt(t)
+	return ppuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (ppuo *ProductPropertyUpdateOne) ClearUpdatedAt() *ProductPropertyUpdateOne {
+	ppuo.mutation.ClearUpdatedAt()
+	return ppuo
+}
+
+// SetDelete sets the "delete" field.
+func (ppuo *ProductPropertyUpdateOne) SetDelete(i int64) *ProductPropertyUpdateOne {
+	ppuo.mutation.ResetDelete()
+	ppuo.mutation.SetDelete(i)
+	return ppuo
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (ppuo *ProductPropertyUpdateOne) SetNillableDelete(i *int64) *ProductPropertyUpdateOne {
+	if i != nil {
+		ppuo.SetDelete(*i)
+	}
+	return ppuo
+}
+
+// AddDelete adds i to the "delete" field.
+func (ppuo *ProductPropertyUpdateOne) AddDelete(i int64) *ProductPropertyUpdateOne {
+	ppuo.mutation.AddDelete(i)
+	return ppuo
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (ppuo *ProductPropertyUpdateOne) ClearDelete() *ProductPropertyUpdateOne {
+	ppuo.mutation.ClearDelete()
+	return ppuo
+}
+
+// SetCreatedID sets the "created_id" field.
+func (ppuo *ProductPropertyUpdateOne) SetCreatedID(i int64) *ProductPropertyUpdateOne {
+	ppuo.mutation.ResetCreatedID()
+	ppuo.mutation.SetCreatedID(i)
+	return ppuo
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (ppuo *ProductPropertyUpdateOne) SetNillableCreatedID(i *int64) *ProductPropertyUpdateOne {
+	if i != nil {
+		ppuo.SetCreatedID(*i)
+	}
+	return ppuo
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (ppuo *ProductPropertyUpdateOne) AddCreatedID(i int64) *ProductPropertyUpdateOne {
+	ppuo.mutation.AddCreatedID(i)
+	return ppuo
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (ppuo *ProductPropertyUpdateOne) ClearCreatedID() *ProductPropertyUpdateOne {
+	ppuo.mutation.ClearCreatedID()
 	return ppuo
 }
 
@@ -913,7 +1057,7 @@ func (ppuo *ProductPropertyUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (ppuo *ProductPropertyUpdateOne) defaults() {
-	if _, ok := ppuo.mutation.UpdatedAt(); !ok {
+	if _, ok := ppuo.mutation.UpdatedAt(); !ok && !ppuo.mutation.UpdatedAtCleared() {
 		v := productproperty.UpdateDefaultUpdatedAt()
 		ppuo.mutation.SetUpdatedAt(v)
 	}
@@ -945,8 +1089,32 @@ func (ppuo *ProductPropertyUpdateOne) sqlSave(ctx context.Context) (_node *Produ
 			}
 		}
 	}
+	if ppuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(productproperty.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := ppuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(productproperty.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if ppuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(productproperty.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := ppuo.mutation.Delete(); ok {
+		_spec.SetField(productproperty.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := ppuo.mutation.AddedDelete(); ok {
+		_spec.AddField(productproperty.FieldDelete, field.TypeInt64, value)
+	}
+	if ppuo.mutation.DeleteCleared() {
+		_spec.ClearField(productproperty.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := ppuo.mutation.CreatedID(); ok {
+		_spec.SetField(productproperty.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := ppuo.mutation.AddedCreatedID(); ok {
+		_spec.AddField(productproperty.FieldCreatedID, field.TypeInt64, value)
+	}
+	if ppuo.mutation.CreatedIDCleared() {
+		_spec.ClearField(productproperty.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := ppuo.mutation.Status(); ok {
 		_spec.SetField(productproperty.FieldStatus, field.TypeInt64, value)

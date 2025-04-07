@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
@@ -46,6 +45,34 @@ func (mppc *MemberProductPropertyCreate) SetUpdatedAt(t time.Time) *MemberProduc
 func (mppc *MemberProductPropertyCreate) SetNillableUpdatedAt(t *time.Time) *MemberProductPropertyCreate {
 	if t != nil {
 		mppc.SetUpdatedAt(*t)
+	}
+	return mppc
+}
+
+// SetDelete sets the "delete" field.
+func (mppc *MemberProductPropertyCreate) SetDelete(i int64) *MemberProductPropertyCreate {
+	mppc.mutation.SetDelete(i)
+	return mppc
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (mppc *MemberProductPropertyCreate) SetNillableDelete(i *int64) *MemberProductPropertyCreate {
+	if i != nil {
+		mppc.SetDelete(*i)
+	}
+	return mppc
+}
+
+// SetCreatedID sets the "created_id" field.
+func (mppc *MemberProductPropertyCreate) SetCreatedID(i int64) *MemberProductPropertyCreate {
+	mppc.mutation.SetCreatedID(i)
+	return mppc
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (mppc *MemberProductPropertyCreate) SetNillableCreatedID(i *int64) *MemberProductPropertyCreate {
+	if i != nil {
+		mppc.SetCreatedID(*i)
 	}
 	return mppc
 }
@@ -329,6 +356,14 @@ func (mppc *MemberProductPropertyCreate) defaults() {
 		v := memberproductproperty.DefaultUpdatedAt()
 		mppc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := mppc.mutation.Delete(); !ok {
+		v := memberproductproperty.DefaultDelete
+		mppc.mutation.SetDelete(v)
+	}
+	if _, ok := mppc.mutation.CreatedID(); !ok {
+		v := memberproductproperty.DefaultCreatedID
+		mppc.mutation.SetCreatedID(v)
+	}
 	if _, ok := mppc.mutation.Status(); !ok {
 		v := memberproductproperty.DefaultStatus
 		mppc.mutation.SetStatus(v)
@@ -345,12 +380,6 @@ func (mppc *MemberProductPropertyCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (mppc *MemberProductPropertyCreate) check() error {
-	if _, ok := mppc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "MemberProductProperty.created_at"`)}
-	}
-	if _, ok := mppc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "MemberProductProperty.updated_at"`)}
-	}
 	return nil
 }
 
@@ -390,6 +419,14 @@ func (mppc *MemberProductPropertyCreate) createSpec() (*MemberProductProperty, *
 	if value, ok := mppc.mutation.UpdatedAt(); ok {
 		_spec.SetField(memberproductproperty.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := mppc.mutation.Delete(); ok {
+		_spec.SetField(memberproductproperty.FieldDelete, field.TypeInt64, value)
+		_node.Delete = value
+	}
+	if value, ok := mppc.mutation.CreatedID(); ok {
+		_spec.SetField(memberproductproperty.FieldCreatedID, field.TypeInt64, value)
+		_node.CreatedID = value
 	}
 	if value, ok := mppc.mutation.Status(); ok {
 		_spec.SetField(memberproductproperty.FieldStatus, field.TypeInt64, value)

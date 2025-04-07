@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/schedule"
 	"kcers/biz/dal/db/mysql/ent/schedulecoach"
@@ -45,6 +44,34 @@ func (scc *ScheduleCoachCreate) SetUpdatedAt(t time.Time) *ScheduleCoachCreate {
 func (scc *ScheduleCoachCreate) SetNillableUpdatedAt(t *time.Time) *ScheduleCoachCreate {
 	if t != nil {
 		scc.SetUpdatedAt(*t)
+	}
+	return scc
+}
+
+// SetDelete sets the "delete" field.
+func (scc *ScheduleCoachCreate) SetDelete(i int64) *ScheduleCoachCreate {
+	scc.mutation.SetDelete(i)
+	return scc
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (scc *ScheduleCoachCreate) SetNillableDelete(i *int64) *ScheduleCoachCreate {
+	if i != nil {
+		scc.SetDelete(*i)
+	}
+	return scc
+}
+
+// SetCreatedID sets the "created_id" field.
+func (scc *ScheduleCoachCreate) SetCreatedID(i int64) *ScheduleCoachCreate {
+	scc.mutation.SetCreatedID(i)
+	return scc
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (scc *ScheduleCoachCreate) SetNillableCreatedID(i *int64) *ScheduleCoachCreate {
+	if i != nil {
+		scc.SetCreatedID(*i)
 	}
 	return scc
 }
@@ -133,58 +160,58 @@ func (scc *ScheduleCoachCreate) SetNillableType(s *string) *ScheduleCoachCreate 
 	return scc
 }
 
-// SetStartTime sets the "start_time" field.
-func (scc *ScheduleCoachCreate) SetStartTime(t time.Time) *ScheduleCoachCreate {
-	scc.mutation.SetStartTime(t)
+// SetStartAt sets the "start_at" field.
+func (scc *ScheduleCoachCreate) SetStartAt(t time.Time) *ScheduleCoachCreate {
+	scc.mutation.SetStartAt(t)
 	return scc
 }
 
-// SetNillableStartTime sets the "start_time" field if the given value is not nil.
-func (scc *ScheduleCoachCreate) SetNillableStartTime(t *time.Time) *ScheduleCoachCreate {
+// SetNillableStartAt sets the "start_at" field if the given value is not nil.
+func (scc *ScheduleCoachCreate) SetNillableStartAt(t *time.Time) *ScheduleCoachCreate {
 	if t != nil {
-		scc.SetStartTime(*t)
+		scc.SetStartAt(*t)
 	}
 	return scc
 }
 
-// SetEndTime sets the "end_time" field.
-func (scc *ScheduleCoachCreate) SetEndTime(t time.Time) *ScheduleCoachCreate {
-	scc.mutation.SetEndTime(t)
+// SetEndAt sets the "end_at" field.
+func (scc *ScheduleCoachCreate) SetEndAt(t time.Time) *ScheduleCoachCreate {
+	scc.mutation.SetEndAt(t)
 	return scc
 }
 
-// SetNillableEndTime sets the "end_time" field if the given value is not nil.
-func (scc *ScheduleCoachCreate) SetNillableEndTime(t *time.Time) *ScheduleCoachCreate {
+// SetNillableEndAt sets the "end_at" field if the given value is not nil.
+func (scc *ScheduleCoachCreate) SetNillableEndAt(t *time.Time) *ScheduleCoachCreate {
 	if t != nil {
-		scc.SetEndTime(*t)
+		scc.SetEndAt(*t)
 	}
 	return scc
 }
 
-// SetSignStartTime sets the "sign_start_time" field.
-func (scc *ScheduleCoachCreate) SetSignStartTime(t time.Time) *ScheduleCoachCreate {
-	scc.mutation.SetSignStartTime(t)
+// SetSignStartAt sets the "sign_start_at" field.
+func (scc *ScheduleCoachCreate) SetSignStartAt(t time.Time) *ScheduleCoachCreate {
+	scc.mutation.SetSignStartAt(t)
 	return scc
 }
 
-// SetNillableSignStartTime sets the "sign_start_time" field if the given value is not nil.
-func (scc *ScheduleCoachCreate) SetNillableSignStartTime(t *time.Time) *ScheduleCoachCreate {
+// SetNillableSignStartAt sets the "sign_start_at" field if the given value is not nil.
+func (scc *ScheduleCoachCreate) SetNillableSignStartAt(t *time.Time) *ScheduleCoachCreate {
 	if t != nil {
-		scc.SetSignStartTime(*t)
+		scc.SetSignStartAt(*t)
 	}
 	return scc
 }
 
-// SetSignEndTime sets the "sign_end_time" field.
-func (scc *ScheduleCoachCreate) SetSignEndTime(t time.Time) *ScheduleCoachCreate {
-	scc.mutation.SetSignEndTime(t)
+// SetSignEndAt sets the "sign_end_at" field.
+func (scc *ScheduleCoachCreate) SetSignEndAt(t time.Time) *ScheduleCoachCreate {
+	scc.mutation.SetSignEndAt(t)
 	return scc
 }
 
-// SetNillableSignEndTime sets the "sign_end_time" field if the given value is not nil.
-func (scc *ScheduleCoachCreate) SetNillableSignEndTime(t *time.Time) *ScheduleCoachCreate {
+// SetNillableSignEndAt sets the "sign_end_at" field if the given value is not nil.
+func (scc *ScheduleCoachCreate) SetNillableSignEndAt(t *time.Time) *ScheduleCoachCreate {
 	if t != nil {
-		scc.SetSignEndTime(*t)
+		scc.SetSignEndAt(*t)
 	}
 	return scc
 }
@@ -257,36 +284,38 @@ func (scc *ScheduleCoachCreate) defaults() {
 		v := schedulecoach.DefaultUpdatedAt()
 		scc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := scc.mutation.Delete(); !ok {
+		v := schedulecoach.DefaultDelete
+		scc.mutation.SetDelete(v)
+	}
+	if _, ok := scc.mutation.CreatedID(); !ok {
+		v := schedulecoach.DefaultCreatedID
+		scc.mutation.SetCreatedID(v)
+	}
 	if _, ok := scc.mutation.Status(); !ok {
 		v := schedulecoach.DefaultStatus
 		scc.mutation.SetStatus(v)
 	}
-	if _, ok := scc.mutation.StartTime(); !ok {
-		v := schedulecoach.DefaultStartTime()
-		scc.mutation.SetStartTime(v)
+	if _, ok := scc.mutation.StartAt(); !ok {
+		v := schedulecoach.DefaultStartAt()
+		scc.mutation.SetStartAt(v)
 	}
-	if _, ok := scc.mutation.EndTime(); !ok {
-		v := schedulecoach.DefaultEndTime()
-		scc.mutation.SetEndTime(v)
+	if _, ok := scc.mutation.EndAt(); !ok {
+		v := schedulecoach.DefaultEndAt()
+		scc.mutation.SetEndAt(v)
 	}
-	if _, ok := scc.mutation.SignStartTime(); !ok {
-		v := schedulecoach.DefaultSignStartTime()
-		scc.mutation.SetSignStartTime(v)
+	if _, ok := scc.mutation.SignStartAt(); !ok {
+		v := schedulecoach.DefaultSignStartAt()
+		scc.mutation.SetSignStartAt(v)
 	}
-	if _, ok := scc.mutation.SignEndTime(); !ok {
-		v := schedulecoach.DefaultSignEndTime()
-		scc.mutation.SetSignEndTime(v)
+	if _, ok := scc.mutation.SignEndAt(); !ok {
+		v := schedulecoach.DefaultSignEndAt()
+		scc.mutation.SetSignEndAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (scc *ScheduleCoachCreate) check() error {
-	if _, ok := scc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "ScheduleCoach.created_at"`)}
-	}
-	if _, ok := scc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "ScheduleCoach.updated_at"`)}
-	}
 	return nil
 }
 
@@ -327,6 +356,14 @@ func (scc *ScheduleCoachCreate) createSpec() (*ScheduleCoach, *sqlgraph.CreateSp
 		_spec.SetField(schedulecoach.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
+	if value, ok := scc.mutation.Delete(); ok {
+		_spec.SetField(schedulecoach.FieldDelete, field.TypeInt64, value)
+		_node.Delete = value
+	}
+	if value, ok := scc.mutation.CreatedID(); ok {
+		_spec.SetField(schedulecoach.FieldCreatedID, field.TypeInt64, value)
+		_node.CreatedID = value
+	}
 	if value, ok := scc.mutation.Status(); ok {
 		_spec.SetField(schedulecoach.FieldStatus, field.TypeInt64, value)
 		_node.Status = value
@@ -347,21 +384,21 @@ func (scc *ScheduleCoachCreate) createSpec() (*ScheduleCoach, *sqlgraph.CreateSp
 		_spec.SetField(schedulecoach.FieldType, field.TypeString, value)
 		_node.Type = value
 	}
-	if value, ok := scc.mutation.StartTime(); ok {
-		_spec.SetField(schedulecoach.FieldStartTime, field.TypeTime, value)
-		_node.StartTime = value
+	if value, ok := scc.mutation.StartAt(); ok {
+		_spec.SetField(schedulecoach.FieldStartAt, field.TypeTime, value)
+		_node.StartAt = value
 	}
-	if value, ok := scc.mutation.EndTime(); ok {
-		_spec.SetField(schedulecoach.FieldEndTime, field.TypeTime, value)
-		_node.EndTime = value
+	if value, ok := scc.mutation.EndAt(); ok {
+		_spec.SetField(schedulecoach.FieldEndAt, field.TypeTime, value)
+		_node.EndAt = value
 	}
-	if value, ok := scc.mutation.SignStartTime(); ok {
-		_spec.SetField(schedulecoach.FieldSignStartTime, field.TypeTime, value)
-		_node.SignStartTime = value
+	if value, ok := scc.mutation.SignStartAt(); ok {
+		_spec.SetField(schedulecoach.FieldSignStartAt, field.TypeTime, value)
+		_node.SignStartAt = value
 	}
-	if value, ok := scc.mutation.SignEndTime(); ok {
-		_spec.SetField(schedulecoach.FieldSignEndTime, field.TypeTime, value)
-		_node.SignEndTime = value
+	if value, ok := scc.mutation.SignEndAt(); ok {
+		_spec.SetField(schedulecoach.FieldSignEndAt, field.TypeTime, value)
+		_node.SignEndAt = value
 	}
 	if value, ok := scc.mutation.CoachName(); ok {
 		_spec.SetField(schedulecoach.FieldCoachName, field.TypeString, value)

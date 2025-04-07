@@ -23,6 +23,10 @@ type ScheduleCoach struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// last update time
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// last delete  1:已删除
+	Delete int64 `json:"delete,omitempty"`
+	// created
+	CreatedID int64 `json:"created_id,omitempty"`
 	// 状态[0:禁用;1:正常]
 	Status int64 `json:"status,omitempty"`
 	// 场馆id
@@ -36,13 +40,13 @@ type ScheduleCoach struct {
 	// 类型
 	Type string `json:"type,omitempty"`
 	// 开始时间
-	StartTime time.Time `json:"start_time,omitempty"`
+	StartAt time.Time `json:"start_at,omitempty"`
 	// 结束时间
-	EndTime time.Time `json:"end_time,omitempty"`
+	EndAt time.Time `json:"end_at,omitempty"`
 	// 上课签到时间
-	SignStartTime time.Time `json:"sign_start_time,omitempty"`
+	SignStartAt time.Time `json:"sign_start_at,omitempty"`
 	// 下课签到时间
-	SignEndTime time.Time `json:"sign_end_time,omitempty"`
+	SignEndAt time.Time `json:"sign_end_at,omitempty"`
 	// 教练名称
 	CoachName string `json:"coach_name,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -76,11 +80,11 @@ func (*ScheduleCoach) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case schedulecoach.FieldID, schedulecoach.FieldStatus, schedulecoach.FieldVenueID, schedulecoach.FieldCoachID, schedulecoach.FieldScheduleID:
+		case schedulecoach.FieldID, schedulecoach.FieldDelete, schedulecoach.FieldCreatedID, schedulecoach.FieldStatus, schedulecoach.FieldVenueID, schedulecoach.FieldCoachID, schedulecoach.FieldScheduleID:
 			values[i] = new(sql.NullInt64)
 		case schedulecoach.FieldScheduleName, schedulecoach.FieldType, schedulecoach.FieldCoachName:
 			values[i] = new(sql.NullString)
-		case schedulecoach.FieldCreatedAt, schedulecoach.FieldUpdatedAt, schedulecoach.FieldStartTime, schedulecoach.FieldEndTime, schedulecoach.FieldSignStartTime, schedulecoach.FieldSignEndTime:
+		case schedulecoach.FieldCreatedAt, schedulecoach.FieldUpdatedAt, schedulecoach.FieldStartAt, schedulecoach.FieldEndAt, schedulecoach.FieldSignStartAt, schedulecoach.FieldSignEndAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -114,6 +118,18 @@ func (sc *ScheduleCoach) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				sc.UpdatedAt = value.Time
+			}
+		case schedulecoach.FieldDelete:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field delete", values[i])
+			} else if value.Valid {
+				sc.Delete = value.Int64
+			}
+		case schedulecoach.FieldCreatedID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field created_id", values[i])
+			} else if value.Valid {
+				sc.CreatedID = value.Int64
 			}
 		case schedulecoach.FieldStatus:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -151,29 +167,29 @@ func (sc *ScheduleCoach) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				sc.Type = value.String
 			}
-		case schedulecoach.FieldStartTime:
+		case schedulecoach.FieldStartAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field start_time", values[i])
+				return fmt.Errorf("unexpected type %T for field start_at", values[i])
 			} else if value.Valid {
-				sc.StartTime = value.Time
+				sc.StartAt = value.Time
 			}
-		case schedulecoach.FieldEndTime:
+		case schedulecoach.FieldEndAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field end_time", values[i])
+				return fmt.Errorf("unexpected type %T for field end_at", values[i])
 			} else if value.Valid {
-				sc.EndTime = value.Time
+				sc.EndAt = value.Time
 			}
-		case schedulecoach.FieldSignStartTime:
+		case schedulecoach.FieldSignStartAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field sign_start_time", values[i])
+				return fmt.Errorf("unexpected type %T for field sign_start_at", values[i])
 			} else if value.Valid {
-				sc.SignStartTime = value.Time
+				sc.SignStartAt = value.Time
 			}
-		case schedulecoach.FieldSignEndTime:
+		case schedulecoach.FieldSignEndAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field sign_end_time", values[i])
+				return fmt.Errorf("unexpected type %T for field sign_end_at", values[i])
 			} else if value.Valid {
-				sc.SignEndTime = value.Time
+				sc.SignEndAt = value.Time
 			}
 		case schedulecoach.FieldCoachName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -228,6 +244,12 @@ func (sc *ScheduleCoach) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(sc.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
+	builder.WriteString("delete=")
+	builder.WriteString(fmt.Sprintf("%v", sc.Delete))
+	builder.WriteString(", ")
+	builder.WriteString("created_id=")
+	builder.WriteString(fmt.Sprintf("%v", sc.CreatedID))
+	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", sc.Status))
 	builder.WriteString(", ")
@@ -246,17 +268,17 @@ func (sc *ScheduleCoach) String() string {
 	builder.WriteString("type=")
 	builder.WriteString(sc.Type)
 	builder.WriteString(", ")
-	builder.WriteString("start_time=")
-	builder.WriteString(sc.StartTime.Format(time.ANSIC))
+	builder.WriteString("start_at=")
+	builder.WriteString(sc.StartAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("end_time=")
-	builder.WriteString(sc.EndTime.Format(time.ANSIC))
+	builder.WriteString("end_at=")
+	builder.WriteString(sc.EndAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("sign_start_time=")
-	builder.WriteString(sc.SignStartTime.Format(time.ANSIC))
+	builder.WriteString("sign_start_at=")
+	builder.WriteString(sc.SignStartAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("sign_end_time=")
-	builder.WriteString(sc.SignEndTime.Format(time.ANSIC))
+	builder.WriteString("sign_end_at=")
+	builder.WriteString(sc.SignEndAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("coach_name=")
 	builder.WriteString(sc.CoachName)

@@ -3,19 +3,55 @@
 package main
 
 import (
+	"context"
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
+	"kcers/biz/dal/casbin"
 	"kcers/biz/mw"
-	"kcers/dal/casbin"
+
+	service2 "kcers/biz/infras/service"
 )
 
 // customizeRegister registers customize routers.
 func customizedRegister(r *server.Hertz) {
-	//r.GET("/__vite_ping", handler.Ping)
 
 	// your code ...
 
-	r.POST("/api/login", mw.GetJWTMw(casbin.CasbinEnforcer()).LoginHandler)
-	r.POST("/api/logout", mw.GetJWTMw(casbin.CasbinEnforcer()).LogoutHandler)
-	r.POST("/api/refresh_token", mw.GetJWTMw(casbin.CasbinEnforcer()).RefreshHandler)
+	// Login .
+	//	@Summary		登录 Summary
+	//	@Description	登录 Description
+	//	@Param			request	body		user.LoginReq	true	"query params"
+	//	@Success		200		{object}	utils.Response
+	//	@router			/service/login [POST]
+	r.POST("/service/login", mw.GetJWTMw(casbin.CasbinEnforcer()).LoginHandler)
+	r.POST("/service/logout", mw.GetJWTMw(casbin.CasbinEnforcer()).LogoutHandler)
+	r.POST("/service/refresh_token", mw.GetJWTMw(casbin.CasbinEnforcer()).RefreshHandler)
+	//MemberLogin .
+	//
+	//	@Summary		会员登录 Summary
+	//	@Description	会员登录 Description
+	//	@Param			request	body		wx.MemberLoginReq	true	"query params"
+	//	@Success		200		{object}	utils.Response
+	//
+	//@router /service/wx/member/login [POST]
+	r.POST("/service/wx/member/login", mw.GetUsJWTMw(casbin.CasbinEnforcer()).LoginHandler)
+	r.POST("/service/wx/member/logout", mw.GetUsJWTMw(casbin.CasbinEnforcer()).LogoutHandler)
+	r.POST("/service/wx/member/refresh_token", mw.GetUsJWTMw(casbin.CasbinEnforcer()).RefreshHandler)
+
+	// StaffLogin .
+	//
+	//	@Summary		教练登录 Summary
+	//	@Description	教练登录 Description
+	//	@Param			request	body		wx.StaffLoginReq	true	"query params"
+	//	@Success		200		{object}	utils.Response
+	//
+	// @router /service/wx/staff/login [POST]
+	r.POST("/service/wx/staff/login", mw.GetJWTMw(casbin.CasbinEnforcer()).LoginHandler)
+	r.POST("/service/wx/staff/logout", mw.GetJWTMw(casbin.CasbinEnforcer()).LogoutHandler)
+	r.POST("/service/wx/staff/refresh_token", mw.GetJWTMw(casbin.CasbinEnforcer()).RefreshHandler)
+
+	r.POST("/service/payment/WXNotify", func(c context.Context, ctx *app.RequestContext) {
+		service2.NewWXPayment(c, ctx).Notify(ctx)
+	})
 
 }

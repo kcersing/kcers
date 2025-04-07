@@ -23,6 +23,10 @@ type OrderAmount struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// last update time
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// last delete  1:已删除
+	Delete int64 `json:"delete,omitempty"`
+	// created
+	CreatedID int64 `json:"created_id,omitempty"`
 	// 订单id
 	OrderID int64 `json:"order_id,omitempty"`
 	// 总金额
@@ -66,7 +70,7 @@ func (*OrderAmount) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case orderamount.FieldTotal, orderamount.FieldActual, orderamount.FieldResidue, orderamount.FieldRemission:
 			values[i] = new(sql.NullFloat64)
-		case orderamount.FieldID, orderamount.FieldOrderID:
+		case orderamount.FieldID, orderamount.FieldDelete, orderamount.FieldCreatedID, orderamount.FieldOrderID:
 			values[i] = new(sql.NullInt64)
 		case orderamount.FieldCreatedAt, orderamount.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -102,6 +106,18 @@ func (oa *OrderAmount) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				oa.UpdatedAt = value.Time
+			}
+		case orderamount.FieldDelete:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field delete", values[i])
+			} else if value.Valid {
+				oa.Delete = value.Int64
+			}
+		case orderamount.FieldCreatedID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field created_id", values[i])
+			} else if value.Valid {
+				oa.CreatedID = value.Int64
 			}
 		case orderamount.FieldOrderID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -179,6 +195,12 @@ func (oa *OrderAmount) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(oa.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("delete=")
+	builder.WriteString(fmt.Sprintf("%v", oa.Delete))
+	builder.WriteString(", ")
+	builder.WriteString("created_id=")
+	builder.WriteString(fmt.Sprintf("%v", oa.CreatedID))
 	builder.WriteString(", ")
 	builder.WriteString("order_id=")
 	builder.WriteString(fmt.Sprintf("%v", oa.OrderID))

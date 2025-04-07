@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/member"
@@ -48,6 +47,34 @@ func (elc *EntryLogsCreate) SetUpdatedAt(t time.Time) *EntryLogsCreate {
 func (elc *EntryLogsCreate) SetNillableUpdatedAt(t *time.Time) *EntryLogsCreate {
 	if t != nil {
 		elc.SetUpdatedAt(*t)
+	}
+	return elc
+}
+
+// SetDelete sets the "delete" field.
+func (elc *EntryLogsCreate) SetDelete(i int64) *EntryLogsCreate {
+	elc.mutation.SetDelete(i)
+	return elc
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (elc *EntryLogsCreate) SetNillableDelete(i *int64) *EntryLogsCreate {
+	if i != nil {
+		elc.SetDelete(*i)
+	}
+	return elc
+}
+
+// SetCreatedID sets the "created_id" field.
+func (elc *EntryLogsCreate) SetCreatedID(i int64) *EntryLogsCreate {
+	elc.mutation.SetCreatedID(i)
+	return elc
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (elc *EntryLogsCreate) SetNillableCreatedID(i *int64) *EntryLogsCreate {
+	if i != nil {
+		elc.SetCreatedID(*i)
 	}
 	return elc
 }
@@ -122,30 +149,30 @@ func (elc *EntryLogsCreate) SetNillableMemberPropertyID(i *int64) *EntryLogsCrea
 	return elc
 }
 
-// SetEntryTime sets the "entry_time" field.
-func (elc *EntryLogsCreate) SetEntryTime(t time.Time) *EntryLogsCreate {
-	elc.mutation.SetEntryTime(t)
+// SetEntryAt sets the "entry_at" field.
+func (elc *EntryLogsCreate) SetEntryAt(t time.Time) *EntryLogsCreate {
+	elc.mutation.SetEntryAt(t)
 	return elc
 }
 
-// SetNillableEntryTime sets the "entry_time" field if the given value is not nil.
-func (elc *EntryLogsCreate) SetNillableEntryTime(t *time.Time) *EntryLogsCreate {
+// SetNillableEntryAt sets the "entry_at" field if the given value is not nil.
+func (elc *EntryLogsCreate) SetNillableEntryAt(t *time.Time) *EntryLogsCreate {
 	if t != nil {
-		elc.SetEntryTime(*t)
+		elc.SetEntryAt(*t)
 	}
 	return elc
 }
 
-// SetLeavingTime sets the "leaving_time" field.
-func (elc *EntryLogsCreate) SetLeavingTime(t time.Time) *EntryLogsCreate {
-	elc.mutation.SetLeavingTime(t)
+// SetLeavingAt sets the "leaving_at" field.
+func (elc *EntryLogsCreate) SetLeavingAt(t time.Time) *EntryLogsCreate {
+	elc.mutation.SetLeavingAt(t)
 	return elc
 }
 
-// SetNillableLeavingTime sets the "leaving_time" field if the given value is not nil.
-func (elc *EntryLogsCreate) SetNillableLeavingTime(t *time.Time) *EntryLogsCreate {
+// SetNillableLeavingAt sets the "leaving_at" field if the given value is not nil.
+func (elc *EntryLogsCreate) SetNillableLeavingAt(t *time.Time) *EntryLogsCreate {
 	if t != nil {
-		elc.SetLeavingTime(*t)
+		elc.SetLeavingAt(*t)
 	}
 	return elc
 }
@@ -275,6 +302,14 @@ func (elc *EntryLogsCreate) defaults() {
 		v := entrylogs.DefaultUpdatedAt()
 		elc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := elc.mutation.Delete(); !ok {
+		v := entrylogs.DefaultDelete
+		elc.mutation.SetDelete(v)
+	}
+	if _, ok := elc.mutation.CreatedID(); !ok {
+		v := entrylogs.DefaultCreatedID
+		elc.mutation.SetCreatedID(v)
+	}
 	if _, ok := elc.mutation.MemberID(); !ok {
 		v := entrylogs.DefaultMemberID
 		elc.mutation.SetMemberID(v)
@@ -287,12 +322,6 @@ func (elc *EntryLogsCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (elc *EntryLogsCreate) check() error {
-	if _, ok := elc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "EntryLogs.created_at"`)}
-	}
-	if _, ok := elc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "EntryLogs.updated_at"`)}
-	}
 	return nil
 }
 
@@ -333,17 +362,25 @@ func (elc *EntryLogsCreate) createSpec() (*EntryLogs, *sqlgraph.CreateSpec) {
 		_spec.SetField(entrylogs.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
+	if value, ok := elc.mutation.Delete(); ok {
+		_spec.SetField(entrylogs.FieldDelete, field.TypeInt64, value)
+		_node.Delete = value
+	}
+	if value, ok := elc.mutation.CreatedID(); ok {
+		_spec.SetField(entrylogs.FieldCreatedID, field.TypeInt64, value)
+		_node.CreatedID = value
+	}
 	if value, ok := elc.mutation.MemberPropertyID(); ok {
 		_spec.SetField(entrylogs.FieldMemberPropertyID, field.TypeInt64, value)
 		_node.MemberPropertyID = value
 	}
-	if value, ok := elc.mutation.EntryTime(); ok {
-		_spec.SetField(entrylogs.FieldEntryTime, field.TypeTime, value)
-		_node.EntryTime = value
+	if value, ok := elc.mutation.EntryAt(); ok {
+		_spec.SetField(entrylogs.FieldEntryAt, field.TypeTime, value)
+		_node.EntryAt = value
 	}
-	if value, ok := elc.mutation.LeavingTime(); ok {
-		_spec.SetField(entrylogs.FieldLeavingTime, field.TypeTime, value)
-		_node.LeavingTime = value
+	if value, ok := elc.mutation.LeavingAt(); ok {
+		_spec.SetField(entrylogs.FieldLeavingAt, field.TypeTime, value)
+		_node.LeavingAt = value
 	}
 	if nodes := elc.mutation.VenuesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

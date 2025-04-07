@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/contract"
 	"time"
@@ -44,6 +43,34 @@ func (cc *ContractCreate) SetUpdatedAt(t time.Time) *ContractCreate {
 func (cc *ContractCreate) SetNillableUpdatedAt(t *time.Time) *ContractCreate {
 	if t != nil {
 		cc.SetUpdatedAt(*t)
+	}
+	return cc
+}
+
+// SetDelete sets the "delete" field.
+func (cc *ContractCreate) SetDelete(i int64) *ContractCreate {
+	cc.mutation.SetDelete(i)
+	return cc
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (cc *ContractCreate) SetNillableDelete(i *int64) *ContractCreate {
+	if i != nil {
+		cc.SetDelete(*i)
+	}
+	return cc
+}
+
+// SetCreatedID sets the "created_id" field.
+func (cc *ContractCreate) SetCreatedID(i int64) *ContractCreate {
+	cc.mutation.SetCreatedID(i)
+	return cc
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (cc *ContractCreate) SetNillableCreatedID(i *int64) *ContractCreate {
+	if i != nil {
+		cc.SetCreatedID(*i)
 	}
 	return cc
 }
@@ -139,6 +166,14 @@ func (cc *ContractCreate) defaults() {
 		v := contract.DefaultUpdatedAt()
 		cc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := cc.mutation.Delete(); !ok {
+		v := contract.DefaultDelete
+		cc.mutation.SetDelete(v)
+	}
+	if _, ok := cc.mutation.CreatedID(); !ok {
+		v := contract.DefaultCreatedID
+		cc.mutation.SetCreatedID(v)
+	}
 	if _, ok := cc.mutation.Status(); !ok {
 		v := contract.DefaultStatus
 		cc.mutation.SetStatus(v)
@@ -147,12 +182,6 @@ func (cc *ContractCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (cc *ContractCreate) check() error {
-	if _, ok := cc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Contract.created_at"`)}
-	}
-	if _, ok := cc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Contract.updated_at"`)}
-	}
 	return nil
 }
 
@@ -192,6 +221,14 @@ func (cc *ContractCreate) createSpec() (*Contract, *sqlgraph.CreateSpec) {
 	if value, ok := cc.mutation.UpdatedAt(); ok {
 		_spec.SetField(contract.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := cc.mutation.Delete(); ok {
+		_spec.SetField(contract.FieldDelete, field.TypeInt64, value)
+		_node.Delete = value
+	}
+	if value, ok := cc.mutation.CreatedID(); ok {
+		_spec.SetField(contract.FieldCreatedID, field.TypeInt64, value)
+		_node.CreatedID = value
 	}
 	if value, ok := cc.mutation.Status(); ok {
 		_spec.SetField(contract.FieldStatus, field.TypeInt64, value)

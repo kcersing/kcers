@@ -65,6 +65,16 @@ func UpdatedAt(v time.Time) predicate.EntryLogs {
 	return predicate.EntryLogs(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
+// Delete applies equality check predicate on the "delete" field. It's identical to DeleteEQ.
+func Delete(v int64) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldEQ(FieldDelete, v))
+}
+
+// CreatedID applies equality check predicate on the "created_id" field. It's identical to CreatedIDEQ.
+func CreatedID(v int64) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldEQ(FieldCreatedID, v))
+}
+
 // MemberID applies equality check predicate on the "member_id" field. It's identical to MemberIDEQ.
 func MemberID(v int64) predicate.EntryLogs {
 	return predicate.EntryLogs(sql.FieldEQ(FieldMemberID, v))
@@ -90,14 +100,14 @@ func MemberPropertyID(v int64) predicate.EntryLogs {
 	return predicate.EntryLogs(sql.FieldEQ(FieldMemberPropertyID, v))
 }
 
-// EntryTime applies equality check predicate on the "entry_time" field. It's identical to EntryTimeEQ.
-func EntryTime(v time.Time) predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldEQ(FieldEntryTime, v))
+// EntryAt applies equality check predicate on the "entry_at" field. It's identical to EntryAtEQ.
+func EntryAt(v time.Time) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldEQ(FieldEntryAt, v))
 }
 
-// LeavingTime applies equality check predicate on the "leaving_time" field. It's identical to LeavingTimeEQ.
-func LeavingTime(v time.Time) predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldEQ(FieldLeavingTime, v))
+// LeavingAt applies equality check predicate on the "leaving_at" field. It's identical to LeavingAtEQ.
+func LeavingAt(v time.Time) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldEQ(FieldLeavingAt, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -140,6 +150,16 @@ func CreatedAtLTE(v time.Time) predicate.EntryLogs {
 	return predicate.EntryLogs(sql.FieldLTE(FieldCreatedAt, v))
 }
 
+// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
+func CreatedAtIsNil() predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldIsNull(FieldCreatedAt))
+}
+
+// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
+func CreatedAtNotNil() predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldNotNull(FieldCreatedAt))
+}
+
 // UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
 func UpdatedAtEQ(v time.Time) predicate.EntryLogs {
 	return predicate.EntryLogs(sql.FieldEQ(FieldUpdatedAt, v))
@@ -178,6 +198,116 @@ func UpdatedAtLT(v time.Time) predicate.EntryLogs {
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.EntryLogs {
 	return predicate.EntryLogs(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldIsNull(FieldUpdatedAt))
+}
+
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldNotNull(FieldUpdatedAt))
+}
+
+// DeleteEQ applies the EQ predicate on the "delete" field.
+func DeleteEQ(v int64) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldEQ(FieldDelete, v))
+}
+
+// DeleteNEQ applies the NEQ predicate on the "delete" field.
+func DeleteNEQ(v int64) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldNEQ(FieldDelete, v))
+}
+
+// DeleteIn applies the In predicate on the "delete" field.
+func DeleteIn(vs ...int64) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldIn(FieldDelete, vs...))
+}
+
+// DeleteNotIn applies the NotIn predicate on the "delete" field.
+func DeleteNotIn(vs ...int64) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldNotIn(FieldDelete, vs...))
+}
+
+// DeleteGT applies the GT predicate on the "delete" field.
+func DeleteGT(v int64) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldGT(FieldDelete, v))
+}
+
+// DeleteGTE applies the GTE predicate on the "delete" field.
+func DeleteGTE(v int64) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldGTE(FieldDelete, v))
+}
+
+// DeleteLT applies the LT predicate on the "delete" field.
+func DeleteLT(v int64) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldLT(FieldDelete, v))
+}
+
+// DeleteLTE applies the LTE predicate on the "delete" field.
+func DeleteLTE(v int64) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldLTE(FieldDelete, v))
+}
+
+// DeleteIsNil applies the IsNil predicate on the "delete" field.
+func DeleteIsNil() predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldIsNull(FieldDelete))
+}
+
+// DeleteNotNil applies the NotNil predicate on the "delete" field.
+func DeleteNotNil() predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldNotNull(FieldDelete))
+}
+
+// CreatedIDEQ applies the EQ predicate on the "created_id" field.
+func CreatedIDEQ(v int64) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldEQ(FieldCreatedID, v))
+}
+
+// CreatedIDNEQ applies the NEQ predicate on the "created_id" field.
+func CreatedIDNEQ(v int64) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldNEQ(FieldCreatedID, v))
+}
+
+// CreatedIDIn applies the In predicate on the "created_id" field.
+func CreatedIDIn(vs ...int64) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldIn(FieldCreatedID, vs...))
+}
+
+// CreatedIDNotIn applies the NotIn predicate on the "created_id" field.
+func CreatedIDNotIn(vs ...int64) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldNotIn(FieldCreatedID, vs...))
+}
+
+// CreatedIDGT applies the GT predicate on the "created_id" field.
+func CreatedIDGT(v int64) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldGT(FieldCreatedID, v))
+}
+
+// CreatedIDGTE applies the GTE predicate on the "created_id" field.
+func CreatedIDGTE(v int64) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldGTE(FieldCreatedID, v))
+}
+
+// CreatedIDLT applies the LT predicate on the "created_id" field.
+func CreatedIDLT(v int64) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldLT(FieldCreatedID, v))
+}
+
+// CreatedIDLTE applies the LTE predicate on the "created_id" field.
+func CreatedIDLTE(v int64) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldLTE(FieldCreatedID, v))
+}
+
+// CreatedIDIsNil applies the IsNil predicate on the "created_id" field.
+func CreatedIDIsNil() predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldIsNull(FieldCreatedID))
+}
+
+// CreatedIDNotNil applies the NotNil predicate on the "created_id" field.
+func CreatedIDNotNil() predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldNotNull(FieldCreatedID))
 }
 
 // MemberIDEQ applies the EQ predicate on the "member_id" field.
@@ -350,104 +480,104 @@ func MemberPropertyIDNotNil() predicate.EntryLogs {
 	return predicate.EntryLogs(sql.FieldNotNull(FieldMemberPropertyID))
 }
 
-// EntryTimeEQ applies the EQ predicate on the "entry_time" field.
-func EntryTimeEQ(v time.Time) predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldEQ(FieldEntryTime, v))
+// EntryAtEQ applies the EQ predicate on the "entry_at" field.
+func EntryAtEQ(v time.Time) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldEQ(FieldEntryAt, v))
 }
 
-// EntryTimeNEQ applies the NEQ predicate on the "entry_time" field.
-func EntryTimeNEQ(v time.Time) predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldNEQ(FieldEntryTime, v))
+// EntryAtNEQ applies the NEQ predicate on the "entry_at" field.
+func EntryAtNEQ(v time.Time) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldNEQ(FieldEntryAt, v))
 }
 
-// EntryTimeIn applies the In predicate on the "entry_time" field.
-func EntryTimeIn(vs ...time.Time) predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldIn(FieldEntryTime, vs...))
+// EntryAtIn applies the In predicate on the "entry_at" field.
+func EntryAtIn(vs ...time.Time) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldIn(FieldEntryAt, vs...))
 }
 
-// EntryTimeNotIn applies the NotIn predicate on the "entry_time" field.
-func EntryTimeNotIn(vs ...time.Time) predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldNotIn(FieldEntryTime, vs...))
+// EntryAtNotIn applies the NotIn predicate on the "entry_at" field.
+func EntryAtNotIn(vs ...time.Time) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldNotIn(FieldEntryAt, vs...))
 }
 
-// EntryTimeGT applies the GT predicate on the "entry_time" field.
-func EntryTimeGT(v time.Time) predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldGT(FieldEntryTime, v))
+// EntryAtGT applies the GT predicate on the "entry_at" field.
+func EntryAtGT(v time.Time) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldGT(FieldEntryAt, v))
 }
 
-// EntryTimeGTE applies the GTE predicate on the "entry_time" field.
-func EntryTimeGTE(v time.Time) predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldGTE(FieldEntryTime, v))
+// EntryAtGTE applies the GTE predicate on the "entry_at" field.
+func EntryAtGTE(v time.Time) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldGTE(FieldEntryAt, v))
 }
 
-// EntryTimeLT applies the LT predicate on the "entry_time" field.
-func EntryTimeLT(v time.Time) predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldLT(FieldEntryTime, v))
+// EntryAtLT applies the LT predicate on the "entry_at" field.
+func EntryAtLT(v time.Time) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldLT(FieldEntryAt, v))
 }
 
-// EntryTimeLTE applies the LTE predicate on the "entry_time" field.
-func EntryTimeLTE(v time.Time) predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldLTE(FieldEntryTime, v))
+// EntryAtLTE applies the LTE predicate on the "entry_at" field.
+func EntryAtLTE(v time.Time) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldLTE(FieldEntryAt, v))
 }
 
-// EntryTimeIsNil applies the IsNil predicate on the "entry_time" field.
-func EntryTimeIsNil() predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldIsNull(FieldEntryTime))
+// EntryAtIsNil applies the IsNil predicate on the "entry_at" field.
+func EntryAtIsNil() predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldIsNull(FieldEntryAt))
 }
 
-// EntryTimeNotNil applies the NotNil predicate on the "entry_time" field.
-func EntryTimeNotNil() predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldNotNull(FieldEntryTime))
+// EntryAtNotNil applies the NotNil predicate on the "entry_at" field.
+func EntryAtNotNil() predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldNotNull(FieldEntryAt))
 }
 
-// LeavingTimeEQ applies the EQ predicate on the "leaving_time" field.
-func LeavingTimeEQ(v time.Time) predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldEQ(FieldLeavingTime, v))
+// LeavingAtEQ applies the EQ predicate on the "leaving_at" field.
+func LeavingAtEQ(v time.Time) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldEQ(FieldLeavingAt, v))
 }
 
-// LeavingTimeNEQ applies the NEQ predicate on the "leaving_time" field.
-func LeavingTimeNEQ(v time.Time) predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldNEQ(FieldLeavingTime, v))
+// LeavingAtNEQ applies the NEQ predicate on the "leaving_at" field.
+func LeavingAtNEQ(v time.Time) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldNEQ(FieldLeavingAt, v))
 }
 
-// LeavingTimeIn applies the In predicate on the "leaving_time" field.
-func LeavingTimeIn(vs ...time.Time) predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldIn(FieldLeavingTime, vs...))
+// LeavingAtIn applies the In predicate on the "leaving_at" field.
+func LeavingAtIn(vs ...time.Time) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldIn(FieldLeavingAt, vs...))
 }
 
-// LeavingTimeNotIn applies the NotIn predicate on the "leaving_time" field.
-func LeavingTimeNotIn(vs ...time.Time) predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldNotIn(FieldLeavingTime, vs...))
+// LeavingAtNotIn applies the NotIn predicate on the "leaving_at" field.
+func LeavingAtNotIn(vs ...time.Time) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldNotIn(FieldLeavingAt, vs...))
 }
 
-// LeavingTimeGT applies the GT predicate on the "leaving_time" field.
-func LeavingTimeGT(v time.Time) predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldGT(FieldLeavingTime, v))
+// LeavingAtGT applies the GT predicate on the "leaving_at" field.
+func LeavingAtGT(v time.Time) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldGT(FieldLeavingAt, v))
 }
 
-// LeavingTimeGTE applies the GTE predicate on the "leaving_time" field.
-func LeavingTimeGTE(v time.Time) predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldGTE(FieldLeavingTime, v))
+// LeavingAtGTE applies the GTE predicate on the "leaving_at" field.
+func LeavingAtGTE(v time.Time) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldGTE(FieldLeavingAt, v))
 }
 
-// LeavingTimeLT applies the LT predicate on the "leaving_time" field.
-func LeavingTimeLT(v time.Time) predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldLT(FieldLeavingTime, v))
+// LeavingAtLT applies the LT predicate on the "leaving_at" field.
+func LeavingAtLT(v time.Time) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldLT(FieldLeavingAt, v))
 }
 
-// LeavingTimeLTE applies the LTE predicate on the "leaving_time" field.
-func LeavingTimeLTE(v time.Time) predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldLTE(FieldLeavingTime, v))
+// LeavingAtLTE applies the LTE predicate on the "leaving_at" field.
+func LeavingAtLTE(v time.Time) predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldLTE(FieldLeavingAt, v))
 }
 
-// LeavingTimeIsNil applies the IsNil predicate on the "leaving_time" field.
-func LeavingTimeIsNil() predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldIsNull(FieldLeavingTime))
+// LeavingAtIsNil applies the IsNil predicate on the "leaving_at" field.
+func LeavingAtIsNil() predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldIsNull(FieldLeavingAt))
 }
 
-// LeavingTimeNotNil applies the NotNil predicate on the "leaving_time" field.
-func LeavingTimeNotNil() predicate.EntryLogs {
-	return predicate.EntryLogs(sql.FieldNotNull(FieldLeavingTime))
+// LeavingAtNotNil applies the NotNil predicate on the "leaving_at" field.
+func LeavingAtNotNil() predicate.EntryLogs {
+	return predicate.EntryLogs(sql.FieldNotNull(FieldLeavingAt))
 }
 
 // HasVenues applies the HasEdge predicate on the "venues" edge.

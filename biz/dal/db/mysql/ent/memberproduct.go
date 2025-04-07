@@ -23,6 +23,10 @@ type MemberProduct struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// last update time
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// last delete  1:已删除
+	Delete int64 `json:"delete,omitempty"`
+	// created
+	CreatedID int64 `json:"created_id,omitempty"`
 	// 状态[0:禁用;1:正常]
 	Status int64 `json:"status,omitempty"`
 	// 编号
@@ -105,7 +109,7 @@ func (*MemberProduct) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case memberproduct.FieldPrice:
 			values[i] = new(sql.NullFloat64)
-		case memberproduct.FieldID, memberproduct.FieldStatus, memberproduct.FieldMemberID, memberproduct.FieldProductID, memberproduct.FieldVenueID, memberproduct.FieldOrderID:
+		case memberproduct.FieldID, memberproduct.FieldDelete, memberproduct.FieldCreatedID, memberproduct.FieldStatus, memberproduct.FieldMemberID, memberproduct.FieldProductID, memberproduct.FieldVenueID, memberproduct.FieldOrderID:
 			values[i] = new(sql.NullInt64)
 		case memberproduct.FieldSn, memberproduct.FieldName:
 			values[i] = new(sql.NullString)
@@ -143,6 +147,18 @@ func (mp *MemberProduct) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				mp.UpdatedAt = value.Time
+			}
+		case memberproduct.FieldDelete:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field delete", values[i])
+			} else if value.Valid {
+				mp.Delete = value.Int64
+			}
+		case memberproduct.FieldCreatedID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field created_id", values[i])
+			} else if value.Valid {
+				mp.CreatedID = value.Int64
 			}
 		case memberproduct.FieldStatus:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -253,6 +269,12 @@ func (mp *MemberProduct) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(mp.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("delete=")
+	builder.WriteString(fmt.Sprintf("%v", mp.Delete))
+	builder.WriteString(", ")
+	builder.WriteString("created_id=")
+	builder.WriteString(fmt.Sprintf("%v", mp.CreatedID))
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", mp.Status))

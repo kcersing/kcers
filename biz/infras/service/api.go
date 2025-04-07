@@ -99,8 +99,8 @@ func (a Api) Update(req *menu.ApiInfo) error {
 	return nil
 }
 
-func (a Api) Delete(id *int64) error {
-	err := a.db.API.DeleteOneID(*id).Exec(a.ctx)
+func (a Api) Delete(id int64) error {
+	err := a.db.API.DeleteOneID(id).Exec(a.ctx)
 	return err
 }
 

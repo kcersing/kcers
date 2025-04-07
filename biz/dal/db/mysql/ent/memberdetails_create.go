@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/member"
 	"kcers/biz/dal/db/mysql/ent/memberdetails"
@@ -45,6 +44,34 @@ func (mdc *MemberDetailsCreate) SetUpdatedAt(t time.Time) *MemberDetailsCreate {
 func (mdc *MemberDetailsCreate) SetNillableUpdatedAt(t *time.Time) *MemberDetailsCreate {
 	if t != nil {
 		mdc.SetUpdatedAt(*t)
+	}
+	return mdc
+}
+
+// SetDelete sets the "delete" field.
+func (mdc *MemberDetailsCreate) SetDelete(i int64) *MemberDetailsCreate {
+	mdc.mutation.SetDelete(i)
+	return mdc
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (mdc *MemberDetailsCreate) SetNillableDelete(i *int64) *MemberDetailsCreate {
+	if i != nil {
+		mdc.SetDelete(*i)
+	}
+	return mdc
+}
+
+// SetCreatedID sets the "created_id" field.
+func (mdc *MemberDetailsCreate) SetCreatedID(i int64) *MemberDetailsCreate {
+	mdc.mutation.SetCreatedID(i)
+	return mdc
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (mdc *MemberDetailsCreate) SetNillableCreatedID(i *int64) *MemberDetailsCreate {
+	if i != nil {
+		mdc.SetCreatedID(*i)
 	}
 	return mdc
 }
@@ -203,44 +230,44 @@ func (mdc *MemberDetailsCreate) SetNillableEntrySum(i *int64) *MemberDetailsCrea
 	return mdc
 }
 
-// SetEntryLastTime sets the "entry_last_time" field.
-func (mdc *MemberDetailsCreate) SetEntryLastTime(t time.Time) *MemberDetailsCreate {
-	mdc.mutation.SetEntryLastTime(t)
+// SetEntryLastAt sets the "entry_last_at" field.
+func (mdc *MemberDetailsCreate) SetEntryLastAt(t time.Time) *MemberDetailsCreate {
+	mdc.mutation.SetEntryLastAt(t)
 	return mdc
 }
 
-// SetNillableEntryLastTime sets the "entry_last_time" field if the given value is not nil.
-func (mdc *MemberDetailsCreate) SetNillableEntryLastTime(t *time.Time) *MemberDetailsCreate {
+// SetNillableEntryLastAt sets the "entry_last_at" field if the given value is not nil.
+func (mdc *MemberDetailsCreate) SetNillableEntryLastAt(t *time.Time) *MemberDetailsCreate {
 	if t != nil {
-		mdc.SetEntryLastTime(*t)
+		mdc.SetEntryLastAt(*t)
 	}
 	return mdc
 }
 
-// SetEntryDeadlineTime sets the "entry_deadline_time" field.
-func (mdc *MemberDetailsCreate) SetEntryDeadlineTime(t time.Time) *MemberDetailsCreate {
-	mdc.mutation.SetEntryDeadlineTime(t)
+// SetEntryDeadlineAt sets the "entry_deadline_at" field.
+func (mdc *MemberDetailsCreate) SetEntryDeadlineAt(t time.Time) *MemberDetailsCreate {
+	mdc.mutation.SetEntryDeadlineAt(t)
 	return mdc
 }
 
-// SetNillableEntryDeadlineTime sets the "entry_deadline_time" field if the given value is not nil.
-func (mdc *MemberDetailsCreate) SetNillableEntryDeadlineTime(t *time.Time) *MemberDetailsCreate {
+// SetNillableEntryDeadlineAt sets the "entry_deadline_at" field if the given value is not nil.
+func (mdc *MemberDetailsCreate) SetNillableEntryDeadlineAt(t *time.Time) *MemberDetailsCreate {
 	if t != nil {
-		mdc.SetEntryDeadlineTime(*t)
+		mdc.SetEntryDeadlineAt(*t)
 	}
 	return mdc
 }
 
-// SetClassLastTime sets the "class_last_time" field.
-func (mdc *MemberDetailsCreate) SetClassLastTime(t time.Time) *MemberDetailsCreate {
-	mdc.mutation.SetClassLastTime(t)
+// SetClassLastAt sets the "class_last_at" field.
+func (mdc *MemberDetailsCreate) SetClassLastAt(t time.Time) *MemberDetailsCreate {
+	mdc.mutation.SetClassLastAt(t)
 	return mdc
 }
 
-// SetNillableClassLastTime sets the "class_last_time" field if the given value is not nil.
-func (mdc *MemberDetailsCreate) SetNillableClassLastTime(t *time.Time) *MemberDetailsCreate {
+// SetNillableClassLastAt sets the "class_last_at" field if the given value is not nil.
+func (mdc *MemberDetailsCreate) SetNillableClassLastAt(t *time.Time) *MemberDetailsCreate {
 	if t != nil {
-		mdc.SetClassLastTime(*t)
+		mdc.SetClassLastAt(*t)
 	}
 	return mdc
 }
@@ -397,6 +424,14 @@ func (mdc *MemberDetailsCreate) defaults() {
 		v := memberdetails.DefaultUpdatedAt()
 		mdc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := mdc.mutation.Delete(); !ok {
+		v := memberdetails.DefaultDelete
+		mdc.mutation.SetDelete(v)
+	}
+	if _, ok := mdc.mutation.CreatedID(); !ok {
+		v := memberdetails.DefaultCreatedID
+		mdc.mutation.SetCreatedID(v)
+	}
 	if _, ok := mdc.mutation.Gender(); !ok {
 		v := memberdetails.DefaultGender
 		mdc.mutation.SetGender(v)
@@ -429,12 +464,6 @@ func (mdc *MemberDetailsCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (mdc *MemberDetailsCreate) check() error {
-	if _, ok := mdc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "MemberDetails.created_at"`)}
-	}
-	if _, ok := mdc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "MemberDetails.updated_at"`)}
-	}
 	return nil
 }
 
@@ -474,6 +503,14 @@ func (mdc *MemberDetailsCreate) createSpec() (*MemberDetails, *sqlgraph.CreateSp
 	if value, ok := mdc.mutation.UpdatedAt(); ok {
 		_spec.SetField(memberdetails.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := mdc.mutation.Delete(); ok {
+		_spec.SetField(memberdetails.FieldDelete, field.TypeInt64, value)
+		_node.Delete = value
+	}
+	if value, ok := mdc.mutation.CreatedID(); ok {
+		_spec.SetField(memberdetails.FieldCreatedID, field.TypeInt64, value)
+		_node.CreatedID = value
 	}
 	if value, ok := mdc.mutation.Email(); ok {
 		_spec.SetField(memberdetails.FieldEmail, field.TypeString, value)
@@ -515,17 +552,17 @@ func (mdc *MemberDetailsCreate) createSpec() (*MemberDetails, *sqlgraph.CreateSp
 		_spec.SetField(memberdetails.FieldEntrySum, field.TypeInt64, value)
 		_node.EntrySum = value
 	}
-	if value, ok := mdc.mutation.EntryLastTime(); ok {
-		_spec.SetField(memberdetails.FieldEntryLastTime, field.TypeTime, value)
-		_node.EntryLastTime = value
+	if value, ok := mdc.mutation.EntryLastAt(); ok {
+		_spec.SetField(memberdetails.FieldEntryLastAt, field.TypeTime, value)
+		_node.EntryLastAt = value
 	}
-	if value, ok := mdc.mutation.EntryDeadlineTime(); ok {
-		_spec.SetField(memberdetails.FieldEntryDeadlineTime, field.TypeTime, value)
-		_node.EntryDeadlineTime = value
+	if value, ok := mdc.mutation.EntryDeadlineAt(); ok {
+		_spec.SetField(memberdetails.FieldEntryDeadlineAt, field.TypeTime, value)
+		_node.EntryDeadlineAt = value
 	}
-	if value, ok := mdc.mutation.ClassLastTime(); ok {
-		_spec.SetField(memberdetails.FieldClassLastTime, field.TypeTime, value)
-		_node.ClassLastTime = value
+	if value, ok := mdc.mutation.ClassLastAt(); ok {
+		_spec.SetField(memberdetails.FieldClassLastAt, field.TypeTime, value)
+		_node.ClassLastAt = value
 	}
 	if value, ok := mdc.mutation.RelationUID(); ok {
 		_spec.SetField(memberdetails.FieldRelationUID, field.TypeInt64, value)

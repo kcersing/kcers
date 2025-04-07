@@ -18,6 +18,10 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
+	// FieldDelete holds the string denoting the delete field in the database.
+	FieldDelete = "delete"
+	// FieldCreatedID holds the string denoting the created_id field in the database.
+	FieldCreatedID = "created_id"
 	// FieldMemberID holds the string denoting the member_id field in the database.
 	FieldMemberID = "member_id"
 	// FieldUserID holds the string denoting the user_id field in the database.
@@ -28,10 +32,10 @@ const (
 	FieldMemberProductID = "member_product_id"
 	// FieldMemberPropertyID holds the string denoting the member_property_id field in the database.
 	FieldMemberPropertyID = "member_property_id"
-	// FieldEntryTime holds the string denoting the entry_time field in the database.
-	FieldEntryTime = "entry_time"
-	// FieldLeavingTime holds the string denoting the leaving_time field in the database.
-	FieldLeavingTime = "leaving_time"
+	// FieldEntryAt holds the string denoting the entry_at field in the database.
+	FieldEntryAt = "entry_at"
+	// FieldLeavingAt holds the string denoting the leaving_at field in the database.
+	FieldLeavingAt = "leaving_at"
 	// EdgeVenues holds the string denoting the venues edge name in mutations.
 	EdgeVenues = "venues"
 	// EdgeMembers holds the string denoting the members edge name in mutations.
@@ -77,13 +81,15 @@ var Columns = []string{
 	FieldID,
 	FieldCreatedAt,
 	FieldUpdatedAt,
+	FieldDelete,
+	FieldCreatedID,
 	FieldMemberID,
 	FieldUserID,
 	FieldVenueID,
 	FieldMemberProductID,
 	FieldMemberPropertyID,
-	FieldEntryTime,
-	FieldLeavingTime,
+	FieldEntryAt,
+	FieldLeavingAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -103,6 +109,10 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultDelete holds the default value on creation for the "delete" field.
+	DefaultDelete int64
+	// DefaultCreatedID holds the default value on creation for the "created_id" field.
+	DefaultCreatedID int64
 	// DefaultMemberID holds the default value on creation for the "member_id" field.
 	DefaultMemberID int64
 	// DefaultUserID holds the default value on creation for the "user_id" field.
@@ -125,6 +135,16 @@ func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdatedAt orders the results by the updated_at field.
 func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByDelete orders the results by the delete field.
+func ByDelete(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDelete, opts...).ToFunc()
+}
+
+// ByCreatedID orders the results by the created_id field.
+func ByCreatedID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedID, opts...).ToFunc()
 }
 
 // ByMemberID orders the results by the member_id field.
@@ -152,14 +172,14 @@ func ByMemberPropertyID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMemberPropertyID, opts...).ToFunc()
 }
 
-// ByEntryTime orders the results by the entry_time field.
-func ByEntryTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldEntryTime, opts...).ToFunc()
+// ByEntryAt orders the results by the entry_at field.
+func ByEntryAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEntryAt, opts...).ToFunc()
 }
 
-// ByLeavingTime orders the results by the leaving_time field.
-func ByLeavingTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldLeavingTime, opts...).ToFunc()
+// ByLeavingAt orders the results by the leaving_at field.
+func ByLeavingAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLeavingAt, opts...).ToFunc()
 }
 
 // ByVenuesField orders the results by venues field.

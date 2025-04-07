@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/member"
 	"kcers/biz/dal/db/mysql/ent/membercontract"
@@ -52,6 +51,34 @@ func (oc *OrderCreate) SetUpdatedAt(t time.Time) *OrderCreate {
 func (oc *OrderCreate) SetNillableUpdatedAt(t *time.Time) *OrderCreate {
 	if t != nil {
 		oc.SetUpdatedAt(*t)
+	}
+	return oc
+}
+
+// SetDelete sets the "delete" field.
+func (oc *OrderCreate) SetDelete(i int64) *OrderCreate {
+	oc.mutation.SetDelete(i)
+	return oc
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableDelete(i *int64) *OrderCreate {
+	if i != nil {
+		oc.SetDelete(*i)
+	}
+	return oc
+}
+
+// SetCreatedID sets the "created_id" field.
+func (oc *OrderCreate) SetCreatedID(i int64) *OrderCreate {
+	oc.mutation.SetCreatedID(i)
+	return oc
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableCreatedID(i *int64) *OrderCreate {
+	if i != nil {
+		oc.SetCreatedID(*i)
 	}
 	return oc
 }
@@ -377,6 +404,14 @@ func (oc *OrderCreate) defaults() {
 		v := order.DefaultUpdatedAt()
 		oc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := oc.mutation.Delete(); !ok {
+		v := order.DefaultDelete
+		oc.mutation.SetDelete(v)
+	}
+	if _, ok := oc.mutation.CreatedID(); !ok {
+		v := order.DefaultCreatedID
+		oc.mutation.SetCreatedID(v)
+	}
 	if _, ok := oc.mutation.Status(); !ok {
 		v := order.DefaultStatus
 		oc.mutation.SetStatus(v)
@@ -393,12 +428,6 @@ func (oc *OrderCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (oc *OrderCreate) check() error {
-	if _, ok := oc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Order.created_at"`)}
-	}
-	if _, ok := oc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Order.updated_at"`)}
-	}
 	return nil
 }
 
@@ -438,6 +467,14 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 	if value, ok := oc.mutation.UpdatedAt(); ok {
 		_spec.SetField(order.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := oc.mutation.Delete(); ok {
+		_spec.SetField(order.FieldDelete, field.TypeInt64, value)
+		_node.Delete = value
+	}
+	if value, ok := oc.mutation.CreatedID(); ok {
+		_spec.SetField(order.FieldCreatedID, field.TypeInt64, value)
+		_node.CreatedID = value
 	}
 	if value, ok := oc.mutation.OrderSn(); ok {
 		_spec.SetField(order.FieldOrderSn, field.TypeString, value)

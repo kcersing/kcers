@@ -18,6 +18,10 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
+	// FieldDelete holds the string denoting the delete field in the database.
+	FieldDelete = "delete"
+	// FieldCreatedID holds the string denoting the created_id field in the database.
+	FieldCreatedID = "created_id"
 	// FieldMemberID holds the string denoting the member_id field in the database.
 	FieldMemberID = "member_id"
 	// FieldUserID holds the string denoting the user_id field in the database.
@@ -32,8 +36,8 @@ const (
 	FieldFacePic = "face_pic"
 	// FieldFaceEigenvalue holds the string denoting the face_eigenvalue field in the database.
 	FieldFaceEigenvalue = "face_eigenvalue"
-	// FieldFacePicUpdatedTime holds the string denoting the face_pic_updated_time field in the database.
-	FieldFacePicUpdatedTime = "face_pic_updated_time"
+	// FieldFacePicUpdatedAt holds the string denoting the face_pic_updated_at field in the database.
+	FieldFacePicUpdatedAt = "face_pic_updated_at"
 	// EdgeMemberFaces holds the string denoting the member_faces edge name in mutations.
 	EdgeMemberFaces = "member_faces"
 	// EdgeUserFaces holds the string denoting the user_faces edge name in mutations.
@@ -61,6 +65,8 @@ var Columns = []string{
 	FieldID,
 	FieldCreatedAt,
 	FieldUpdatedAt,
+	FieldDelete,
+	FieldCreatedID,
 	FieldMemberID,
 	FieldUserID,
 	FieldIdentityCard,
@@ -68,7 +74,7 @@ var Columns = []string{
 	FieldBackIdentityCard,
 	FieldFacePic,
 	FieldFaceEigenvalue,
-	FieldFacePicUpdatedTime,
+	FieldFacePicUpdatedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -88,6 +94,10 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultDelete holds the default value on creation for the "delete" field.
+	DefaultDelete int64
+	// DefaultCreatedID holds the default value on creation for the "created_id" field.
+	DefaultCreatedID int64
 	// DefaultFaceIdentityCard holds the default value on creation for the "face_identity_card" field.
 	DefaultFaceIdentityCard string
 	// DefaultBackIdentityCard holds the default value on creation for the "back_identity_card" field.
@@ -96,8 +106,8 @@ var (
 	DefaultFacePic string
 	// DefaultFaceEigenvalue holds the default value on creation for the "face_eigenvalue" field.
 	DefaultFaceEigenvalue string
-	// DefaultFacePicUpdatedTime holds the default value on creation for the "face_pic_updated_time" field.
-	DefaultFacePicUpdatedTime func() time.Time
+	// DefaultFacePicUpdatedAt holds the default value on creation for the "face_pic_updated_at" field.
+	DefaultFacePicUpdatedAt func() time.Time
 )
 
 // OrderOption defines the ordering options for the Face queries.
@@ -116,6 +126,16 @@ func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdatedAt orders the results by the updated_at field.
 func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByDelete orders the results by the delete field.
+func ByDelete(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDelete, opts...).ToFunc()
+}
+
+// ByCreatedID orders the results by the created_id field.
+func ByCreatedID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedID, opts...).ToFunc()
 }
 
 // ByMemberID orders the results by the member_id field.
@@ -153,9 +173,9 @@ func ByFaceEigenvalue(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldFaceEigenvalue, opts...).ToFunc()
 }
 
-// ByFacePicUpdatedTime orders the results by the face_pic_updated_time field.
-func ByFacePicUpdatedTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldFacePicUpdatedTime, opts...).ToFunc()
+// ByFacePicUpdatedAt orders the results by the face_pic_updated_at field.
+func ByFacePicUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFacePicUpdatedAt, opts...).ToFunc()
 }
 
 // ByMemberFacesField orders the results by member_faces field.

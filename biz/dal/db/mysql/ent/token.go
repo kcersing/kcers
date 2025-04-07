@@ -22,6 +22,10 @@ type Token struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// last update time
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// last delete  1:已删除
+	Delete int64 `json:"delete,omitempty"`
+	// created
+	CreatedID int64 `json:"created_id,omitempty"`
 	//  User's ID | 用户的ID
 	UserID int64 `json:"user_id,omitempty"`
 	// Token string | Token 字符串
@@ -62,7 +66,7 @@ func (*Token) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case token.FieldID, token.FieldUserID:
+		case token.FieldID, token.FieldDelete, token.FieldCreatedID, token.FieldUserID:
 			values[i] = new(sql.NullInt64)
 		case token.FieldToken, token.FieldSource:
 			values[i] = new(sql.NullString)
@@ -102,6 +106,18 @@ func (t *Token) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				t.UpdatedAt = value.Time
+			}
+		case token.FieldDelete:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field delete", values[i])
+			} else if value.Valid {
+				t.Delete = value.Int64
+			}
+		case token.FieldCreatedID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field created_id", values[i])
+			} else if value.Valid {
+				t.CreatedID = value.Int64
 			}
 		case token.FieldUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -180,6 +196,12 @@ func (t *Token) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(t.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("delete=")
+	builder.WriteString(fmt.Sprintf("%v", t.Delete))
+	builder.WriteString(", ")
+	builder.WriteString("created_id=")
+	builder.WriteString(fmt.Sprintf("%v", t.CreatedID))
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", t.UserID))

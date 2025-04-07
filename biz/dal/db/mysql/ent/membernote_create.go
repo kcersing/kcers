@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/member"
 	"kcers/biz/dal/db/mysql/ent/membernote"
@@ -45,6 +44,34 @@ func (mnc *MemberNoteCreate) SetUpdatedAt(t time.Time) *MemberNoteCreate {
 func (mnc *MemberNoteCreate) SetNillableUpdatedAt(t *time.Time) *MemberNoteCreate {
 	if t != nil {
 		mnc.SetUpdatedAt(*t)
+	}
+	return mnc
+}
+
+// SetDelete sets the "delete" field.
+func (mnc *MemberNoteCreate) SetDelete(i int64) *MemberNoteCreate {
+	mnc.mutation.SetDelete(i)
+	return mnc
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (mnc *MemberNoteCreate) SetNillableDelete(i *int64) *MemberNoteCreate {
+	if i != nil {
+		mnc.SetDelete(*i)
+	}
+	return mnc
+}
+
+// SetCreatedID sets the "created_id" field.
+func (mnc *MemberNoteCreate) SetCreatedID(i int64) *MemberNoteCreate {
+	mnc.mutation.SetCreatedID(i)
+	return mnc
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (mnc *MemberNoteCreate) SetNillableCreatedID(i *int64) *MemberNoteCreate {
+	if i != nil {
+		mnc.SetCreatedID(*i)
 	}
 	return mnc
 }
@@ -159,6 +186,14 @@ func (mnc *MemberNoteCreate) defaults() {
 		v := membernote.DefaultUpdatedAt()
 		mnc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := mnc.mutation.Delete(); !ok {
+		v := membernote.DefaultDelete
+		mnc.mutation.SetDelete(v)
+	}
+	if _, ok := mnc.mutation.CreatedID(); !ok {
+		v := membernote.DefaultCreatedID
+		mnc.mutation.SetCreatedID(v)
+	}
 	if _, ok := mnc.mutation.Status(); !ok {
 		v := membernote.DefaultStatus
 		mnc.mutation.SetStatus(v)
@@ -171,12 +206,6 @@ func (mnc *MemberNoteCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (mnc *MemberNoteCreate) check() error {
-	if _, ok := mnc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "MemberNote.created_at"`)}
-	}
-	if _, ok := mnc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "MemberNote.updated_at"`)}
-	}
 	return nil
 }
 
@@ -216,6 +245,14 @@ func (mnc *MemberNoteCreate) createSpec() (*MemberNote, *sqlgraph.CreateSpec) {
 	if value, ok := mnc.mutation.UpdatedAt(); ok {
 		_spec.SetField(membernote.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := mnc.mutation.Delete(); ok {
+		_spec.SetField(membernote.FieldDelete, field.TypeInt64, value)
+		_node.Delete = value
+	}
+	if value, ok := mnc.mutation.CreatedID(); ok {
+		_spec.SetField(membernote.FieldCreatedID, field.TypeInt64, value)
+		_node.CreatedID = value
 	}
 	if value, ok := mnc.mutation.Status(); ok {
 		_spec.SetField(membernote.FieldStatus, field.TypeInt64, value)

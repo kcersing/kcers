@@ -8,14 +8,13 @@ import (
 	"github.com/dgraph-io/ristretto"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
-	"kcers/app/dal/cache"
-	"kcers/app/pkg/do"
-	"kcers/biz/infras/infras/service/1"
-	"kcers/config"
-	"kcers/infras"
-	"kcers/pkg/db/ent"
-	"kcers/pkg/db/ent/order"
-	"kcers/pkg/db/ent/predicate"
+	"kcers/biz/dal/cache"
+	"kcers/biz/dal/config"
+	db "kcers/biz/dal/db/mysql"
+	"kcers/biz/dal/db/mysql/ent"
+	"kcers/biz/dal/db/mysql/ent/order"
+	"kcers/biz/dal/db/mysql/ent/predicate"
+	"kcers/biz/infras/do"
 	"time"
 )
 
@@ -160,7 +159,7 @@ func NewOrder(ctx context.Context, c *app.RequestContext) do.Order {
 		ctx:   ctx,
 		c:     c,
 		salt:  config.GlobalServerConfig.MySQLInfo.Salt,
-		db:    infras.DB,
+		db:    db.DB,
 		cache: cache.Cache,
 	}
 }

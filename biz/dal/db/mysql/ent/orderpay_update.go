@@ -35,6 +35,66 @@ func (opu *OrderPayUpdate) SetUpdatedAt(t time.Time) *OrderPayUpdate {
 	return opu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (opu *OrderPayUpdate) ClearUpdatedAt() *OrderPayUpdate {
+	opu.mutation.ClearUpdatedAt()
+	return opu
+}
+
+// SetDelete sets the "delete" field.
+func (opu *OrderPayUpdate) SetDelete(i int64) *OrderPayUpdate {
+	opu.mutation.ResetDelete()
+	opu.mutation.SetDelete(i)
+	return opu
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (opu *OrderPayUpdate) SetNillableDelete(i *int64) *OrderPayUpdate {
+	if i != nil {
+		opu.SetDelete(*i)
+	}
+	return opu
+}
+
+// AddDelete adds i to the "delete" field.
+func (opu *OrderPayUpdate) AddDelete(i int64) *OrderPayUpdate {
+	opu.mutation.AddDelete(i)
+	return opu
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (opu *OrderPayUpdate) ClearDelete() *OrderPayUpdate {
+	opu.mutation.ClearDelete()
+	return opu
+}
+
+// SetCreatedID sets the "created_id" field.
+func (opu *OrderPayUpdate) SetCreatedID(i int64) *OrderPayUpdate {
+	opu.mutation.ResetCreatedID()
+	opu.mutation.SetCreatedID(i)
+	return opu
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (opu *OrderPayUpdate) SetNillableCreatedID(i *int64) *OrderPayUpdate {
+	if i != nil {
+		opu.SetCreatedID(*i)
+	}
+	return opu
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (opu *OrderPayUpdate) AddCreatedID(i int64) *OrderPayUpdate {
+	opu.mutation.AddCreatedID(i)
+	return opu
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (opu *OrderPayUpdate) ClearCreatedID() *OrderPayUpdate {
+	opu.mutation.ClearCreatedID()
+	return opu
+}
+
 // SetOrderID sets the "order_id" field.
 func (opu *OrderPayUpdate) SetOrderID(i int64) *OrderPayUpdate {
 	opu.mutation.SetOrderID(i)
@@ -222,7 +282,7 @@ func (opu *OrderPayUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (opu *OrderPayUpdate) defaults() {
-	if _, ok := opu.mutation.UpdatedAt(); !ok {
+	if _, ok := opu.mutation.UpdatedAt(); !ok && !opu.mutation.UpdatedAtCleared() {
 		v := orderpay.UpdateDefaultUpdatedAt()
 		opu.mutation.SetUpdatedAt(v)
 	}
@@ -237,8 +297,32 @@ func (opu *OrderPayUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if opu.mutation.CreatedAtCleared() {
+		_spec.ClearField(orderpay.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := opu.mutation.UpdatedAt(); ok {
 		_spec.SetField(orderpay.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if opu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(orderpay.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := opu.mutation.Delete(); ok {
+		_spec.SetField(orderpay.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := opu.mutation.AddedDelete(); ok {
+		_spec.AddField(orderpay.FieldDelete, field.TypeInt64, value)
+	}
+	if opu.mutation.DeleteCleared() {
+		_spec.ClearField(orderpay.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := opu.mutation.CreatedID(); ok {
+		_spec.SetField(orderpay.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := opu.mutation.AddedCreatedID(); ok {
+		_spec.AddField(orderpay.FieldCreatedID, field.TypeInt64, value)
+	}
+	if opu.mutation.CreatedIDCleared() {
+		_spec.ClearField(orderpay.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := opu.mutation.Remission(); ok {
 		_spec.SetField(orderpay.FieldRemission, field.TypeFloat64, value)
@@ -331,6 +415,66 @@ type OrderPayUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (opuo *OrderPayUpdateOne) SetUpdatedAt(t time.Time) *OrderPayUpdateOne {
 	opuo.mutation.SetUpdatedAt(t)
+	return opuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (opuo *OrderPayUpdateOne) ClearUpdatedAt() *OrderPayUpdateOne {
+	opuo.mutation.ClearUpdatedAt()
+	return opuo
+}
+
+// SetDelete sets the "delete" field.
+func (opuo *OrderPayUpdateOne) SetDelete(i int64) *OrderPayUpdateOne {
+	opuo.mutation.ResetDelete()
+	opuo.mutation.SetDelete(i)
+	return opuo
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (opuo *OrderPayUpdateOne) SetNillableDelete(i *int64) *OrderPayUpdateOne {
+	if i != nil {
+		opuo.SetDelete(*i)
+	}
+	return opuo
+}
+
+// AddDelete adds i to the "delete" field.
+func (opuo *OrderPayUpdateOne) AddDelete(i int64) *OrderPayUpdateOne {
+	opuo.mutation.AddDelete(i)
+	return opuo
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (opuo *OrderPayUpdateOne) ClearDelete() *OrderPayUpdateOne {
+	opuo.mutation.ClearDelete()
+	return opuo
+}
+
+// SetCreatedID sets the "created_id" field.
+func (opuo *OrderPayUpdateOne) SetCreatedID(i int64) *OrderPayUpdateOne {
+	opuo.mutation.ResetCreatedID()
+	opuo.mutation.SetCreatedID(i)
+	return opuo
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (opuo *OrderPayUpdateOne) SetNillableCreatedID(i *int64) *OrderPayUpdateOne {
+	if i != nil {
+		opuo.SetCreatedID(*i)
+	}
+	return opuo
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (opuo *OrderPayUpdateOne) AddCreatedID(i int64) *OrderPayUpdateOne {
+	opuo.mutation.AddCreatedID(i)
+	return opuo
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (opuo *OrderPayUpdateOne) ClearCreatedID() *OrderPayUpdateOne {
+	opuo.mutation.ClearCreatedID()
 	return opuo
 }
 
@@ -534,7 +678,7 @@ func (opuo *OrderPayUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (opuo *OrderPayUpdateOne) defaults() {
-	if _, ok := opuo.mutation.UpdatedAt(); !ok {
+	if _, ok := opuo.mutation.UpdatedAt(); !ok && !opuo.mutation.UpdatedAtCleared() {
 		v := orderpay.UpdateDefaultUpdatedAt()
 		opuo.mutation.SetUpdatedAt(v)
 	}
@@ -566,8 +710,32 @@ func (opuo *OrderPayUpdateOne) sqlSave(ctx context.Context) (_node *OrderPay, er
 			}
 		}
 	}
+	if opuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(orderpay.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := opuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(orderpay.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if opuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(orderpay.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := opuo.mutation.Delete(); ok {
+		_spec.SetField(orderpay.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := opuo.mutation.AddedDelete(); ok {
+		_spec.AddField(orderpay.FieldDelete, field.TypeInt64, value)
+	}
+	if opuo.mutation.DeleteCleared() {
+		_spec.ClearField(orderpay.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := opuo.mutation.CreatedID(); ok {
+		_spec.SetField(orderpay.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := opuo.mutation.AddedCreatedID(); ok {
+		_spec.AddField(orderpay.FieldCreatedID, field.TypeInt64, value)
+	}
+	if opuo.mutation.CreatedIDCleared() {
+		_spec.ClearField(orderpay.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := opuo.mutation.Remission(); ok {
 		_spec.SetField(orderpay.FieldRemission, field.TypeFloat64, value)

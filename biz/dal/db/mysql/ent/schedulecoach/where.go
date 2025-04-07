@@ -65,6 +65,16 @@ func UpdatedAt(v time.Time) predicate.ScheduleCoach {
 	return predicate.ScheduleCoach(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
+// Delete applies equality check predicate on the "delete" field. It's identical to DeleteEQ.
+func Delete(v int64) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldEQ(FieldDelete, v))
+}
+
+// CreatedID applies equality check predicate on the "created_id" field. It's identical to CreatedIDEQ.
+func CreatedID(v int64) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldEQ(FieldCreatedID, v))
+}
+
 // Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
 func Status(v int64) predicate.ScheduleCoach {
 	return predicate.ScheduleCoach(sql.FieldEQ(FieldStatus, v))
@@ -95,24 +105,24 @@ func Type(v string) predicate.ScheduleCoach {
 	return predicate.ScheduleCoach(sql.FieldEQ(FieldType, v))
 }
 
-// StartTime applies equality check predicate on the "start_time" field. It's identical to StartTimeEQ.
-func StartTime(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldEQ(FieldStartTime, v))
+// StartAt applies equality check predicate on the "start_at" field. It's identical to StartAtEQ.
+func StartAt(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldEQ(FieldStartAt, v))
 }
 
-// EndTime applies equality check predicate on the "end_time" field. It's identical to EndTimeEQ.
-func EndTime(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldEQ(FieldEndTime, v))
+// EndAt applies equality check predicate on the "end_at" field. It's identical to EndAtEQ.
+func EndAt(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldEQ(FieldEndAt, v))
 }
 
-// SignStartTime applies equality check predicate on the "sign_start_time" field. It's identical to SignStartTimeEQ.
-func SignStartTime(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldEQ(FieldSignStartTime, v))
+// SignStartAt applies equality check predicate on the "sign_start_at" field. It's identical to SignStartAtEQ.
+func SignStartAt(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldEQ(FieldSignStartAt, v))
 }
 
-// SignEndTime applies equality check predicate on the "sign_end_time" field. It's identical to SignEndTimeEQ.
-func SignEndTime(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldEQ(FieldSignEndTime, v))
+// SignEndAt applies equality check predicate on the "sign_end_at" field. It's identical to SignEndAtEQ.
+func SignEndAt(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldEQ(FieldSignEndAt, v))
 }
 
 // CoachName applies equality check predicate on the "coach_name" field. It's identical to CoachNameEQ.
@@ -160,6 +170,16 @@ func CreatedAtLTE(v time.Time) predicate.ScheduleCoach {
 	return predicate.ScheduleCoach(sql.FieldLTE(FieldCreatedAt, v))
 }
 
+// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
+func CreatedAtIsNil() predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldIsNull(FieldCreatedAt))
+}
+
+// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
+func CreatedAtNotNil() predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldNotNull(FieldCreatedAt))
+}
+
 // UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
 func UpdatedAtEQ(v time.Time) predicate.ScheduleCoach {
 	return predicate.ScheduleCoach(sql.FieldEQ(FieldUpdatedAt, v))
@@ -198,6 +218,116 @@ func UpdatedAtLT(v time.Time) predicate.ScheduleCoach {
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.ScheduleCoach {
 	return predicate.ScheduleCoach(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldIsNull(FieldUpdatedAt))
+}
+
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldNotNull(FieldUpdatedAt))
+}
+
+// DeleteEQ applies the EQ predicate on the "delete" field.
+func DeleteEQ(v int64) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldEQ(FieldDelete, v))
+}
+
+// DeleteNEQ applies the NEQ predicate on the "delete" field.
+func DeleteNEQ(v int64) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldNEQ(FieldDelete, v))
+}
+
+// DeleteIn applies the In predicate on the "delete" field.
+func DeleteIn(vs ...int64) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldIn(FieldDelete, vs...))
+}
+
+// DeleteNotIn applies the NotIn predicate on the "delete" field.
+func DeleteNotIn(vs ...int64) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldNotIn(FieldDelete, vs...))
+}
+
+// DeleteGT applies the GT predicate on the "delete" field.
+func DeleteGT(v int64) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldGT(FieldDelete, v))
+}
+
+// DeleteGTE applies the GTE predicate on the "delete" field.
+func DeleteGTE(v int64) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldGTE(FieldDelete, v))
+}
+
+// DeleteLT applies the LT predicate on the "delete" field.
+func DeleteLT(v int64) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldLT(FieldDelete, v))
+}
+
+// DeleteLTE applies the LTE predicate on the "delete" field.
+func DeleteLTE(v int64) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldLTE(FieldDelete, v))
+}
+
+// DeleteIsNil applies the IsNil predicate on the "delete" field.
+func DeleteIsNil() predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldIsNull(FieldDelete))
+}
+
+// DeleteNotNil applies the NotNil predicate on the "delete" field.
+func DeleteNotNil() predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldNotNull(FieldDelete))
+}
+
+// CreatedIDEQ applies the EQ predicate on the "created_id" field.
+func CreatedIDEQ(v int64) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldEQ(FieldCreatedID, v))
+}
+
+// CreatedIDNEQ applies the NEQ predicate on the "created_id" field.
+func CreatedIDNEQ(v int64) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldNEQ(FieldCreatedID, v))
+}
+
+// CreatedIDIn applies the In predicate on the "created_id" field.
+func CreatedIDIn(vs ...int64) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldIn(FieldCreatedID, vs...))
+}
+
+// CreatedIDNotIn applies the NotIn predicate on the "created_id" field.
+func CreatedIDNotIn(vs ...int64) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldNotIn(FieldCreatedID, vs...))
+}
+
+// CreatedIDGT applies the GT predicate on the "created_id" field.
+func CreatedIDGT(v int64) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldGT(FieldCreatedID, v))
+}
+
+// CreatedIDGTE applies the GTE predicate on the "created_id" field.
+func CreatedIDGTE(v int64) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldGTE(FieldCreatedID, v))
+}
+
+// CreatedIDLT applies the LT predicate on the "created_id" field.
+func CreatedIDLT(v int64) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldLT(FieldCreatedID, v))
+}
+
+// CreatedIDLTE applies the LTE predicate on the "created_id" field.
+func CreatedIDLTE(v int64) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldLTE(FieldCreatedID, v))
+}
+
+// CreatedIDIsNil applies the IsNil predicate on the "created_id" field.
+func CreatedIDIsNil() predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldIsNull(FieldCreatedID))
+}
+
+// CreatedIDNotNil applies the NotNil predicate on the "created_id" field.
+func CreatedIDNotNil() predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldNotNull(FieldCreatedID))
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
@@ -530,204 +660,204 @@ func TypeContainsFold(v string) predicate.ScheduleCoach {
 	return predicate.ScheduleCoach(sql.FieldContainsFold(FieldType, v))
 }
 
-// StartTimeEQ applies the EQ predicate on the "start_time" field.
-func StartTimeEQ(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldEQ(FieldStartTime, v))
+// StartAtEQ applies the EQ predicate on the "start_at" field.
+func StartAtEQ(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldEQ(FieldStartAt, v))
 }
 
-// StartTimeNEQ applies the NEQ predicate on the "start_time" field.
-func StartTimeNEQ(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldNEQ(FieldStartTime, v))
+// StartAtNEQ applies the NEQ predicate on the "start_at" field.
+func StartAtNEQ(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldNEQ(FieldStartAt, v))
 }
 
-// StartTimeIn applies the In predicate on the "start_time" field.
-func StartTimeIn(vs ...time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldIn(FieldStartTime, vs...))
+// StartAtIn applies the In predicate on the "start_at" field.
+func StartAtIn(vs ...time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldIn(FieldStartAt, vs...))
 }
 
-// StartTimeNotIn applies the NotIn predicate on the "start_time" field.
-func StartTimeNotIn(vs ...time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldNotIn(FieldStartTime, vs...))
+// StartAtNotIn applies the NotIn predicate on the "start_at" field.
+func StartAtNotIn(vs ...time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldNotIn(FieldStartAt, vs...))
 }
 
-// StartTimeGT applies the GT predicate on the "start_time" field.
-func StartTimeGT(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldGT(FieldStartTime, v))
+// StartAtGT applies the GT predicate on the "start_at" field.
+func StartAtGT(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldGT(FieldStartAt, v))
 }
 
-// StartTimeGTE applies the GTE predicate on the "start_time" field.
-func StartTimeGTE(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldGTE(FieldStartTime, v))
+// StartAtGTE applies the GTE predicate on the "start_at" field.
+func StartAtGTE(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldGTE(FieldStartAt, v))
 }
 
-// StartTimeLT applies the LT predicate on the "start_time" field.
-func StartTimeLT(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldLT(FieldStartTime, v))
+// StartAtLT applies the LT predicate on the "start_at" field.
+func StartAtLT(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldLT(FieldStartAt, v))
 }
 
-// StartTimeLTE applies the LTE predicate on the "start_time" field.
-func StartTimeLTE(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldLTE(FieldStartTime, v))
+// StartAtLTE applies the LTE predicate on the "start_at" field.
+func StartAtLTE(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldLTE(FieldStartAt, v))
 }
 
-// StartTimeIsNil applies the IsNil predicate on the "start_time" field.
-func StartTimeIsNil() predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldIsNull(FieldStartTime))
+// StartAtIsNil applies the IsNil predicate on the "start_at" field.
+func StartAtIsNil() predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldIsNull(FieldStartAt))
 }
 
-// StartTimeNotNil applies the NotNil predicate on the "start_time" field.
-func StartTimeNotNil() predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldNotNull(FieldStartTime))
+// StartAtNotNil applies the NotNil predicate on the "start_at" field.
+func StartAtNotNil() predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldNotNull(FieldStartAt))
 }
 
-// EndTimeEQ applies the EQ predicate on the "end_time" field.
-func EndTimeEQ(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldEQ(FieldEndTime, v))
+// EndAtEQ applies the EQ predicate on the "end_at" field.
+func EndAtEQ(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldEQ(FieldEndAt, v))
 }
 
-// EndTimeNEQ applies the NEQ predicate on the "end_time" field.
-func EndTimeNEQ(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldNEQ(FieldEndTime, v))
+// EndAtNEQ applies the NEQ predicate on the "end_at" field.
+func EndAtNEQ(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldNEQ(FieldEndAt, v))
 }
 
-// EndTimeIn applies the In predicate on the "end_time" field.
-func EndTimeIn(vs ...time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldIn(FieldEndTime, vs...))
+// EndAtIn applies the In predicate on the "end_at" field.
+func EndAtIn(vs ...time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldIn(FieldEndAt, vs...))
 }
 
-// EndTimeNotIn applies the NotIn predicate on the "end_time" field.
-func EndTimeNotIn(vs ...time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldNotIn(FieldEndTime, vs...))
+// EndAtNotIn applies the NotIn predicate on the "end_at" field.
+func EndAtNotIn(vs ...time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldNotIn(FieldEndAt, vs...))
 }
 
-// EndTimeGT applies the GT predicate on the "end_time" field.
-func EndTimeGT(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldGT(FieldEndTime, v))
+// EndAtGT applies the GT predicate on the "end_at" field.
+func EndAtGT(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldGT(FieldEndAt, v))
 }
 
-// EndTimeGTE applies the GTE predicate on the "end_time" field.
-func EndTimeGTE(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldGTE(FieldEndTime, v))
+// EndAtGTE applies the GTE predicate on the "end_at" field.
+func EndAtGTE(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldGTE(FieldEndAt, v))
 }
 
-// EndTimeLT applies the LT predicate on the "end_time" field.
-func EndTimeLT(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldLT(FieldEndTime, v))
+// EndAtLT applies the LT predicate on the "end_at" field.
+func EndAtLT(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldLT(FieldEndAt, v))
 }
 
-// EndTimeLTE applies the LTE predicate on the "end_time" field.
-func EndTimeLTE(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldLTE(FieldEndTime, v))
+// EndAtLTE applies the LTE predicate on the "end_at" field.
+func EndAtLTE(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldLTE(FieldEndAt, v))
 }
 
-// EndTimeIsNil applies the IsNil predicate on the "end_time" field.
-func EndTimeIsNil() predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldIsNull(FieldEndTime))
+// EndAtIsNil applies the IsNil predicate on the "end_at" field.
+func EndAtIsNil() predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldIsNull(FieldEndAt))
 }
 
-// EndTimeNotNil applies the NotNil predicate on the "end_time" field.
-func EndTimeNotNil() predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldNotNull(FieldEndTime))
+// EndAtNotNil applies the NotNil predicate on the "end_at" field.
+func EndAtNotNil() predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldNotNull(FieldEndAt))
 }
 
-// SignStartTimeEQ applies the EQ predicate on the "sign_start_time" field.
-func SignStartTimeEQ(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldEQ(FieldSignStartTime, v))
+// SignStartAtEQ applies the EQ predicate on the "sign_start_at" field.
+func SignStartAtEQ(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldEQ(FieldSignStartAt, v))
 }
 
-// SignStartTimeNEQ applies the NEQ predicate on the "sign_start_time" field.
-func SignStartTimeNEQ(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldNEQ(FieldSignStartTime, v))
+// SignStartAtNEQ applies the NEQ predicate on the "sign_start_at" field.
+func SignStartAtNEQ(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldNEQ(FieldSignStartAt, v))
 }
 
-// SignStartTimeIn applies the In predicate on the "sign_start_time" field.
-func SignStartTimeIn(vs ...time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldIn(FieldSignStartTime, vs...))
+// SignStartAtIn applies the In predicate on the "sign_start_at" field.
+func SignStartAtIn(vs ...time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldIn(FieldSignStartAt, vs...))
 }
 
-// SignStartTimeNotIn applies the NotIn predicate on the "sign_start_time" field.
-func SignStartTimeNotIn(vs ...time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldNotIn(FieldSignStartTime, vs...))
+// SignStartAtNotIn applies the NotIn predicate on the "sign_start_at" field.
+func SignStartAtNotIn(vs ...time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldNotIn(FieldSignStartAt, vs...))
 }
 
-// SignStartTimeGT applies the GT predicate on the "sign_start_time" field.
-func SignStartTimeGT(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldGT(FieldSignStartTime, v))
+// SignStartAtGT applies the GT predicate on the "sign_start_at" field.
+func SignStartAtGT(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldGT(FieldSignStartAt, v))
 }
 
-// SignStartTimeGTE applies the GTE predicate on the "sign_start_time" field.
-func SignStartTimeGTE(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldGTE(FieldSignStartTime, v))
+// SignStartAtGTE applies the GTE predicate on the "sign_start_at" field.
+func SignStartAtGTE(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldGTE(FieldSignStartAt, v))
 }
 
-// SignStartTimeLT applies the LT predicate on the "sign_start_time" field.
-func SignStartTimeLT(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldLT(FieldSignStartTime, v))
+// SignStartAtLT applies the LT predicate on the "sign_start_at" field.
+func SignStartAtLT(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldLT(FieldSignStartAt, v))
 }
 
-// SignStartTimeLTE applies the LTE predicate on the "sign_start_time" field.
-func SignStartTimeLTE(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldLTE(FieldSignStartTime, v))
+// SignStartAtLTE applies the LTE predicate on the "sign_start_at" field.
+func SignStartAtLTE(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldLTE(FieldSignStartAt, v))
 }
 
-// SignStartTimeIsNil applies the IsNil predicate on the "sign_start_time" field.
-func SignStartTimeIsNil() predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldIsNull(FieldSignStartTime))
+// SignStartAtIsNil applies the IsNil predicate on the "sign_start_at" field.
+func SignStartAtIsNil() predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldIsNull(FieldSignStartAt))
 }
 
-// SignStartTimeNotNil applies the NotNil predicate on the "sign_start_time" field.
-func SignStartTimeNotNil() predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldNotNull(FieldSignStartTime))
+// SignStartAtNotNil applies the NotNil predicate on the "sign_start_at" field.
+func SignStartAtNotNil() predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldNotNull(FieldSignStartAt))
 }
 
-// SignEndTimeEQ applies the EQ predicate on the "sign_end_time" field.
-func SignEndTimeEQ(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldEQ(FieldSignEndTime, v))
+// SignEndAtEQ applies the EQ predicate on the "sign_end_at" field.
+func SignEndAtEQ(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldEQ(FieldSignEndAt, v))
 }
 
-// SignEndTimeNEQ applies the NEQ predicate on the "sign_end_time" field.
-func SignEndTimeNEQ(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldNEQ(FieldSignEndTime, v))
+// SignEndAtNEQ applies the NEQ predicate on the "sign_end_at" field.
+func SignEndAtNEQ(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldNEQ(FieldSignEndAt, v))
 }
 
-// SignEndTimeIn applies the In predicate on the "sign_end_time" field.
-func SignEndTimeIn(vs ...time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldIn(FieldSignEndTime, vs...))
+// SignEndAtIn applies the In predicate on the "sign_end_at" field.
+func SignEndAtIn(vs ...time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldIn(FieldSignEndAt, vs...))
 }
 
-// SignEndTimeNotIn applies the NotIn predicate on the "sign_end_time" field.
-func SignEndTimeNotIn(vs ...time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldNotIn(FieldSignEndTime, vs...))
+// SignEndAtNotIn applies the NotIn predicate on the "sign_end_at" field.
+func SignEndAtNotIn(vs ...time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldNotIn(FieldSignEndAt, vs...))
 }
 
-// SignEndTimeGT applies the GT predicate on the "sign_end_time" field.
-func SignEndTimeGT(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldGT(FieldSignEndTime, v))
+// SignEndAtGT applies the GT predicate on the "sign_end_at" field.
+func SignEndAtGT(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldGT(FieldSignEndAt, v))
 }
 
-// SignEndTimeGTE applies the GTE predicate on the "sign_end_time" field.
-func SignEndTimeGTE(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldGTE(FieldSignEndTime, v))
+// SignEndAtGTE applies the GTE predicate on the "sign_end_at" field.
+func SignEndAtGTE(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldGTE(FieldSignEndAt, v))
 }
 
-// SignEndTimeLT applies the LT predicate on the "sign_end_time" field.
-func SignEndTimeLT(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldLT(FieldSignEndTime, v))
+// SignEndAtLT applies the LT predicate on the "sign_end_at" field.
+func SignEndAtLT(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldLT(FieldSignEndAt, v))
 }
 
-// SignEndTimeLTE applies the LTE predicate on the "sign_end_time" field.
-func SignEndTimeLTE(v time.Time) predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldLTE(FieldSignEndTime, v))
+// SignEndAtLTE applies the LTE predicate on the "sign_end_at" field.
+func SignEndAtLTE(v time.Time) predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldLTE(FieldSignEndAt, v))
 }
 
-// SignEndTimeIsNil applies the IsNil predicate on the "sign_end_time" field.
-func SignEndTimeIsNil() predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldIsNull(FieldSignEndTime))
+// SignEndAtIsNil applies the IsNil predicate on the "sign_end_at" field.
+func SignEndAtIsNil() predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldIsNull(FieldSignEndAt))
 }
 
-// SignEndTimeNotNil applies the NotNil predicate on the "sign_end_time" field.
-func SignEndTimeNotNil() predicate.ScheduleCoach {
-	return predicate.ScheduleCoach(sql.FieldNotNull(FieldSignEndTime))
+// SignEndAtNotNil applies the NotNil predicate on the "sign_end_at" field.
+func SignEndAtNotNil() predicate.ScheduleCoach {
+	return predicate.ScheduleCoach(sql.FieldNotNull(FieldSignEndAt))
 }
 
 // CoachNameEQ applies the EQ predicate on the "coach_name" field.

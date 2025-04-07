@@ -35,6 +35,66 @@ func (ddu *DictionaryDetailUpdate) SetUpdatedAt(t time.Time) *DictionaryDetailUp
 	return ddu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (ddu *DictionaryDetailUpdate) ClearUpdatedAt() *DictionaryDetailUpdate {
+	ddu.mutation.ClearUpdatedAt()
+	return ddu
+}
+
+// SetDelete sets the "delete" field.
+func (ddu *DictionaryDetailUpdate) SetDelete(i int64) *DictionaryDetailUpdate {
+	ddu.mutation.ResetDelete()
+	ddu.mutation.SetDelete(i)
+	return ddu
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (ddu *DictionaryDetailUpdate) SetNillableDelete(i *int64) *DictionaryDetailUpdate {
+	if i != nil {
+		ddu.SetDelete(*i)
+	}
+	return ddu
+}
+
+// AddDelete adds i to the "delete" field.
+func (ddu *DictionaryDetailUpdate) AddDelete(i int64) *DictionaryDetailUpdate {
+	ddu.mutation.AddDelete(i)
+	return ddu
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (ddu *DictionaryDetailUpdate) ClearDelete() *DictionaryDetailUpdate {
+	ddu.mutation.ClearDelete()
+	return ddu
+}
+
+// SetCreatedID sets the "created_id" field.
+func (ddu *DictionaryDetailUpdate) SetCreatedID(i int64) *DictionaryDetailUpdate {
+	ddu.mutation.ResetCreatedID()
+	ddu.mutation.SetCreatedID(i)
+	return ddu
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (ddu *DictionaryDetailUpdate) SetNillableCreatedID(i *int64) *DictionaryDetailUpdate {
+	if i != nil {
+		ddu.SetCreatedID(*i)
+	}
+	return ddu
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (ddu *DictionaryDetailUpdate) AddCreatedID(i int64) *DictionaryDetailUpdate {
+	ddu.mutation.AddCreatedID(i)
+	return ddu
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (ddu *DictionaryDetailUpdate) ClearCreatedID() *DictionaryDetailUpdate {
+	ddu.mutation.ClearCreatedID()
+	return ddu
+}
+
 // SetStatus sets the "status" field.
 func (ddu *DictionaryDetailUpdate) SetStatus(i int64) *DictionaryDetailUpdate {
 	ddu.mutation.ResetStatus()
@@ -170,7 +230,7 @@ func (ddu *DictionaryDetailUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (ddu *DictionaryDetailUpdate) defaults() {
-	if _, ok := ddu.mutation.UpdatedAt(); !ok {
+	if _, ok := ddu.mutation.UpdatedAt(); !ok && !ddu.mutation.UpdatedAtCleared() {
 		v := dictionarydetail.UpdateDefaultUpdatedAt()
 		ddu.mutation.SetUpdatedAt(v)
 	}
@@ -185,8 +245,32 @@ func (ddu *DictionaryDetailUpdate) sqlSave(ctx context.Context) (n int, err erro
 			}
 		}
 	}
+	if ddu.mutation.CreatedAtCleared() {
+		_spec.ClearField(dictionarydetail.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := ddu.mutation.UpdatedAt(); ok {
 		_spec.SetField(dictionarydetail.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if ddu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(dictionarydetail.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := ddu.mutation.Delete(); ok {
+		_spec.SetField(dictionarydetail.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := ddu.mutation.AddedDelete(); ok {
+		_spec.AddField(dictionarydetail.FieldDelete, field.TypeInt64, value)
+	}
+	if ddu.mutation.DeleteCleared() {
+		_spec.ClearField(dictionarydetail.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := ddu.mutation.CreatedID(); ok {
+		_spec.SetField(dictionarydetail.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := ddu.mutation.AddedCreatedID(); ok {
+		_spec.AddField(dictionarydetail.FieldCreatedID, field.TypeInt64, value)
+	}
+	if ddu.mutation.CreatedIDCleared() {
+		_spec.ClearField(dictionarydetail.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := ddu.mutation.Status(); ok {
 		_spec.SetField(dictionarydetail.FieldStatus, field.TypeInt64, value)
@@ -258,6 +342,66 @@ type DictionaryDetailUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (dduo *DictionaryDetailUpdateOne) SetUpdatedAt(t time.Time) *DictionaryDetailUpdateOne {
 	dduo.mutation.SetUpdatedAt(t)
+	return dduo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (dduo *DictionaryDetailUpdateOne) ClearUpdatedAt() *DictionaryDetailUpdateOne {
+	dduo.mutation.ClearUpdatedAt()
+	return dduo
+}
+
+// SetDelete sets the "delete" field.
+func (dduo *DictionaryDetailUpdateOne) SetDelete(i int64) *DictionaryDetailUpdateOne {
+	dduo.mutation.ResetDelete()
+	dduo.mutation.SetDelete(i)
+	return dduo
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (dduo *DictionaryDetailUpdateOne) SetNillableDelete(i *int64) *DictionaryDetailUpdateOne {
+	if i != nil {
+		dduo.SetDelete(*i)
+	}
+	return dduo
+}
+
+// AddDelete adds i to the "delete" field.
+func (dduo *DictionaryDetailUpdateOne) AddDelete(i int64) *DictionaryDetailUpdateOne {
+	dduo.mutation.AddDelete(i)
+	return dduo
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (dduo *DictionaryDetailUpdateOne) ClearDelete() *DictionaryDetailUpdateOne {
+	dduo.mutation.ClearDelete()
+	return dduo
+}
+
+// SetCreatedID sets the "created_id" field.
+func (dduo *DictionaryDetailUpdateOne) SetCreatedID(i int64) *DictionaryDetailUpdateOne {
+	dduo.mutation.ResetCreatedID()
+	dduo.mutation.SetCreatedID(i)
+	return dduo
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (dduo *DictionaryDetailUpdateOne) SetNillableCreatedID(i *int64) *DictionaryDetailUpdateOne {
+	if i != nil {
+		dduo.SetCreatedID(*i)
+	}
+	return dduo
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (dduo *DictionaryDetailUpdateOne) AddCreatedID(i int64) *DictionaryDetailUpdateOne {
+	dduo.mutation.AddCreatedID(i)
+	return dduo
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (dduo *DictionaryDetailUpdateOne) ClearCreatedID() *DictionaryDetailUpdateOne {
+	dduo.mutation.ClearCreatedID()
 	return dduo
 }
 
@@ -409,7 +553,7 @@ func (dduo *DictionaryDetailUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (dduo *DictionaryDetailUpdateOne) defaults() {
-	if _, ok := dduo.mutation.UpdatedAt(); !ok {
+	if _, ok := dduo.mutation.UpdatedAt(); !ok && !dduo.mutation.UpdatedAtCleared() {
 		v := dictionarydetail.UpdateDefaultUpdatedAt()
 		dduo.mutation.SetUpdatedAt(v)
 	}
@@ -441,8 +585,32 @@ func (dduo *DictionaryDetailUpdateOne) sqlSave(ctx context.Context) (_node *Dict
 			}
 		}
 	}
+	if dduo.mutation.CreatedAtCleared() {
+		_spec.ClearField(dictionarydetail.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := dduo.mutation.UpdatedAt(); ok {
 		_spec.SetField(dictionarydetail.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if dduo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(dictionarydetail.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := dduo.mutation.Delete(); ok {
+		_spec.SetField(dictionarydetail.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := dduo.mutation.AddedDelete(); ok {
+		_spec.AddField(dictionarydetail.FieldDelete, field.TypeInt64, value)
+	}
+	if dduo.mutation.DeleteCleared() {
+		_spec.ClearField(dictionarydetail.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := dduo.mutation.CreatedID(); ok {
+		_spec.SetField(dictionarydetail.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := dduo.mutation.AddedCreatedID(); ok {
+		_spec.AddField(dictionarydetail.FieldCreatedID, field.TypeInt64, value)
+	}
+	if dduo.mutation.CreatedIDCleared() {
+		_spec.ClearField(dictionarydetail.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := dduo.mutation.Status(); ok {
 		_spec.SetField(dictionarydetail.FieldStatus, field.TypeInt64, value)

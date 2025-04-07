@@ -18,6 +18,10 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
+	// FieldDelete holds the string denoting the delete field in the database.
+	FieldDelete = "delete"
+	// FieldCreatedID holds the string denoting the created_id field in the database.
+	FieldCreatedID = "created_id"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldVenueID holds the string denoting the venue_id field in the database.
@@ -34,14 +38,14 @@ const (
 	FieldMemberProductPropertyID = "member_product_property_id"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
-	// FieldStartTime holds the string denoting the start_time field in the database.
-	FieldStartTime = "start_time"
-	// FieldEndTime holds the string denoting the end_time field in the database.
-	FieldEndTime = "end_time"
-	// FieldSignStartTime holds the string denoting the sign_start_time field in the database.
-	FieldSignStartTime = "sign_start_time"
-	// FieldSignEndTime holds the string denoting the sign_end_time field in the database.
-	FieldSignEndTime = "sign_end_time"
+	// FieldStartAt holds the string denoting the start_at field in the database.
+	FieldStartAt = "start_at"
+	// FieldEndAt holds the string denoting the end_at field in the database.
+	FieldEndAt = "end_at"
+	// FieldSignStartAt holds the string denoting the sign_start_at field in the database.
+	FieldSignStartAt = "sign_start_at"
+	// FieldSignEndAt holds the string denoting the sign_end_at field in the database.
+	FieldSignEndAt = "sign_end_at"
 	// FieldMemberName holds the string denoting the member_name field in the database.
 	FieldMemberName = "member_name"
 	// FieldMemberProductName holds the string denoting the member_product_name field in the database.
@@ -68,6 +72,8 @@ var Columns = []string{
 	FieldID,
 	FieldCreatedAt,
 	FieldUpdatedAt,
+	FieldDelete,
+	FieldCreatedID,
 	FieldStatus,
 	FieldVenueID,
 	FieldScheduleID,
@@ -76,10 +82,10 @@ var Columns = []string{
 	FieldMemberProductID,
 	FieldMemberProductPropertyID,
 	FieldType,
-	FieldStartTime,
-	FieldEndTime,
-	FieldSignStartTime,
-	FieldSignEndTime,
+	FieldStartAt,
+	FieldEndAt,
+	FieldSignStartAt,
+	FieldSignEndAt,
 	FieldMemberName,
 	FieldMemberProductName,
 	FieldMemberProductPropertyName,
@@ -103,16 +109,20 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultDelete holds the default value on creation for the "delete" field.
+	DefaultDelete int64
+	// DefaultCreatedID holds the default value on creation for the "created_id" field.
+	DefaultCreatedID int64
 	// DefaultStatus holds the default value on creation for the "status" field.
 	DefaultStatus int64
-	// DefaultStartTime holds the default value on creation for the "start_time" field.
-	DefaultStartTime func() time.Time
-	// DefaultEndTime holds the default value on creation for the "end_time" field.
-	DefaultEndTime func() time.Time
-	// DefaultSignStartTime holds the default value on creation for the "sign_start_time" field.
-	DefaultSignStartTime func() time.Time
-	// DefaultSignEndTime holds the default value on creation for the "sign_end_time" field.
-	DefaultSignEndTime func() time.Time
+	// DefaultStartAt holds the default value on creation for the "start_at" field.
+	DefaultStartAt func() time.Time
+	// DefaultEndAt holds the default value on creation for the "end_at" field.
+	DefaultEndAt func() time.Time
+	// DefaultSignStartAt holds the default value on creation for the "sign_start_at" field.
+	DefaultSignStartAt func() time.Time
+	// DefaultSignEndAt holds the default value on creation for the "sign_end_at" field.
+	DefaultSignEndAt func() time.Time
 )
 
 // OrderOption defines the ordering options for the ScheduleMember queries.
@@ -131,6 +141,16 @@ func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdatedAt orders the results by the updated_at field.
 func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByDelete orders the results by the delete field.
+func ByDelete(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDelete, opts...).ToFunc()
+}
+
+// ByCreatedID orders the results by the created_id field.
+func ByCreatedID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedID, opts...).ToFunc()
 }
 
 // ByStatus orders the results by the status field.
@@ -173,24 +193,24 @@ func ByType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldType, opts...).ToFunc()
 }
 
-// ByStartTime orders the results by the start_time field.
-func ByStartTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldStartTime, opts...).ToFunc()
+// ByStartAt orders the results by the start_at field.
+func ByStartAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStartAt, opts...).ToFunc()
 }
 
-// ByEndTime orders the results by the end_time field.
-func ByEndTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldEndTime, opts...).ToFunc()
+// ByEndAt orders the results by the end_at field.
+func ByEndAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEndAt, opts...).ToFunc()
 }
 
-// BySignStartTime orders the results by the sign_start_time field.
-func BySignStartTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSignStartTime, opts...).ToFunc()
+// BySignStartAt orders the results by the sign_start_at field.
+func BySignStartAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSignStartAt, opts...).ToFunc()
 }
 
-// BySignEndTime orders the results by the sign_end_time field.
-func BySignEndTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSignEndTime, opts...).ToFunc()
+// BySignEndAt orders the results by the sign_end_at field.
+func BySignEndAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSignEndAt, opts...).ToFunc()
 }
 
 // ByMemberName orders the results by the member_name field.

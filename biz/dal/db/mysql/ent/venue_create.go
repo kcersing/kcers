@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
@@ -49,6 +48,34 @@ func (vc *VenueCreate) SetUpdatedAt(t time.Time) *VenueCreate {
 func (vc *VenueCreate) SetNillableUpdatedAt(t *time.Time) *VenueCreate {
 	if t != nil {
 		vc.SetUpdatedAt(*t)
+	}
+	return vc
+}
+
+// SetDelete sets the "delete" field.
+func (vc *VenueCreate) SetDelete(i int64) *VenueCreate {
+	vc.mutation.SetDelete(i)
+	return vc
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (vc *VenueCreate) SetNillableDelete(i *int64) *VenueCreate {
+	if i != nil {
+		vc.SetDelete(*i)
+	}
+	return vc
+}
+
+// SetCreatedID sets the "created_id" field.
+func (vc *VenueCreate) SetCreatedID(i int64) *VenueCreate {
+	vc.mutation.SetCreatedID(i)
+	return vc
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (vc *VenueCreate) SetNillableCreatedID(i *int64) *VenueCreate {
+	if i != nil {
+		vc.SetCreatedID(*i)
 	}
 	return vc
 }
@@ -331,6 +358,14 @@ func (vc *VenueCreate) defaults() {
 		v := venue.DefaultUpdatedAt()
 		vc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := vc.mutation.Delete(); !ok {
+		v := venue.DefaultDelete
+		vc.mutation.SetDelete(v)
+	}
+	if _, ok := vc.mutation.CreatedID(); !ok {
+		v := venue.DefaultCreatedID
+		vc.mutation.SetCreatedID(v)
+	}
 	if _, ok := vc.mutation.Status(); !ok {
 		v := venue.DefaultStatus
 		vc.mutation.SetStatus(v)
@@ -339,12 +374,6 @@ func (vc *VenueCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (vc *VenueCreate) check() error {
-	if _, ok := vc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Venue.created_at"`)}
-	}
-	if _, ok := vc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Venue.updated_at"`)}
-	}
 	return nil
 }
 
@@ -384,6 +413,14 @@ func (vc *VenueCreate) createSpec() (*Venue, *sqlgraph.CreateSpec) {
 	if value, ok := vc.mutation.UpdatedAt(); ok {
 		_spec.SetField(venue.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := vc.mutation.Delete(); ok {
+		_spec.SetField(venue.FieldDelete, field.TypeInt64, value)
+		_node.Delete = value
+	}
+	if value, ok := vc.mutation.CreatedID(); ok {
+		_spec.SetField(venue.FieldCreatedID, field.TypeInt64, value)
+		_node.CreatedID = value
 	}
 	if value, ok := vc.mutation.Status(); ok {
 		_spec.SetField(venue.FieldStatus, field.TypeInt64, value)

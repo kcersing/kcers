@@ -7,20 +7,13 @@ import (
 	"github.com/dgraph-io/ristretto"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
-	"kcers/app/dal/cache"
-	"kcers/app/pkg/do"
-	"kcers/biz/infras/infras/service/1"
-	"kcers/config"
-	"kcers/infras"
-	"kcers/pkg/db/ent"
-	"kcers/pkg/db/ent/face"
-	"kcers/pkg/db/ent/member"
-	"kcers/pkg/db/ent/memberdetails"
-	"kcers/pkg/db/ent/memberproduct"
-	"kcers/pkg/db/ent/memberproductproperty"
-	"kcers/pkg/db/ent/predicate"
-	"kcers/pkg/encrypt"
-	"kcers/pkg/minio"
+	"kcers/biz/dal/cache"
+	"kcers/biz/dal/config"
+	db "kcers/biz/dal/db/mysql"
+	"kcers/biz/dal/db/mysql/ent"
+	"kcers/biz/dal/db/mysql/ent/member"
+	"kcers/biz/infras/do"
+	"kcers/biz/pkg/encrypt"
 	"strconv"
 	"time"
 )
@@ -320,7 +313,7 @@ func NewMember(ctx context.Context, c *app.RequestContext) do.Member {
 		ctx:   ctx,
 		c:     c,
 		salt:  config.GlobalServerConfig.MySQLInfo.Salt,
-		db:    infras.DB,
+		db:    db.DB,
 		cache: cache.Cache,
 	}
 }

@@ -24,6 +24,10 @@ type Face struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// last update time
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// last delete  1:已删除
+	Delete int64 `json:"delete,omitempty"`
+	// created
+	CreatedID int64 `json:"created_id,omitempty"`
 	// 会员id
 	MemberID int64 `json:"member_id,omitempty"`
 	// user id
@@ -39,7 +43,7 @@ type Face struct {
 	// 人脸特征值
 	FaceEigenvalue string `json:"face_eigenvalue,omitempty"`
 	// 人脸更新时间
-	FacePicUpdatedTime time.Time `json:"face_pic_updated_time,omitempty"`
+	FacePicUpdatedAt time.Time `json:"face_pic_updated_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FaceQuery when eager-loading is set.
 	Edges        FaceEdges `json:"edges"`
@@ -84,11 +88,11 @@ func (*Face) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case face.FieldID, face.FieldMemberID, face.FieldUserID:
+		case face.FieldID, face.FieldDelete, face.FieldCreatedID, face.FieldMemberID, face.FieldUserID:
 			values[i] = new(sql.NullInt64)
 		case face.FieldIdentityCard, face.FieldFaceIdentityCard, face.FieldBackIdentityCard, face.FieldFacePic, face.FieldFaceEigenvalue:
 			values[i] = new(sql.NullString)
-		case face.FieldCreatedAt, face.FieldUpdatedAt, face.FieldFacePicUpdatedTime:
+		case face.FieldCreatedAt, face.FieldUpdatedAt, face.FieldFacePicUpdatedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -122,6 +126,18 @@ func (f *Face) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				f.UpdatedAt = value.Time
+			}
+		case face.FieldDelete:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field delete", values[i])
+			} else if value.Valid {
+				f.Delete = value.Int64
+			}
+		case face.FieldCreatedID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field created_id", values[i])
+			} else if value.Valid {
+				f.CreatedID = value.Int64
 			}
 		case face.FieldMemberID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -165,11 +181,11 @@ func (f *Face) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				f.FaceEigenvalue = value.String
 			}
-		case face.FieldFacePicUpdatedTime:
+		case face.FieldFacePicUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field face_pic_updated_time", values[i])
+				return fmt.Errorf("unexpected type %T for field face_pic_updated_at", values[i])
 			} else if value.Valid {
-				f.FacePicUpdatedTime = value.Time
+				f.FacePicUpdatedAt = value.Time
 			}
 		default:
 			f.selectValues.Set(columns[i], values[i])
@@ -223,6 +239,12 @@ func (f *Face) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(f.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
+	builder.WriteString("delete=")
+	builder.WriteString(fmt.Sprintf("%v", f.Delete))
+	builder.WriteString(", ")
+	builder.WriteString("created_id=")
+	builder.WriteString(fmt.Sprintf("%v", f.CreatedID))
+	builder.WriteString(", ")
 	builder.WriteString("member_id=")
 	builder.WriteString(fmt.Sprintf("%v", f.MemberID))
 	builder.WriteString(", ")
@@ -244,8 +266,8 @@ func (f *Face) String() string {
 	builder.WriteString("face_eigenvalue=")
 	builder.WriteString(f.FaceEigenvalue)
 	builder.WriteString(", ")
-	builder.WriteString("face_pic_updated_time=")
-	builder.WriteString(f.FacePicUpdatedTime.Format(time.ANSIC))
+	builder.WriteString("face_pic_updated_at=")
+	builder.WriteString(f.FacePicUpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

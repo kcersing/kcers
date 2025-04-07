@@ -9,6 +9,7 @@ import (
 	"kcers/biz/dal/config"
 	db "kcers/biz/dal/db/mysql"
 	"kcers/biz/dal/db/mysql/ent"
+	banner2 "kcers/biz/dal/db/mysql/ent/banner"
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	"kcers/biz/infras/do"
 	"kcers/idl_gen/model/banner"
@@ -36,7 +37,7 @@ func NewBanner(ctx context.Context, c *app.RequestContext) do.Banner {
 	}
 }
 
-func (b *Banner) Create(req banner.BannerInfo) error {
+func (b *Banner) Create(req *banner.BannerInfo) error {
 	err := b.db.Banner.Create().
 		SetName(req.Name).
 		SetPic(req.Pic).
@@ -49,7 +50,7 @@ func (b *Banner) Create(req banner.BannerInfo) error {
 	return nil
 }
 
-func (b *Banner) Update(req banner.BannerInfo) error {
+func (b *Banner) Update(req *banner.BannerInfo) error {
 	err := b.db.Banner.Update().
 		Where(banner2.IDEQ(req.ID)).
 		SetName(req.Name).
@@ -81,7 +82,7 @@ func (b *Banner) List(req *banner.BannerListReq) (resp []*banner.BannerInfo, tot
 
 	lists, err := b.db.Banner.Query().Where(predicates...).
 		Offset(int(req.Page-1) * int(req.PageSize)).
-		Order(ent.Desc(contestparticipant.FieldID)).
+		Order(ent.Desc(banner2.FieldID)).
 		Limit(int(req.PageSize)).All(b.ctx)
 	if err != nil {
 		err = errors.Wrap(err, "get contest participant list failed")

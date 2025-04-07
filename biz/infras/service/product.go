@@ -7,16 +7,16 @@ import (
 	"github.com/dgraph-io/ristretto"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
-	"kcers/app/dal/cache"
-	"kcers/app/pkg/do"
-	"kcers/config"
-	"kcers/infras"
-	"kcers/pkg/db/ent"
-	"kcers/pkg/db/ent/predicate"
-	"kcers/pkg/db/ent/product"
-	"kcers/pkg/db/ent/productproperty"
-	"kcers/pkg/db/ent/user"
-	"kcers/pkg/db/ent/venue"
+	"kcers/biz/dal/cache"
+	"kcers/biz/dal/config"
+	db "kcers/biz/dal/db/mysql"
+	"kcers/biz/dal/db/mysql/ent"
+	"kcers/biz/dal/db/mysql/ent/predicate"
+	"kcers/biz/dal/db/mysql/ent/product"
+	"kcers/biz/dal/db/mysql/ent/productproperty"
+	"kcers/biz/dal/db/mysql/ent/user"
+	"kcers/biz/dal/db/mysql/ent/venue"
+	"kcers/biz/infras/do"
 	"strconv"
 	"time"
 )
@@ -314,7 +314,7 @@ func NewProduct(ctx context.Context, c *app.RequestContext) do.Product {
 		ctx:   ctx,
 		c:     c,
 		salt:  config.GlobalServerConfig.MySQLInfo.Salt,
-		db:    infras.DB,
+		db:    db.DB,
 		cache: cache.Cache,
 	}
 }

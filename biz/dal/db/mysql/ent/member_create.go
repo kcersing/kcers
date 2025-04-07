@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/face"
@@ -51,6 +50,34 @@ func (mc *MemberCreate) SetUpdatedAt(t time.Time) *MemberCreate {
 func (mc *MemberCreate) SetNillableUpdatedAt(t *time.Time) *MemberCreate {
 	if t != nil {
 		mc.SetUpdatedAt(*t)
+	}
+	return mc
+}
+
+// SetDelete sets the "delete" field.
+func (mc *MemberCreate) SetDelete(i int64) *MemberCreate {
+	mc.mutation.SetDelete(i)
+	return mc
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (mc *MemberCreate) SetNillableDelete(i *int64) *MemberCreate {
+	if i != nil {
+		mc.SetDelete(*i)
+	}
+	return mc
+}
+
+// SetCreatedID sets the "created_id" field.
+func (mc *MemberCreate) SetCreatedID(i int64) *MemberCreate {
+	mc.mutation.SetCreatedID(i)
+	return mc
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (mc *MemberCreate) SetNillableCreatedID(i *int64) *MemberCreate {
+	if i != nil {
+		mc.SetCreatedID(*i)
 	}
 	return mc
 }
@@ -307,6 +334,14 @@ func (mc *MemberCreate) defaults() {
 		v := member.DefaultUpdatedAt()
 		mc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := mc.mutation.Delete(); !ok {
+		v := member.DefaultDelete
+		mc.mutation.SetDelete(v)
+	}
+	if _, ok := mc.mutation.CreatedID(); !ok {
+		v := member.DefaultCreatedID
+		mc.mutation.SetCreatedID(v)
+	}
 	if _, ok := mc.mutation.Status(); !ok {
 		v := member.DefaultStatus
 		mc.mutation.SetStatus(v)
@@ -323,12 +358,6 @@ func (mc *MemberCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (mc *MemberCreate) check() error {
-	if _, ok := mc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Member.created_at"`)}
-	}
-	if _, ok := mc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Member.updated_at"`)}
-	}
 	return nil
 }
 
@@ -368,6 +397,14 @@ func (mc *MemberCreate) createSpec() (*Member, *sqlgraph.CreateSpec) {
 	if value, ok := mc.mutation.UpdatedAt(); ok {
 		_spec.SetField(member.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := mc.mutation.Delete(); ok {
+		_spec.SetField(member.FieldDelete, field.TypeInt64, value)
+		_node.Delete = value
+	}
+	if value, ok := mc.mutation.CreatedID(); ok {
+		_spec.SetField(member.FieldCreatedID, field.TypeInt64, value)
+		_node.CreatedID = value
 	}
 	if value, ok := mc.mutation.Status(); ok {
 		_spec.SetField(member.FieldStatus, field.TypeInt64, value)

@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/orderitem"
@@ -45,6 +44,34 @@ func (oic *OrderItemCreate) SetUpdatedAt(t time.Time) *OrderItemCreate {
 func (oic *OrderItemCreate) SetNillableUpdatedAt(t *time.Time) *OrderItemCreate {
 	if t != nil {
 		oic.SetUpdatedAt(*t)
+	}
+	return oic
+}
+
+// SetDelete sets the "delete" field.
+func (oic *OrderItemCreate) SetDelete(i int64) *OrderItemCreate {
+	oic.mutation.SetDelete(i)
+	return oic
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (oic *OrderItemCreate) SetNillableDelete(i *int64) *OrderItemCreate {
+	if i != nil {
+		oic.SetDelete(*i)
+	}
+	return oic
+}
+
+// SetCreatedID sets the "created_id" field.
+func (oic *OrderItemCreate) SetCreatedID(i int64) *OrderItemCreate {
+	oic.mutation.SetCreatedID(i)
+	return oic
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (oic *OrderItemCreate) SetNillableCreatedID(i *int64) *OrderItemCreate {
+	if i != nil {
+		oic.SetCreatedID(*i)
 	}
 	return oic
 }
@@ -145,6 +172,14 @@ func (oic *OrderItemCreate) defaults() {
 		v := orderitem.DefaultUpdatedAt()
 		oic.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := oic.mutation.Delete(); !ok {
+		v := orderitem.DefaultDelete
+		oic.mutation.SetDelete(v)
+	}
+	if _, ok := oic.mutation.CreatedID(); !ok {
+		v := orderitem.DefaultCreatedID
+		oic.mutation.SetCreatedID(v)
+	}
 	if _, ok := oic.mutation.RelatedUserProductID(); !ok {
 		v := orderitem.DefaultRelatedUserProductID
 		oic.mutation.SetRelatedUserProductID(v)
@@ -153,12 +188,6 @@ func (oic *OrderItemCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (oic *OrderItemCreate) check() error {
-	if _, ok := oic.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "OrderItem.created_at"`)}
-	}
-	if _, ok := oic.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "OrderItem.updated_at"`)}
-	}
 	return nil
 }
 
@@ -198,6 +227,14 @@ func (oic *OrderItemCreate) createSpec() (*OrderItem, *sqlgraph.CreateSpec) {
 	if value, ok := oic.mutation.UpdatedAt(); ok {
 		_spec.SetField(orderitem.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := oic.mutation.Delete(); ok {
+		_spec.SetField(orderitem.FieldDelete, field.TypeInt64, value)
+		_node.Delete = value
+	}
+	if value, ok := oic.mutation.CreatedID(); ok {
+		_spec.SetField(orderitem.FieldCreatedID, field.TypeInt64, value)
+		_node.CreatedID = value
 	}
 	if value, ok := oic.mutation.ProductID(); ok {
 		_spec.SetField(orderitem.FieldProductID, field.TypeInt64, value)

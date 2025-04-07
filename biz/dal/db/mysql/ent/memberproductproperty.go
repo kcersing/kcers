@@ -23,6 +23,10 @@ type MemberProductProperty struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// last update time
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// last delete  1:已删除
+	Delete int64 `json:"delete,omitempty"`
+	// created
+	CreatedID int64 `json:"created_id,omitempty"`
 	// 状态[0:禁用;1:正常]
 	Status int64 `json:"status,omitempty"`
 	// 会员id
@@ -95,7 +99,7 @@ func (*MemberProductProperty) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case memberproductproperty.FieldPrice:
 			values[i] = new(sql.NullFloat64)
-		case memberproductproperty.FieldID, memberproductproperty.FieldStatus, memberproductproperty.FieldMemberID, memberproductproperty.FieldMemberProductID, memberproductproperty.FieldPropertyID, memberproductproperty.FieldDuration, memberproductproperty.FieldLength, memberproductproperty.FieldCount, memberproductproperty.FieldCountSurplus:
+		case memberproductproperty.FieldID, memberproductproperty.FieldDelete, memberproductproperty.FieldCreatedID, memberproductproperty.FieldStatus, memberproductproperty.FieldMemberID, memberproductproperty.FieldMemberProductID, memberproductproperty.FieldPropertyID, memberproductproperty.FieldDuration, memberproductproperty.FieldLength, memberproductproperty.FieldCount, memberproductproperty.FieldCountSurplus:
 			values[i] = new(sql.NullInt64)
 		case memberproductproperty.FieldSn, memberproductproperty.FieldType, memberproductproperty.FieldName:
 			values[i] = new(sql.NullString)
@@ -133,6 +137,18 @@ func (mpp *MemberProductProperty) assignValues(columns []string, values []any) e
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				mpp.UpdatedAt = value.Time
+			}
+		case memberproductproperty.FieldDelete:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field delete", values[i])
+			} else if value.Valid {
+				mpp.Delete = value.Int64
+			}
+		case memberproductproperty.FieldCreatedID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field created_id", values[i])
+			} else if value.Valid {
+				mpp.CreatedID = value.Int64
 			}
 		case memberproductproperty.FieldStatus:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -269,6 +285,12 @@ func (mpp *MemberProductProperty) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(mpp.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("delete=")
+	builder.WriteString(fmt.Sprintf("%v", mpp.Delete))
+	builder.WriteString(", ")
+	builder.WriteString("created_id=")
+	builder.WriteString(fmt.Sprintf("%v", mpp.CreatedID))
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", mpp.Status))

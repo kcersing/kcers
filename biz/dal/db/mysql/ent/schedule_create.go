@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/schedule"
 	"kcers/biz/dal/db/mysql/ent/schedulecoach"
@@ -46,6 +45,34 @@ func (sc *ScheduleCreate) SetUpdatedAt(t time.Time) *ScheduleCreate {
 func (sc *ScheduleCreate) SetNillableUpdatedAt(t *time.Time) *ScheduleCreate {
 	if t != nil {
 		sc.SetUpdatedAt(*t)
+	}
+	return sc
+}
+
+// SetDelete sets the "delete" field.
+func (sc *ScheduleCreate) SetDelete(i int64) *ScheduleCreate {
+	sc.mutation.SetDelete(i)
+	return sc
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (sc *ScheduleCreate) SetNillableDelete(i *int64) *ScheduleCreate {
+	if i != nil {
+		sc.SetDelete(*i)
+	}
+	return sc
+}
+
+// SetCreatedID sets the "created_id" field.
+func (sc *ScheduleCreate) SetCreatedID(i int64) *ScheduleCreate {
+	sc.mutation.SetCreatedID(i)
+	return sc
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (sc *ScheduleCreate) SetNillableCreatedID(i *int64) *ScheduleCreate {
+	if i != nil {
+		sc.SetCreatedID(*i)
 	}
 	return sc
 }
@@ -190,30 +217,30 @@ func (sc *ScheduleCreate) SetNillableDate(s *string) *ScheduleCreate {
 	return sc
 }
 
-// SetStartTime sets the "start_time" field.
-func (sc *ScheduleCreate) SetStartTime(t time.Time) *ScheduleCreate {
-	sc.mutation.SetStartTime(t)
+// SetStartAt sets the "start_at" field.
+func (sc *ScheduleCreate) SetStartAt(t time.Time) *ScheduleCreate {
+	sc.mutation.SetStartAt(t)
 	return sc
 }
 
-// SetNillableStartTime sets the "start_time" field if the given value is not nil.
-func (sc *ScheduleCreate) SetNillableStartTime(t *time.Time) *ScheduleCreate {
+// SetNillableStartAt sets the "start_at" field if the given value is not nil.
+func (sc *ScheduleCreate) SetNillableStartAt(t *time.Time) *ScheduleCreate {
 	if t != nil {
-		sc.SetStartTime(*t)
+		sc.SetStartAt(*t)
 	}
 	return sc
 }
 
-// SetEndTime sets the "end_time" field.
-func (sc *ScheduleCreate) SetEndTime(t time.Time) *ScheduleCreate {
-	sc.mutation.SetEndTime(t)
+// SetEndAt sets the "end_at" field.
+func (sc *ScheduleCreate) SetEndAt(t time.Time) *ScheduleCreate {
+	sc.mutation.SetEndAt(t)
 	return sc
 }
 
-// SetNillableEndTime sets the "end_time" field if the given value is not nil.
-func (sc *ScheduleCreate) SetNillableEndTime(t *time.Time) *ScheduleCreate {
+// SetNillableEndAt sets the "end_at" field if the given value is not nil.
+func (sc *ScheduleCreate) SetNillableEndAt(t *time.Time) *ScheduleCreate {
 	if t != nil {
-		sc.SetEndTime(*t)
+		sc.SetEndAt(*t)
 	}
 	return sc
 }
@@ -353,6 +380,14 @@ func (sc *ScheduleCreate) defaults() {
 		v := schedule.DefaultUpdatedAt()
 		sc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := sc.mutation.Delete(); !ok {
+		v := schedule.DefaultDelete
+		sc.mutation.SetDelete(v)
+	}
+	if _, ok := sc.mutation.CreatedID(); !ok {
+		v := schedule.DefaultCreatedID
+		sc.mutation.SetCreatedID(v)
+	}
 	if _, ok := sc.mutation.Status(); !ok {
 		v := schedule.DefaultStatus
 		sc.mutation.SetStatus(v)
@@ -365,12 +400,6 @@ func (sc *ScheduleCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (sc *ScheduleCreate) check() error {
-	if _, ok := sc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Schedule.created_at"`)}
-	}
-	if _, ok := sc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Schedule.updated_at"`)}
-	}
 	return nil
 }
 
@@ -410,6 +439,14 @@ func (sc *ScheduleCreate) createSpec() (*Schedule, *sqlgraph.CreateSpec) {
 	if value, ok := sc.mutation.UpdatedAt(); ok {
 		_spec.SetField(schedule.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := sc.mutation.Delete(); ok {
+		_spec.SetField(schedule.FieldDelete, field.TypeInt64, value)
+		_node.Delete = value
+	}
+	if value, ok := sc.mutation.CreatedID(); ok {
+		_spec.SetField(schedule.FieldCreatedID, field.TypeInt64, value)
+		_node.CreatedID = value
 	}
 	if value, ok := sc.mutation.Status(); ok {
 		_spec.SetField(schedule.FieldStatus, field.TypeInt64, value)
@@ -451,13 +488,13 @@ func (sc *ScheduleCreate) createSpec() (*Schedule, *sqlgraph.CreateSpec) {
 		_spec.SetField(schedule.FieldDate, field.TypeString, value)
 		_node.Date = value
 	}
-	if value, ok := sc.mutation.StartTime(); ok {
-		_spec.SetField(schedule.FieldStartTime, field.TypeTime, value)
-		_node.StartTime = value
+	if value, ok := sc.mutation.StartAt(); ok {
+		_spec.SetField(schedule.FieldStartAt, field.TypeTime, value)
+		_node.StartAt = value
 	}
-	if value, ok := sc.mutation.EndTime(); ok {
-		_spec.SetField(schedule.FieldEndTime, field.TypeTime, value)
-		_node.EndTime = value
+	if value, ok := sc.mutation.EndAt(); ok {
+		_spec.SetField(schedule.FieldEndAt, field.TypeTime, value)
+		_node.EndAt = value
 	}
 	if value, ok := sc.mutation.Price(); ok {
 		_spec.SetField(schedule.FieldPrice, field.TypeFloat64, value)

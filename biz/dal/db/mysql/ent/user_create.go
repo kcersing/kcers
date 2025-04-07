@@ -52,6 +52,34 @@ func (uc *UserCreate) SetNillableUpdatedAt(t *time.Time) *UserCreate {
 	return uc
 }
 
+// SetDelete sets the "delete" field.
+func (uc *UserCreate) SetDelete(i int64) *UserCreate {
+	uc.mutation.SetDelete(i)
+	return uc
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (uc *UserCreate) SetNillableDelete(i *int64) *UserCreate {
+	if i != nil {
+		uc.SetDelete(*i)
+	}
+	return uc
+}
+
+// SetCreatedID sets the "created_id" field.
+func (uc *UserCreate) SetCreatedID(i int64) *UserCreate {
+	uc.mutation.SetCreatedID(i)
+	return uc
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (uc *UserCreate) SetNillableCreatedID(i *int64) *UserCreate {
+	if i != nil {
+		uc.SetCreatedID(*i)
+	}
+	return uc
+}
+
 // SetStatus sets the "status" field.
 func (uc *UserCreate) SetStatus(i int64) *UserCreate {
 	uc.mutation.SetStatus(i)
@@ -379,6 +407,14 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultUpdatedAt()
 		uc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := uc.mutation.Delete(); !ok {
+		v := user.DefaultDelete
+		uc.mutation.SetDelete(v)
+	}
+	if _, ok := uc.mutation.CreatedID(); !ok {
+		v := user.DefaultCreatedID
+		uc.mutation.SetCreatedID(v)
+	}
 	if _, ok := uc.mutation.Status(); !ok {
 		v := user.DefaultStatus
 		uc.mutation.SetStatus(v)
@@ -407,12 +443,6 @@ func (uc *UserCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (uc *UserCreate) check() error {
-	if _, ok := uc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "User.created_at"`)}
-	}
-	if _, ok := uc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "User.updated_at"`)}
-	}
 	if _, ok := uc.mutation.Username(); !ok {
 		return &ValidationError{Name: "username", err: errors.New(`ent: missing required field "User.username"`)}
 	}
@@ -461,6 +491,14 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := uc.mutation.Delete(); ok {
+		_spec.SetField(user.FieldDelete, field.TypeInt64, value)
+		_node.Delete = value
+	}
+	if value, ok := uc.mutation.CreatedID(); ok {
+		_spec.SetField(user.FieldCreatedID, field.TypeInt64, value)
+		_node.CreatedID = value
 	}
 	if value, ok := uc.mutation.Status(); ok {
 		_spec.SetField(user.FieldStatus, field.TypeInt64, value)

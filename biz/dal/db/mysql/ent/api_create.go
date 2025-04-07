@@ -48,6 +48,34 @@ func (ac *APICreate) SetNillableUpdatedAt(t *time.Time) *APICreate {
 	return ac
 }
 
+// SetDelete sets the "delete" field.
+func (ac *APICreate) SetDelete(i int64) *APICreate {
+	ac.mutation.SetDelete(i)
+	return ac
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (ac *APICreate) SetNillableDelete(i *int64) *APICreate {
+	if i != nil {
+		ac.SetDelete(*i)
+	}
+	return ac
+}
+
+// SetCreatedID sets the "created_id" field.
+func (ac *APICreate) SetCreatedID(i int64) *APICreate {
+	ac.mutation.SetCreatedID(i)
+	return ac
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (ac *APICreate) SetNillableCreatedID(i *int64) *APICreate {
+	if i != nil {
+		ac.SetCreatedID(*i)
+	}
+	return ac
+}
+
 // SetPath sets the "path" field.
 func (ac *APICreate) SetPath(s string) *APICreate {
 	ac.mutation.SetPath(s)
@@ -135,6 +163,14 @@ func (ac *APICreate) defaults() {
 		v := api.DefaultUpdatedAt()
 		ac.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := ac.mutation.Delete(); !ok {
+		v := api.DefaultDelete
+		ac.mutation.SetDelete(v)
+	}
+	if _, ok := ac.mutation.CreatedID(); !ok {
+		v := api.DefaultCreatedID
+		ac.mutation.SetCreatedID(v)
+	}
 	if _, ok := ac.mutation.Method(); !ok {
 		v := api.DefaultMethod
 		ac.mutation.SetMethod(v)
@@ -143,12 +179,6 @@ func (ac *APICreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (ac *APICreate) check() error {
-	if _, ok := ac.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "API.created_at"`)}
-	}
-	if _, ok := ac.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "API.updated_at"`)}
-	}
 	if _, ok := ac.mutation.Path(); !ok {
 		return &ValidationError{Name: "path", err: errors.New(`ent: missing required field "API.path"`)}
 	}
@@ -203,6 +233,14 @@ func (ac *APICreate) createSpec() (*API, *sqlgraph.CreateSpec) {
 	if value, ok := ac.mutation.UpdatedAt(); ok {
 		_spec.SetField(api.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := ac.mutation.Delete(); ok {
+		_spec.SetField(api.FieldDelete, field.TypeInt64, value)
+		_node.Delete = value
+	}
+	if value, ok := ac.mutation.CreatedID(); ok {
+		_spec.SetField(api.FieldCreatedID, field.TypeInt64, value)
+		_node.CreatedID = value
 	}
 	if value, ok := ac.mutation.Path(); ok {
 		_spec.SetField(api.FieldPath, field.TypeString, value)

@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/face"
 	"kcers/biz/dal/db/mysql/ent/member"
@@ -46,6 +45,34 @@ func (fc *FaceCreate) SetUpdatedAt(t time.Time) *FaceCreate {
 func (fc *FaceCreate) SetNillableUpdatedAt(t *time.Time) *FaceCreate {
 	if t != nil {
 		fc.SetUpdatedAt(*t)
+	}
+	return fc
+}
+
+// SetDelete sets the "delete" field.
+func (fc *FaceCreate) SetDelete(i int64) *FaceCreate {
+	fc.mutation.SetDelete(i)
+	return fc
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (fc *FaceCreate) SetNillableDelete(i *int64) *FaceCreate {
+	if i != nil {
+		fc.SetDelete(*i)
+	}
+	return fc
+}
+
+// SetCreatedID sets the "created_id" field.
+func (fc *FaceCreate) SetCreatedID(i int64) *FaceCreate {
+	fc.mutation.SetCreatedID(i)
+	return fc
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (fc *FaceCreate) SetNillableCreatedID(i *int64) *FaceCreate {
+	if i != nil {
+		fc.SetCreatedID(*i)
 	}
 	return fc
 }
@@ -148,16 +175,16 @@ func (fc *FaceCreate) SetNillableFaceEigenvalue(s *string) *FaceCreate {
 	return fc
 }
 
-// SetFacePicUpdatedTime sets the "face_pic_updated_time" field.
-func (fc *FaceCreate) SetFacePicUpdatedTime(t time.Time) *FaceCreate {
-	fc.mutation.SetFacePicUpdatedTime(t)
+// SetFacePicUpdatedAt sets the "face_pic_updated_at" field.
+func (fc *FaceCreate) SetFacePicUpdatedAt(t time.Time) *FaceCreate {
+	fc.mutation.SetFacePicUpdatedAt(t)
 	return fc
 }
 
-// SetNillableFacePicUpdatedTime sets the "face_pic_updated_time" field if the given value is not nil.
-func (fc *FaceCreate) SetNillableFacePicUpdatedTime(t *time.Time) *FaceCreate {
+// SetNillableFacePicUpdatedAt sets the "face_pic_updated_at" field if the given value is not nil.
+func (fc *FaceCreate) SetNillableFacePicUpdatedAt(t *time.Time) *FaceCreate {
 	if t != nil {
-		fc.SetFacePicUpdatedTime(*t)
+		fc.SetFacePicUpdatedAt(*t)
 	}
 	return fc
 }
@@ -249,6 +276,14 @@ func (fc *FaceCreate) defaults() {
 		v := face.DefaultUpdatedAt()
 		fc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := fc.mutation.Delete(); !ok {
+		v := face.DefaultDelete
+		fc.mutation.SetDelete(v)
+	}
+	if _, ok := fc.mutation.CreatedID(); !ok {
+		v := face.DefaultCreatedID
+		fc.mutation.SetCreatedID(v)
+	}
 	if _, ok := fc.mutation.FaceIdentityCard(); !ok {
 		v := face.DefaultFaceIdentityCard
 		fc.mutation.SetFaceIdentityCard(v)
@@ -265,20 +300,14 @@ func (fc *FaceCreate) defaults() {
 		v := face.DefaultFaceEigenvalue
 		fc.mutation.SetFaceEigenvalue(v)
 	}
-	if _, ok := fc.mutation.FacePicUpdatedTime(); !ok {
-		v := face.DefaultFacePicUpdatedTime()
-		fc.mutation.SetFacePicUpdatedTime(v)
+	if _, ok := fc.mutation.FacePicUpdatedAt(); !ok {
+		v := face.DefaultFacePicUpdatedAt()
+		fc.mutation.SetFacePicUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (fc *FaceCreate) check() error {
-	if _, ok := fc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Face.created_at"`)}
-	}
-	if _, ok := fc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Face.updated_at"`)}
-	}
 	return nil
 }
 
@@ -319,6 +348,14 @@ func (fc *FaceCreate) createSpec() (*Face, *sqlgraph.CreateSpec) {
 		_spec.SetField(face.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
+	if value, ok := fc.mutation.Delete(); ok {
+		_spec.SetField(face.FieldDelete, field.TypeInt64, value)
+		_node.Delete = value
+	}
+	if value, ok := fc.mutation.CreatedID(); ok {
+		_spec.SetField(face.FieldCreatedID, field.TypeInt64, value)
+		_node.CreatedID = value
+	}
 	if value, ok := fc.mutation.IdentityCard(); ok {
 		_spec.SetField(face.FieldIdentityCard, field.TypeString, value)
 		_node.IdentityCard = value
@@ -339,9 +376,9 @@ func (fc *FaceCreate) createSpec() (*Face, *sqlgraph.CreateSpec) {
 		_spec.SetField(face.FieldFaceEigenvalue, field.TypeString, value)
 		_node.FaceEigenvalue = value
 	}
-	if value, ok := fc.mutation.FacePicUpdatedTime(); ok {
-		_spec.SetField(face.FieldFacePicUpdatedTime, field.TypeTime, value)
-		_node.FacePicUpdatedTime = value
+	if value, ok := fc.mutation.FacePicUpdatedAt(); ok {
+		_spec.SetField(face.FieldFacePicUpdatedAt, field.TypeTime, value)
+		_node.FacePicUpdatedAt = value
 	}
 	if nodes := fc.mutation.MemberFacesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

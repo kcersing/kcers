@@ -26,6 +26,10 @@ type EntryLogs struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// last update time
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// last delete  1:已删除
+	Delete int64 `json:"delete,omitempty"`
+	// created
+	CreatedID int64 `json:"created_id,omitempty"`
 	// 会员id
 	MemberID int64 `json:"member_id,omitempty"`
 	// 用户id
@@ -37,9 +41,9 @@ type EntryLogs struct {
 	// 属性id
 	MemberPropertyID int64 `json:"member_property_id,omitempty"`
 	// 进场时间
-	EntryTime time.Time `json:"entry_time,omitempty"`
+	EntryAt time.Time `json:"entry_at,omitempty"`
 	// 离场时间
-	LeavingTime time.Time `json:"leaving_time,omitempty"`
+	LeavingAt time.Time `json:"leaving_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the EntryLogsQuery when eager-loading is set.
 	Edges        EntryLogsEdges `json:"edges"`
@@ -110,9 +114,9 @@ func (*EntryLogs) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case entrylogs.FieldID, entrylogs.FieldMemberID, entrylogs.FieldUserID, entrylogs.FieldVenueID, entrylogs.FieldMemberProductID, entrylogs.FieldMemberPropertyID:
+		case entrylogs.FieldID, entrylogs.FieldDelete, entrylogs.FieldCreatedID, entrylogs.FieldMemberID, entrylogs.FieldUserID, entrylogs.FieldVenueID, entrylogs.FieldMemberProductID, entrylogs.FieldMemberPropertyID:
 			values[i] = new(sql.NullInt64)
-		case entrylogs.FieldCreatedAt, entrylogs.FieldUpdatedAt, entrylogs.FieldEntryTime, entrylogs.FieldLeavingTime:
+		case entrylogs.FieldCreatedAt, entrylogs.FieldUpdatedAt, entrylogs.FieldEntryAt, entrylogs.FieldLeavingAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -147,6 +151,18 @@ func (el *EntryLogs) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				el.UpdatedAt = value.Time
 			}
+		case entrylogs.FieldDelete:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field delete", values[i])
+			} else if value.Valid {
+				el.Delete = value.Int64
+			}
+		case entrylogs.FieldCreatedID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field created_id", values[i])
+			} else if value.Valid {
+				el.CreatedID = value.Int64
+			}
 		case entrylogs.FieldMemberID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field member_id", values[i])
@@ -177,17 +193,17 @@ func (el *EntryLogs) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				el.MemberPropertyID = value.Int64
 			}
-		case entrylogs.FieldEntryTime:
+		case entrylogs.FieldEntryAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field entry_time", values[i])
+				return fmt.Errorf("unexpected type %T for field entry_at", values[i])
 			} else if value.Valid {
-				el.EntryTime = value.Time
+				el.EntryAt = value.Time
 			}
-		case entrylogs.FieldLeavingTime:
+		case entrylogs.FieldLeavingAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field leaving_time", values[i])
+				return fmt.Errorf("unexpected type %T for field leaving_at", values[i])
 			} else if value.Valid {
-				el.LeavingTime = value.Time
+				el.LeavingAt = value.Time
 			}
 		default:
 			el.selectValues.Set(columns[i], values[i])
@@ -251,6 +267,12 @@ func (el *EntryLogs) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(el.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
+	builder.WriteString("delete=")
+	builder.WriteString(fmt.Sprintf("%v", el.Delete))
+	builder.WriteString(", ")
+	builder.WriteString("created_id=")
+	builder.WriteString(fmt.Sprintf("%v", el.CreatedID))
+	builder.WriteString(", ")
 	builder.WriteString("member_id=")
 	builder.WriteString(fmt.Sprintf("%v", el.MemberID))
 	builder.WriteString(", ")
@@ -266,11 +288,11 @@ func (el *EntryLogs) String() string {
 	builder.WriteString("member_property_id=")
 	builder.WriteString(fmt.Sprintf("%v", el.MemberPropertyID))
 	builder.WriteString(", ")
-	builder.WriteString("entry_time=")
-	builder.WriteString(el.EntryTime.Format(time.ANSIC))
+	builder.WriteString("entry_at=")
+	builder.WriteString(el.EntryAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("leaving_time=")
-	builder.WriteString(el.LeavingTime.Format(time.ANSIC))
+	builder.WriteString("leaving_at=")
+	builder.WriteString(el.LeavingAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

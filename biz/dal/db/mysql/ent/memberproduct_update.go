@@ -38,6 +38,66 @@ func (mpu *MemberProductUpdate) SetUpdatedAt(t time.Time) *MemberProductUpdate {
 	return mpu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (mpu *MemberProductUpdate) ClearUpdatedAt() *MemberProductUpdate {
+	mpu.mutation.ClearUpdatedAt()
+	return mpu
+}
+
+// SetDelete sets the "delete" field.
+func (mpu *MemberProductUpdate) SetDelete(i int64) *MemberProductUpdate {
+	mpu.mutation.ResetDelete()
+	mpu.mutation.SetDelete(i)
+	return mpu
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (mpu *MemberProductUpdate) SetNillableDelete(i *int64) *MemberProductUpdate {
+	if i != nil {
+		mpu.SetDelete(*i)
+	}
+	return mpu
+}
+
+// AddDelete adds i to the "delete" field.
+func (mpu *MemberProductUpdate) AddDelete(i int64) *MemberProductUpdate {
+	mpu.mutation.AddDelete(i)
+	return mpu
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (mpu *MemberProductUpdate) ClearDelete() *MemberProductUpdate {
+	mpu.mutation.ClearDelete()
+	return mpu
+}
+
+// SetCreatedID sets the "created_id" field.
+func (mpu *MemberProductUpdate) SetCreatedID(i int64) *MemberProductUpdate {
+	mpu.mutation.ResetCreatedID()
+	mpu.mutation.SetCreatedID(i)
+	return mpu
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (mpu *MemberProductUpdate) SetNillableCreatedID(i *int64) *MemberProductUpdate {
+	if i != nil {
+		mpu.SetCreatedID(*i)
+	}
+	return mpu
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (mpu *MemberProductUpdate) AddCreatedID(i int64) *MemberProductUpdate {
+	mpu.mutation.AddCreatedID(i)
+	return mpu
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (mpu *MemberProductUpdate) ClearCreatedID() *MemberProductUpdate {
+	mpu.mutation.ClearCreatedID()
+	return mpu
+}
+
 // SetStatus sets the "status" field.
 func (mpu *MemberProductUpdate) SetStatus(i int64) *MemberProductUpdate {
 	mpu.mutation.ResetStatus()
@@ -401,7 +461,7 @@ func (mpu *MemberProductUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (mpu *MemberProductUpdate) defaults() {
-	if _, ok := mpu.mutation.UpdatedAt(); !ok {
+	if _, ok := mpu.mutation.UpdatedAt(); !ok && !mpu.mutation.UpdatedAtCleared() {
 		v := memberproduct.UpdateDefaultUpdatedAt()
 		mpu.mutation.SetUpdatedAt(v)
 	}
@@ -416,8 +476,32 @@ func (mpu *MemberProductUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			}
 		}
 	}
+	if mpu.mutation.CreatedAtCleared() {
+		_spec.ClearField(memberproduct.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := mpu.mutation.UpdatedAt(); ok {
 		_spec.SetField(memberproduct.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if mpu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(memberproduct.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := mpu.mutation.Delete(); ok {
+		_spec.SetField(memberproduct.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := mpu.mutation.AddedDelete(); ok {
+		_spec.AddField(memberproduct.FieldDelete, field.TypeInt64, value)
+	}
+	if mpu.mutation.DeleteCleared() {
+		_spec.ClearField(memberproduct.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := mpu.mutation.CreatedID(); ok {
+		_spec.SetField(memberproduct.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := mpu.mutation.AddedCreatedID(); ok {
+		_spec.AddField(memberproduct.FieldCreatedID, field.TypeInt64, value)
+	}
+	if mpu.mutation.CreatedIDCleared() {
+		_spec.ClearField(memberproduct.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := mpu.mutation.Status(); ok {
 		_spec.SetField(memberproduct.FieldStatus, field.TypeInt64, value)
@@ -663,6 +747,66 @@ type MemberProductUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (mpuo *MemberProductUpdateOne) SetUpdatedAt(t time.Time) *MemberProductUpdateOne {
 	mpuo.mutation.SetUpdatedAt(t)
+	return mpuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (mpuo *MemberProductUpdateOne) ClearUpdatedAt() *MemberProductUpdateOne {
+	mpuo.mutation.ClearUpdatedAt()
+	return mpuo
+}
+
+// SetDelete sets the "delete" field.
+func (mpuo *MemberProductUpdateOne) SetDelete(i int64) *MemberProductUpdateOne {
+	mpuo.mutation.ResetDelete()
+	mpuo.mutation.SetDelete(i)
+	return mpuo
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (mpuo *MemberProductUpdateOne) SetNillableDelete(i *int64) *MemberProductUpdateOne {
+	if i != nil {
+		mpuo.SetDelete(*i)
+	}
+	return mpuo
+}
+
+// AddDelete adds i to the "delete" field.
+func (mpuo *MemberProductUpdateOne) AddDelete(i int64) *MemberProductUpdateOne {
+	mpuo.mutation.AddDelete(i)
+	return mpuo
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (mpuo *MemberProductUpdateOne) ClearDelete() *MemberProductUpdateOne {
+	mpuo.mutation.ClearDelete()
+	return mpuo
+}
+
+// SetCreatedID sets the "created_id" field.
+func (mpuo *MemberProductUpdateOne) SetCreatedID(i int64) *MemberProductUpdateOne {
+	mpuo.mutation.ResetCreatedID()
+	mpuo.mutation.SetCreatedID(i)
+	return mpuo
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (mpuo *MemberProductUpdateOne) SetNillableCreatedID(i *int64) *MemberProductUpdateOne {
+	if i != nil {
+		mpuo.SetCreatedID(*i)
+	}
+	return mpuo
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (mpuo *MemberProductUpdateOne) AddCreatedID(i int64) *MemberProductUpdateOne {
+	mpuo.mutation.AddCreatedID(i)
+	return mpuo
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (mpuo *MemberProductUpdateOne) ClearCreatedID() *MemberProductUpdateOne {
+	mpuo.mutation.ClearCreatedID()
 	return mpuo
 }
 
@@ -1042,7 +1186,7 @@ func (mpuo *MemberProductUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (mpuo *MemberProductUpdateOne) defaults() {
-	if _, ok := mpuo.mutation.UpdatedAt(); !ok {
+	if _, ok := mpuo.mutation.UpdatedAt(); !ok && !mpuo.mutation.UpdatedAtCleared() {
 		v := memberproduct.UpdateDefaultUpdatedAt()
 		mpuo.mutation.SetUpdatedAt(v)
 	}
@@ -1074,8 +1218,32 @@ func (mpuo *MemberProductUpdateOne) sqlSave(ctx context.Context) (_node *MemberP
 			}
 		}
 	}
+	if mpuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(memberproduct.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := mpuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(memberproduct.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if mpuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(memberproduct.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := mpuo.mutation.Delete(); ok {
+		_spec.SetField(memberproduct.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := mpuo.mutation.AddedDelete(); ok {
+		_spec.AddField(memberproduct.FieldDelete, field.TypeInt64, value)
+	}
+	if mpuo.mutation.DeleteCleared() {
+		_spec.ClearField(memberproduct.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := mpuo.mutation.CreatedID(); ok {
+		_spec.SetField(memberproduct.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := mpuo.mutation.AddedCreatedID(); ok {
+		_spec.AddField(memberproduct.FieldCreatedID, field.TypeInt64, value)
+	}
+	if mpuo.mutation.CreatedIDCleared() {
+		_spec.ClearField(memberproduct.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := mpuo.mutation.Status(); ok {
 		_spec.SetField(memberproduct.FieldStatus, field.TypeInt64, value)

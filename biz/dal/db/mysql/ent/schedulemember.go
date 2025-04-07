@@ -23,6 +23,10 @@ type ScheduleMember struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// last update time
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// last delete  1:已删除
+	Delete int64 `json:"delete,omitempty"`
+	// created
+	CreatedID int64 `json:"created_id,omitempty"`
 	// 状态[0:禁用;1:正常]
 	Status int64 `json:"status,omitempty"`
 	// 场馆id
@@ -40,13 +44,13 @@ type ScheduleMember struct {
 	// 类型
 	Type string `json:"type,omitempty"`
 	// 开始时间
-	StartTime time.Time `json:"start_time,omitempty"`
+	StartAt time.Time `json:"start_at,omitempty"`
 	// 结束时间
-	EndTime time.Time `json:"end_time,omitempty"`
+	EndAt time.Time `json:"end_at,omitempty"`
 	// 上课签到时间
-	SignStartTime time.Time `json:"sign_start_time,omitempty"`
+	SignStartAt time.Time `json:"sign_start_at,omitempty"`
 	// 下课签到时间
-	SignEndTime time.Time `json:"sign_end_time,omitempty"`
+	SignEndAt time.Time `json:"sign_end_at,omitempty"`
 	// 会员名称
 	MemberName string `json:"member_name,omitempty"`
 	// 会员产品名称
@@ -86,11 +90,11 @@ func (*ScheduleMember) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case schedulemember.FieldID, schedulemember.FieldStatus, schedulemember.FieldVenueID, schedulemember.FieldScheduleID, schedulemember.FieldMemberID, schedulemember.FieldMemberProductID, schedulemember.FieldMemberProductPropertyID:
+		case schedulemember.FieldID, schedulemember.FieldDelete, schedulemember.FieldCreatedID, schedulemember.FieldStatus, schedulemember.FieldVenueID, schedulemember.FieldScheduleID, schedulemember.FieldMemberID, schedulemember.FieldMemberProductID, schedulemember.FieldMemberProductPropertyID:
 			values[i] = new(sql.NullInt64)
 		case schedulemember.FieldScheduleName, schedulemember.FieldType, schedulemember.FieldMemberName, schedulemember.FieldMemberProductName, schedulemember.FieldMemberProductPropertyName, schedulemember.FieldRemark:
 			values[i] = new(sql.NullString)
-		case schedulemember.FieldCreatedAt, schedulemember.FieldUpdatedAt, schedulemember.FieldStartTime, schedulemember.FieldEndTime, schedulemember.FieldSignStartTime, schedulemember.FieldSignEndTime:
+		case schedulemember.FieldCreatedAt, schedulemember.FieldUpdatedAt, schedulemember.FieldStartAt, schedulemember.FieldEndAt, schedulemember.FieldSignStartAt, schedulemember.FieldSignEndAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -124,6 +128,18 @@ func (sm *ScheduleMember) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				sm.UpdatedAt = value.Time
+			}
+		case schedulemember.FieldDelete:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field delete", values[i])
+			} else if value.Valid {
+				sm.Delete = value.Int64
+			}
+		case schedulemember.FieldCreatedID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field created_id", values[i])
+			} else if value.Valid {
+				sm.CreatedID = value.Int64
 			}
 		case schedulemember.FieldStatus:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -173,29 +189,29 @@ func (sm *ScheduleMember) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				sm.Type = value.String
 			}
-		case schedulemember.FieldStartTime:
+		case schedulemember.FieldStartAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field start_time", values[i])
+				return fmt.Errorf("unexpected type %T for field start_at", values[i])
 			} else if value.Valid {
-				sm.StartTime = value.Time
+				sm.StartAt = value.Time
 			}
-		case schedulemember.FieldEndTime:
+		case schedulemember.FieldEndAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field end_time", values[i])
+				return fmt.Errorf("unexpected type %T for field end_at", values[i])
 			} else if value.Valid {
-				sm.EndTime = value.Time
+				sm.EndAt = value.Time
 			}
-		case schedulemember.FieldSignStartTime:
+		case schedulemember.FieldSignStartAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field sign_start_time", values[i])
+				return fmt.Errorf("unexpected type %T for field sign_start_at", values[i])
 			} else if value.Valid {
-				sm.SignStartTime = value.Time
+				sm.SignStartAt = value.Time
 			}
-		case schedulemember.FieldSignEndTime:
+		case schedulemember.FieldSignEndAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field sign_end_time", values[i])
+				return fmt.Errorf("unexpected type %T for field sign_end_at", values[i])
 			} else if value.Valid {
-				sm.SignEndTime = value.Time
+				sm.SignEndAt = value.Time
 			}
 		case schedulemember.FieldMemberName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -268,6 +284,12 @@ func (sm *ScheduleMember) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(sm.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
+	builder.WriteString("delete=")
+	builder.WriteString(fmt.Sprintf("%v", sm.Delete))
+	builder.WriteString(", ")
+	builder.WriteString("created_id=")
+	builder.WriteString(fmt.Sprintf("%v", sm.CreatedID))
+	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", sm.Status))
 	builder.WriteString(", ")
@@ -292,17 +314,17 @@ func (sm *ScheduleMember) String() string {
 	builder.WriteString("type=")
 	builder.WriteString(sm.Type)
 	builder.WriteString(", ")
-	builder.WriteString("start_time=")
-	builder.WriteString(sm.StartTime.Format(time.ANSIC))
+	builder.WriteString("start_at=")
+	builder.WriteString(sm.StartAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("end_time=")
-	builder.WriteString(sm.EndTime.Format(time.ANSIC))
+	builder.WriteString("end_at=")
+	builder.WriteString(sm.EndAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("sign_start_time=")
-	builder.WriteString(sm.SignStartTime.Format(time.ANSIC))
+	builder.WriteString("sign_start_at=")
+	builder.WriteString(sm.SignStartAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("sign_end_time=")
-	builder.WriteString(sm.SignEndTime.Format(time.ANSIC))
+	builder.WriteString("sign_end_at=")
+	builder.WriteString(sm.SignEndAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("member_name=")
 	builder.WriteString(sm.MemberName)

@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/venue"
 	"kcers/biz/dal/db/mysql/ent/venueplace"
@@ -46,6 +45,34 @@ func (vpc *VenuePlaceCreate) SetUpdatedAt(t time.Time) *VenuePlaceCreate {
 func (vpc *VenuePlaceCreate) SetNillableUpdatedAt(t *time.Time) *VenuePlaceCreate {
 	if t != nil {
 		vpc.SetUpdatedAt(*t)
+	}
+	return vpc
+}
+
+// SetDelete sets the "delete" field.
+func (vpc *VenuePlaceCreate) SetDelete(i int64) *VenuePlaceCreate {
+	vpc.mutation.SetDelete(i)
+	return vpc
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (vpc *VenuePlaceCreate) SetNillableDelete(i *int64) *VenuePlaceCreate {
+	if i != nil {
+		vpc.SetDelete(*i)
+	}
+	return vpc
+}
+
+// SetCreatedID sets the "created_id" field.
+func (vpc *VenuePlaceCreate) SetCreatedID(i int64) *VenuePlaceCreate {
+	vpc.mutation.SetCreatedID(i)
+	return vpc
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (vpc *VenuePlaceCreate) SetNillableCreatedID(i *int64) *VenuePlaceCreate {
+	if i != nil {
+		vpc.SetCreatedID(*i)
 	}
 	return vpc
 }
@@ -208,6 +235,14 @@ func (vpc *VenuePlaceCreate) defaults() {
 		v := venueplace.DefaultUpdatedAt()
 		vpc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := vpc.mutation.Delete(); !ok {
+		v := venueplace.DefaultDelete
+		vpc.mutation.SetDelete(v)
+	}
+	if _, ok := vpc.mutation.CreatedID(); !ok {
+		v := venueplace.DefaultCreatedID
+		vpc.mutation.SetCreatedID(v)
+	}
 	if _, ok := vpc.mutation.Status(); !ok {
 		v := venueplace.DefaultStatus
 		vpc.mutation.SetStatus(v)
@@ -224,12 +259,6 @@ func (vpc *VenuePlaceCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (vpc *VenuePlaceCreate) check() error {
-	if _, ok := vpc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "VenuePlace.created_at"`)}
-	}
-	if _, ok := vpc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "VenuePlace.updated_at"`)}
-	}
 	return nil
 }
 
@@ -269,6 +298,14 @@ func (vpc *VenuePlaceCreate) createSpec() (*VenuePlace, *sqlgraph.CreateSpec) {
 	if value, ok := vpc.mutation.UpdatedAt(); ok {
 		_spec.SetField(venueplace.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := vpc.mutation.Delete(); ok {
+		_spec.SetField(venueplace.FieldDelete, field.TypeInt64, value)
+		_node.Delete = value
+	}
+	if value, ok := vpc.mutation.CreatedID(); ok {
+		_spec.SetField(venueplace.FieldCreatedID, field.TypeInt64, value)
+		_node.CreatedID = value
 	}
 	if value, ok := vpc.mutation.Status(); ok {
 		_spec.SetField(venueplace.FieldStatus, field.TypeInt64, value)

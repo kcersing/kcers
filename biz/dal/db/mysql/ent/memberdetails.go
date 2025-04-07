@@ -23,6 +23,10 @@ type MemberDetails struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// last update time
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// last delete  1:已删除
+	Delete int64 `json:"delete,omitempty"`
+	// created
+	CreatedID int64 `json:"created_id,omitempty"`
 	// 会员id
 	MemberID int64 `json:"member_id,omitempty"`
 	// email | 邮箱号
@@ -46,11 +50,11 @@ type MemberDetails struct {
 	// 进馆总次数
 	EntrySum int64 `json:"entry_sum,omitempty"`
 	// 最后一次进馆时间
-	EntryLastTime time.Time `json:"entry_last_time,omitempty"`
+	EntryLastAt time.Time `json:"entry_last_at,omitempty"`
 	// 进馆最后期限时间
-	EntryDeadlineTime time.Time `json:"entry_deadline_time,omitempty"`
+	EntryDeadlineAt time.Time `json:"entry_deadline_at,omitempty"`
 	// 最后一次上课时间
-	ClassLastTime time.Time `json:"class_last_time,omitempty"`
+	ClassLastAt time.Time `json:"class_last_at,omitempty"`
 	// 关联员工
 	RelationUID int64 `json:"relation_uid,omitempty"`
 	// 关联员工
@@ -96,11 +100,11 @@ func (*MemberDetails) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case memberdetails.FieldMoneySum:
 			values[i] = new(sql.NullFloat64)
-		case memberdetails.FieldID, memberdetails.FieldMemberID, memberdetails.FieldGender, memberdetails.FieldProductID, memberdetails.FieldProductVenue, memberdetails.FieldEntrySum, memberdetails.FieldRelationUID, memberdetails.FieldRelationMid, memberdetails.FieldCreateID:
+		case memberdetails.FieldID, memberdetails.FieldDelete, memberdetails.FieldCreatedID, memberdetails.FieldMemberID, memberdetails.FieldGender, memberdetails.FieldProductID, memberdetails.FieldProductVenue, memberdetails.FieldEntrySum, memberdetails.FieldRelationUID, memberdetails.FieldRelationMid, memberdetails.FieldCreateID:
 			values[i] = new(sql.NullInt64)
 		case memberdetails.FieldEmail, memberdetails.FieldWecom, memberdetails.FieldProductName, memberdetails.FieldProductVenueName, memberdetails.FieldRelationUname, memberdetails.FieldRelationMame, memberdetails.FieldCreateName:
 			values[i] = new(sql.NullString)
-		case memberdetails.FieldCreatedAt, memberdetails.FieldUpdatedAt, memberdetails.FieldBirthday, memberdetails.FieldEntryLastTime, memberdetails.FieldEntryDeadlineTime, memberdetails.FieldClassLastTime:
+		case memberdetails.FieldCreatedAt, memberdetails.FieldUpdatedAt, memberdetails.FieldBirthday, memberdetails.FieldEntryLastAt, memberdetails.FieldEntryDeadlineAt, memberdetails.FieldClassLastAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -134,6 +138,18 @@ func (md *MemberDetails) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				md.UpdatedAt = value.Time
+			}
+		case memberdetails.FieldDelete:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field delete", values[i])
+			} else if value.Valid {
+				md.Delete = value.Int64
+			}
+		case memberdetails.FieldCreatedID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field created_id", values[i])
+			} else if value.Valid {
+				md.CreatedID = value.Int64
 			}
 		case memberdetails.FieldMemberID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -201,23 +217,23 @@ func (md *MemberDetails) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				md.EntrySum = value.Int64
 			}
-		case memberdetails.FieldEntryLastTime:
+		case memberdetails.FieldEntryLastAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field entry_last_time", values[i])
+				return fmt.Errorf("unexpected type %T for field entry_last_at", values[i])
 			} else if value.Valid {
-				md.EntryLastTime = value.Time
+				md.EntryLastAt = value.Time
 			}
-		case memberdetails.FieldEntryDeadlineTime:
+		case memberdetails.FieldEntryDeadlineAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field entry_deadline_time", values[i])
+				return fmt.Errorf("unexpected type %T for field entry_deadline_at", values[i])
 			} else if value.Valid {
-				md.EntryDeadlineTime = value.Time
+				md.EntryDeadlineAt = value.Time
 			}
-		case memberdetails.FieldClassLastTime:
+		case memberdetails.FieldClassLastAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field class_last_time", values[i])
+				return fmt.Errorf("unexpected type %T for field class_last_at", values[i])
 			} else if value.Valid {
-				md.ClassLastTime = value.Time
+				md.ClassLastAt = value.Time
 			}
 		case memberdetails.FieldRelationUID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -302,6 +318,12 @@ func (md *MemberDetails) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(md.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
+	builder.WriteString("delete=")
+	builder.WriteString(fmt.Sprintf("%v", md.Delete))
+	builder.WriteString(", ")
+	builder.WriteString("created_id=")
+	builder.WriteString(fmt.Sprintf("%v", md.CreatedID))
+	builder.WriteString(", ")
 	builder.WriteString("member_id=")
 	builder.WriteString(fmt.Sprintf("%v", md.MemberID))
 	builder.WriteString(", ")
@@ -335,14 +357,14 @@ func (md *MemberDetails) String() string {
 	builder.WriteString("entry_sum=")
 	builder.WriteString(fmt.Sprintf("%v", md.EntrySum))
 	builder.WriteString(", ")
-	builder.WriteString("entry_last_time=")
-	builder.WriteString(md.EntryLastTime.Format(time.ANSIC))
+	builder.WriteString("entry_last_at=")
+	builder.WriteString(md.EntryLastAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("entry_deadline_time=")
-	builder.WriteString(md.EntryDeadlineTime.Format(time.ANSIC))
+	builder.WriteString("entry_deadline_at=")
+	builder.WriteString(md.EntryDeadlineAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("class_last_time=")
-	builder.WriteString(md.ClassLastTime.Format(time.ANSIC))
+	builder.WriteString("class_last_at=")
+	builder.WriteString(md.ClassLastAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("relation_uid=")
 	builder.WriteString(fmt.Sprintf("%v", md.RelationUID))

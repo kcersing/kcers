@@ -34,6 +34,66 @@ func (bu *BannerUpdate) SetUpdatedAt(t time.Time) *BannerUpdate {
 	return bu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (bu *BannerUpdate) ClearUpdatedAt() *BannerUpdate {
+	bu.mutation.ClearUpdatedAt()
+	return bu
+}
+
+// SetDelete sets the "delete" field.
+func (bu *BannerUpdate) SetDelete(i int64) *BannerUpdate {
+	bu.mutation.ResetDelete()
+	bu.mutation.SetDelete(i)
+	return bu
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (bu *BannerUpdate) SetNillableDelete(i *int64) *BannerUpdate {
+	if i != nil {
+		bu.SetDelete(*i)
+	}
+	return bu
+}
+
+// AddDelete adds i to the "delete" field.
+func (bu *BannerUpdate) AddDelete(i int64) *BannerUpdate {
+	bu.mutation.AddDelete(i)
+	return bu
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (bu *BannerUpdate) ClearDelete() *BannerUpdate {
+	bu.mutation.ClearDelete()
+	return bu
+}
+
+// SetCreatedID sets the "created_id" field.
+func (bu *BannerUpdate) SetCreatedID(i int64) *BannerUpdate {
+	bu.mutation.ResetCreatedID()
+	bu.mutation.SetCreatedID(i)
+	return bu
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (bu *BannerUpdate) SetNillableCreatedID(i *int64) *BannerUpdate {
+	if i != nil {
+		bu.SetCreatedID(*i)
+	}
+	return bu
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (bu *BannerUpdate) AddCreatedID(i int64) *BannerUpdate {
+	bu.mutation.AddCreatedID(i)
+	return bu
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (bu *BannerUpdate) ClearCreatedID() *BannerUpdate {
+	bu.mutation.ClearCreatedID()
+	return bu
+}
+
 // SetStatus sets the "status" field.
 func (bu *BannerUpdate) SetStatus(i int64) *BannerUpdate {
 	bu.mutation.ResetStatus()
@@ -165,7 +225,7 @@ func (bu *BannerUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (bu *BannerUpdate) defaults() {
-	if _, ok := bu.mutation.UpdatedAt(); !ok {
+	if _, ok := bu.mutation.UpdatedAt(); !ok && !bu.mutation.UpdatedAtCleared() {
 		v := banner.UpdateDefaultUpdatedAt()
 		bu.mutation.SetUpdatedAt(v)
 	}
@@ -180,8 +240,32 @@ func (bu *BannerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if bu.mutation.CreatedAtCleared() {
+		_spec.ClearField(banner.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := bu.mutation.UpdatedAt(); ok {
 		_spec.SetField(banner.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if bu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(banner.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := bu.mutation.Delete(); ok {
+		_spec.SetField(banner.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := bu.mutation.AddedDelete(); ok {
+		_spec.AddField(banner.FieldDelete, field.TypeInt64, value)
+	}
+	if bu.mutation.DeleteCleared() {
+		_spec.ClearField(banner.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := bu.mutation.CreatedID(); ok {
+		_spec.SetField(banner.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := bu.mutation.AddedCreatedID(); ok {
+		_spec.AddField(banner.FieldCreatedID, field.TypeInt64, value)
+	}
+	if bu.mutation.CreatedIDCleared() {
+		_spec.ClearField(banner.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := bu.mutation.Status(); ok {
 		_spec.SetField(banner.FieldStatus, field.TypeInt64, value)
@@ -233,6 +317,66 @@ type BannerUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (buo *BannerUpdateOne) SetUpdatedAt(t time.Time) *BannerUpdateOne {
 	buo.mutation.SetUpdatedAt(t)
+	return buo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (buo *BannerUpdateOne) ClearUpdatedAt() *BannerUpdateOne {
+	buo.mutation.ClearUpdatedAt()
+	return buo
+}
+
+// SetDelete sets the "delete" field.
+func (buo *BannerUpdateOne) SetDelete(i int64) *BannerUpdateOne {
+	buo.mutation.ResetDelete()
+	buo.mutation.SetDelete(i)
+	return buo
+}
+
+// SetNillableDelete sets the "delete" field if the given value is not nil.
+func (buo *BannerUpdateOne) SetNillableDelete(i *int64) *BannerUpdateOne {
+	if i != nil {
+		buo.SetDelete(*i)
+	}
+	return buo
+}
+
+// AddDelete adds i to the "delete" field.
+func (buo *BannerUpdateOne) AddDelete(i int64) *BannerUpdateOne {
+	buo.mutation.AddDelete(i)
+	return buo
+}
+
+// ClearDelete clears the value of the "delete" field.
+func (buo *BannerUpdateOne) ClearDelete() *BannerUpdateOne {
+	buo.mutation.ClearDelete()
+	return buo
+}
+
+// SetCreatedID sets the "created_id" field.
+func (buo *BannerUpdateOne) SetCreatedID(i int64) *BannerUpdateOne {
+	buo.mutation.ResetCreatedID()
+	buo.mutation.SetCreatedID(i)
+	return buo
+}
+
+// SetNillableCreatedID sets the "created_id" field if the given value is not nil.
+func (buo *BannerUpdateOne) SetNillableCreatedID(i *int64) *BannerUpdateOne {
+	if i != nil {
+		buo.SetCreatedID(*i)
+	}
+	return buo
+}
+
+// AddCreatedID adds i to the "created_id" field.
+func (buo *BannerUpdateOne) AddCreatedID(i int64) *BannerUpdateOne {
+	buo.mutation.AddCreatedID(i)
+	return buo
+}
+
+// ClearCreatedID clears the value of the "created_id" field.
+func (buo *BannerUpdateOne) ClearCreatedID() *BannerUpdateOne {
+	buo.mutation.ClearCreatedID()
 	return buo
 }
 
@@ -380,7 +524,7 @@ func (buo *BannerUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (buo *BannerUpdateOne) defaults() {
-	if _, ok := buo.mutation.UpdatedAt(); !ok {
+	if _, ok := buo.mutation.UpdatedAt(); !ok && !buo.mutation.UpdatedAtCleared() {
 		v := banner.UpdateDefaultUpdatedAt()
 		buo.mutation.SetUpdatedAt(v)
 	}
@@ -412,8 +556,32 @@ func (buo *BannerUpdateOne) sqlSave(ctx context.Context) (_node *Banner, err err
 			}
 		}
 	}
+	if buo.mutation.CreatedAtCleared() {
+		_spec.ClearField(banner.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := buo.mutation.UpdatedAt(); ok {
 		_spec.SetField(banner.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if buo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(banner.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := buo.mutation.Delete(); ok {
+		_spec.SetField(banner.FieldDelete, field.TypeInt64, value)
+	}
+	if value, ok := buo.mutation.AddedDelete(); ok {
+		_spec.AddField(banner.FieldDelete, field.TypeInt64, value)
+	}
+	if buo.mutation.DeleteCleared() {
+		_spec.ClearField(banner.FieldDelete, field.TypeInt64)
+	}
+	if value, ok := buo.mutation.CreatedID(); ok {
+		_spec.SetField(banner.FieldCreatedID, field.TypeInt64, value)
+	}
+	if value, ok := buo.mutation.AddedCreatedID(); ok {
+		_spec.AddField(banner.FieldCreatedID, field.TypeInt64, value)
+	}
+	if buo.mutation.CreatedIDCleared() {
+		_spec.ClearField(banner.FieldCreatedID, field.TypeInt64)
 	}
 	if value, ok := buo.mutation.Status(); ok {
 		_spec.SetField(banner.FieldStatus, field.TypeInt64, value)
