@@ -34,6 +34,8 @@ const (
 	FieldDictionaryID = "dictionary_id"
 	// EdgeDictionary holds the string denoting the dictionary edge name in mutations.
 	EdgeDictionary = "dictionary"
+	// EdgeProperty holds the string denoting the property edge name in mutations.
+	EdgeProperty = "property"
 	// Table holds the table name of the dictionarydetail in the database.
 	Table = "sys_dictionary_details"
 	// DictionaryTable is the table that holds the dictionary relation/edge.
@@ -43,6 +45,11 @@ const (
 	DictionaryInverseTable = "sys_dictionaries"
 	// DictionaryColumn is the table column denoting the dictionary relation/edge.
 	DictionaryColumn = "dictionary_id"
+	// PropertyTable is the table that holds the property relation/edge. The primary key declared below.
+	PropertyTable = "product_property_tags"
+	// PropertyInverseTable is the table name for the ProductProperty entity.
+	// It exists in this package in order to avoid circular dependency with the "productproperty" package.
+	PropertyInverseTable = "product_property"
 )
 
 // Columns holds all SQL columns for dictionarydetail fields.
@@ -58,6 +65,12 @@ var Columns = []string{
 	FieldValue,
 	FieldDictionaryID,
 }
+
+var (
+	// PropertyPrimaryKey and PropertyColumn2 are the table columns denoting the
+	// primary key for the property relation (M2M).
+	PropertyPrimaryKey = []string{"product_property_id", "dictionary_detail_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -143,10 +156,31 @@ func ByDictionaryField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newDictionaryStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByPropertyCount orders the results by property count.
+func ByPropertyCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newPropertyStep(), opts...)
+	}
+}
+
+// ByProperty orders the results by property terms.
+func ByProperty(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPropertyStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newDictionaryStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(DictionaryInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, DictionaryTable, DictionaryColumn),
+	)
+}
+func newPropertyStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PropertyInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, PropertyTable, PropertyPrimaryKey...),
 	)
 }

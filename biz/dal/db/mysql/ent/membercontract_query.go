@@ -31,6 +31,7 @@ type MemberContractQuery struct {
 	withMember        *MemberQuery
 	withOrder         *OrderQuery
 	withMemberProduct *MemberProductQuery
+	modifiers         []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -352,8 +353,9 @@ func (mcq *MemberContractQuery) Clone() *MemberContractQuery {
 		withOrder:         mcq.withOrder.Clone(),
 		withMemberProduct: mcq.withMemberProduct.Clone(),
 		// clone intermediate query.
-		sql:  mcq.sql.Clone(),
-		path: mcq.path,
+		sql:       mcq.sql.Clone(),
+		path:      mcq.path,
+		modifiers: append([]func(*sql.Selector){}, mcq.modifiers...),
 	}
 }
 
@@ -494,6 +496,9 @@ func (mcq *MemberContractQuery) sqlAll(ctx context.Context, hooks ...queryHook) 
 		nodes = append(nodes, node)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
+	}
+	if len(mcq.modifiers) > 0 {
+		_spec.Modifiers = mcq.modifiers
 	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
@@ -652,6 +657,9 @@ func (mcq *MemberContractQuery) loadMemberProduct(ctx context.Context, query *Me
 
 func (mcq *MemberContractQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := mcq.querySpec()
+	if len(mcq.modifiers) > 0 {
+		_spec.Modifiers = mcq.modifiers
+	}
 	_spec.Node.Columns = mcq.ctx.Fields
 	if len(mcq.ctx.Fields) > 0 {
 		_spec.Unique = mcq.ctx.Unique != nil && *mcq.ctx.Unique
@@ -723,6 +731,9 @@ func (mcq *MemberContractQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if mcq.ctx.Unique != nil && *mcq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range mcq.modifiers {
+		m(selector)
+	}
 	for _, p := range mcq.predicates {
 		p(selector)
 	}
@@ -738,6 +749,12 @@ func (mcq *MemberContractQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (mcq *MemberContractQuery) Modify(modifiers ...func(s *sql.Selector)) *MemberContractSelect {
+	mcq.modifiers = append(mcq.modifiers, modifiers...)
+	return mcq.Select()
 }
 
 // MemberContractGroupBy is the group-by builder for MemberContract entities.
@@ -828,4 +845,10 @@ func (mcs *MemberContractSelect) sqlScan(ctx context.Context, root *MemberContra
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (mcs *MemberContractSelect) Modify(modifiers ...func(s *sql.Selector)) *MemberContractSelect {
+	mcs.modifiers = append(mcs.modifiers, modifiers...)
+	return mcs
 }

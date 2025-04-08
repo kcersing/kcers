@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/contract"
 	"kcers/biz/dal/db/mysql/ent/predicate"
+	"kcers/biz/dal/db/mysql/ent/productproperty"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -18,8 +19,9 @@ import (
 // ContractUpdate is the builder for updating Contract entities.
 type ContractUpdate struct {
 	config
-	hooks    []Hook
-	mutation *ContractMutation
+	hooks     []Hook
+	mutation  *ContractMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the ContractUpdate builder.
@@ -161,9 +163,45 @@ func (cu *ContractUpdate) ClearContent() *ContractUpdate {
 	return cu
 }
 
+// AddPropertyIDs adds the "property" edge to the ProductProperty entity by IDs.
+func (cu *ContractUpdate) AddPropertyIDs(ids ...int64) *ContractUpdate {
+	cu.mutation.AddPropertyIDs(ids...)
+	return cu
+}
+
+// AddProperty adds the "property" edges to the ProductProperty entity.
+func (cu *ContractUpdate) AddProperty(p ...*ProductProperty) *ContractUpdate {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return cu.AddPropertyIDs(ids...)
+}
+
 // Mutation returns the ContractMutation object of the builder.
 func (cu *ContractUpdate) Mutation() *ContractMutation {
 	return cu.mutation
+}
+
+// ClearProperty clears all "property" edges to the ProductProperty entity.
+func (cu *ContractUpdate) ClearProperty() *ContractUpdate {
+	cu.mutation.ClearProperty()
+	return cu
+}
+
+// RemovePropertyIDs removes the "property" edge to ProductProperty entities by IDs.
+func (cu *ContractUpdate) RemovePropertyIDs(ids ...int64) *ContractUpdate {
+	cu.mutation.RemovePropertyIDs(ids...)
+	return cu
+}
+
+// RemoveProperty removes "property" edges to ProductProperty entities.
+func (cu *ContractUpdate) RemoveProperty(p ...*ProductProperty) *ContractUpdate {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return cu.RemovePropertyIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -200,6 +238,12 @@ func (cu *ContractUpdate) defaults() {
 		v := contract.UpdateDefaultUpdatedAt()
 		cu.mutation.SetUpdatedAt(v)
 	}
+}
+
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (cu *ContractUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ContractUpdate {
+	cu.modifiers = append(cu.modifiers, modifiers...)
+	return cu
 }
 
 func (cu *ContractUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -259,6 +303,52 @@ func (cu *ContractUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if cu.mutation.ContentCleared() {
 		_spec.ClearField(contract.FieldContent, field.TypeString)
 	}
+	if cu.mutation.PropertyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   contract.PropertyTable,
+			Columns: contract.PropertyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(productproperty.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cu.mutation.RemovedPropertyIDs(); len(nodes) > 0 && !cu.mutation.PropertyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   contract.PropertyTable,
+			Columns: contract.PropertyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(productproperty.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cu.mutation.PropertyIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   contract.PropertyTable,
+			Columns: contract.PropertyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(productproperty.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	_spec.AddModifiers(cu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, cu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{contract.Label}
@@ -274,9 +364,10 @@ func (cu *ContractUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // ContractUpdateOne is the builder for updating a single Contract entity.
 type ContractUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *ContractMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *ContractMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -412,9 +503,45 @@ func (cuo *ContractUpdateOne) ClearContent() *ContractUpdateOne {
 	return cuo
 }
 
+// AddPropertyIDs adds the "property" edge to the ProductProperty entity by IDs.
+func (cuo *ContractUpdateOne) AddPropertyIDs(ids ...int64) *ContractUpdateOne {
+	cuo.mutation.AddPropertyIDs(ids...)
+	return cuo
+}
+
+// AddProperty adds the "property" edges to the ProductProperty entity.
+func (cuo *ContractUpdateOne) AddProperty(p ...*ProductProperty) *ContractUpdateOne {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return cuo.AddPropertyIDs(ids...)
+}
+
 // Mutation returns the ContractMutation object of the builder.
 func (cuo *ContractUpdateOne) Mutation() *ContractMutation {
 	return cuo.mutation
+}
+
+// ClearProperty clears all "property" edges to the ProductProperty entity.
+func (cuo *ContractUpdateOne) ClearProperty() *ContractUpdateOne {
+	cuo.mutation.ClearProperty()
+	return cuo
+}
+
+// RemovePropertyIDs removes the "property" edge to ProductProperty entities by IDs.
+func (cuo *ContractUpdateOne) RemovePropertyIDs(ids ...int64) *ContractUpdateOne {
+	cuo.mutation.RemovePropertyIDs(ids...)
+	return cuo
+}
+
+// RemoveProperty removes "property" edges to ProductProperty entities.
+func (cuo *ContractUpdateOne) RemoveProperty(p ...*ProductProperty) *ContractUpdateOne {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return cuo.RemovePropertyIDs(ids...)
 }
 
 // Where appends a list predicates to the ContractUpdate builder.
@@ -464,6 +591,12 @@ func (cuo *ContractUpdateOne) defaults() {
 		v := contract.UpdateDefaultUpdatedAt()
 		cuo.mutation.SetUpdatedAt(v)
 	}
+}
+
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (cuo *ContractUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ContractUpdateOne {
+	cuo.modifiers = append(cuo.modifiers, modifiers...)
+	return cuo
 }
 
 func (cuo *ContractUpdateOne) sqlSave(ctx context.Context) (_node *Contract, err error) {
@@ -540,6 +673,52 @@ func (cuo *ContractUpdateOne) sqlSave(ctx context.Context) (_node *Contract, err
 	if cuo.mutation.ContentCleared() {
 		_spec.ClearField(contract.FieldContent, field.TypeString)
 	}
+	if cuo.mutation.PropertyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   contract.PropertyTable,
+			Columns: contract.PropertyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(productproperty.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cuo.mutation.RemovedPropertyIDs(); len(nodes) > 0 && !cuo.mutation.PropertyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   contract.PropertyTable,
+			Columns: contract.PropertyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(productproperty.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cuo.mutation.PropertyIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   contract.PropertyTable,
+			Columns: contract.PropertyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(productproperty.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	_spec.AddModifiers(cuo.modifiers...)
 	_node = &Contract{config: cuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

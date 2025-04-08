@@ -42,6 +42,10 @@ const (
 	FieldCreateID = "create_id"
 	// EdgeProduct holds the string denoting the product edge name in mutations.
 	EdgeProduct = "product"
+	// EdgeTags holds the string denoting the tags edge name in mutations.
+	EdgeTags = "tags"
+	// EdgeContracts holds the string denoting the contracts edge name in mutations.
+	EdgeContracts = "contracts"
 	// EdgeVenues holds the string denoting the venues edge name in mutations.
 	EdgeVenues = "venues"
 	// Table holds the table name of the productproperty in the database.
@@ -51,6 +55,16 @@ const (
 	// ProductInverseTable is the table name for the Product entity.
 	// It exists in this package in order to avoid circular dependency with the "product" package.
 	ProductInverseTable = "product"
+	// TagsTable is the table that holds the tags relation/edge. The primary key declared below.
+	TagsTable = "product_property_tags"
+	// TagsInverseTable is the table name for the DictionaryDetail entity.
+	// It exists in this package in order to avoid circular dependency with the "dictionarydetail" package.
+	TagsInverseTable = "sys_dictionary_details"
+	// ContractsTable is the table that holds the contracts relation/edge. The primary key declared below.
+	ContractsTable = "product_property_contracts"
+	// ContractsInverseTable is the table name for the Contract entity.
+	// It exists in this package in order to avoid circular dependency with the "contract" package.
+	ContractsInverseTable = "contracts"
 	// VenuesTable is the table that holds the venues relation/edge. The primary key declared below.
 	VenuesTable = "product_property_venues"
 	// VenuesInverseTable is the table name for the Venue entity.
@@ -80,6 +94,12 @@ var (
 	// ProductPrimaryKey and ProductColumn2 are the table columns denoting the
 	// primary key for the product relation (M2M).
 	ProductPrimaryKey = []string{"product_id", "product_property_id"}
+	// TagsPrimaryKey and TagsColumn2 are the table columns denoting the
+	// primary key for the tags relation (M2M).
+	TagsPrimaryKey = []string{"product_property_id", "dictionary_detail_id"}
+	// ContractsPrimaryKey and ContractsColumn2 are the table columns denoting the
+	// primary key for the contracts relation (M2M).
+	ContractsPrimaryKey = []string{"product_property_id", "contract_id"}
 	// VenuesPrimaryKey and VenuesColumn2 are the table columns denoting the
 	// primary key for the venues relation (M2M).
 	VenuesPrimaryKey = []string{"product_property_id", "venue_id"}
@@ -197,6 +217,34 @@ func ByProduct(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByTagsCount orders the results by tags count.
+func ByTagsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newTagsStep(), opts...)
+	}
+}
+
+// ByTags orders the results by tags terms.
+func ByTags(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTagsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByContractsCount orders the results by contracts count.
+func ByContractsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newContractsStep(), opts...)
+	}
+}
+
+// ByContracts orders the results by contracts terms.
+func ByContracts(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newContractsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByVenuesCount orders the results by venues count.
 func ByVenuesCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -215,6 +263,20 @@ func newProductStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ProductInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, true, ProductTable, ProductPrimaryKey...),
+	)
+}
+func newTagsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TagsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, TagsTable, TagsPrimaryKey...),
+	)
+}
+func newContractsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ContractsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, ContractsTable, ContractsPrimaryKey...),
 	)
 }
 func newVenuesStep() *sqlgraph.Step {

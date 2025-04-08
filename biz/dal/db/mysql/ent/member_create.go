@@ -12,6 +12,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/memberdetails"
 	"kcers/biz/dal/db/mysql/ent/membernote"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
+	"kcers/biz/dal/db/mysql/ent/memberprofile"
 	"kcers/biz/dal/db/mysql/ent/order"
 	"time"
 
@@ -110,30 +111,16 @@ func (mc *MemberCreate) SetNillablePassword(s *string) *MemberCreate {
 	return mc
 }
 
-// SetName sets the "name" field.
-func (mc *MemberCreate) SetName(s string) *MemberCreate {
-	mc.mutation.SetName(s)
+// SetUsername sets the "username" field.
+func (mc *MemberCreate) SetUsername(s string) *MemberCreate {
+	mc.mutation.SetUsername(s)
 	return mc
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (mc *MemberCreate) SetNillableName(s *string) *MemberCreate {
+// SetNillableUsername sets the "username" field if the given value is not nil.
+func (mc *MemberCreate) SetNillableUsername(s *string) *MemberCreate {
 	if s != nil {
-		mc.SetName(*s)
-	}
-	return mc
-}
-
-// SetNickname sets the "nickname" field.
-func (mc *MemberCreate) SetNickname(s string) *MemberCreate {
-	mc.mutation.SetNickname(s)
-	return mc
-}
-
-// SetNillableNickname sets the "nickname" field if the given value is not nil.
-func (mc *MemberCreate) SetNillableNickname(s *string) *MemberCreate {
-	if s != nil {
-		mc.SetNickname(*s)
+		mc.SetUsername(*s)
 	}
 	return mc
 }
@@ -148,6 +135,20 @@ func (mc *MemberCreate) SetMobile(s string) *MemberCreate {
 func (mc *MemberCreate) SetNillableMobile(s *string) *MemberCreate {
 	if s != nil {
 		mc.SetMobile(*s)
+	}
+	return mc
+}
+
+// SetName sets the "name" field.
+func (mc *MemberCreate) SetName(s string) *MemberCreate {
+	mc.mutation.SetName(s)
+	return mc
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (mc *MemberCreate) SetNillableName(s *string) *MemberCreate {
+	if s != nil {
+		mc.SetName(*s)
 	}
 	return mc
 }
@@ -184,6 +185,21 @@ func (mc *MemberCreate) SetNillableCondition(i *int64) *MemberCreate {
 func (mc *MemberCreate) SetID(i int64) *MemberCreate {
 	mc.mutation.SetID(i)
 	return mc
+}
+
+// AddMemberProfileIDs adds the "member_profile" edge to the MemberProfile entity by IDs.
+func (mc *MemberCreate) AddMemberProfileIDs(ids ...int64) *MemberCreate {
+	mc.mutation.AddMemberProfileIDs(ids...)
+	return mc
+}
+
+// AddMemberProfile adds the "member_profile" edges to the MemberProfile entity.
+func (mc *MemberCreate) AddMemberProfile(m ...*MemberProfile) *MemberCreate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mc.AddMemberProfileIDs(ids...)
 }
 
 // AddMemberDetailIDs adds the "member_details" edge to the MemberDetails entity by IDs.
@@ -414,17 +430,17 @@ func (mc *MemberCreate) createSpec() (*Member, *sqlgraph.CreateSpec) {
 		_spec.SetField(member.FieldPassword, field.TypeString, value)
 		_node.Password = value
 	}
-	if value, ok := mc.mutation.Name(); ok {
-		_spec.SetField(member.FieldName, field.TypeString, value)
-		_node.Name = value
-	}
-	if value, ok := mc.mutation.Nickname(); ok {
-		_spec.SetField(member.FieldNickname, field.TypeString, value)
-		_node.Nickname = value
+	if value, ok := mc.mutation.Username(); ok {
+		_spec.SetField(member.FieldUsername, field.TypeString, value)
+		_node.Username = value
 	}
 	if value, ok := mc.mutation.Mobile(); ok {
 		_spec.SetField(member.FieldMobile, field.TypeString, value)
 		_node.Mobile = value
+	}
+	if value, ok := mc.mutation.Name(); ok {
+		_spec.SetField(member.FieldName, field.TypeString, value)
+		_node.Name = value
 	}
 	if value, ok := mc.mutation.Avatar(); ok {
 		_spec.SetField(member.FieldAvatar, field.TypeString, value)
@@ -433,6 +449,22 @@ func (mc *MemberCreate) createSpec() (*Member, *sqlgraph.CreateSpec) {
 	if value, ok := mc.mutation.Condition(); ok {
 		_spec.SetField(member.FieldCondition, field.TypeInt64, value)
 		_node.Condition = value
+	}
+	if nodes := mc.mutation.MemberProfileIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   member.MemberProfileTable,
+			Columns: []string{member.MemberProfileColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(memberprofile.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := mc.mutation.MemberDetailsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

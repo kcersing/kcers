@@ -22,6 +22,7 @@ type MessagesQuery struct {
 	order      []messages.OrderOption
 	inters     []Interceptor
 	predicates []predicate.Messages
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -251,8 +252,9 @@ func (mq *MessagesQuery) Clone() *MessagesQuery {
 		inters:     append([]Interceptor{}, mq.inters...),
 		predicates: append([]predicate.Messages{}, mq.predicates...),
 		// clone intermediate query.
-		sql:  mq.sql.Clone(),
-		path: mq.path,
+		sql:       mq.sql.Clone(),
+		path:      mq.path,
+		modifiers: append([]func(*sql.Selector){}, mq.modifiers...),
 	}
 }
 
@@ -343,6 +345,9 @@ func (mq *MessagesQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Mes
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
+	if len(mq.modifiers) > 0 {
+		_spec.Modifiers = mq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -357,6 +362,9 @@ func (mq *MessagesQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Mes
 
 func (mq *MessagesQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := mq.querySpec()
+	if len(mq.modifiers) > 0 {
+		_spec.Modifiers = mq.modifiers
+	}
 	_spec.Node.Columns = mq.ctx.Fields
 	if len(mq.ctx.Fields) > 0 {
 		_spec.Unique = mq.ctx.Unique != nil && *mq.ctx.Unique
@@ -419,6 +427,9 @@ func (mq *MessagesQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if mq.ctx.Unique != nil && *mq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range mq.modifiers {
+		m(selector)
+	}
 	for _, p := range mq.predicates {
 		p(selector)
 	}
@@ -434,6 +445,12 @@ func (mq *MessagesQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (mq *MessagesQuery) Modify(modifiers ...func(s *sql.Selector)) *MessagesSelect {
+	mq.modifiers = append(mq.modifiers, modifiers...)
+	return mq.Select()
 }
 
 // MessagesGroupBy is the group-by builder for Messages entities.
@@ -524,4 +541,10 @@ func (ms *MessagesSelect) sqlScan(ctx context.Context, root *MessagesQuery, v an
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (ms *MessagesSelect) Modify(modifiers ...func(s *sql.Selector)) *MessagesSelect {
+	ms.modifiers = append(ms.modifiers, modifiers...)
+	return ms
 }

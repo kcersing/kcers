@@ -9,6 +9,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	"kcers/biz/dal/db/mysql/ent/product"
 	"kcers/biz/dal/db/mysql/ent/productproperty"
+	"kcers/biz/dal/db/mysql/ent/venue"
 	"math"
 
 	"entgo.io/ent"
@@ -24,7 +25,9 @@ type ProductQuery struct {
 	order         []product.OrderOption
 	inters        []Interceptor
 	predicates    []predicate.Product
+	withVenues    *VenueQuery
 	withPropertys *ProductPropertyQuery
+	modifiers     []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -59,6 +62,28 @@ func (pq *ProductQuery) Unique(unique bool) *ProductQuery {
 func (pq *ProductQuery) Order(o ...product.OrderOption) *ProductQuery {
 	pq.order = append(pq.order, o...)
 	return pq
+}
+
+// QueryVenues chains the current query on the "venues" edge.
+func (pq *ProductQuery) QueryVenues() *VenueQuery {
+	query := (&VenueClient{config: pq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := pq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := pq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(product.Table, product.FieldID, selector),
+			sqlgraph.To(venue.Table, venue.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, product.VenuesTable, product.VenuesPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // QueryPropertys chains the current query on the "propertys" edge.
@@ -275,11 +300,24 @@ func (pq *ProductQuery) Clone() *ProductQuery {
 		order:         append([]product.OrderOption{}, pq.order...),
 		inters:        append([]Interceptor{}, pq.inters...),
 		predicates:    append([]predicate.Product{}, pq.predicates...),
+		withVenues:    pq.withVenues.Clone(),
 		withPropertys: pq.withPropertys.Clone(),
 		// clone intermediate query.
-		sql:  pq.sql.Clone(),
-		path: pq.path,
+		sql:       pq.sql.Clone(),
+		path:      pq.path,
+		modifiers: append([]func(*sql.Selector){}, pq.modifiers...),
 	}
+}
+
+// WithVenues tells the query-builder to eager-load the nodes that are connected to
+// the "venues" edge. The optional arguments are used to configure the query builder of the edge.
+func (pq *ProductQuery) WithVenues(opts ...func(*VenueQuery)) *ProductQuery {
+	query := (&VenueClient{config: pq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	pq.withVenues = query
+	return pq
 }
 
 // WithPropertys tells the query-builder to eager-load the nodes that are connected to
@@ -371,7 +409,8 @@ func (pq *ProductQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prod
 	var (
 		nodes       = []*Product{}
 		_spec       = pq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
+			pq.withVenues != nil,
 			pq.withPropertys != nil,
 		}
 	)
@@ -384,6 +423,9 @@ func (pq *ProductQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prod
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(pq.modifiers) > 0 {
+		_spec.Modifiers = pq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -392,6 +434,13 @@ func (pq *ProductQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prod
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
+	}
+	if query := pq.withVenues; query != nil {
+		if err := pq.loadVenues(ctx, query, nodes,
+			func(n *Product) { n.Edges.Venues = []*Venue{} },
+			func(n *Product, e *Venue) { n.Edges.Venues = append(n.Edges.Venues, e) }); err != nil {
+			return nil, err
+		}
 	}
 	if query := pq.withPropertys; query != nil {
 		if err := pq.loadPropertys(ctx, query, nodes,
@@ -403,6 +452,67 @@ func (pq *ProductQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prod
 	return nodes, nil
 }
 
+func (pq *ProductQuery) loadVenues(ctx context.Context, query *VenueQuery, nodes []*Product, init func(*Product), assign func(*Product, *Venue)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int64]*Product)
+	nids := make(map[int64]map[*Product]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(product.VenuesTable)
+		s.Join(joinT).On(s.C(venue.FieldID), joinT.C(product.VenuesPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(product.VenuesPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(product.VenuesPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullInt64).Int64
+				inValue := values[1].(*sql.NullInt64).Int64
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Product]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Venue](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "venues" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
 func (pq *ProductQuery) loadPropertys(ctx context.Context, query *ProductPropertyQuery, nodes []*Product, init func(*Product), assign func(*Product, *ProductProperty)) error {
 	edgeIDs := make([]driver.Value, len(nodes))
 	byID := make(map[int64]*Product)
@@ -467,6 +577,9 @@ func (pq *ProductQuery) loadPropertys(ctx context.Context, query *ProductPropert
 
 func (pq *ProductQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := pq.querySpec()
+	if len(pq.modifiers) > 0 {
+		_spec.Modifiers = pq.modifiers
+	}
 	_spec.Node.Columns = pq.ctx.Fields
 	if len(pq.ctx.Fields) > 0 {
 		_spec.Unique = pq.ctx.Unique != nil && *pq.ctx.Unique
@@ -529,6 +642,9 @@ func (pq *ProductQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if pq.ctx.Unique != nil && *pq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range pq.modifiers {
+		m(selector)
+	}
 	for _, p := range pq.predicates {
 		p(selector)
 	}
@@ -544,6 +660,12 @@ func (pq *ProductQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (pq *ProductQuery) Modify(modifiers ...func(s *sql.Selector)) *ProductSelect {
+	pq.modifiers = append(pq.modifiers, modifiers...)
+	return pq.Select()
 }
 
 // ProductGroupBy is the group-by builder for Product entities.
@@ -634,4 +756,10 @@ func (ps *ProductSelect) sqlScan(ctx context.Context, root *ProductQuery, v any)
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (ps *ProductSelect) Modify(modifiers ...func(s *sql.Selector)) *ProductSelect {
+	ps.modifiers = append(ps.modifiers, modifiers...)
+	return ps
 }

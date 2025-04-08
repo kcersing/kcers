@@ -25,6 +25,7 @@ type MenuParamQuery struct {
 	predicates []predicate.MenuParam
 	withMenus  *MenuQuery
 	withFKs    bool
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -277,8 +278,9 @@ func (mpq *MenuParamQuery) Clone() *MenuParamQuery {
 		predicates: append([]predicate.MenuParam{}, mpq.predicates...),
 		withMenus:  mpq.withMenus.Clone(),
 		// clone intermediate query.
-		sql:  mpq.sql.Clone(),
-		path: mpq.path,
+		sql:       mpq.sql.Clone(),
+		path:      mpq.path,
+		modifiers: append([]func(*sql.Selector){}, mpq.modifiers...),
 	}
 }
 
@@ -391,6 +393,9 @@ func (mpq *MenuParamQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*M
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(mpq.modifiers) > 0 {
+		_spec.Modifiers = mpq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -444,6 +449,9 @@ func (mpq *MenuParamQuery) loadMenus(ctx context.Context, query *MenuQuery, node
 
 func (mpq *MenuParamQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := mpq.querySpec()
+	if len(mpq.modifiers) > 0 {
+		_spec.Modifiers = mpq.modifiers
+	}
 	_spec.Node.Columns = mpq.ctx.Fields
 	if len(mpq.ctx.Fields) > 0 {
 		_spec.Unique = mpq.ctx.Unique != nil && *mpq.ctx.Unique
@@ -506,6 +514,9 @@ func (mpq *MenuParamQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if mpq.ctx.Unique != nil && *mpq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range mpq.modifiers {
+		m(selector)
+	}
 	for _, p := range mpq.predicates {
 		p(selector)
 	}
@@ -521,6 +532,12 @@ func (mpq *MenuParamQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (mpq *MenuParamQuery) Modify(modifiers ...func(s *sql.Selector)) *MenuParamSelect {
+	mpq.modifiers = append(mpq.modifiers, modifiers...)
+	return mpq.Select()
 }
 
 // MenuParamGroupBy is the group-by builder for MenuParam entities.
@@ -611,4 +628,10 @@ func (mps *MenuParamSelect) sqlScan(ctx context.Context, root *MenuParamQuery, v
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (mps *MenuParamSelect) Modify(modifiers ...func(s *sql.Selector)) *MenuParamSelect {
+	mps.modifiers = append(mps.modifiers, modifiers...)
+	return mps
 }

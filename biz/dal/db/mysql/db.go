@@ -1,9 +1,8 @@
 package db
 
 import (
-	"saas/biz/dal/db/ent"
-	"saas/config"
-
+	"kcers/biz/dal/config"
+	"kcers/biz/dal/db/mysql/ent"
 	"sync"
 )
 

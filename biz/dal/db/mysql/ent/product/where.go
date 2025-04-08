@@ -110,6 +110,16 @@ func CreateID(v int64) predicate.Product {
 	return predicate.Product(sql.FieldEQ(FieldCreateID, v))
 }
 
+// SignSalesAt applies equality check predicate on the "sign_sales_at" field. It's identical to SignSalesAtEQ.
+func SignSalesAt(v time.Time) predicate.Product {
+	return predicate.Product(sql.FieldEQ(FieldSignSalesAt, v))
+}
+
+// EndSalesAt applies equality check predicate on the "end_sales_at" field. It's identical to EndSalesAtEQ.
+func EndSalesAt(v time.Time) predicate.Product {
+	return predicate.Product(sql.FieldEQ(FieldEndSalesAt, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Product {
 	return predicate.Product(sql.FieldEQ(FieldCreatedAt, v))
@@ -733,6 +743,139 @@ func CreateIDIsNil() predicate.Product {
 // CreateIDNotNil applies the NotNil predicate on the "create_id" field.
 func CreateIDNotNil() predicate.Product {
 	return predicate.Product(sql.FieldNotNull(FieldCreateID))
+}
+
+// IsSalesIsNil applies the IsNil predicate on the "is_sales" field.
+func IsSalesIsNil() predicate.Product {
+	return predicate.Product(sql.FieldIsNull(FieldIsSales))
+}
+
+// IsSalesNotNil applies the NotNil predicate on the "is_sales" field.
+func IsSalesNotNil() predicate.Product {
+	return predicate.Product(sql.FieldNotNull(FieldIsSales))
+}
+
+// SignSalesAtEQ applies the EQ predicate on the "sign_sales_at" field.
+func SignSalesAtEQ(v time.Time) predicate.Product {
+	return predicate.Product(sql.FieldEQ(FieldSignSalesAt, v))
+}
+
+// SignSalesAtNEQ applies the NEQ predicate on the "sign_sales_at" field.
+func SignSalesAtNEQ(v time.Time) predicate.Product {
+	return predicate.Product(sql.FieldNEQ(FieldSignSalesAt, v))
+}
+
+// SignSalesAtIn applies the In predicate on the "sign_sales_at" field.
+func SignSalesAtIn(vs ...time.Time) predicate.Product {
+	return predicate.Product(sql.FieldIn(FieldSignSalesAt, vs...))
+}
+
+// SignSalesAtNotIn applies the NotIn predicate on the "sign_sales_at" field.
+func SignSalesAtNotIn(vs ...time.Time) predicate.Product {
+	return predicate.Product(sql.FieldNotIn(FieldSignSalesAt, vs...))
+}
+
+// SignSalesAtGT applies the GT predicate on the "sign_sales_at" field.
+func SignSalesAtGT(v time.Time) predicate.Product {
+	return predicate.Product(sql.FieldGT(FieldSignSalesAt, v))
+}
+
+// SignSalesAtGTE applies the GTE predicate on the "sign_sales_at" field.
+func SignSalesAtGTE(v time.Time) predicate.Product {
+	return predicate.Product(sql.FieldGTE(FieldSignSalesAt, v))
+}
+
+// SignSalesAtLT applies the LT predicate on the "sign_sales_at" field.
+func SignSalesAtLT(v time.Time) predicate.Product {
+	return predicate.Product(sql.FieldLT(FieldSignSalesAt, v))
+}
+
+// SignSalesAtLTE applies the LTE predicate on the "sign_sales_at" field.
+func SignSalesAtLTE(v time.Time) predicate.Product {
+	return predicate.Product(sql.FieldLTE(FieldSignSalesAt, v))
+}
+
+// SignSalesAtIsNil applies the IsNil predicate on the "sign_sales_at" field.
+func SignSalesAtIsNil() predicate.Product {
+	return predicate.Product(sql.FieldIsNull(FieldSignSalesAt))
+}
+
+// SignSalesAtNotNil applies the NotNil predicate on the "sign_sales_at" field.
+func SignSalesAtNotNil() predicate.Product {
+	return predicate.Product(sql.FieldNotNull(FieldSignSalesAt))
+}
+
+// EndSalesAtEQ applies the EQ predicate on the "end_sales_at" field.
+func EndSalesAtEQ(v time.Time) predicate.Product {
+	return predicate.Product(sql.FieldEQ(FieldEndSalesAt, v))
+}
+
+// EndSalesAtNEQ applies the NEQ predicate on the "end_sales_at" field.
+func EndSalesAtNEQ(v time.Time) predicate.Product {
+	return predicate.Product(sql.FieldNEQ(FieldEndSalesAt, v))
+}
+
+// EndSalesAtIn applies the In predicate on the "end_sales_at" field.
+func EndSalesAtIn(vs ...time.Time) predicate.Product {
+	return predicate.Product(sql.FieldIn(FieldEndSalesAt, vs...))
+}
+
+// EndSalesAtNotIn applies the NotIn predicate on the "end_sales_at" field.
+func EndSalesAtNotIn(vs ...time.Time) predicate.Product {
+	return predicate.Product(sql.FieldNotIn(FieldEndSalesAt, vs...))
+}
+
+// EndSalesAtGT applies the GT predicate on the "end_sales_at" field.
+func EndSalesAtGT(v time.Time) predicate.Product {
+	return predicate.Product(sql.FieldGT(FieldEndSalesAt, v))
+}
+
+// EndSalesAtGTE applies the GTE predicate on the "end_sales_at" field.
+func EndSalesAtGTE(v time.Time) predicate.Product {
+	return predicate.Product(sql.FieldGTE(FieldEndSalesAt, v))
+}
+
+// EndSalesAtLT applies the LT predicate on the "end_sales_at" field.
+func EndSalesAtLT(v time.Time) predicate.Product {
+	return predicate.Product(sql.FieldLT(FieldEndSalesAt, v))
+}
+
+// EndSalesAtLTE applies the LTE predicate on the "end_sales_at" field.
+func EndSalesAtLTE(v time.Time) predicate.Product {
+	return predicate.Product(sql.FieldLTE(FieldEndSalesAt, v))
+}
+
+// EndSalesAtIsNil applies the IsNil predicate on the "end_sales_at" field.
+func EndSalesAtIsNil() predicate.Product {
+	return predicate.Product(sql.FieldIsNull(FieldEndSalesAt))
+}
+
+// EndSalesAtNotNil applies the NotNil predicate on the "end_sales_at" field.
+func EndSalesAtNotNil() predicate.Product {
+	return predicate.Product(sql.FieldNotNull(FieldEndSalesAt))
+}
+
+// HasVenues applies the HasEdge predicate on the "venues" edge.
+func HasVenues() predicate.Product {
+	return predicate.Product(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, VenuesTable, VenuesPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasVenuesWith applies the HasEdge predicate on the "venues" edge with a given conditions (other predicates).
+func HasVenuesWith(preds ...predicate.Venue) predicate.Product {
+	return predicate.Product(func(s *sql.Selector) {
+		step := newVenuesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // HasPropertys applies the HasEdge predicate on the "propertys" edge.

@@ -26,6 +26,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/membernote"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
+	"kcers/biz/dal/db/mysql/ent/memberprofile"
 	"kcers/biz/dal/db/mysql/ent/menu"
 	"kcers/biz/dal/db/mysql/ent/menuparam"
 	"kcers/biz/dal/db/mysql/ent/messages"
@@ -40,6 +41,8 @@ import (
 	"kcers/biz/dal/db/mysql/ent/schedule"
 	"kcers/biz/dal/db/mysql/ent/schedulecoach"
 	"kcers/biz/dal/db/mysql/ent/schedulemember"
+	"kcers/biz/dal/db/mysql/ent/sms"
+	"kcers/biz/dal/db/mysql/ent/smslog"
 	"kcers/biz/dal/db/mysql/ent/token"
 	"kcers/biz/dal/db/mysql/ent/user"
 	"kcers/biz/dal/db/mysql/ent/venue"
@@ -86,6 +89,8 @@ type Client struct {
 	MemberProduct *MemberProductClient
 	// MemberProductProperty is the client for interacting with the MemberProductProperty builders.
 	MemberProductProperty *MemberProductPropertyClient
+	// MemberProfile is the client for interacting with the MemberProfile builders.
+	MemberProfile *MemberProfileClient
 	// Menu is the client for interacting with the Menu builders.
 	Menu *MenuClient
 	// MenuParam is the client for interacting with the MenuParam builders.
@@ -114,6 +119,10 @@ type Client struct {
 	ScheduleCoach *ScheduleCoachClient
 	// ScheduleMember is the client for interacting with the ScheduleMember builders.
 	ScheduleMember *ScheduleMemberClient
+	// Sms is the client for interacting with the Sms builders.
+	Sms *SmsClient
+	// SmsLog is the client for interacting with the SmsLog builders.
+	SmsLog *SmsLogClient
 	// Token is the client for interacting with the Token builders.
 	Token *TokenClient
 	// User is the client for interacting with the User builders.
@@ -148,6 +157,7 @@ func (c *Client) init() {
 	c.MemberNote = NewMemberNoteClient(c.config)
 	c.MemberProduct = NewMemberProductClient(c.config)
 	c.MemberProductProperty = NewMemberProductPropertyClient(c.config)
+	c.MemberProfile = NewMemberProfileClient(c.config)
 	c.Menu = NewMenuClient(c.config)
 	c.MenuParam = NewMenuParamClient(c.config)
 	c.Messages = NewMessagesClient(c.config)
@@ -162,6 +172,8 @@ func (c *Client) init() {
 	c.Schedule = NewScheduleClient(c.config)
 	c.ScheduleCoach = NewScheduleCoachClient(c.config)
 	c.ScheduleMember = NewScheduleMemberClient(c.config)
+	c.Sms = NewSmsClient(c.config)
+	c.SmsLog = NewSmsLogClient(c.config)
 	c.Token = NewTokenClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.Venue = NewVenueClient(c.config)
@@ -273,6 +285,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		MemberNote:            NewMemberNoteClient(cfg),
 		MemberProduct:         NewMemberProductClient(cfg),
 		MemberProductProperty: NewMemberProductPropertyClient(cfg),
+		MemberProfile:         NewMemberProfileClient(cfg),
 		Menu:                  NewMenuClient(cfg),
 		MenuParam:             NewMenuParamClient(cfg),
 		Messages:              NewMessagesClient(cfg),
@@ -287,6 +300,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Schedule:              NewScheduleClient(cfg),
 		ScheduleCoach:         NewScheduleCoachClient(cfg),
 		ScheduleMember:        NewScheduleMemberClient(cfg),
+		Sms:                   NewSmsClient(cfg),
+		SmsLog:                NewSmsLogClient(cfg),
 		Token:                 NewTokenClient(cfg),
 		User:                  NewUserClient(cfg),
 		Venue:                 NewVenueClient(cfg),
@@ -325,6 +340,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		MemberNote:            NewMemberNoteClient(cfg),
 		MemberProduct:         NewMemberProductClient(cfg),
 		MemberProductProperty: NewMemberProductPropertyClient(cfg),
+		MemberProfile:         NewMemberProfileClient(cfg),
 		Menu:                  NewMenuClient(cfg),
 		MenuParam:             NewMenuParamClient(cfg),
 		Messages:              NewMessagesClient(cfg),
@@ -339,6 +355,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Schedule:              NewScheduleClient(cfg),
 		ScheduleCoach:         NewScheduleCoachClient(cfg),
 		ScheduleMember:        NewScheduleMemberClient(cfg),
+		Sms:                   NewSmsClient(cfg),
+		SmsLog:                NewSmsLogClient(cfg),
 		Token:                 NewTokenClient(cfg),
 		User:                  NewUserClient(cfg),
 		Venue:                 NewVenueClient(cfg),
@@ -375,9 +393,10 @@ func (c *Client) Use(hooks ...Hook) {
 		c.API, c.Banner, c.Contract, c.Dictionary, c.DictionaryDetail, c.EntryLogs,
 		c.Face, c.Logs, c.Member, c.MemberContract, c.MemberContractContent,
 		c.MemberDetails, c.MemberNote, c.MemberProduct, c.MemberProductProperty,
-		c.Menu, c.MenuParam, c.Messages, c.Order, c.OrderAmount, c.OrderItem,
-		c.OrderPay, c.OrderSales, c.Product, c.ProductProperty, c.Role, c.Schedule,
-		c.ScheduleCoach, c.ScheduleMember, c.Token, c.User, c.Venue, c.VenuePlace,
+		c.MemberProfile, c.Menu, c.MenuParam, c.Messages, c.Order, c.OrderAmount,
+		c.OrderItem, c.OrderPay, c.OrderSales, c.Product, c.ProductProperty, c.Role,
+		c.Schedule, c.ScheduleCoach, c.ScheduleMember, c.Sms, c.SmsLog, c.Token,
+		c.User, c.Venue, c.VenuePlace,
 	} {
 		n.Use(hooks...)
 	}
@@ -390,9 +409,10 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.API, c.Banner, c.Contract, c.Dictionary, c.DictionaryDetail, c.EntryLogs,
 		c.Face, c.Logs, c.Member, c.MemberContract, c.MemberContractContent,
 		c.MemberDetails, c.MemberNote, c.MemberProduct, c.MemberProductProperty,
-		c.Menu, c.MenuParam, c.Messages, c.Order, c.OrderAmount, c.OrderItem,
-		c.OrderPay, c.OrderSales, c.Product, c.ProductProperty, c.Role, c.Schedule,
-		c.ScheduleCoach, c.ScheduleMember, c.Token, c.User, c.Venue, c.VenuePlace,
+		c.MemberProfile, c.Menu, c.MenuParam, c.Messages, c.Order, c.OrderAmount,
+		c.OrderItem, c.OrderPay, c.OrderSales, c.Product, c.ProductProperty, c.Role,
+		c.Schedule, c.ScheduleCoach, c.ScheduleMember, c.Sms, c.SmsLog, c.Token,
+		c.User, c.Venue, c.VenuePlace,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -431,6 +451,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.MemberProduct.mutate(ctx, m)
 	case *MemberProductPropertyMutation:
 		return c.MemberProductProperty.mutate(ctx, m)
+	case *MemberProfileMutation:
+		return c.MemberProfile.mutate(ctx, m)
 	case *MenuMutation:
 		return c.Menu.mutate(ctx, m)
 	case *MenuParamMutation:
@@ -459,6 +481,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.ScheduleCoach.mutate(ctx, m)
 	case *ScheduleMemberMutation:
 		return c.ScheduleMember.mutate(ctx, m)
+	case *SmsMutation:
+		return c.Sms.mutate(ctx, m)
+	case *SmsLogMutation:
+		return c.SmsLog.mutate(ctx, m)
 	case *TokenMutation:
 		return c.Token.mutate(ctx, m)
 	case *UserMutation:
@@ -846,6 +872,22 @@ func (c *ContractClient) GetX(ctx context.Context, id int64) *Contract {
 	return obj
 }
 
+// QueryProperty queries the property edge of a Contract.
+func (c *ContractClient) QueryProperty(co *Contract) *ProductPropertyQuery {
+	query := (&ProductPropertyClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := co.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(contract.Table, contract.FieldID, id),
+			sqlgraph.To(productproperty.Table, productproperty.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, contract.PropertyTable, contract.PropertyPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *ContractClient) Hooks() []Hook {
 	return c.hooks.Contract
@@ -1137,6 +1179,22 @@ func (c *DictionaryDetailClient) QueryDictionary(dd *DictionaryDetail) *Dictiona
 			sqlgraph.From(dictionarydetail.Table, dictionarydetail.FieldID, id),
 			sqlgraph.To(dictionary.Table, dictionary.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, dictionarydetail.DictionaryTable, dictionarydetail.DictionaryColumn),
+		)
+		fromV = sqlgraph.Neighbors(dd.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryProperty queries the property edge of a DictionaryDetail.
+func (c *DictionaryDetailClient) QueryProperty(dd *DictionaryDetail) *ProductPropertyQuery {
+	query := (&ProductPropertyClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := dd.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(dictionarydetail.Table, dictionarydetail.FieldID, id),
+			sqlgraph.To(productproperty.Table, productproperty.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, dictionarydetail.PropertyTable, dictionarydetail.PropertyPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(dd.driver.Dialect(), step)
 		return fromV, nil
@@ -1772,6 +1830,22 @@ func (c *MemberClient) GetX(ctx context.Context, id int64) *Member {
 	return obj
 }
 
+// QueryMemberProfile queries the member_profile edge of a Member.
+func (c *MemberClient) QueryMemberProfile(m *Member) *MemberProfileQuery {
+	query := (&MemberProfileClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(member.Table, member.FieldID, id),
+			sqlgraph.To(memberprofile.Table, memberprofile.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, member.MemberProfileTable, member.MemberProfileColumn),
+		)
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryMemberDetails queries the member_details edge of a Member.
 func (c *MemberClient) QueryMemberDetails(m *Member) *MemberDetailsQuery {
 	query := (&MemberDetailsClient{config: c.config}).Query()
@@ -2363,15 +2437,15 @@ func (c *MemberDetailsClient) GetX(ctx context.Context, id int64) *MemberDetails
 	return obj
 }
 
-// QueryInfo queries the info edge of a MemberDetails.
-func (c *MemberDetailsClient) QueryInfo(md *MemberDetails) *MemberQuery {
+// QueryMember queries the member edge of a MemberDetails.
+func (c *MemberDetailsClient) QueryMember(md *MemberDetails) *MemberQuery {
 	query := (&MemberClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := md.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(memberdetails.Table, memberdetails.FieldID, id),
 			sqlgraph.To(member.Table, member.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, memberdetails.InfoTable, memberdetails.InfoColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, memberdetails.MemberTable, memberdetails.MemberColumn),
 		)
 		fromV = sqlgraph.Neighbors(md.driver.Dialect(), step)
 		return fromV, nil
@@ -2912,6 +2986,155 @@ func (c *MemberProductPropertyClient) mutate(ctx context.Context, m *MemberProdu
 		return (&MemberProductPropertyDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown MemberProductProperty mutation op: %q", m.Op())
+	}
+}
+
+// MemberProfileClient is a client for the MemberProfile schema.
+type MemberProfileClient struct {
+	config
+}
+
+// NewMemberProfileClient returns a client for the MemberProfile from the given config.
+func NewMemberProfileClient(c config) *MemberProfileClient {
+	return &MemberProfileClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `memberprofile.Hooks(f(g(h())))`.
+func (c *MemberProfileClient) Use(hooks ...Hook) {
+	c.hooks.MemberProfile = append(c.hooks.MemberProfile, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `memberprofile.Intercept(f(g(h())))`.
+func (c *MemberProfileClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MemberProfile = append(c.inters.MemberProfile, interceptors...)
+}
+
+// Create returns a builder for creating a MemberProfile entity.
+func (c *MemberProfileClient) Create() *MemberProfileCreate {
+	mutation := newMemberProfileMutation(c.config, OpCreate)
+	return &MemberProfileCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MemberProfile entities.
+func (c *MemberProfileClient) CreateBulk(builders ...*MemberProfileCreate) *MemberProfileCreateBulk {
+	return &MemberProfileCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MemberProfileClient) MapCreateBulk(slice any, setFunc func(*MemberProfileCreate, int)) *MemberProfileCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MemberProfileCreateBulk{err: fmt.Errorf("calling to MemberProfileClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MemberProfileCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MemberProfileCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MemberProfile.
+func (c *MemberProfileClient) Update() *MemberProfileUpdate {
+	mutation := newMemberProfileMutation(c.config, OpUpdate)
+	return &MemberProfileUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MemberProfileClient) UpdateOne(mp *MemberProfile) *MemberProfileUpdateOne {
+	mutation := newMemberProfileMutation(c.config, OpUpdateOne, withMemberProfile(mp))
+	return &MemberProfileUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MemberProfileClient) UpdateOneID(id int64) *MemberProfileUpdateOne {
+	mutation := newMemberProfileMutation(c.config, OpUpdateOne, withMemberProfileID(id))
+	return &MemberProfileUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MemberProfile.
+func (c *MemberProfileClient) Delete() *MemberProfileDelete {
+	mutation := newMemberProfileMutation(c.config, OpDelete)
+	return &MemberProfileDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MemberProfileClient) DeleteOne(mp *MemberProfile) *MemberProfileDeleteOne {
+	return c.DeleteOneID(mp.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MemberProfileClient) DeleteOneID(id int64) *MemberProfileDeleteOne {
+	builder := c.Delete().Where(memberprofile.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MemberProfileDeleteOne{builder}
+}
+
+// Query returns a query builder for MemberProfile.
+func (c *MemberProfileClient) Query() *MemberProfileQuery {
+	return &MemberProfileQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMemberProfile},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MemberProfile entity by its id.
+func (c *MemberProfileClient) Get(ctx context.Context, id int64) (*MemberProfile, error) {
+	return c.Query().Where(memberprofile.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MemberProfileClient) GetX(ctx context.Context, id int64) *MemberProfile {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryMember queries the member edge of a MemberProfile.
+func (c *MemberProfileClient) QueryMember(mp *MemberProfile) *MemberQuery {
+	query := (&MemberClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(memberprofile.Table, memberprofile.FieldID, id),
+			sqlgraph.To(member.Table, member.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, memberprofile.MemberTable, memberprofile.MemberColumn),
+		)
+		fromV = sqlgraph.Neighbors(mp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *MemberProfileClient) Hooks() []Hook {
+	return c.hooks.MemberProfile
+}
+
+// Interceptors returns the client interceptors.
+func (c *MemberProfileClient) Interceptors() []Interceptor {
+	return c.inters.MemberProfile
+}
+
+func (c *MemberProfileClient) mutate(ctx context.Context, m *MemberProfileMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MemberProfileCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MemberProfileUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MemberProfileUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MemberProfileDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown MemberProfile mutation op: %q", m.Op())
 	}
 }
 
@@ -4359,6 +4582,22 @@ func (c *ProductClient) GetX(ctx context.Context, id int64) *Product {
 	return obj
 }
 
+// QueryVenues queries the venues edge of a Product.
+func (c *ProductClient) QueryVenues(pr *Product) *VenueQuery {
+	query := (&VenueClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(product.Table, product.FieldID, id),
+			sqlgraph.To(venue.Table, venue.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, product.VenuesTable, product.VenuesPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryPropertys queries the propertys edge of a Product.
 func (c *ProductClient) QueryPropertys(pr *Product) *ProductPropertyQuery {
 	query := (&ProductPropertyClient{config: c.config}).Query()
@@ -4517,6 +4756,38 @@ func (c *ProductPropertyClient) QueryProduct(pp *ProductProperty) *ProductQuery 
 			sqlgraph.From(productproperty.Table, productproperty.FieldID, id),
 			sqlgraph.To(product.Table, product.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, productproperty.ProductTable, productproperty.ProductPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(pp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTags queries the tags edge of a ProductProperty.
+func (c *ProductPropertyClient) QueryTags(pp *ProductProperty) *DictionaryDetailQuery {
+	query := (&DictionaryDetailClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(productproperty.Table, productproperty.FieldID, id),
+			sqlgraph.To(dictionarydetail.Table, dictionarydetail.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, productproperty.TagsTable, productproperty.TagsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(pp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryContracts queries the contracts edge of a ProductProperty.
+func (c *ProductPropertyClient) QueryContracts(pp *ProductProperty) *ContractQuery {
+	query := (&ContractClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(productproperty.Table, productproperty.FieldID, id),
+			sqlgraph.To(contract.Table, contract.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, productproperty.ContractsTable, productproperty.ContractsPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(pp.driver.Dialect(), step)
 		return fromV, nil
@@ -5177,6 +5448,272 @@ func (c *ScheduleMemberClient) mutate(ctx context.Context, m *ScheduleMemberMuta
 	}
 }
 
+// SmsClient is a client for the Sms schema.
+type SmsClient struct {
+	config
+}
+
+// NewSmsClient returns a client for the Sms from the given config.
+func NewSmsClient(c config) *SmsClient {
+	return &SmsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `sms.Hooks(f(g(h())))`.
+func (c *SmsClient) Use(hooks ...Hook) {
+	c.hooks.Sms = append(c.hooks.Sms, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `sms.Intercept(f(g(h())))`.
+func (c *SmsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Sms = append(c.inters.Sms, interceptors...)
+}
+
+// Create returns a builder for creating a Sms entity.
+func (c *SmsClient) Create() *SmsCreate {
+	mutation := newSmsMutation(c.config, OpCreate)
+	return &SmsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Sms entities.
+func (c *SmsClient) CreateBulk(builders ...*SmsCreate) *SmsCreateBulk {
+	return &SmsCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SmsClient) MapCreateBulk(slice any, setFunc func(*SmsCreate, int)) *SmsCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SmsCreateBulk{err: fmt.Errorf("calling to SmsClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SmsCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SmsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Sms.
+func (c *SmsClient) Update() *SmsUpdate {
+	mutation := newSmsMutation(c.config, OpUpdate)
+	return &SmsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SmsClient) UpdateOne(s *Sms) *SmsUpdateOne {
+	mutation := newSmsMutation(c.config, OpUpdateOne, withSms(s))
+	return &SmsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SmsClient) UpdateOneID(id int64) *SmsUpdateOne {
+	mutation := newSmsMutation(c.config, OpUpdateOne, withSmsID(id))
+	return &SmsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Sms.
+func (c *SmsClient) Delete() *SmsDelete {
+	mutation := newSmsMutation(c.config, OpDelete)
+	return &SmsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SmsClient) DeleteOne(s *Sms) *SmsDeleteOne {
+	return c.DeleteOneID(s.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SmsClient) DeleteOneID(id int64) *SmsDeleteOne {
+	builder := c.Delete().Where(sms.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SmsDeleteOne{builder}
+}
+
+// Query returns a query builder for Sms.
+func (c *SmsClient) Query() *SmsQuery {
+	return &SmsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSms},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Sms entity by its id.
+func (c *SmsClient) Get(ctx context.Context, id int64) (*Sms, error) {
+	return c.Query().Where(sms.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SmsClient) GetX(ctx context.Context, id int64) *Sms {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SmsClient) Hooks() []Hook {
+	return c.hooks.Sms
+}
+
+// Interceptors returns the client interceptors.
+func (c *SmsClient) Interceptors() []Interceptor {
+	return c.inters.Sms
+}
+
+func (c *SmsClient) mutate(ctx context.Context, m *SmsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SmsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SmsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SmsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SmsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Sms mutation op: %q", m.Op())
+	}
+}
+
+// SmsLogClient is a client for the SmsLog schema.
+type SmsLogClient struct {
+	config
+}
+
+// NewSmsLogClient returns a client for the SmsLog from the given config.
+func NewSmsLogClient(c config) *SmsLogClient {
+	return &SmsLogClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `smslog.Hooks(f(g(h())))`.
+func (c *SmsLogClient) Use(hooks ...Hook) {
+	c.hooks.SmsLog = append(c.hooks.SmsLog, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `smslog.Intercept(f(g(h())))`.
+func (c *SmsLogClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SmsLog = append(c.inters.SmsLog, interceptors...)
+}
+
+// Create returns a builder for creating a SmsLog entity.
+func (c *SmsLogClient) Create() *SmsLogCreate {
+	mutation := newSmsLogMutation(c.config, OpCreate)
+	return &SmsLogCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SmsLog entities.
+func (c *SmsLogClient) CreateBulk(builders ...*SmsLogCreate) *SmsLogCreateBulk {
+	return &SmsLogCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SmsLogClient) MapCreateBulk(slice any, setFunc func(*SmsLogCreate, int)) *SmsLogCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SmsLogCreateBulk{err: fmt.Errorf("calling to SmsLogClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SmsLogCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SmsLogCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SmsLog.
+func (c *SmsLogClient) Update() *SmsLogUpdate {
+	mutation := newSmsLogMutation(c.config, OpUpdate)
+	return &SmsLogUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SmsLogClient) UpdateOne(sl *SmsLog) *SmsLogUpdateOne {
+	mutation := newSmsLogMutation(c.config, OpUpdateOne, withSmsLog(sl))
+	return &SmsLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SmsLogClient) UpdateOneID(id int64) *SmsLogUpdateOne {
+	mutation := newSmsLogMutation(c.config, OpUpdateOne, withSmsLogID(id))
+	return &SmsLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SmsLog.
+func (c *SmsLogClient) Delete() *SmsLogDelete {
+	mutation := newSmsLogMutation(c.config, OpDelete)
+	return &SmsLogDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SmsLogClient) DeleteOne(sl *SmsLog) *SmsLogDeleteOne {
+	return c.DeleteOneID(sl.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SmsLogClient) DeleteOneID(id int64) *SmsLogDeleteOne {
+	builder := c.Delete().Where(smslog.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SmsLogDeleteOne{builder}
+}
+
+// Query returns a query builder for SmsLog.
+func (c *SmsLogClient) Query() *SmsLogQuery {
+	return &SmsLogQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSmsLog},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SmsLog entity by its id.
+func (c *SmsLogClient) Get(ctx context.Context, id int64) (*SmsLog, error) {
+	return c.Query().Where(smslog.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SmsLogClient) GetX(ctx context.Context, id int64) *SmsLog {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SmsLogClient) Hooks() []Hook {
+	return c.hooks.SmsLog
+}
+
+// Interceptors returns the client interceptors.
+func (c *SmsLogClient) Interceptors() []Interceptor {
+	return c.inters.SmsLog
+}
+
+func (c *SmsLogClient) mutate(ctx context.Context, m *SmsLogMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SmsLogCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SmsLogUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SmsLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SmsLogDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown SmsLog mutation op: %q", m.Op())
+	}
+}
+
 // TokenClient is a client for the Token schema.
 type TokenClient struct {
 	config
@@ -5711,6 +6248,22 @@ func (c *VenueClient) QueryPropertyVenues(v *Venue) *ProductPropertyQuery {
 	return query
 }
 
+// QueryProducts queries the products edge of a Venue.
+func (c *VenueClient) QueryProducts(v *Venue) *ProductQuery {
+	query := (&ProductClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := v.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(venue.Table, venue.FieldID, id),
+			sqlgraph.To(product.Table, product.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, venue.ProductsTable, venue.ProductsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(v.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *VenueClient) Hooks() []Hook {
 	return c.hooks.Venue
@@ -5890,17 +6443,17 @@ type (
 	hooks struct {
 		API, Banner, Contract, Dictionary, DictionaryDetail, EntryLogs, Face, Logs,
 		Member, MemberContract, MemberContractContent, MemberDetails, MemberNote,
-		MemberProduct, MemberProductProperty, Menu, MenuParam, Messages, Order,
-		OrderAmount, OrderItem, OrderPay, OrderSales, Product, ProductProperty, Role,
-		Schedule, ScheduleCoach, ScheduleMember, Token, User, Venue,
+		MemberProduct, MemberProductProperty, MemberProfile, Menu, MenuParam, Messages,
+		Order, OrderAmount, OrderItem, OrderPay, OrderSales, Product, ProductProperty,
+		Role, Schedule, ScheduleCoach, ScheduleMember, Sms, SmsLog, Token, User, Venue,
 		VenuePlace []ent.Hook
 	}
 	inters struct {
 		API, Banner, Contract, Dictionary, DictionaryDetail, EntryLogs, Face, Logs,
 		Member, MemberContract, MemberContractContent, MemberDetails, MemberNote,
-		MemberProduct, MemberProductProperty, Menu, MenuParam, Messages, Order,
-		OrderAmount, OrderItem, OrderPay, OrderSales, Product, ProductProperty, Role,
-		Schedule, ScheduleCoach, ScheduleMember, Token, User, Venue,
+		MemberProduct, MemberProductProperty, MemberProfile, Menu, MenuParam, Messages,
+		Order, OrderAmount, OrderItem, OrderPay, OrderSales, Product, ProductProperty,
+		Role, Schedule, ScheduleCoach, ScheduleMember, Sms, SmsLog, Token, User, Venue,
 		VenuePlace []ent.Interceptor
 	}
 )

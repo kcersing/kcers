@@ -28,8 +28,8 @@ struct Empty {
 }
 
 struct List {
-    1: optional i64 id= 0
-    2: optional string name =""
+    1: optional i64 id= 0  (api.raw ="id")
+    2: optional string name ="" (api.raw ="name")
 }
 struct IDReq{
     1: i64 id,

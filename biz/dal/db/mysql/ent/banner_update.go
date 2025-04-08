@@ -18,8 +18,9 @@ import (
 // BannerUpdate is the builder for updating Banner entities.
 type BannerUpdate struct {
 	config
-	hooks    []Hook
-	mutation *BannerMutation
+	hooks     []Hook
+	mutation  *BannerMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the BannerUpdate builder.
@@ -231,6 +232,12 @@ func (bu *BannerUpdate) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (bu *BannerUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *BannerUpdate {
+	bu.modifiers = append(bu.modifiers, modifiers...)
+	return bu
+}
+
 func (bu *BannerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(banner.Table, banner.Columns, sqlgraph.NewFieldSpec(banner.FieldID, field.TypeInt64))
 	if ps := bu.mutation.predicates; len(ps) > 0 {
@@ -294,6 +301,7 @@ func (bu *BannerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if bu.mutation.IsShowCleared() {
 		_spec.ClearField(banner.FieldIsShow, field.TypeInt64)
 	}
+	_spec.AddModifiers(bu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, bu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{banner.Label}
@@ -309,9 +317,10 @@ func (bu *BannerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // BannerUpdateOne is the builder for updating a single Banner entity.
 type BannerUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *BannerMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *BannerMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -530,6 +539,12 @@ func (buo *BannerUpdateOne) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (buo *BannerUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *BannerUpdateOne {
+	buo.modifiers = append(buo.modifiers, modifiers...)
+	return buo
+}
+
 func (buo *BannerUpdateOne) sqlSave(ctx context.Context) (_node *Banner, err error) {
 	_spec := sqlgraph.NewUpdateSpec(banner.Table, banner.Columns, sqlgraph.NewFieldSpec(banner.FieldID, field.TypeInt64))
 	id, ok := buo.mutation.ID()
@@ -610,6 +625,7 @@ func (buo *BannerUpdateOne) sqlSave(ctx context.Context) (_node *Banner, err err
 	if buo.mutation.IsShowCleared() {
 		_spec.ClearField(banner.FieldIsShow, field.TypeInt64)
 	}
+	_spec.AddModifiers(buo.modifiers...)
 	_node = &Banner{config: buo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/contract"
+	"kcers/biz/dal/db/mysql/ent/productproperty"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -121,6 +122,21 @@ func (cc *ContractCreate) SetNillableContent(s *string) *ContractCreate {
 func (cc *ContractCreate) SetID(i int64) *ContractCreate {
 	cc.mutation.SetID(i)
 	return cc
+}
+
+// AddPropertyIDs adds the "property" edge to the ProductProperty entity by IDs.
+func (cc *ContractCreate) AddPropertyIDs(ids ...int64) *ContractCreate {
+	cc.mutation.AddPropertyIDs(ids...)
+	return cc
+}
+
+// AddProperty adds the "property" edges to the ProductProperty entity.
+func (cc *ContractCreate) AddProperty(p ...*ProductProperty) *ContractCreate {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return cc.AddPropertyIDs(ids...)
 }
 
 // Mutation returns the ContractMutation object of the builder.
@@ -241,6 +257,22 @@ func (cc *ContractCreate) createSpec() (*Contract, *sqlgraph.CreateSpec) {
 	if value, ok := cc.mutation.Content(); ok {
 		_spec.SetField(contract.FieldContent, field.TypeString, value)
 		_node.Content = value
+	}
+	if nodes := cc.mutation.PropertyIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   contract.PropertyTable,
+			Columns: contract.PropertyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(productproperty.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

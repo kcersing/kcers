@@ -868,6 +868,52 @@ func HasProductWith(preds ...predicate.Product) predicate.ProductProperty {
 	})
 }
 
+// HasTags applies the HasEdge predicate on the "tags" edge.
+func HasTags() predicate.ProductProperty {
+	return predicate.ProductProperty(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, TagsTable, TagsPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTagsWith applies the HasEdge predicate on the "tags" edge with a given conditions (other predicates).
+func HasTagsWith(preds ...predicate.DictionaryDetail) predicate.ProductProperty {
+	return predicate.ProductProperty(func(s *sql.Selector) {
+		step := newTagsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasContracts applies the HasEdge predicate on the "contracts" edge.
+func HasContracts() predicate.ProductProperty {
+	return predicate.ProductProperty(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, ContractsTable, ContractsPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasContractsWith applies the HasEdge predicate on the "contracts" edge with a given conditions (other predicates).
+func HasContractsWith(preds ...predicate.Contract) predicate.ProductProperty {
+	return predicate.ProductProperty(func(s *sql.Selector) {
+		step := newContractsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasVenues applies the HasEdge predicate on the "venues" edge.
 func HasVenues() predicate.ProductProperty {
 	return predicate.ProductProperty(func(s *sql.Selector) {

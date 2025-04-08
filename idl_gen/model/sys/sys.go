@@ -283,17 +283,18 @@ func (p *SysList) String() string {
 }
 
 type SysListReq struct {
-	Name         *string `thrift:"name,1,optional" form:"name" json:"name" query:"name"`
-	DictionaryId int64   `thrift:"dictionaryId,2,optional" form:"dictionaryId" json:"dictionaryId" query:"dictionaryId"`
-	Type         string  `thrift:"type,3,optional" form:"type" json:"type" query:"type"`
-	Mobile       string  `thrift:"mobile,4,optional" form:"mobile" json:"mobile" query:"mobile"`
-	ProductId    int64   `thrift:"productId,5,optional" form:"productId" json:"productId" query:"productId"`
-	VenueId      int64   `thrift:"venueId,6,optional" form:"venueId" json:"venueId" query:"venueId"`
+	Name         string `thrift:"name,1,optional" form:"name" json:"name" query:"name"`
+	DictionaryId int64  `thrift:"dictionaryId,2,optional" form:"dictionaryId" json:"dictionaryId" query:"dictionaryId"`
+	Type         string `thrift:"type,3,optional" form:"type" json:"type" query:"type"`
+	Mobile       string `thrift:"mobile,4,optional" form:"mobile" json:"mobile" query:"mobile"`
+	ProductId    int64  `thrift:"productId,5,optional" form:"productId" json:"productId" query:"productId"`
+	VenueId      int64  `thrift:"venueId,6,optional" form:"venueId" json:"venueId" query:"venueId"`
 }
 
 func NewSysListReq() *SysListReq {
 	return &SysListReq{
 
+		Name:         "",
 		DictionaryId: 0,
 		Type:         "",
 		Mobile:       "",
@@ -303,6 +304,7 @@ func NewSysListReq() *SysListReq {
 }
 
 func (p *SysListReq) InitDefault() {
+	p.Name = ""
 	p.DictionaryId = 0
 	p.Type = ""
 	p.Mobile = ""
@@ -310,13 +312,13 @@ func (p *SysListReq) InitDefault() {
 	p.VenueId = 0
 }
 
-var SysListReq_Name_DEFAULT string
+var SysListReq_Name_DEFAULT string = ""
 
 func (p *SysListReq) GetName() (v string) {
 	if !p.IsSetName() {
 		return SysListReq_Name_DEFAULT
 	}
-	return *p.Name
+	return p.Name
 }
 
 var SysListReq_DictionaryId_DEFAULT int64 = 0
@@ -374,7 +376,7 @@ var fieldIDToName_SysListReq = map[int16]string{
 }
 
 func (p *SysListReq) IsSetName() bool {
-	return p.Name != nil
+	return p.Name != SysListReq_Name_DEFAULT
 }
 
 func (p *SysListReq) IsSetDictionaryId() bool {
@@ -495,11 +497,11 @@ ReadStructEndError:
 
 func (p *SysListReq) ReadField1(iprot thrift.TProtocol) error {
 
-	var _field *string
+	var _field string
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		_field = &v
+		_field = v
 	}
 	p.Name = _field
 	return nil
@@ -613,7 +615,7 @@ func (p *SysListReq) writeField1(oprot thrift.TProtocol) (err error) {
 		if err = oprot.WriteFieldBegin("name", thrift.STRING, 1); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(*p.Name); err != nil {
+		if err := oprot.WriteString(p.Name); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {

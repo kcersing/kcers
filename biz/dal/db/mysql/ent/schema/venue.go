@@ -43,6 +43,8 @@ func (Venue) Edges() []ent.Edge {
 		edge.To("venue_entry", EntryLogs.Type),
 		edge.From("member_property_venues", MemberProductProperty.Type).Ref("venues"),
 		edge.From("property_venues", ProductProperty.Type).Ref("venues"),
+
+		edge.From("products", Product.Type).Ref("venues"),
 	}
 }
 

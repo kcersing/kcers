@@ -6,6 +6,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"kcers/biz/dal/db/mysql/ent/contract"
+	"kcers/biz/dal/db/mysql/ent/dictionarydetail"
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	"kcers/biz/dal/db/mysql/ent/product"
 	"kcers/biz/dal/db/mysql/ent/productproperty"
@@ -20,8 +22,9 @@ import (
 // ProductPropertyUpdate is the builder for updating ProductProperty entities.
 type ProductPropertyUpdate struct {
 	config
-	hooks    []Hook
-	mutation *ProductPropertyMutation
+	hooks     []Hook
+	mutation  *ProductPropertyMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the ProductPropertyUpdate builder.
@@ -333,6 +336,36 @@ func (ppu *ProductPropertyUpdate) AddProduct(p ...*Product) *ProductPropertyUpda
 	return ppu.AddProductIDs(ids...)
 }
 
+// AddTagIDs adds the "tags" edge to the DictionaryDetail entity by IDs.
+func (ppu *ProductPropertyUpdate) AddTagIDs(ids ...int64) *ProductPropertyUpdate {
+	ppu.mutation.AddTagIDs(ids...)
+	return ppu
+}
+
+// AddTags adds the "tags" edges to the DictionaryDetail entity.
+func (ppu *ProductPropertyUpdate) AddTags(d ...*DictionaryDetail) *ProductPropertyUpdate {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return ppu.AddTagIDs(ids...)
+}
+
+// AddContractIDs adds the "contracts" edge to the Contract entity by IDs.
+func (ppu *ProductPropertyUpdate) AddContractIDs(ids ...int64) *ProductPropertyUpdate {
+	ppu.mutation.AddContractIDs(ids...)
+	return ppu
+}
+
+// AddContracts adds the "contracts" edges to the Contract entity.
+func (ppu *ProductPropertyUpdate) AddContracts(c ...*Contract) *ProductPropertyUpdate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return ppu.AddContractIDs(ids...)
+}
+
 // AddVenueIDs adds the "venues" edge to the Venue entity by IDs.
 func (ppu *ProductPropertyUpdate) AddVenueIDs(ids ...int64) *ProductPropertyUpdate {
 	ppu.mutation.AddVenueIDs(ids...)
@@ -372,6 +405,48 @@ func (ppu *ProductPropertyUpdate) RemoveProduct(p ...*Product) *ProductPropertyU
 		ids[i] = p[i].ID
 	}
 	return ppu.RemoveProductIDs(ids...)
+}
+
+// ClearTags clears all "tags" edges to the DictionaryDetail entity.
+func (ppu *ProductPropertyUpdate) ClearTags() *ProductPropertyUpdate {
+	ppu.mutation.ClearTags()
+	return ppu
+}
+
+// RemoveTagIDs removes the "tags" edge to DictionaryDetail entities by IDs.
+func (ppu *ProductPropertyUpdate) RemoveTagIDs(ids ...int64) *ProductPropertyUpdate {
+	ppu.mutation.RemoveTagIDs(ids...)
+	return ppu
+}
+
+// RemoveTags removes "tags" edges to DictionaryDetail entities.
+func (ppu *ProductPropertyUpdate) RemoveTags(d ...*DictionaryDetail) *ProductPropertyUpdate {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return ppu.RemoveTagIDs(ids...)
+}
+
+// ClearContracts clears all "contracts" edges to the Contract entity.
+func (ppu *ProductPropertyUpdate) ClearContracts() *ProductPropertyUpdate {
+	ppu.mutation.ClearContracts()
+	return ppu
+}
+
+// RemoveContractIDs removes the "contracts" edge to Contract entities by IDs.
+func (ppu *ProductPropertyUpdate) RemoveContractIDs(ids ...int64) *ProductPropertyUpdate {
+	ppu.mutation.RemoveContractIDs(ids...)
+	return ppu
+}
+
+// RemoveContracts removes "contracts" edges to Contract entities.
+func (ppu *ProductPropertyUpdate) RemoveContracts(c ...*Contract) *ProductPropertyUpdate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return ppu.RemoveContractIDs(ids...)
 }
 
 // ClearVenues clears all "venues" edges to the Venue entity.
@@ -429,6 +504,12 @@ func (ppu *ProductPropertyUpdate) defaults() {
 		v := productproperty.UpdateDefaultUpdatedAt()
 		ppu.mutation.SetUpdatedAt(v)
 	}
+}
+
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (ppu *ProductPropertyUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ProductPropertyUpdate {
+	ppu.modifiers = append(ppu.modifiers, modifiers...)
+	return ppu
 }
 
 func (ppu *ProductPropertyUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -584,6 +665,96 @@ func (ppu *ProductPropertyUpdate) sqlSave(ctx context.Context) (n int, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ppu.mutation.TagsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   productproperty.TagsTable,
+			Columns: productproperty.TagsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(dictionarydetail.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ppu.mutation.RemovedTagsIDs(); len(nodes) > 0 && !ppu.mutation.TagsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   productproperty.TagsTable,
+			Columns: productproperty.TagsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(dictionarydetail.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ppu.mutation.TagsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   productproperty.TagsTable,
+			Columns: productproperty.TagsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(dictionarydetail.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ppu.mutation.ContractsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   productproperty.ContractsTable,
+			Columns: productproperty.ContractsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(contract.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ppu.mutation.RemovedContractsIDs(); len(nodes) > 0 && !ppu.mutation.ContractsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   productproperty.ContractsTable,
+			Columns: productproperty.ContractsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(contract.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ppu.mutation.ContractsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   productproperty.ContractsTable,
+			Columns: productproperty.ContractsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(contract.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if ppu.mutation.VenuesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -629,6 +800,7 @@ func (ppu *ProductPropertyUpdate) sqlSave(ctx context.Context) (n int, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(ppu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, ppu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{productproperty.Label}
@@ -644,9 +816,10 @@ func (ppu *ProductPropertyUpdate) sqlSave(ctx context.Context) (n int, err error
 // ProductPropertyUpdateOne is the builder for updating a single ProductProperty entity.
 type ProductPropertyUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *ProductPropertyMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *ProductPropertyMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -952,6 +1125,36 @@ func (ppuo *ProductPropertyUpdateOne) AddProduct(p ...*Product) *ProductProperty
 	return ppuo.AddProductIDs(ids...)
 }
 
+// AddTagIDs adds the "tags" edge to the DictionaryDetail entity by IDs.
+func (ppuo *ProductPropertyUpdateOne) AddTagIDs(ids ...int64) *ProductPropertyUpdateOne {
+	ppuo.mutation.AddTagIDs(ids...)
+	return ppuo
+}
+
+// AddTags adds the "tags" edges to the DictionaryDetail entity.
+func (ppuo *ProductPropertyUpdateOne) AddTags(d ...*DictionaryDetail) *ProductPropertyUpdateOne {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return ppuo.AddTagIDs(ids...)
+}
+
+// AddContractIDs adds the "contracts" edge to the Contract entity by IDs.
+func (ppuo *ProductPropertyUpdateOne) AddContractIDs(ids ...int64) *ProductPropertyUpdateOne {
+	ppuo.mutation.AddContractIDs(ids...)
+	return ppuo
+}
+
+// AddContracts adds the "contracts" edges to the Contract entity.
+func (ppuo *ProductPropertyUpdateOne) AddContracts(c ...*Contract) *ProductPropertyUpdateOne {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return ppuo.AddContractIDs(ids...)
+}
+
 // AddVenueIDs adds the "venues" edge to the Venue entity by IDs.
 func (ppuo *ProductPropertyUpdateOne) AddVenueIDs(ids ...int64) *ProductPropertyUpdateOne {
 	ppuo.mutation.AddVenueIDs(ids...)
@@ -991,6 +1194,48 @@ func (ppuo *ProductPropertyUpdateOne) RemoveProduct(p ...*Product) *ProductPrope
 		ids[i] = p[i].ID
 	}
 	return ppuo.RemoveProductIDs(ids...)
+}
+
+// ClearTags clears all "tags" edges to the DictionaryDetail entity.
+func (ppuo *ProductPropertyUpdateOne) ClearTags() *ProductPropertyUpdateOne {
+	ppuo.mutation.ClearTags()
+	return ppuo
+}
+
+// RemoveTagIDs removes the "tags" edge to DictionaryDetail entities by IDs.
+func (ppuo *ProductPropertyUpdateOne) RemoveTagIDs(ids ...int64) *ProductPropertyUpdateOne {
+	ppuo.mutation.RemoveTagIDs(ids...)
+	return ppuo
+}
+
+// RemoveTags removes "tags" edges to DictionaryDetail entities.
+func (ppuo *ProductPropertyUpdateOne) RemoveTags(d ...*DictionaryDetail) *ProductPropertyUpdateOne {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return ppuo.RemoveTagIDs(ids...)
+}
+
+// ClearContracts clears all "contracts" edges to the Contract entity.
+func (ppuo *ProductPropertyUpdateOne) ClearContracts() *ProductPropertyUpdateOne {
+	ppuo.mutation.ClearContracts()
+	return ppuo
+}
+
+// RemoveContractIDs removes the "contracts" edge to Contract entities by IDs.
+func (ppuo *ProductPropertyUpdateOne) RemoveContractIDs(ids ...int64) *ProductPropertyUpdateOne {
+	ppuo.mutation.RemoveContractIDs(ids...)
+	return ppuo
+}
+
+// RemoveContracts removes "contracts" edges to Contract entities.
+func (ppuo *ProductPropertyUpdateOne) RemoveContracts(c ...*Contract) *ProductPropertyUpdateOne {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return ppuo.RemoveContractIDs(ids...)
 }
 
 // ClearVenues clears all "venues" edges to the Venue entity.
@@ -1061,6 +1306,12 @@ func (ppuo *ProductPropertyUpdateOne) defaults() {
 		v := productproperty.UpdateDefaultUpdatedAt()
 		ppuo.mutation.SetUpdatedAt(v)
 	}
+}
+
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (ppuo *ProductPropertyUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ProductPropertyUpdateOne {
+	ppuo.modifiers = append(ppuo.modifiers, modifiers...)
+	return ppuo
 }
 
 func (ppuo *ProductPropertyUpdateOne) sqlSave(ctx context.Context) (_node *ProductProperty, err error) {
@@ -1233,6 +1484,96 @@ func (ppuo *ProductPropertyUpdateOne) sqlSave(ctx context.Context) (_node *Produ
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ppuo.mutation.TagsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   productproperty.TagsTable,
+			Columns: productproperty.TagsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(dictionarydetail.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ppuo.mutation.RemovedTagsIDs(); len(nodes) > 0 && !ppuo.mutation.TagsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   productproperty.TagsTable,
+			Columns: productproperty.TagsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(dictionarydetail.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ppuo.mutation.TagsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   productproperty.TagsTable,
+			Columns: productproperty.TagsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(dictionarydetail.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ppuo.mutation.ContractsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   productproperty.ContractsTable,
+			Columns: productproperty.ContractsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(contract.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ppuo.mutation.RemovedContractsIDs(); len(nodes) > 0 && !ppuo.mutation.ContractsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   productproperty.ContractsTable,
+			Columns: productproperty.ContractsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(contract.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ppuo.mutation.ContractsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   productproperty.ContractsTable,
+			Columns: productproperty.ContractsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(contract.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if ppuo.mutation.VenuesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -1278,6 +1619,7 @@ func (ppuo *ProductPropertyUpdateOne) sqlSave(ctx context.Context) (_node *Produ
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(ppuo.modifiers...)
 	_node = &ProductProperty{config: ppuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

@@ -36,10 +36,23 @@ const (
 	FieldStock = "stock"
 	// FieldCreateID holds the string denoting the create_id field in the database.
 	FieldCreateID = "create_id"
+	// FieldIsSales holds the string denoting the is_sales field in the database.
+	FieldIsSales = "is_sales"
+	// FieldSignSalesAt holds the string denoting the sign_sales_at field in the database.
+	FieldSignSalesAt = "sign_sales_at"
+	// FieldEndSalesAt holds the string denoting the end_sales_at field in the database.
+	FieldEndSalesAt = "end_sales_at"
+	// EdgeVenues holds the string denoting the venues edge name in mutations.
+	EdgeVenues = "venues"
 	// EdgePropertys holds the string denoting the propertys edge name in mutations.
 	EdgePropertys = "propertys"
 	// Table holds the table name of the product in the database.
 	Table = "product"
+	// VenuesTable is the table that holds the venues relation/edge. The primary key declared below.
+	VenuesTable = "product_venues"
+	// VenuesInverseTable is the table name for the Venue entity.
+	// It exists in this package in order to avoid circular dependency with the "venue" package.
+	VenuesInverseTable = "venue"
 	// PropertysTable is the table that holds the propertys relation/edge. The primary key declared below.
 	PropertysTable = "product_propertys"
 	// PropertysInverseTable is the table name for the ProductProperty entity.
@@ -61,9 +74,15 @@ var Columns = []string{
 	FieldPrice,
 	FieldStock,
 	FieldCreateID,
+	FieldIsSales,
+	FieldSignSalesAt,
+	FieldEndSalesAt,
 }
 
 var (
+	// VenuesPrimaryKey and VenuesColumn2 are the table columns denoting the
+	// primary key for the venues relation (M2M).
+	VenuesPrimaryKey = []string{"product_id", "venue_id"}
 	// PropertysPrimaryKey and PropertysColumn2 are the table columns denoting the
 	// primary key for the propertys relation (M2M).
 	PropertysPrimaryKey = []string{"product_id", "product_property_id"}
@@ -157,6 +176,30 @@ func ByCreateID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCreateID, opts...).ToFunc()
 }
 
+// BySignSalesAt orders the results by the sign_sales_at field.
+func BySignSalesAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSignSalesAt, opts...).ToFunc()
+}
+
+// ByEndSalesAt orders the results by the end_sales_at field.
+func ByEndSalesAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEndSalesAt, opts...).ToFunc()
+}
+
+// ByVenuesCount orders the results by venues count.
+func ByVenuesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newVenuesStep(), opts...)
+	}
+}
+
+// ByVenues orders the results by venues terms.
+func ByVenues(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newVenuesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByPropertysCount orders the results by propertys count.
 func ByPropertysCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -169,6 +212,13 @@ func ByPropertys(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newPropertysStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
+}
+func newVenuesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(VenuesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, VenuesTable, VenuesPrimaryKey...),
+	)
 }
 func newPropertysStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(

@@ -9,30 +9,17 @@ import (
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/hertz-contrib/logger/accesslog"
+	prometheus "github.com/hertz-contrib/monitor-prometheus"
 	"github.com/hertz-contrib/reverseproxy"
-	"kcers/biz/dal/cache"
-	"kcers/biz/dal/casbin"
+	"kcers/biz/dal"
 	"kcers/biz/dal/config"
-	"kcers/biz/dal/data"
-	db "kcers/biz/dal/db/mysql"
-	"kcers/biz/dal/logger"
-	"kcers/biz/pkg/minio"
 	"time"
 )
 
 func init() {
-
-	logger.InitLogger()
-	config.InitConfig()
-	db.InitDB()
-	casbin.InitCasbin()
-	cache.InitCache()
-	data.NewInitDatabase().InitDatabaseUser()
-	data.NewInitDatabase().InitDatabaseDict()
-	data.NewInitDatabase().InsertDatabaseMenuData()
-	data.NewInitDatabase().InitDatabaseApi()
-	minio.Init()
+	dal.Init()
 }
+
 func minioReverseProxy(c context.Context, ctx *app.RequestContext) {
 	proxy, _ := reverseproxy.NewSingleHostReverseProxy(config.GlobalServerConfig.Minio.Url)
 	ctx.URI().SetPath(ctx.Param("name"))
@@ -41,9 +28,15 @@ func minioReverseProxy(c context.Context, ctx *app.RequestContext) {
 }
 
 func main() {
+
 	h := server.Default(
 		server.WithStreamBody(true),
 		server.WithHostPorts(fmt.Sprintf("%s:%d", config.GlobalServerConfig.Host, config.GlobalServerConfig.Port)),
+		server.WithTracer(
+			prometheus.NewServerTracer(":9091", "/hertz",
+				prometheus.WithEnableGoCollector(true), // enable go runtime metric collector
+			),
+		),
 	)
 
 	h.Use(accesslog.New(
@@ -53,7 +46,8 @@ func main() {
 	h.NoHijackConnPool = true
 	// Set up /src/*name route forwarding to access minio from external network
 	h.GET("/src/*name", minioReverseProxy)
-	//h.GET("/api/ws/face", service.Faces)
+	h.Static("/export", "./tmp/")
+
 	register(h)
 	h.Spin()
 }

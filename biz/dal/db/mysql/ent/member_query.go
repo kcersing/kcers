@@ -13,6 +13,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/memberdetails"
 	"kcers/biz/dal/db/mysql/ent/membernote"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
+	"kcers/biz/dal/db/mysql/ent/memberprofile"
 	"kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	"math"
@@ -30,6 +31,7 @@ type MemberQuery struct {
 	order              []member.OrderOption
 	inters             []Interceptor
 	predicates         []predicate.Member
+	withMemberProfile  *MemberProfileQuery
 	withMemberDetails  *MemberDetailsQuery
 	withMemberNotes    *MemberNoteQuery
 	withMemberOrders   *OrderQuery
@@ -37,6 +39,7 @@ type MemberQuery struct {
 	withMemberEntry    *EntryLogsQuery
 	withMemberContents *MemberContractQuery
 	withMemberFace     *FaceQuery
+	modifiers          []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -71,6 +74,28 @@ func (mq *MemberQuery) Unique(unique bool) *MemberQuery {
 func (mq *MemberQuery) Order(o ...member.OrderOption) *MemberQuery {
 	mq.order = append(mq.order, o...)
 	return mq
+}
+
+// QueryMemberProfile chains the current query on the "member_profile" edge.
+func (mq *MemberQuery) QueryMemberProfile() *MemberProfileQuery {
+	query := (&MemberProfileClient{config: mq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := mq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := mq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(member.Table, member.FieldID, selector),
+			sqlgraph.To(memberprofile.Table, memberprofile.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, member.MemberProfileTable, member.MemberProfileColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // QueryMemberDetails chains the current query on the "member_details" edge.
@@ -419,6 +444,7 @@ func (mq *MemberQuery) Clone() *MemberQuery {
 		order:              append([]member.OrderOption{}, mq.order...),
 		inters:             append([]Interceptor{}, mq.inters...),
 		predicates:         append([]predicate.Member{}, mq.predicates...),
+		withMemberProfile:  mq.withMemberProfile.Clone(),
 		withMemberDetails:  mq.withMemberDetails.Clone(),
 		withMemberNotes:    mq.withMemberNotes.Clone(),
 		withMemberOrders:   mq.withMemberOrders.Clone(),
@@ -427,9 +453,21 @@ func (mq *MemberQuery) Clone() *MemberQuery {
 		withMemberContents: mq.withMemberContents.Clone(),
 		withMemberFace:     mq.withMemberFace.Clone(),
 		// clone intermediate query.
-		sql:  mq.sql.Clone(),
-		path: mq.path,
+		sql:       mq.sql.Clone(),
+		path:      mq.path,
+		modifiers: append([]func(*sql.Selector){}, mq.modifiers...),
 	}
+}
+
+// WithMemberProfile tells the query-builder to eager-load the nodes that are connected to
+// the "member_profile" edge. The optional arguments are used to configure the query builder of the edge.
+func (mq *MemberQuery) WithMemberProfile(opts ...func(*MemberProfileQuery)) *MemberQuery {
+	query := (&MemberProfileClient{config: mq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	mq.withMemberProfile = query
+	return mq
 }
 
 // WithMemberDetails tells the query-builder to eager-load the nodes that are connected to
@@ -587,7 +625,8 @@ func (mq *MemberQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Membe
 	var (
 		nodes       = []*Member{}
 		_spec       = mq.querySpec()
-		loadedTypes = [7]bool{
+		loadedTypes = [8]bool{
+			mq.withMemberProfile != nil,
 			mq.withMemberDetails != nil,
 			mq.withMemberNotes != nil,
 			mq.withMemberOrders != nil,
@@ -606,6 +645,9 @@ func (mq *MemberQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Membe
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(mq.modifiers) > 0 {
+		_spec.Modifiers = mq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -614,6 +656,13 @@ func (mq *MemberQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Membe
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
+	}
+	if query := mq.withMemberProfile; query != nil {
+		if err := mq.loadMemberProfile(ctx, query, nodes,
+			func(n *Member) { n.Edges.MemberProfile = []*MemberProfile{} },
+			func(n *Member, e *MemberProfile) { n.Edges.MemberProfile = append(n.Edges.MemberProfile, e) }); err != nil {
+			return nil, err
+		}
 	}
 	if query := mq.withMemberDetails; query != nil {
 		if err := mq.loadMemberDetails(ctx, query, nodes,
@@ -667,6 +716,36 @@ func (mq *MemberQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Membe
 	return nodes, nil
 }
 
+func (mq *MemberQuery) loadMemberProfile(ctx context.Context, query *MemberProfileQuery, nodes []*Member, init func(*Member), assign func(*Member, *MemberProfile)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Member)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(memberprofile.FieldMemberID)
+	}
+	query.Where(predicate.MemberProfile(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(member.MemberProfileColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.MemberID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "member_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
 func (mq *MemberQuery) loadMemberDetails(ctx context.Context, query *MemberDetailsQuery, nodes []*Member, init func(*Member), assign func(*Member, *MemberDetails)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*Member)
@@ -880,6 +959,9 @@ func (mq *MemberQuery) loadMemberFace(ctx context.Context, query *FaceQuery, nod
 
 func (mq *MemberQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := mq.querySpec()
+	if len(mq.modifiers) > 0 {
+		_spec.Modifiers = mq.modifiers
+	}
 	_spec.Node.Columns = mq.ctx.Fields
 	if len(mq.ctx.Fields) > 0 {
 		_spec.Unique = mq.ctx.Unique != nil && *mq.ctx.Unique
@@ -942,6 +1024,9 @@ func (mq *MemberQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if mq.ctx.Unique != nil && *mq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range mq.modifiers {
+		m(selector)
+	}
 	for _, p := range mq.predicates {
 		p(selector)
 	}
@@ -957,6 +1042,12 @@ func (mq *MemberQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (mq *MemberQuery) Modify(modifiers ...func(s *sql.Selector)) *MemberSelect {
+	mq.modifiers = append(mq.modifiers, modifiers...)
+	return mq.Select()
 }
 
 // MemberGroupBy is the group-by builder for Member entities.
@@ -1047,4 +1138,10 @@ func (ms *MemberSelect) sqlScan(ctx context.Context, root *MemberQuery, v any) e
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (ms *MemberSelect) Modify(modifiers ...func(s *sql.Selector)) *MemberSelect {
+	ms.modifiers = append(ms.modifiers, modifiers...)
+	return ms
 }

@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"entgo.io/ent/schema/edge"
 	"kcers/biz/dal/db/mysql/ent/schema/mixins"
 
 	"entgo.io/ent"
@@ -28,7 +29,9 @@ func (Contract) Mixin() []ent.Mixin {
 }
 
 func (Contract) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.From("property", ProductProperty.Type).Ref("contracts"),
+	}
 }
 
 func (Contract) Indexes() []ent.Index {

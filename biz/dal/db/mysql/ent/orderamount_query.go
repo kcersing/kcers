@@ -24,6 +24,7 @@ type OrderAmountQuery struct {
 	inters     []Interceptor
 	predicates []predicate.OrderAmount
 	withOrder  *OrderQuery
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -276,8 +277,9 @@ func (oaq *OrderAmountQuery) Clone() *OrderAmountQuery {
 		predicates: append([]predicate.OrderAmount{}, oaq.predicates...),
 		withOrder:  oaq.withOrder.Clone(),
 		// clone intermediate query.
-		sql:  oaq.sql.Clone(),
-		path: oaq.path,
+		sql:       oaq.sql.Clone(),
+		path:      oaq.path,
+		modifiers: append([]func(*sql.Selector){}, oaq.modifiers...),
 	}
 }
 
@@ -383,6 +385,9 @@ func (oaq *OrderAmountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(oaq.modifiers) > 0 {
+		_spec.Modifiers = oaq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -433,6 +438,9 @@ func (oaq *OrderAmountQuery) loadOrder(ctx context.Context, query *OrderQuery, n
 
 func (oaq *OrderAmountQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := oaq.querySpec()
+	if len(oaq.modifiers) > 0 {
+		_spec.Modifiers = oaq.modifiers
+	}
 	_spec.Node.Columns = oaq.ctx.Fields
 	if len(oaq.ctx.Fields) > 0 {
 		_spec.Unique = oaq.ctx.Unique != nil && *oaq.ctx.Unique
@@ -498,6 +506,9 @@ func (oaq *OrderAmountQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if oaq.ctx.Unique != nil && *oaq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range oaq.modifiers {
+		m(selector)
+	}
 	for _, p := range oaq.predicates {
 		p(selector)
 	}
@@ -513,6 +524,12 @@ func (oaq *OrderAmountQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (oaq *OrderAmountQuery) Modify(modifiers ...func(s *sql.Selector)) *OrderAmountSelect {
+	oaq.modifiers = append(oaq.modifiers, modifiers...)
+	return oaq.Select()
 }
 
 // OrderAmountGroupBy is the group-by builder for OrderAmount entities.
@@ -603,4 +620,10 @@ func (oas *OrderAmountSelect) sqlScan(ctx context.Context, root *OrderAmountQuer
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (oas *OrderAmountSelect) Modify(modifiers ...func(s *sql.Selector)) *OrderAmountSelect {
+	oas.modifiers = append(oas.modifiers, modifiers...)
+	return oas
 }

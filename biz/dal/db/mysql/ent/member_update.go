@@ -13,6 +13,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/memberdetails"
 	"kcers/biz/dal/db/mysql/ent/membernote"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
+	"kcers/biz/dal/db/mysql/ent/memberprofile"
 	"kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	"time"
@@ -25,8 +26,9 @@ import (
 // MemberUpdate is the builder for updating Member entities.
 type MemberUpdate struct {
 	config
-	hooks    []Hook
-	mutation *MemberMutation
+	hooks     []Hook
+	mutation  *MemberMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the MemberUpdate builder.
@@ -148,43 +150,23 @@ func (mu *MemberUpdate) ClearPassword() *MemberUpdate {
 	return mu
 }
 
-// SetName sets the "name" field.
-func (mu *MemberUpdate) SetName(s string) *MemberUpdate {
-	mu.mutation.SetName(s)
+// SetUsername sets the "username" field.
+func (mu *MemberUpdate) SetUsername(s string) *MemberUpdate {
+	mu.mutation.SetUsername(s)
 	return mu
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (mu *MemberUpdate) SetNillableName(s *string) *MemberUpdate {
+// SetNillableUsername sets the "username" field if the given value is not nil.
+func (mu *MemberUpdate) SetNillableUsername(s *string) *MemberUpdate {
 	if s != nil {
-		mu.SetName(*s)
+		mu.SetUsername(*s)
 	}
 	return mu
 }
 
-// ClearName clears the value of the "name" field.
-func (mu *MemberUpdate) ClearName() *MemberUpdate {
-	mu.mutation.ClearName()
-	return mu
-}
-
-// SetNickname sets the "nickname" field.
-func (mu *MemberUpdate) SetNickname(s string) *MemberUpdate {
-	mu.mutation.SetNickname(s)
-	return mu
-}
-
-// SetNillableNickname sets the "nickname" field if the given value is not nil.
-func (mu *MemberUpdate) SetNillableNickname(s *string) *MemberUpdate {
-	if s != nil {
-		mu.SetNickname(*s)
-	}
-	return mu
-}
-
-// ClearNickname clears the value of the "nickname" field.
-func (mu *MemberUpdate) ClearNickname() *MemberUpdate {
-	mu.mutation.ClearNickname()
+// ClearUsername clears the value of the "username" field.
+func (mu *MemberUpdate) ClearUsername() *MemberUpdate {
+	mu.mutation.ClearUsername()
 	return mu
 }
 
@@ -205,6 +187,26 @@ func (mu *MemberUpdate) SetNillableMobile(s *string) *MemberUpdate {
 // ClearMobile clears the value of the "mobile" field.
 func (mu *MemberUpdate) ClearMobile() *MemberUpdate {
 	mu.mutation.ClearMobile()
+	return mu
+}
+
+// SetName sets the "name" field.
+func (mu *MemberUpdate) SetName(s string) *MemberUpdate {
+	mu.mutation.SetName(s)
+	return mu
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (mu *MemberUpdate) SetNillableName(s *string) *MemberUpdate {
+	if s != nil {
+		mu.SetName(*s)
+	}
+	return mu
+}
+
+// ClearName clears the value of the "name" field.
+func (mu *MemberUpdate) ClearName() *MemberUpdate {
+	mu.mutation.ClearName()
 	return mu
 }
 
@@ -253,6 +255,21 @@ func (mu *MemberUpdate) AddCondition(i int64) *MemberUpdate {
 func (mu *MemberUpdate) ClearCondition() *MemberUpdate {
 	mu.mutation.ClearCondition()
 	return mu
+}
+
+// AddMemberProfileIDs adds the "member_profile" edge to the MemberProfile entity by IDs.
+func (mu *MemberUpdate) AddMemberProfileIDs(ids ...int64) *MemberUpdate {
+	mu.mutation.AddMemberProfileIDs(ids...)
+	return mu
+}
+
+// AddMemberProfile adds the "member_profile" edges to the MemberProfile entity.
+func (mu *MemberUpdate) AddMemberProfile(m ...*MemberProfile) *MemberUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mu.AddMemberProfileIDs(ids...)
 }
 
 // AddMemberDetailIDs adds the "member_details" edge to the MemberDetails entity by IDs.
@@ -363,6 +380,27 @@ func (mu *MemberUpdate) AddMemberFace(f ...*Face) *MemberUpdate {
 // Mutation returns the MemberMutation object of the builder.
 func (mu *MemberUpdate) Mutation() *MemberMutation {
 	return mu.mutation
+}
+
+// ClearMemberProfile clears all "member_profile" edges to the MemberProfile entity.
+func (mu *MemberUpdate) ClearMemberProfile() *MemberUpdate {
+	mu.mutation.ClearMemberProfile()
+	return mu
+}
+
+// RemoveMemberProfileIDs removes the "member_profile" edge to MemberProfile entities by IDs.
+func (mu *MemberUpdate) RemoveMemberProfileIDs(ids ...int64) *MemberUpdate {
+	mu.mutation.RemoveMemberProfileIDs(ids...)
+	return mu
+}
+
+// RemoveMemberProfile removes "member_profile" edges to MemberProfile entities.
+func (mu *MemberUpdate) RemoveMemberProfile(m ...*MemberProfile) *MemberUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mu.RemoveMemberProfileIDs(ids...)
 }
 
 // ClearMemberDetails clears all "member_details" edges to the MemberDetails entity.
@@ -548,6 +586,12 @@ func (mu *MemberUpdate) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (mu *MemberUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *MemberUpdate {
+	mu.modifiers = append(mu.modifiers, modifiers...)
+	return mu
+}
+
 func (mu *MemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(member.Table, member.Columns, sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt64))
 	if ps := mu.mutation.predicates; len(ps) > 0 {
@@ -599,23 +643,23 @@ func (mu *MemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if mu.mutation.PasswordCleared() {
 		_spec.ClearField(member.FieldPassword, field.TypeString)
 	}
-	if value, ok := mu.mutation.Name(); ok {
-		_spec.SetField(member.FieldName, field.TypeString, value)
+	if value, ok := mu.mutation.Username(); ok {
+		_spec.SetField(member.FieldUsername, field.TypeString, value)
 	}
-	if mu.mutation.NameCleared() {
-		_spec.ClearField(member.FieldName, field.TypeString)
-	}
-	if value, ok := mu.mutation.Nickname(); ok {
-		_spec.SetField(member.FieldNickname, field.TypeString, value)
-	}
-	if mu.mutation.NicknameCleared() {
-		_spec.ClearField(member.FieldNickname, field.TypeString)
+	if mu.mutation.UsernameCleared() {
+		_spec.ClearField(member.FieldUsername, field.TypeString)
 	}
 	if value, ok := mu.mutation.Mobile(); ok {
 		_spec.SetField(member.FieldMobile, field.TypeString, value)
 	}
 	if mu.mutation.MobileCleared() {
 		_spec.ClearField(member.FieldMobile, field.TypeString)
+	}
+	if value, ok := mu.mutation.Name(); ok {
+		_spec.SetField(member.FieldName, field.TypeString, value)
+	}
+	if mu.mutation.NameCleared() {
+		_spec.ClearField(member.FieldName, field.TypeString)
 	}
 	if value, ok := mu.mutation.Avatar(); ok {
 		_spec.SetField(member.FieldAvatar, field.TypeString, value)
@@ -631,6 +675,51 @@ func (mu *MemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if mu.mutation.ConditionCleared() {
 		_spec.ClearField(member.FieldCondition, field.TypeInt64)
+	}
+	if mu.mutation.MemberProfileCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   member.MemberProfileTable,
+			Columns: []string{member.MemberProfileColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(memberprofile.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.RemovedMemberProfileIDs(); len(nodes) > 0 && !mu.mutation.MemberProfileCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   member.MemberProfileTable,
+			Columns: []string{member.MemberProfileColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(memberprofile.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.MemberProfileIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   member.MemberProfileTable,
+			Columns: []string{member.MemberProfileColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(memberprofile.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if mu.mutation.MemberDetailsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -947,6 +1036,7 @@ func (mu *MemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(mu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, mu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{member.Label}
@@ -962,9 +1052,10 @@ func (mu *MemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // MemberUpdateOne is the builder for updating a single Member entity.
 type MemberUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *MemberMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *MemberMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -1080,43 +1171,23 @@ func (muo *MemberUpdateOne) ClearPassword() *MemberUpdateOne {
 	return muo
 }
 
-// SetName sets the "name" field.
-func (muo *MemberUpdateOne) SetName(s string) *MemberUpdateOne {
-	muo.mutation.SetName(s)
+// SetUsername sets the "username" field.
+func (muo *MemberUpdateOne) SetUsername(s string) *MemberUpdateOne {
+	muo.mutation.SetUsername(s)
 	return muo
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (muo *MemberUpdateOne) SetNillableName(s *string) *MemberUpdateOne {
+// SetNillableUsername sets the "username" field if the given value is not nil.
+func (muo *MemberUpdateOne) SetNillableUsername(s *string) *MemberUpdateOne {
 	if s != nil {
-		muo.SetName(*s)
+		muo.SetUsername(*s)
 	}
 	return muo
 }
 
-// ClearName clears the value of the "name" field.
-func (muo *MemberUpdateOne) ClearName() *MemberUpdateOne {
-	muo.mutation.ClearName()
-	return muo
-}
-
-// SetNickname sets the "nickname" field.
-func (muo *MemberUpdateOne) SetNickname(s string) *MemberUpdateOne {
-	muo.mutation.SetNickname(s)
-	return muo
-}
-
-// SetNillableNickname sets the "nickname" field if the given value is not nil.
-func (muo *MemberUpdateOne) SetNillableNickname(s *string) *MemberUpdateOne {
-	if s != nil {
-		muo.SetNickname(*s)
-	}
-	return muo
-}
-
-// ClearNickname clears the value of the "nickname" field.
-func (muo *MemberUpdateOne) ClearNickname() *MemberUpdateOne {
-	muo.mutation.ClearNickname()
+// ClearUsername clears the value of the "username" field.
+func (muo *MemberUpdateOne) ClearUsername() *MemberUpdateOne {
+	muo.mutation.ClearUsername()
 	return muo
 }
 
@@ -1137,6 +1208,26 @@ func (muo *MemberUpdateOne) SetNillableMobile(s *string) *MemberUpdateOne {
 // ClearMobile clears the value of the "mobile" field.
 func (muo *MemberUpdateOne) ClearMobile() *MemberUpdateOne {
 	muo.mutation.ClearMobile()
+	return muo
+}
+
+// SetName sets the "name" field.
+func (muo *MemberUpdateOne) SetName(s string) *MemberUpdateOne {
+	muo.mutation.SetName(s)
+	return muo
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (muo *MemberUpdateOne) SetNillableName(s *string) *MemberUpdateOne {
+	if s != nil {
+		muo.SetName(*s)
+	}
+	return muo
+}
+
+// ClearName clears the value of the "name" field.
+func (muo *MemberUpdateOne) ClearName() *MemberUpdateOne {
+	muo.mutation.ClearName()
 	return muo
 }
 
@@ -1185,6 +1276,21 @@ func (muo *MemberUpdateOne) AddCondition(i int64) *MemberUpdateOne {
 func (muo *MemberUpdateOne) ClearCondition() *MemberUpdateOne {
 	muo.mutation.ClearCondition()
 	return muo
+}
+
+// AddMemberProfileIDs adds the "member_profile" edge to the MemberProfile entity by IDs.
+func (muo *MemberUpdateOne) AddMemberProfileIDs(ids ...int64) *MemberUpdateOne {
+	muo.mutation.AddMemberProfileIDs(ids...)
+	return muo
+}
+
+// AddMemberProfile adds the "member_profile" edges to the MemberProfile entity.
+func (muo *MemberUpdateOne) AddMemberProfile(m ...*MemberProfile) *MemberUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return muo.AddMemberProfileIDs(ids...)
 }
 
 // AddMemberDetailIDs adds the "member_details" edge to the MemberDetails entity by IDs.
@@ -1295,6 +1401,27 @@ func (muo *MemberUpdateOne) AddMemberFace(f ...*Face) *MemberUpdateOne {
 // Mutation returns the MemberMutation object of the builder.
 func (muo *MemberUpdateOne) Mutation() *MemberMutation {
 	return muo.mutation
+}
+
+// ClearMemberProfile clears all "member_profile" edges to the MemberProfile entity.
+func (muo *MemberUpdateOne) ClearMemberProfile() *MemberUpdateOne {
+	muo.mutation.ClearMemberProfile()
+	return muo
+}
+
+// RemoveMemberProfileIDs removes the "member_profile" edge to MemberProfile entities by IDs.
+func (muo *MemberUpdateOne) RemoveMemberProfileIDs(ids ...int64) *MemberUpdateOne {
+	muo.mutation.RemoveMemberProfileIDs(ids...)
+	return muo
+}
+
+// RemoveMemberProfile removes "member_profile" edges to MemberProfile entities.
+func (muo *MemberUpdateOne) RemoveMemberProfile(m ...*MemberProfile) *MemberUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return muo.RemoveMemberProfileIDs(ids...)
 }
 
 // ClearMemberDetails clears all "member_details" edges to the MemberDetails entity.
@@ -1493,6 +1620,12 @@ func (muo *MemberUpdateOne) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (muo *MemberUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *MemberUpdateOne {
+	muo.modifiers = append(muo.modifiers, modifiers...)
+	return muo
+}
+
 func (muo *MemberUpdateOne) sqlSave(ctx context.Context) (_node *Member, err error) {
 	_spec := sqlgraph.NewUpdateSpec(member.Table, member.Columns, sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt64))
 	id, ok := muo.mutation.ID()
@@ -1561,23 +1694,23 @@ func (muo *MemberUpdateOne) sqlSave(ctx context.Context) (_node *Member, err err
 	if muo.mutation.PasswordCleared() {
 		_spec.ClearField(member.FieldPassword, field.TypeString)
 	}
-	if value, ok := muo.mutation.Name(); ok {
-		_spec.SetField(member.FieldName, field.TypeString, value)
+	if value, ok := muo.mutation.Username(); ok {
+		_spec.SetField(member.FieldUsername, field.TypeString, value)
 	}
-	if muo.mutation.NameCleared() {
-		_spec.ClearField(member.FieldName, field.TypeString)
-	}
-	if value, ok := muo.mutation.Nickname(); ok {
-		_spec.SetField(member.FieldNickname, field.TypeString, value)
-	}
-	if muo.mutation.NicknameCleared() {
-		_spec.ClearField(member.FieldNickname, field.TypeString)
+	if muo.mutation.UsernameCleared() {
+		_spec.ClearField(member.FieldUsername, field.TypeString)
 	}
 	if value, ok := muo.mutation.Mobile(); ok {
 		_spec.SetField(member.FieldMobile, field.TypeString, value)
 	}
 	if muo.mutation.MobileCleared() {
 		_spec.ClearField(member.FieldMobile, field.TypeString)
+	}
+	if value, ok := muo.mutation.Name(); ok {
+		_spec.SetField(member.FieldName, field.TypeString, value)
+	}
+	if muo.mutation.NameCleared() {
+		_spec.ClearField(member.FieldName, field.TypeString)
 	}
 	if value, ok := muo.mutation.Avatar(); ok {
 		_spec.SetField(member.FieldAvatar, field.TypeString, value)
@@ -1593,6 +1726,51 @@ func (muo *MemberUpdateOne) sqlSave(ctx context.Context) (_node *Member, err err
 	}
 	if muo.mutation.ConditionCleared() {
 		_spec.ClearField(member.FieldCondition, field.TypeInt64)
+	}
+	if muo.mutation.MemberProfileCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   member.MemberProfileTable,
+			Columns: []string{member.MemberProfileColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(memberprofile.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.RemovedMemberProfileIDs(); len(nodes) > 0 && !muo.mutation.MemberProfileCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   member.MemberProfileTable,
+			Columns: []string{member.MemberProfileColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(memberprofile.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.MemberProfileIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   member.MemberProfileTable,
+			Columns: []string{member.MemberProfileColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(memberprofile.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if muo.mutation.MemberDetailsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1909,6 +2087,7 @@ func (muo *MemberUpdateOne) sqlSave(ctx context.Context) (_node *Member, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(muo.modifiers...)
 	_node = &Member{config: muo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

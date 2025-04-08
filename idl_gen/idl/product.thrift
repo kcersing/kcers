@@ -20,37 +20,44 @@ struct Property {
     /**数据 */
     8:optional string data=""  (api.raw = "data")
     9:optional i64 id =0  (api.raw = "id")
-
-        /**标签*/
-        18: optional list<base.List> tags = {}  (api.raw = "tags")
-        /**合同*/
-        19: optional list<base.List> contracts = {} (api.raw = "contracts")
-
+    15: optional i64 status =0 (api.raw = "status")
+    16: optional string statusName="" (api.raw = "statusName")
+    /**标签*/
+    18: optional list<base.List> tags = {}  (api.raw = "tags")
+    /**合同*/
+    19: optional list<base.List> contracts = {} (api.raw = "contracts")
+    /**标签-数组*/
+    20: optional list<i64> tagId=0   (api.raw = "tagId")
+    /**合同-数组*/
+    17: optional list<i64> contractId =0 (api.raw = "contractId")
 }
 
 struct Product {
     /**商品名 */
     1:optional string name="" (api.raw = "name")
     /**主图 */
-    2:optional string pic (api.raw = "pic")
+    2:optional string pic="" (api.raw = "pic")
     /**详情 */
-    3:optional string description (api.raw = "description")
+    3:optional string description="" (api.raw = "description")
     /**属性 */
-    4:optional list <Property> propertys (api.raw = "propertys")
+    4:optional list <Property> propertys={} (api.raw = "propertys")
     /**价格 */
-    5:optional double price (api.raw = "price")
+    5:optional double price=0 (api.raw = "price")
     /**库存 */
-    6:optional i64 stock (api.raw = "stock")
+    6:optional i64 stock=0 (api.raw = "stock")
     /**状态*/
-    7:optional i64 status (api.raw = "status")
-    8:optional i64 id (api.raw = "id")
-    12: optional i64 isSales=0 (api.raw = "isSales")
+    7:optional i64 status=0 (api.raw = "status")
+    18: optional string statusName="" (api.raw = "statusName")
+    8:optional i64 id=0 (api.raw = "id")
+    12: optional list<i64> isSales=0 (api.raw = "isSales")
     13: optional string signSalesAt = "" (api.raw = "signSalesAt")
     14: optional string endSalesAt = "" (api.raw = "endSalesAt")
     16: optional string createdAt = ""  (api.raw = "createdAt")
     17: optional string updatedAt = "" (api.raw = "updatedAt")
     20: optional i64 createdId = 0 (api.raw = "createdId")
     21: optional string createdName = "" (api.raw = "createdName")
+    19: optional list<base.List> venues = {}  (api.raw = "venues")
+    22: optional list<i64> venueId = {}  (api.raw = "venueId")
 }
 
 struct CreateOrUpdatePropertyReq {
@@ -68,20 +75,22 @@ struct CreateOrUpdatePropertyReq {
     /**类型*/
     7: optional string type ="" (api.raw = "type")
     8: optional list<i64> venueId =0(api.raw = "venueId")
-
+    15: optional i64 status =0 (api.raw = "status")
     /**标签-数组*/
     16: optional list<i64> tagId=0   (api.raw = "tagId")
+
     /**合同-数组*/
     17: optional list<i64> contractId =0 (api.raw = "contractId")
+
 
 }
 
 struct CreateOrUpdateReq {
     1: optional i64 id =0(api.raw = "id")
     /**商品名*/
-    2: optional string name (api.raw = "name")
+    2: optional string name="" (api.raw = "name")
     /**主图*/
-    3: optional string pic (api.raw = "pic")
+    3: optional string pic="" (api.raw = "pic")
     /**详情*/
     4: optional string description ="" (api.raw = "description")
     /**价格*/
@@ -99,7 +108,8 @@ struct CreateOrUpdateReq {
     13: optional string signSalesAt ="" (api.raw = "signSalesAt")
     /**销售结束时间*/
     14: optional string endSalesAt ="" (api.raw = "endSalesAt")
-
+    15: optional i64 status =0 (api.raw = "status")
+    16: optional list<i64> venueId = {}  (api.raw = "venueId")
 }
 
 struct ListReq {

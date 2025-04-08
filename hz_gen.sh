@@ -26,20 +26,23 @@
 #- api.proto 与 base.proto是不需要更新与生成的，因为它们是由导入它们的proto文件生成的
 #```bash
 
-#hz new -I api -idl_gen ./../idl_gen/admin/token.thrift -model_dir ./../app/biz/model/ --unset_omitempty
-hz update -idl idl_gen/idl/admin.thrift -model_dir idl_gen/model/  --unset_omitempty
-hz update -idl idl_gen/idl/contract.thrift -model_dir idl_gen/model/  --unset_omitempty
-hz update -idl idl_gen/idl/dictionary.thrift -model_dir idl_gen/model/  --unset_omitempty
-hz update -idl idl_gen/idl/entry.thrift -model_dir idl_gen/model/  --unset_omitempty
-hz update -idl idl_gen/idl/logs.thrift -model_dir idl_gen/model/  --unset_omitempty
-hz update -idl idl_gen/idl/member.thrift -model_dir idl_gen/model/  --unset_omitempty
-hz update -idl idl_gen/idl/menu.thrift -model_dir idl_gen/model/  --unset_omitempty
-hz update -idl idl_gen/idl/order.thrift -model_dir idl_gen/model/  --unset_omitempty
-hz update -idl idl_gen/idl/product.thrift -model_dir idl_gen/model/  --unset_omitempty
-hz update -idl idl_gen/idl/pub.thrift -model_dir idl_gen/model/  --unset_omitempty
-hz update -idl idl_gen/idl/role.thrift -model_dir idl_gen/model/  --unset_omitempty
-hz update -idl idl_gen/idl/schedule.thrift -model_dir idl_gen/model/  --unset_omitempty
-hz update -idl idl_gen/idl/sys.thrift -model_dir idl_gen/model/  --unset_omitempty
-hz update -idl idl_gen/idl/token.thrift -model_dir idl_gen/model/  --unset_omitempty
-hz update -idl idl_gen/idl/user.thrift -model_dir idl_gen/model/  --unset_omitempty
-hz update -idl idl_gen/idl/venue.thrift -model_dir idl_gen/model/  --unset_omitempty
+	hz update -idl idl_gen/idl/auth.thrift -model_dir idl_gen/model/  --unset_omitempty
+	hz update -idl idl_gen/idl/banner.thrift -model_dir idl_gen/model/  --unset_omitempty
+	hz update -idl idl_gen/idl/captcha.thrift -model_dir idl_gen/model/  --unset_omitempty
+	hz update -idl idl_gen/idl/contract.thrift -model_dir idl_gen/model/  --unset_omitempty
+	hz update -idl idl_gen/idl/dictionary.thrift -model_dir idl_gen/model/  --unset_omitempty
+	hz update -idl idl_gen/idl/entry.thrift -model_dir idl_gen/model/  --unset_omitempty
+	hz update -idl idl_gen/idl/logs.thrift -model_dir idl_gen/model/  --unset_omitempty
+	hz update -idl idl_gen/idl/member.thrift -model_dir idl_gen/model/  --unset_omitempty
+	hz update -idl idl_gen/idl/menu.thrift -model_dir idl_gen/model/  --unset_omitempty
+	hz update -idl idl_gen/idl/order.thrift -model_dir idl_gen/model/  --unset_omitempty
+	hz update -idl idl_gen/idl/payment.thrift -model_dir idl_gen/model/  --unset_omitempty
+	hz update -idl idl_gen/idl/product.thrift -model_dir idl_gen/model/  --unset_omitempty
+	hz update -idl idl_gen/idl/pub.thrift -model_dir idl_gen/model/  --unset_omitempty
+	hz update -idl idl_gen/idl/schedule.thrift -model_dir idl_gen/model/  --unset_omitempty
+	hz update -idl idl_gen/idl/service.thrift -model_dir idl_gen/model/  --unset_omitempty
+	hz update -idl idl_gen/idl/sms.thrift -model_dir idl_gen/model/  --unset_omitempty
+	hz update -idl idl_gen/idl/sys.thrift -model_dir idl_gen/model/  --unset_omitempty
+	hz update -idl idl_gen/idl/token.thrift -model_dir idl_gen/model/  --unset_omitempty
+	hz update -idl idl_gen/idl/user.thrift -model_dir idl_gen/model/  --unset_omitempty
+	hz update -idl idl_gen/idl/venue.thrift -model_dir idl_gen/model/  --unset_omitempty

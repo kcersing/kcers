@@ -16,8 +16,12 @@
 package es
 
 import (
-	"github.com/olivere/elastic/v7"
+	//"saas/conf"
 	"sync"
+
+	//"github.com/cloudwego/biz-demo/book-shop/app/item/common/entity"
+	//"github.com/cloudwego/biz-demo/book-shop/pkg/conf"
+	"github.com/olivere/elastic/v7"
 )
 
 // ES client
@@ -32,14 +36,14 @@ func GetESClient() *elastic.Client {
 		return esCli
 	}
 
-	//esOnce.Do(func() {
-	//	cli, err := elastic.NewSimpleClient(
-	//		elastic.SetURL(conf.Conf().ESAddress.Host + ":" + conf.Conf().ESAddress.Port),
-	//	)
-	//	if err != nil {
-	//		panic("new es client failed, err=" + err.Error())
-	//	}
-	//	esCli = cli
-	//})
+	esOnce.Do(func() {
+		cli, err := elastic.NewSimpleClient(
+		//elastic.SetURL(conf.Conf().ESAddress.Host + ":" + conf.Conf().ESAddress.Port),
+		)
+		if err != nil {
+			panic("new es client failed, err=" + err.Error())
+		}
+		esCli = cli
+	})
 	return esCli
 }

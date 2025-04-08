@@ -36,6 +36,7 @@ func (DictionaryDetail) Edges() []ent.Edge {
 			Field("dictionary_id").
 			Ref("dictionary_details").
 			Unique(),
+		edge.From("property", ProductProperty.Type).Ref("tags"),
 	}
 }
 

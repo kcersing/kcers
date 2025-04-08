@@ -11,18 +11,17 @@ import (
 
 // Create or update user information request | 创建或更新用户信息
 type CreateOrUpdateMemberReq struct {
-	ID        int64   `thrift:"id,1,optional" form:"id" json:"id" query:"id"`
-	Name      string  `thrift:"name,2,optional" form:"name" json:"name" query:"name"`
-	Mobile    string  `thrift:"mobile,4,optional" form:"mobile" json:"mobile" query:"mobile"`
-	Gender    string  `thrift:"gender,5,optional" form:"gender" json:"gender" query:"gender"`
-	Birthday  string  `thrift:"birthday,6,optional" form:"birthday" json:"birthday" query:"birthday"`
-	Source    int64   `thrift:"source,7,optional" form:"source" json:"source" query:"source"`
-	Grade     int64   `thrift:"grade,8,optional" form:"grade" json:"grade" query:"grade"`
-	Intention int64   `thrift:"intention,9,optional" form:"intention" json:"intention" query:"intention"`
-	Email     *string `thrift:"email,10,optional" form:"email" json:"email" query:"email"`
-	Status    *int64  `thrift:"status,11,optional" form:"status" json:"status" query:"status"`
-	Wecom     *string `thrift:"wecom,12,optional" form:"wecom" json:"wecom" query:"wecom"`
-	CreateId  *int64  `thrift:"createId,13,optional" form:"createId" json:"createId" query:"createId"`
+	ID        int64  `thrift:"id,1,optional" form:"id" json:"id" query:"id"`
+	Name      string `thrift:"name,2,optional" form:"name" json:"name" query:"name"`
+	Username  string `thrift:"username,3,optional" form:"username" json:"username" query:"username"`
+	Mobile    string `thrift:"mobile,4,optional" form:"mobile" json:"mobile" query:"mobile"`
+	Gender    string `thrift:"gender,5,optional" form:"gender" json:"gender" query:"gender"`
+	Birthday  string `thrift:"birthday,6,optional" form:"birthday" json:"birthday" query:"birthday"`
+	Source    int64  `thrift:"source,7,optional" form:"source" json:"source" query:"source"`
+	Grade     int64  `thrift:"grade,8,optional" form:"grade" json:"grade" query:"grade"`
+	Intention int64  `thrift:"intention,9,optional" form:"intention" json:"intention" query:"intention"`
+	Email     string `thrift:"email,10,optional" form:"email" json:"email" query:"email"`
+	Wecom     string `thrift:"wecom,11,optional" form:"wecom" json:"wecom" query:"wecom"`
 }
 
 func NewCreateOrUpdateMemberReq() *CreateOrUpdateMemberReq {
@@ -30,24 +29,30 @@ func NewCreateOrUpdateMemberReq() *CreateOrUpdateMemberReq {
 
 		ID:        0,
 		Name:      "",
+		Username:  "",
 		Mobile:    "",
 		Gender:    "未知",
 		Birthday:  "",
 		Source:    0,
 		Grade:     0,
 		Intention: 0,
+		Email:     "",
+		Wecom:     "",
 	}
 }
 
 func (p *CreateOrUpdateMemberReq) InitDefault() {
 	p.ID = 0
 	p.Name = ""
+	p.Username = ""
 	p.Mobile = ""
 	p.Gender = "未知"
 	p.Birthday = ""
 	p.Source = 0
 	p.Grade = 0
 	p.Intention = 0
+	p.Email = ""
+	p.Wecom = ""
 }
 
 var CreateOrUpdateMemberReq_ID_DEFAULT int64 = 0
@@ -66,6 +71,15 @@ func (p *CreateOrUpdateMemberReq) GetName() (v string) {
 		return CreateOrUpdateMemberReq_Name_DEFAULT
 	}
 	return p.Name
+}
+
+var CreateOrUpdateMemberReq_Username_DEFAULT string = ""
+
+func (p *CreateOrUpdateMemberReq) GetUsername() (v string) {
+	if !p.IsSetUsername() {
+		return CreateOrUpdateMemberReq_Username_DEFAULT
+	}
+	return p.Username
 }
 
 var CreateOrUpdateMemberReq_Mobile_DEFAULT string = ""
@@ -122,45 +136,28 @@ func (p *CreateOrUpdateMemberReq) GetIntention() (v int64) {
 	return p.Intention
 }
 
-var CreateOrUpdateMemberReq_Email_DEFAULT string
+var CreateOrUpdateMemberReq_Email_DEFAULT string = ""
 
 func (p *CreateOrUpdateMemberReq) GetEmail() (v string) {
 	if !p.IsSetEmail() {
 		return CreateOrUpdateMemberReq_Email_DEFAULT
 	}
-	return *p.Email
+	return p.Email
 }
 
-var CreateOrUpdateMemberReq_Status_DEFAULT int64
-
-func (p *CreateOrUpdateMemberReq) GetStatus() (v int64) {
-	if !p.IsSetStatus() {
-		return CreateOrUpdateMemberReq_Status_DEFAULT
-	}
-	return *p.Status
-}
-
-var CreateOrUpdateMemberReq_Wecom_DEFAULT string
+var CreateOrUpdateMemberReq_Wecom_DEFAULT string = ""
 
 func (p *CreateOrUpdateMemberReq) GetWecom() (v string) {
 	if !p.IsSetWecom() {
 		return CreateOrUpdateMemberReq_Wecom_DEFAULT
 	}
-	return *p.Wecom
-}
-
-var CreateOrUpdateMemberReq_CreateId_DEFAULT int64
-
-func (p *CreateOrUpdateMemberReq) GetCreateId() (v int64) {
-	if !p.IsSetCreateId() {
-		return CreateOrUpdateMemberReq_CreateId_DEFAULT
-	}
-	return *p.CreateId
+	return p.Wecom
 }
 
 var fieldIDToName_CreateOrUpdateMemberReq = map[int16]string{
 	1:  "id",
 	2:  "name",
+	3:  "username",
 	4:  "mobile",
 	5:  "gender",
 	6:  "birthday",
@@ -168,9 +165,7 @@ var fieldIDToName_CreateOrUpdateMemberReq = map[int16]string{
 	8:  "grade",
 	9:  "intention",
 	10: "email",
-	11: "status",
-	12: "wecom",
-	13: "createId",
+	11: "wecom",
 }
 
 func (p *CreateOrUpdateMemberReq) IsSetID() bool {
@@ -179,6 +174,10 @@ func (p *CreateOrUpdateMemberReq) IsSetID() bool {
 
 func (p *CreateOrUpdateMemberReq) IsSetName() bool {
 	return p.Name != CreateOrUpdateMemberReq_Name_DEFAULT
+}
+
+func (p *CreateOrUpdateMemberReq) IsSetUsername() bool {
+	return p.Username != CreateOrUpdateMemberReq_Username_DEFAULT
 }
 
 func (p *CreateOrUpdateMemberReq) IsSetMobile() bool {
@@ -206,19 +205,11 @@ func (p *CreateOrUpdateMemberReq) IsSetIntention() bool {
 }
 
 func (p *CreateOrUpdateMemberReq) IsSetEmail() bool {
-	return p.Email != nil
-}
-
-func (p *CreateOrUpdateMemberReq) IsSetStatus() bool {
-	return p.Status != nil
+	return p.Email != CreateOrUpdateMemberReq_Email_DEFAULT
 }
 
 func (p *CreateOrUpdateMemberReq) IsSetWecom() bool {
-	return p.Wecom != nil
-}
-
-func (p *CreateOrUpdateMemberReq) IsSetCreateId() bool {
-	return p.CreateId != nil
+	return p.Wecom != CreateOrUpdateMemberReq_Wecom_DEFAULT
 }
 
 func (p *CreateOrUpdateMemberReq) Read(iprot thrift.TProtocol) (err error) {
@@ -251,6 +242,14 @@ func (p *CreateOrUpdateMemberReq) Read(iprot thrift.TProtocol) (err error) {
 		case 2:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 3:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -313,24 +312,8 @@ func (p *CreateOrUpdateMemberReq) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 11:
-			if fieldTypeId == thrift.I64 {
-				if err = p.ReadField11(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 12:
 			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField12(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 13:
-			if fieldTypeId == thrift.I64 {
-				if err = p.ReadField13(iprot); err != nil {
+				if err = p.ReadField11(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -385,6 +368,17 @@ func (p *CreateOrUpdateMemberReq) ReadField2(iprot thrift.TProtocol) error {
 		_field = v
 	}
 	p.Name = _field
+	return nil
+}
+func (p *CreateOrUpdateMemberReq) ReadField3(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.Username = _field
 	return nil
 }
 func (p *CreateOrUpdateMemberReq) ReadField4(iprot thrift.TProtocol) error {
@@ -455,46 +449,24 @@ func (p *CreateOrUpdateMemberReq) ReadField9(iprot thrift.TProtocol) error {
 }
 func (p *CreateOrUpdateMemberReq) ReadField10(iprot thrift.TProtocol) error {
 
-	var _field *string
+	var _field string
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		_field = &v
+		_field = v
 	}
 	p.Email = _field
 	return nil
 }
 func (p *CreateOrUpdateMemberReq) ReadField11(iprot thrift.TProtocol) error {
 
-	var _field *int64
-	if v, err := iprot.ReadI64(); err != nil {
-		return err
-	} else {
-		_field = &v
-	}
-	p.Status = _field
-	return nil
-}
-func (p *CreateOrUpdateMemberReq) ReadField12(iprot thrift.TProtocol) error {
-
-	var _field *string
+	var _field string
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		_field = &v
+		_field = v
 	}
 	p.Wecom = _field
-	return nil
-}
-func (p *CreateOrUpdateMemberReq) ReadField13(iprot thrift.TProtocol) error {
-
-	var _field *int64
-	if v, err := iprot.ReadI64(); err != nil {
-		return err
-	} else {
-		_field = &v
-	}
-	p.CreateId = _field
 	return nil
 }
 
@@ -510,6 +482,10 @@ func (p *CreateOrUpdateMemberReq) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField3(oprot); err != nil {
+			fieldId = 3
 			goto WriteFieldError
 		}
 		if err = p.writeField4(oprot); err != nil {
@@ -542,14 +518,6 @@ func (p *CreateOrUpdateMemberReq) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField11(oprot); err != nil {
 			fieldId = 11
-			goto WriteFieldError
-		}
-		if err = p.writeField12(oprot); err != nil {
-			fieldId = 12
-			goto WriteFieldError
-		}
-		if err = p.writeField13(oprot); err != nil {
-			fieldId = 13
 			goto WriteFieldError
 		}
 	}
@@ -606,6 +574,25 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *CreateOrUpdateMemberReq) writeField3(oprot thrift.TProtocol) (err error) {
+	if p.IsSetUsername() {
+		if err = oprot.WriteFieldBegin("username", thrift.STRING, 3); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.Username); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
 func (p *CreateOrUpdateMemberReq) writeField4(oprot thrift.TProtocol) (err error) {
@@ -727,7 +714,7 @@ func (p *CreateOrUpdateMemberReq) writeField10(oprot thrift.TProtocol) (err erro
 		if err = oprot.WriteFieldBegin("email", thrift.STRING, 10); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(*p.Email); err != nil {
+		if err := oprot.WriteString(p.Email); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -742,11 +729,11 @@ WriteFieldEndError:
 }
 
 func (p *CreateOrUpdateMemberReq) writeField11(oprot thrift.TProtocol) (err error) {
-	if p.IsSetStatus() {
-		if err = oprot.WriteFieldBegin("status", thrift.I64, 11); err != nil {
+	if p.IsSetWecom() {
+		if err = oprot.WriteFieldBegin("wecom", thrift.STRING, 11); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI64(*p.Status); err != nil {
+		if err := oprot.WriteString(p.Wecom); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -758,44 +745,6 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 11 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 11 end error: ", p), err)
-}
-
-func (p *CreateOrUpdateMemberReq) writeField12(oprot thrift.TProtocol) (err error) {
-	if p.IsSetWecom() {
-		if err = oprot.WriteFieldBegin("wecom", thrift.STRING, 12); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteString(*p.Wecom); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 12 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 12 end error: ", p), err)
-}
-
-func (p *CreateOrUpdateMemberReq) writeField13(oprot thrift.TProtocol) (err error) {
-	if p.IsSetCreateId() {
-		if err = oprot.WriteFieldBegin("createId", thrift.I64, 13); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteI64(*p.CreateId); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 13 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 13 end error: ", p), err)
 }
 
 func (p *CreateOrUpdateMemberReq) String() string {
@@ -1021,31 +970,41 @@ func (p *CreateOrUpdateMemberAvatarReq) String() string {
 }
 
 type MemberInfo struct {
-	ID        int64          `thrift:"id,1,optional" form:"id" json:"id" query:"id"`
-	Name      string         `thrift:"name,2,optional" form:"name" json:"name" query:"name"`
-	Status    int64          `thrift:"status,4,optional" form:"status" json:"status" query:"status"`
-	Username  string         `thrift:"username,5,optional" form:"username" json:"username" query:"username"`
-	Mobile    string         `thrift:"mobile,6,optional" form:"mobile" json:"mobile" query:"mobile"`
-	Avatar    string         `thrift:"avatar,7,optional" form:"avatar" json:"avatar" query:"avatar"`
-	CreatedAt string         `thrift:"createdAt,8,optional" form:"createdAt" json:"createdAt" query:"createdAt"`
-	UpdatedAt string         `thrift:"updatedAt,9,optional" form:"updatedAt" json:"updatedAt" query:"updatedAt"`
-	Profile   *MemberProfile `thrift:"profile,250,optional" form:"profile" json:"profile" query:"profile"`
-	Privacy   *MemberPrivacy `thrift:"privacy,252,optional" form:"privacy" json:"privacy" query:"privacy"`
+	ID            int64          `thrift:"id,1,optional" form:"id" json:"id" query:"id"`
+	Name          string         `thrift:"name,2,optional" form:"name" json:"name" query:"name"`
+	Status        int64          `thrift:"status,4,optional" form:"status" json:"status" query:"status"`
+	Username      string         `thrift:"username,5,optional" form:"username" json:"username" query:"username"`
+	Mobile        string         `thrift:"mobile,6,optional" form:"mobile" json:"mobile" query:"mobile"`
+	Avatar        string         `thrift:"avatar,7,optional" form:"avatar" json:"avatar" query:"avatar"`
+	CreatedAt     string         `thrift:"createdAt,8,optional" form:"createdAt" json:"createdAt" query:"createdAt"`
+	UpdatedAt     string         `thrift:"updatedAt,9,optional" form:"updatedAt" json:"updatedAt" query:"updatedAt"`
+	Condition     int64          `thrift:"condition,10,optional" form:"condition" json:"condition" query:"condition"`
+	ConditionName string         `thrift:"conditionName,11,optional" form:"conditionName" json:"conditionName" query:"conditionName"`
+	CreatedId     int64          `thrift:"createdId,12,optional" form:"createdId" json:"createdId" query:"createdId"`
+	CreatedName   string         `thrift:"createdName,13,optional" form:"createdName" json:"createdName" query:"createdName"`
+	Profile       *MemberProfile `thrift:"profile,250,optional" form:"profile" json:"profile" query:"profile"`
+	Privacy       *MemberPrivacy `thrift:"privacy,251,optional" form:"privacy" json:"privacy" query:"privacy"`
+	Detail        *MemberDetail  `thrift:"detail,252,optional" form:"detail" json:"detail" query:"detail"`
 }
 
 func NewMemberInfo() *MemberInfo {
 	return &MemberInfo{
 
-		ID:        0,
-		Name:      "",
-		Status:    0,
-		Username:  "",
-		Mobile:    "",
-		Avatar:    "",
-		CreatedAt: "",
-		UpdatedAt: "",
-		Profile:   &MemberProfile{},
-		Privacy:   &MemberPrivacy{},
+		ID:            0,
+		Name:          "",
+		Status:        0,
+		Username:      "",
+		Mobile:        "",
+		Avatar:        "",
+		CreatedAt:     "",
+		UpdatedAt:     "",
+		Condition:     0,
+		ConditionName: "",
+		CreatedId:     0,
+		CreatedName:   "",
+		Profile:       &MemberProfile{},
+		Privacy:       &MemberPrivacy{},
+		Detail:        &MemberDetail{},
 	}
 }
 
@@ -1058,8 +1017,13 @@ func (p *MemberInfo) InitDefault() {
 	p.Avatar = ""
 	p.CreatedAt = ""
 	p.UpdatedAt = ""
+	p.Condition = 0
+	p.ConditionName = ""
+	p.CreatedId = 0
+	p.CreatedName = ""
 	p.Profile = &MemberProfile{}
 	p.Privacy = &MemberPrivacy{}
+	p.Detail = &MemberDetail{}
 }
 
 var MemberInfo_ID_DEFAULT int64 = 0
@@ -1134,6 +1098,42 @@ func (p *MemberInfo) GetUpdatedAt() (v string) {
 	return p.UpdatedAt
 }
 
+var MemberInfo_Condition_DEFAULT int64 = 0
+
+func (p *MemberInfo) GetCondition() (v int64) {
+	if !p.IsSetCondition() {
+		return MemberInfo_Condition_DEFAULT
+	}
+	return p.Condition
+}
+
+var MemberInfo_ConditionName_DEFAULT string = ""
+
+func (p *MemberInfo) GetConditionName() (v string) {
+	if !p.IsSetConditionName() {
+		return MemberInfo_ConditionName_DEFAULT
+	}
+	return p.ConditionName
+}
+
+var MemberInfo_CreatedId_DEFAULT int64 = 0
+
+func (p *MemberInfo) GetCreatedId() (v int64) {
+	if !p.IsSetCreatedId() {
+		return MemberInfo_CreatedId_DEFAULT
+	}
+	return p.CreatedId
+}
+
+var MemberInfo_CreatedName_DEFAULT string = ""
+
+func (p *MemberInfo) GetCreatedName() (v string) {
+	if !p.IsSetCreatedName() {
+		return MemberInfo_CreatedName_DEFAULT
+	}
+	return p.CreatedName
+}
+
 var MemberInfo_Profile_DEFAULT *MemberProfile = &MemberProfile{}
 
 func (p *MemberInfo) GetProfile() (v *MemberProfile) {
@@ -1152,6 +1152,15 @@ func (p *MemberInfo) GetPrivacy() (v *MemberPrivacy) {
 	return p.Privacy
 }
 
+var MemberInfo_Detail_DEFAULT *MemberDetail = &MemberDetail{}
+
+func (p *MemberInfo) GetDetail() (v *MemberDetail) {
+	if !p.IsSetDetail() {
+		return MemberInfo_Detail_DEFAULT
+	}
+	return p.Detail
+}
+
 var fieldIDToName_MemberInfo = map[int16]string{
 	1:   "id",
 	2:   "name",
@@ -1161,8 +1170,13 @@ var fieldIDToName_MemberInfo = map[int16]string{
 	7:   "avatar",
 	8:   "createdAt",
 	9:   "updatedAt",
+	10:  "condition",
+	11:  "conditionName",
+	12:  "createdId",
+	13:  "createdName",
 	250: "profile",
-	252: "privacy",
+	251: "privacy",
+	252: "detail",
 }
 
 func (p *MemberInfo) IsSetID() bool {
@@ -1197,12 +1211,32 @@ func (p *MemberInfo) IsSetUpdatedAt() bool {
 	return p.UpdatedAt != MemberInfo_UpdatedAt_DEFAULT
 }
 
+func (p *MemberInfo) IsSetCondition() bool {
+	return p.Condition != MemberInfo_Condition_DEFAULT
+}
+
+func (p *MemberInfo) IsSetConditionName() bool {
+	return p.ConditionName != MemberInfo_ConditionName_DEFAULT
+}
+
+func (p *MemberInfo) IsSetCreatedId() bool {
+	return p.CreatedId != MemberInfo_CreatedId_DEFAULT
+}
+
+func (p *MemberInfo) IsSetCreatedName() bool {
+	return p.CreatedName != MemberInfo_CreatedName_DEFAULT
+}
+
 func (p *MemberInfo) IsSetProfile() bool {
 	return p.Profile != nil
 }
 
 func (p *MemberInfo) IsSetPrivacy() bool {
 	return p.Privacy != nil
+}
+
+func (p *MemberInfo) IsSetDetail() bool {
+	return p.Detail != nil
 }
 
 func (p *MemberInfo) Read(iprot thrift.TProtocol) (err error) {
@@ -1288,9 +1322,49 @@ func (p *MemberInfo) Read(iprot thrift.TProtocol) (err error) {
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
 			}
+		case 10:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField10(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 11:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField11(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 12:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField12(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 13:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField13(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
 		case 250:
 			if fieldTypeId == thrift.STRUCT {
 				if err = p.ReadField250(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 251:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField251(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -1421,6 +1495,50 @@ func (p *MemberInfo) ReadField9(iprot thrift.TProtocol) error {
 	p.UpdatedAt = _field
 	return nil
 }
+func (p *MemberInfo) ReadField10(iprot thrift.TProtocol) error {
+
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.Condition = _field
+	return nil
+}
+func (p *MemberInfo) ReadField11(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.ConditionName = _field
+	return nil
+}
+func (p *MemberInfo) ReadField12(iprot thrift.TProtocol) error {
+
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.CreatedId = _field
+	return nil
+}
+func (p *MemberInfo) ReadField13(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.CreatedName = _field
+	return nil
+}
 func (p *MemberInfo) ReadField250(iprot thrift.TProtocol) error {
 	_field := NewMemberProfile()
 	if err := _field.Read(iprot); err != nil {
@@ -1429,12 +1547,20 @@ func (p *MemberInfo) ReadField250(iprot thrift.TProtocol) error {
 	p.Profile = _field
 	return nil
 }
-func (p *MemberInfo) ReadField252(iprot thrift.TProtocol) error {
+func (p *MemberInfo) ReadField251(iprot thrift.TProtocol) error {
 	_field := NewMemberPrivacy()
 	if err := _field.Read(iprot); err != nil {
 		return err
 	}
 	p.Privacy = _field
+	return nil
+}
+func (p *MemberInfo) ReadField252(iprot thrift.TProtocol) error {
+	_field := NewMemberDetail()
+	if err := _field.Read(iprot); err != nil {
+		return err
+	}
+	p.Detail = _field
 	return nil
 }
 
@@ -1476,8 +1602,28 @@ func (p *MemberInfo) Write(oprot thrift.TProtocol) (err error) {
 			fieldId = 9
 			goto WriteFieldError
 		}
+		if err = p.writeField10(oprot); err != nil {
+			fieldId = 10
+			goto WriteFieldError
+		}
+		if err = p.writeField11(oprot); err != nil {
+			fieldId = 11
+			goto WriteFieldError
+		}
+		if err = p.writeField12(oprot); err != nil {
+			fieldId = 12
+			goto WriteFieldError
+		}
+		if err = p.writeField13(oprot); err != nil {
+			fieldId = 13
+			goto WriteFieldError
+		}
 		if err = p.writeField250(oprot); err != nil {
 			fieldId = 250
+			goto WriteFieldError
+		}
+		if err = p.writeField251(oprot); err != nil {
+			fieldId = 251
 			goto WriteFieldError
 		}
 		if err = p.writeField252(oprot); err != nil {
@@ -1654,6 +1800,82 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 9 end error: ", p), err)
 }
 
+func (p *MemberInfo) writeField10(oprot thrift.TProtocol) (err error) {
+	if p.IsSetCondition() {
+		if err = oprot.WriteFieldBegin("condition", thrift.I64, 10); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI64(p.Condition); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 end error: ", p), err)
+}
+
+func (p *MemberInfo) writeField11(oprot thrift.TProtocol) (err error) {
+	if p.IsSetConditionName() {
+		if err = oprot.WriteFieldBegin("conditionName", thrift.STRING, 11); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.ConditionName); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 11 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 11 end error: ", p), err)
+}
+
+func (p *MemberInfo) writeField12(oprot thrift.TProtocol) (err error) {
+	if p.IsSetCreatedId() {
+		if err = oprot.WriteFieldBegin("createdId", thrift.I64, 12); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI64(p.CreatedId); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 12 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 12 end error: ", p), err)
+}
+
+func (p *MemberInfo) writeField13(oprot thrift.TProtocol) (err error) {
+	if p.IsSetCreatedName() {
+		if err = oprot.WriteFieldBegin("createdName", thrift.STRING, 13); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.CreatedName); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 13 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 13 end error: ", p), err)
+}
+
 func (p *MemberInfo) writeField250(oprot thrift.TProtocol) (err error) {
 	if p.IsSetProfile() {
 		if err = oprot.WriteFieldBegin("profile", thrift.STRUCT, 250); err != nil {
@@ -1673,12 +1895,31 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 250 end error: ", p), err)
 }
 
-func (p *MemberInfo) writeField252(oprot thrift.TProtocol) (err error) {
+func (p *MemberInfo) writeField251(oprot thrift.TProtocol) (err error) {
 	if p.IsSetPrivacy() {
-		if err = oprot.WriteFieldBegin("privacy", thrift.STRUCT, 252); err != nil {
+		if err = oprot.WriteFieldBegin("privacy", thrift.STRUCT, 251); err != nil {
 			goto WriteFieldBeginError
 		}
 		if err := p.Privacy.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 251 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 251 end error: ", p), err)
+}
+
+func (p *MemberInfo) writeField252(oprot thrift.TProtocol) (err error) {
+	if p.IsSetDetail() {
+		if err = oprot.WriteFieldBegin("detail", thrift.STRUCT, 252); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.Detail.Write(oprot); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -1700,7 +1941,523 @@ func (p *MemberInfo) String() string {
 
 }
 
+type MemberDetail struct {
+	/**消费总金额*/
+	MoneySum float64 `thrift:"moneySum,2,optional" form:"moneySum" json:"moneySum" query:"moneySum"`
+	/**首次的产品*/
+	ProductId   int64  `thrift:"productId,3,optional" form:"productId" json:"productId" query:"productId"`
+	ProductName string `thrift:"productName,4,optional" form:"productName" json:"productName" query:"productName"`
+	/**进馆总次数*/
+	EntrySum int64 `thrift:"entrySum,7,optional" form:"entrySum" json:"entrySum" query:"entrySum"`
+	/**最后一次进馆时间*/
+	EntryLastAt string `thrift:"entryLastAt,8,optional" form:"entryLastAt" json:"entryLastAt" query:"entryLastAt"`
+	/**进馆最后期限时间*/
+	EntryDeadlineAt string `thrift:"entryDeadlineAt,9,optional" form:"entryDeadlineAt" json:"entryDeadlineAt" query:"entryDeadlineAt"`
+	/**最后一次上课时间*/
+	ClassLastAt string `thrift:"classLastAt,10,optional" form:"classLastAt" json:"classLastAt" query:"classLastAt"`
+}
+
+func NewMemberDetail() *MemberDetail {
+	return &MemberDetail{
+
+		MoneySum:        0.0,
+		ProductId:       0,
+		ProductName:     "",
+		EntrySum:        0,
+		EntryLastAt:     "",
+		EntryDeadlineAt: "",
+		ClassLastAt:     "",
+	}
+}
+
+func (p *MemberDetail) InitDefault() {
+	p.MoneySum = 0.0
+	p.ProductId = 0
+	p.ProductName = ""
+	p.EntrySum = 0
+	p.EntryLastAt = ""
+	p.EntryDeadlineAt = ""
+	p.ClassLastAt = ""
+}
+
+var MemberDetail_MoneySum_DEFAULT float64 = 0.0
+
+func (p *MemberDetail) GetMoneySum() (v float64) {
+	if !p.IsSetMoneySum() {
+		return MemberDetail_MoneySum_DEFAULT
+	}
+	return p.MoneySum
+}
+
+var MemberDetail_ProductId_DEFAULT int64 = 0
+
+func (p *MemberDetail) GetProductId() (v int64) {
+	if !p.IsSetProductId() {
+		return MemberDetail_ProductId_DEFAULT
+	}
+	return p.ProductId
+}
+
+var MemberDetail_ProductName_DEFAULT string = ""
+
+func (p *MemberDetail) GetProductName() (v string) {
+	if !p.IsSetProductName() {
+		return MemberDetail_ProductName_DEFAULT
+	}
+	return p.ProductName
+}
+
+var MemberDetail_EntrySum_DEFAULT int64 = 0
+
+func (p *MemberDetail) GetEntrySum() (v int64) {
+	if !p.IsSetEntrySum() {
+		return MemberDetail_EntrySum_DEFAULT
+	}
+	return p.EntrySum
+}
+
+var MemberDetail_EntryLastAt_DEFAULT string = ""
+
+func (p *MemberDetail) GetEntryLastAt() (v string) {
+	if !p.IsSetEntryLastAt() {
+		return MemberDetail_EntryLastAt_DEFAULT
+	}
+	return p.EntryLastAt
+}
+
+var MemberDetail_EntryDeadlineAt_DEFAULT string = ""
+
+func (p *MemberDetail) GetEntryDeadlineAt() (v string) {
+	if !p.IsSetEntryDeadlineAt() {
+		return MemberDetail_EntryDeadlineAt_DEFAULT
+	}
+	return p.EntryDeadlineAt
+}
+
+var MemberDetail_ClassLastAt_DEFAULT string = ""
+
+func (p *MemberDetail) GetClassLastAt() (v string) {
+	if !p.IsSetClassLastAt() {
+		return MemberDetail_ClassLastAt_DEFAULT
+	}
+	return p.ClassLastAt
+}
+
+var fieldIDToName_MemberDetail = map[int16]string{
+	2:  "moneySum",
+	3:  "productId",
+	4:  "productName",
+	7:  "entrySum",
+	8:  "entryLastAt",
+	9:  "entryDeadlineAt",
+	10: "classLastAt",
+}
+
+func (p *MemberDetail) IsSetMoneySum() bool {
+	return p.MoneySum != MemberDetail_MoneySum_DEFAULT
+}
+
+func (p *MemberDetail) IsSetProductId() bool {
+	return p.ProductId != MemberDetail_ProductId_DEFAULT
+}
+
+func (p *MemberDetail) IsSetProductName() bool {
+	return p.ProductName != MemberDetail_ProductName_DEFAULT
+}
+
+func (p *MemberDetail) IsSetEntrySum() bool {
+	return p.EntrySum != MemberDetail_EntrySum_DEFAULT
+}
+
+func (p *MemberDetail) IsSetEntryLastAt() bool {
+	return p.EntryLastAt != MemberDetail_EntryLastAt_DEFAULT
+}
+
+func (p *MemberDetail) IsSetEntryDeadlineAt() bool {
+	return p.EntryDeadlineAt != MemberDetail_EntryDeadlineAt_DEFAULT
+}
+
+func (p *MemberDetail) IsSetClassLastAt() bool {
+	return p.ClassLastAt != MemberDetail_ClassLastAt_DEFAULT
+}
+
+func (p *MemberDetail) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 2:
+			if fieldTypeId == thrift.DOUBLE {
+				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 3:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField3(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 4:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField4(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 7:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField7(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 8:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField8(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 9:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField9(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 10:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField10(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_MemberDetail[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *MemberDetail) ReadField2(iprot thrift.TProtocol) error {
+
+	var _field float64
+	if v, err := iprot.ReadDouble(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.MoneySum = _field
+	return nil
+}
+func (p *MemberDetail) ReadField3(iprot thrift.TProtocol) error {
+
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.ProductId = _field
+	return nil
+}
+func (p *MemberDetail) ReadField4(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.ProductName = _field
+	return nil
+}
+func (p *MemberDetail) ReadField7(iprot thrift.TProtocol) error {
+
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.EntrySum = _field
+	return nil
+}
+func (p *MemberDetail) ReadField8(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.EntryLastAt = _field
+	return nil
+}
+func (p *MemberDetail) ReadField9(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.EntryDeadlineAt = _field
+	return nil
+}
+func (p *MemberDetail) ReadField10(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.ClassLastAt = _field
+	return nil
+}
+
+func (p *MemberDetail) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("MemberDetail"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField2(oprot); err != nil {
+			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField3(oprot); err != nil {
+			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
+			goto WriteFieldError
+		}
+		if err = p.writeField7(oprot); err != nil {
+			fieldId = 7
+			goto WriteFieldError
+		}
+		if err = p.writeField8(oprot); err != nil {
+			fieldId = 8
+			goto WriteFieldError
+		}
+		if err = p.writeField9(oprot); err != nil {
+			fieldId = 9
+			goto WriteFieldError
+		}
+		if err = p.writeField10(oprot); err != nil {
+			fieldId = 10
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *MemberDetail) writeField2(oprot thrift.TProtocol) (err error) {
+	if p.IsSetMoneySum() {
+		if err = oprot.WriteFieldBegin("moneySum", thrift.DOUBLE, 2); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteDouble(p.MoneySum); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *MemberDetail) writeField3(oprot thrift.TProtocol) (err error) {
+	if p.IsSetProductId() {
+		if err = oprot.WriteFieldBegin("productId", thrift.I64, 3); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI64(p.ProductId); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
+func (p *MemberDetail) writeField4(oprot thrift.TProtocol) (err error) {
+	if p.IsSetProductName() {
+		if err = oprot.WriteFieldBegin("productName", thrift.STRING, 4); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.ProductName); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
+}
+
+func (p *MemberDetail) writeField7(oprot thrift.TProtocol) (err error) {
+	if p.IsSetEntrySum() {
+		if err = oprot.WriteFieldBegin("entrySum", thrift.I64, 7); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI64(p.EntrySum); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 7 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 7 end error: ", p), err)
+}
+
+func (p *MemberDetail) writeField8(oprot thrift.TProtocol) (err error) {
+	if p.IsSetEntryLastAt() {
+		if err = oprot.WriteFieldBegin("entryLastAt", thrift.STRING, 8); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.EntryLastAt); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 end error: ", p), err)
+}
+
+func (p *MemberDetail) writeField9(oprot thrift.TProtocol) (err error) {
+	if p.IsSetEntryDeadlineAt() {
+		if err = oprot.WriteFieldBegin("entryDeadlineAt", thrift.STRING, 9); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.EntryDeadlineAt); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 end error: ", p), err)
+}
+
+func (p *MemberDetail) writeField10(oprot thrift.TProtocol) (err error) {
+	if p.IsSetClassLastAt() {
+		if err = oprot.WriteFieldBegin("classLastAt", thrift.STRING, 10); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.ClassLastAt); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 end error: ", p), err)
+}
+
+func (p *MemberDetail) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("MemberDetail(%+v)", *p)
+
+}
+
 type MemberProfile struct {
+	Name          string `thrift:"name,1,optional" form:"name" json:"name" query:"name"`
 	FatherName    string `thrift:"fatherName,2,optional" form:"fatherName" json:"fatherName" query:"fatherName"`
 	MotherName    string `thrift:"motherName,3,optional" form:"motherName" json:"motherName" query:"motherName"`
 	Grade         int64  `thrift:"grade,4,optional" form:"grade" json:"grade" query:"grade"`
@@ -1714,15 +2471,18 @@ type MemberProfile struct {
 	Age           int64  `thrift:"age,12,optional" form:"age" json:"age" query:"age"`
 	Wecom         string `thrift:"wecom,13,optional" form:"wecom" json:"wecom" query:"wecom"`
 	Birthday      string `thrift:"birthday,14,optional" form:"birthday" json:"birthday" query:"birthday"`
-	ID            int64  `thrift:"id,250,optional" form:"id" json:"id" query:"id"`
 	/**关联会员*/
 	RelationMid   int64  `thrift:"relationMid,15,optional" form:"relationMid" json:"relationMid" query:"relationMid"`
 	RelationMname string `thrift:"relationMname,16,optional" form:"relationMname" json:"relationMname" query:"relationMname"`
+	/**关联员工*/
+	RelationUid   int64  `thrift:"relationUid,17,optional" form:"relationUid" json:"relationUid" query:"relationUid"`
+	RelationUname string `thrift:"relationUname,18,optional" form:"relationUname" json:"relationUname" query:"relationUname"`
 }
 
 func NewMemberProfile() *MemberProfile {
 	return &MemberProfile{
 
+		Name:          "",
 		FatherName:    "",
 		MotherName:    "",
 		Grade:         0,
@@ -1736,13 +2496,15 @@ func NewMemberProfile() *MemberProfile {
 		Age:           0,
 		Wecom:         "",
 		Birthday:      "",
-		ID:            0,
 		RelationMid:   0,
 		RelationMname: "",
+		RelationUid:   0,
+		RelationUname: "",
 	}
 }
 
 func (p *MemberProfile) InitDefault() {
+	p.Name = ""
 	p.FatherName = ""
 	p.MotherName = ""
 	p.Grade = 0
@@ -1756,9 +2518,19 @@ func (p *MemberProfile) InitDefault() {
 	p.Age = 0
 	p.Wecom = ""
 	p.Birthday = ""
-	p.ID = 0
 	p.RelationMid = 0
 	p.RelationMname = ""
+	p.RelationUid = 0
+	p.RelationUname = ""
+}
+
+var MemberProfile_Name_DEFAULT string = ""
+
+func (p *MemberProfile) GetName() (v string) {
+	if !p.IsSetName() {
+		return MemberProfile_Name_DEFAULT
+	}
+	return p.Name
 }
 
 var MemberProfile_FatherName_DEFAULT string = ""
@@ -1878,15 +2650,6 @@ func (p *MemberProfile) GetBirthday() (v string) {
 	return p.Birthday
 }
 
-var MemberProfile_ID_DEFAULT int64 = 0
-
-func (p *MemberProfile) GetID() (v int64) {
-	if !p.IsSetID() {
-		return MemberProfile_ID_DEFAULT
-	}
-	return p.ID
-}
-
 var MemberProfile_RelationMid_DEFAULT int64 = 0
 
 func (p *MemberProfile) GetRelationMid() (v int64) {
@@ -1905,23 +2668,47 @@ func (p *MemberProfile) GetRelationMname() (v string) {
 	return p.RelationMname
 }
 
+var MemberProfile_RelationUid_DEFAULT int64 = 0
+
+func (p *MemberProfile) GetRelationUid() (v int64) {
+	if !p.IsSetRelationUid() {
+		return MemberProfile_RelationUid_DEFAULT
+	}
+	return p.RelationUid
+}
+
+var MemberProfile_RelationUname_DEFAULT string = ""
+
+func (p *MemberProfile) GetRelationUname() (v string) {
+	if !p.IsSetRelationUname() {
+		return MemberProfile_RelationUname_DEFAULT
+	}
+	return p.RelationUname
+}
+
 var fieldIDToName_MemberProfile = map[int16]string{
-	2:   "fatherName",
-	3:   "motherName",
-	4:   "grade",
-	5:   "intention",
-	6:   "source",
-	7:   "gradeName",
-	8:   "intentionName",
-	9:   "sourceName",
-	10:  "email",
-	11:  "gender",
-	12:  "age",
-	13:  "wecom",
-	14:  "birthday",
-	250: "id",
-	15:  "relationMid",
-	16:  "relationMname",
+	1:  "name",
+	2:  "fatherName",
+	3:  "motherName",
+	4:  "grade",
+	5:  "intention",
+	6:  "source",
+	7:  "gradeName",
+	8:  "intentionName",
+	9:  "sourceName",
+	10: "email",
+	11: "gender",
+	12: "age",
+	13: "wecom",
+	14: "birthday",
+	15: "relationMid",
+	16: "relationMname",
+	17: "relationUid",
+	18: "relationUname",
+}
+
+func (p *MemberProfile) IsSetName() bool {
+	return p.Name != MemberProfile_Name_DEFAULT
 }
 
 func (p *MemberProfile) IsSetFatherName() bool {
@@ -1976,16 +2763,20 @@ func (p *MemberProfile) IsSetBirthday() bool {
 	return p.Birthday != MemberProfile_Birthday_DEFAULT
 }
 
-func (p *MemberProfile) IsSetID() bool {
-	return p.ID != MemberProfile_ID_DEFAULT
-}
-
 func (p *MemberProfile) IsSetRelationMid() bool {
 	return p.RelationMid != MemberProfile_RelationMid_DEFAULT
 }
 
 func (p *MemberProfile) IsSetRelationMname() bool {
 	return p.RelationMname != MemberProfile_RelationMname_DEFAULT
+}
+
+func (p *MemberProfile) IsSetRelationUid() bool {
+	return p.RelationUid != MemberProfile_RelationUid_DEFAULT
+}
+
+func (p *MemberProfile) IsSetRelationUname() bool {
+	return p.RelationUname != MemberProfile_RelationUname_DEFAULT
 }
 
 func (p *MemberProfile) Read(iprot thrift.TProtocol) (err error) {
@@ -2007,6 +2798,14 @@ func (p *MemberProfile) Read(iprot thrift.TProtocol) (err error) {
 		}
 
 		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
 		case 2:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField2(iprot); err != nil {
@@ -2111,14 +2910,6 @@ func (p *MemberProfile) Read(iprot thrift.TProtocol) (err error) {
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
 			}
-		case 250:
-			if fieldTypeId == thrift.I64 {
-				if err = p.ReadField250(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
 		case 15:
 			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField15(iprot); err != nil {
@@ -2130,6 +2921,22 @@ func (p *MemberProfile) Read(iprot thrift.TProtocol) (err error) {
 		case 16:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField16(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 17:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField17(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 18:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField18(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -2164,6 +2971,17 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
+func (p *MemberProfile) ReadField1(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.Name = _field
+	return nil
+}
 func (p *MemberProfile) ReadField2(iprot thrift.TProtocol) error {
 
 	var _field string
@@ -2307,17 +3125,6 @@ func (p *MemberProfile) ReadField14(iprot thrift.TProtocol) error {
 	p.Birthday = _field
 	return nil
 }
-func (p *MemberProfile) ReadField250(iprot thrift.TProtocol) error {
-
-	var _field int64
-	if v, err := iprot.ReadI64(); err != nil {
-		return err
-	} else {
-		_field = v
-	}
-	p.ID = _field
-	return nil
-}
 func (p *MemberProfile) ReadField15(iprot thrift.TProtocol) error {
 
 	var _field int64
@@ -2340,6 +3147,28 @@ func (p *MemberProfile) ReadField16(iprot thrift.TProtocol) error {
 	p.RelationMname = _field
 	return nil
 }
+func (p *MemberProfile) ReadField17(iprot thrift.TProtocol) error {
+
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.RelationUid = _field
+	return nil
+}
+func (p *MemberProfile) ReadField18(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.RelationUname = _field
+	return nil
+}
 
 func (p *MemberProfile) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
@@ -2347,6 +3176,10 @@ func (p *MemberProfile) Write(oprot thrift.TProtocol) (err error) {
 		goto WriteStructBeginError
 	}
 	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
 			goto WriteFieldError
@@ -2399,16 +3232,20 @@ func (p *MemberProfile) Write(oprot thrift.TProtocol) (err error) {
 			fieldId = 14
 			goto WriteFieldError
 		}
-		if err = p.writeField250(oprot); err != nil {
-			fieldId = 250
-			goto WriteFieldError
-		}
 		if err = p.writeField15(oprot); err != nil {
 			fieldId = 15
 			goto WriteFieldError
 		}
 		if err = p.writeField16(oprot); err != nil {
 			fieldId = 16
+			goto WriteFieldError
+		}
+		if err = p.writeField17(oprot); err != nil {
+			fieldId = 17
+			goto WriteFieldError
+		}
+		if err = p.writeField18(oprot); err != nil {
+			fieldId = 18
 			goto WriteFieldError
 		}
 	}
@@ -2427,6 +3264,25 @@ WriteFieldStopError:
 	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
 WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *MemberProfile) writeField1(oprot thrift.TProtocol) (err error) {
+	if p.IsSetName() {
+		if err = oprot.WriteFieldBegin("name", thrift.STRING, 1); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.Name); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
 func (p *MemberProfile) writeField2(oprot thrift.TProtocol) (err error) {
@@ -2676,25 +3532,6 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 14 end error: ", p), err)
 }
 
-func (p *MemberProfile) writeField250(oprot thrift.TProtocol) (err error) {
-	if p.IsSetID() {
-		if err = oprot.WriteFieldBegin("id", thrift.I64, 250); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteI64(p.ID); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 250 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 250 end error: ", p), err)
-}
-
 func (p *MemberProfile) writeField15(oprot thrift.TProtocol) (err error) {
 	if p.IsSetRelationMid() {
 		if err = oprot.WriteFieldBegin("relationMid", thrift.I64, 15); err != nil {
@@ -2731,6 +3568,44 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 16 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 16 end error: ", p), err)
+}
+
+func (p *MemberProfile) writeField17(oprot thrift.TProtocol) (err error) {
+	if p.IsSetRelationUid() {
+		if err = oprot.WriteFieldBegin("relationUid", thrift.I64, 17); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI64(p.RelationUid); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 17 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 17 end error: ", p), err)
+}
+
+func (p *MemberProfile) writeField18(oprot thrift.TProtocol) (err error) {
+	if p.IsSetRelationUname() {
+		if err = oprot.WriteFieldBegin("relationUname", thrift.STRING, 18); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.RelationUname); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 18 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 18 end error: ", p), err)
 }
 
 func (p *MemberProfile) String() string {
@@ -3984,73 +4859,87 @@ func (p *MemberSearchReq) String() string {
 }
 
 type MemberProductListReq struct {
-	Page     *int64  `thrift:"page,1,optional" form:"page" json:"page" query:"page"`
-	PageSize *int64  `thrift:"pageSize,2,optional" form:"pageSize" json:"pageSize" query:"pageSize"`
-	MemberId *int64  `thrift:"memberId,3,optional" form:"memberId" json:"memberId" query:"memberId"`
-	Name     *string `thrift:"name,4,optional" form:"name" json:"name" query:"name"`
-	VenueId  *int64  `thrift:"venueId,5,optional" form:"venueId" json:"venueId" query:"venueId"`
-	Status   *int64  `thrift:"status,6,optional" form:"status" json:"status" query:"status"`
+	Page     int64  `thrift:"page,1,optional" form:"page" json:"page" query:"page"`
+	PageSize int64  `thrift:"pageSize,2,optional" form:"pageSize" json:"pageSize" query:"pageSize"`
+	MemberId int64  `thrift:"memberId,3,optional" form:"memberId" json:"memberId" query:"memberId"`
+	Name     string `thrift:"name,4,optional" form:"name" json:"name" query:"name"`
+	VenueId  int64  `thrift:"venueId,5,optional" form:"venueId" json:"venueId" query:"venueId"`
+	Status   int64  `thrift:"status,6,optional" form:"status" json:"status" query:"status"`
 }
 
 func NewMemberProductListReq() *MemberProductListReq {
-	return &MemberProductListReq{}
+	return &MemberProductListReq{
+
+		Page:     1,
+		PageSize: 10,
+		MemberId: 0,
+		Name:     "",
+		VenueId:  0,
+		Status:   0,
+	}
 }
 
 func (p *MemberProductListReq) InitDefault() {
+	p.Page = 1
+	p.PageSize = 10
+	p.MemberId = 0
+	p.Name = ""
+	p.VenueId = 0
+	p.Status = 0
 }
 
-var MemberProductListReq_Page_DEFAULT int64
+var MemberProductListReq_Page_DEFAULT int64 = 1
 
 func (p *MemberProductListReq) GetPage() (v int64) {
 	if !p.IsSetPage() {
 		return MemberProductListReq_Page_DEFAULT
 	}
-	return *p.Page
+	return p.Page
 }
 
-var MemberProductListReq_PageSize_DEFAULT int64
+var MemberProductListReq_PageSize_DEFAULT int64 = 10
 
 func (p *MemberProductListReq) GetPageSize() (v int64) {
 	if !p.IsSetPageSize() {
 		return MemberProductListReq_PageSize_DEFAULT
 	}
-	return *p.PageSize
+	return p.PageSize
 }
 
-var MemberProductListReq_MemberId_DEFAULT int64
+var MemberProductListReq_MemberId_DEFAULT int64 = 0
 
 func (p *MemberProductListReq) GetMemberId() (v int64) {
 	if !p.IsSetMemberId() {
 		return MemberProductListReq_MemberId_DEFAULT
 	}
-	return *p.MemberId
+	return p.MemberId
 }
 
-var MemberProductListReq_Name_DEFAULT string
+var MemberProductListReq_Name_DEFAULT string = ""
 
 func (p *MemberProductListReq) GetName() (v string) {
 	if !p.IsSetName() {
 		return MemberProductListReq_Name_DEFAULT
 	}
-	return *p.Name
+	return p.Name
 }
 
-var MemberProductListReq_VenueId_DEFAULT int64
+var MemberProductListReq_VenueId_DEFAULT int64 = 0
 
 func (p *MemberProductListReq) GetVenueId() (v int64) {
 	if !p.IsSetVenueId() {
 		return MemberProductListReq_VenueId_DEFAULT
 	}
-	return *p.VenueId
+	return p.VenueId
 }
 
-var MemberProductListReq_Status_DEFAULT int64
+var MemberProductListReq_Status_DEFAULT int64 = 0
 
 func (p *MemberProductListReq) GetStatus() (v int64) {
 	if !p.IsSetStatus() {
 		return MemberProductListReq_Status_DEFAULT
 	}
-	return *p.Status
+	return p.Status
 }
 
 var fieldIDToName_MemberProductListReq = map[int16]string{
@@ -4063,27 +4952,27 @@ var fieldIDToName_MemberProductListReq = map[int16]string{
 }
 
 func (p *MemberProductListReq) IsSetPage() bool {
-	return p.Page != nil
+	return p.Page != MemberProductListReq_Page_DEFAULT
 }
 
 func (p *MemberProductListReq) IsSetPageSize() bool {
-	return p.PageSize != nil
+	return p.PageSize != MemberProductListReq_PageSize_DEFAULT
 }
 
 func (p *MemberProductListReq) IsSetMemberId() bool {
-	return p.MemberId != nil
+	return p.MemberId != MemberProductListReq_MemberId_DEFAULT
 }
 
 func (p *MemberProductListReq) IsSetName() bool {
-	return p.Name != nil
+	return p.Name != MemberProductListReq_Name_DEFAULT
 }
 
 func (p *MemberProductListReq) IsSetVenueId() bool {
-	return p.VenueId != nil
+	return p.VenueId != MemberProductListReq_VenueId_DEFAULT
 }
 
 func (p *MemberProductListReq) IsSetStatus() bool {
-	return p.Status != nil
+	return p.Status != MemberProductListReq_Status_DEFAULT
 }
 
 func (p *MemberProductListReq) Read(iprot thrift.TProtocol) (err error) {
@@ -4184,66 +5073,66 @@ ReadStructEndError:
 
 func (p *MemberProductListReq) ReadField1(iprot thrift.TProtocol) error {
 
-	var _field *int64
+	var _field int64
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
-		_field = &v
+		_field = v
 	}
 	p.Page = _field
 	return nil
 }
 func (p *MemberProductListReq) ReadField2(iprot thrift.TProtocol) error {
 
-	var _field *int64
+	var _field int64
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
-		_field = &v
+		_field = v
 	}
 	p.PageSize = _field
 	return nil
 }
 func (p *MemberProductListReq) ReadField3(iprot thrift.TProtocol) error {
 
-	var _field *int64
+	var _field int64
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
-		_field = &v
+		_field = v
 	}
 	p.MemberId = _field
 	return nil
 }
 func (p *MemberProductListReq) ReadField4(iprot thrift.TProtocol) error {
 
-	var _field *string
+	var _field string
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		_field = &v
+		_field = v
 	}
 	p.Name = _field
 	return nil
 }
 func (p *MemberProductListReq) ReadField5(iprot thrift.TProtocol) error {
 
-	var _field *int64
+	var _field int64
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
-		_field = &v
+		_field = v
 	}
 	p.VenueId = _field
 	return nil
 }
 func (p *MemberProductListReq) ReadField6(iprot thrift.TProtocol) error {
 
-	var _field *int64
+	var _field int64
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
-		_field = &v
+		_field = v
 	}
 	p.Status = _field
 	return nil
@@ -4302,7 +5191,7 @@ func (p *MemberProductListReq) writeField1(oprot thrift.TProtocol) (err error) {
 		if err = oprot.WriteFieldBegin("page", thrift.I64, 1); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI64(*p.Page); err != nil {
+		if err := oprot.WriteI64(p.Page); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -4321,7 +5210,7 @@ func (p *MemberProductListReq) writeField2(oprot thrift.TProtocol) (err error) {
 		if err = oprot.WriteFieldBegin("pageSize", thrift.I64, 2); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI64(*p.PageSize); err != nil {
+		if err := oprot.WriteI64(p.PageSize); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -4340,7 +5229,7 @@ func (p *MemberProductListReq) writeField3(oprot thrift.TProtocol) (err error) {
 		if err = oprot.WriteFieldBegin("memberId", thrift.I64, 3); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI64(*p.MemberId); err != nil {
+		if err := oprot.WriteI64(p.MemberId); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -4359,7 +5248,7 @@ func (p *MemberProductListReq) writeField4(oprot thrift.TProtocol) (err error) {
 		if err = oprot.WriteFieldBegin("name", thrift.STRING, 4); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(*p.Name); err != nil {
+		if err := oprot.WriteString(p.Name); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -4378,7 +5267,7 @@ func (p *MemberProductListReq) writeField5(oprot thrift.TProtocol) (err error) {
 		if err = oprot.WriteFieldBegin("venueId", thrift.I64, 5); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI64(*p.VenueId); err != nil {
+		if err := oprot.WriteI64(p.VenueId); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -4397,7 +5286,7 @@ func (p *MemberProductListReq) writeField6(oprot thrift.TProtocol) (err error) {
 		if err = oprot.WriteFieldBegin("status", thrift.I64, 6); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI64(*p.Status); err != nil {
+		if err := oprot.WriteI64(p.Status); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -7701,25 +8590,25 @@ func (p *MemberProductInfo) String() string {
 }
 
 type MemberPropertyInfo struct {
-	ID              int64            `thrift:"id,1,optional" form:"id" json:"id" query:"id"`
-	Sn              string           `thrift:"sn,2,optional" form:"sn" json:"sn" query:"sn"`
-	MemberId        int64            `thrift:"memberId,3,optional" form:"memberId" json:"memberId" query:"memberId"`
-	MemberProductId int64            `thrift:"memberProductId,4,optional" form:"memberProductId" json:"memberProductId" query:"memberProductId"`
-	PropertyId      int64            `thrift:"propertyId,5,optional" form:"propertyId" json:"propertyId" query:"propertyId"`
-	Name            string           `thrift:"name,6,optional" form:"name" json:"name" query:"name"`
-	Price           float64          `thrift:"price,7,optional" form:"price" json:"price" query:"price"`
-	Duration        int64            `thrift:"duration,8,optional" form:"duration" json:"duration" query:"duration"`
-	Length          int64            `thrift:"length,9,optional" form:"length" json:"length" query:"length"`
-	Count           int64            `thrift:"count,10,optional" form:"count" json:"count" query:"count"`
-	CountSurplus    int64            `thrift:"countSurplus,11,optional" form:"countSurplus" json:"countSurplus" query:"countSurplus"`
-	Type            string           `thrift:"type,12,optional" form:"type" json:"type" query:"type"`
-	Status          int64            `thrift:"status,13,optional" form:"status" json:"status" query:"status"`
-	CreatedAt       string           `thrift:"createdAt,14,optional" form:"createdAt" json:"createdAt" query:"createdAt"`
-	ValidityAt      string           `thrift:"validityAt,15,optional" form:"validityAt" json:"validityAt" query:"validityAt"`
-	CancelAt        string           `thrift:"cancelAt,16,optional" form:"cancelAt" json:"cancelAt" query:"cancelAt"`
-	Venue           []*PropertyVenue `thrift:"venue,17,optional" form:"venue" json:"venue" query:"venue"`
-	VenueId         []int64          `thrift:"venueId,18,optional" form:"venueId" json:"venueId" query:"venueId"`
-	Venues          string           `thrift:"venues,19,optional" form:"venues" json:"venues" query:"venues"`
+	ID              int64        `thrift:"id,1,optional" form:"id" json:"id" query:"id"`
+	Sn              string       `thrift:"sn,2,optional" form:"sn" json:"sn" query:"sn"`
+	MemberId        int64        `thrift:"memberId,3,optional" form:"memberId" json:"memberId" query:"memberId"`
+	MemberProductId int64        `thrift:"memberProductId,4,optional" form:"memberProductId" json:"memberProductId" query:"memberProductId"`
+	PropertyId      int64        `thrift:"propertyId,5,optional" form:"propertyId" json:"propertyId" query:"propertyId"`
+	Name            string       `thrift:"name,6,optional" form:"name" json:"name" query:"name"`
+	Price           float64      `thrift:"price,7,optional" form:"price" json:"price" query:"price"`
+	Duration        int64        `thrift:"duration,8,optional" form:"duration" json:"duration" query:"duration"`
+	Length          int64        `thrift:"length,9,optional" form:"length" json:"length" query:"length"`
+	Count           int64        `thrift:"count,10,optional" form:"count" json:"count" query:"count"`
+	CountSurplus    int64        `thrift:"countSurplus,11,optional" form:"countSurplus" json:"countSurplus" query:"countSurplus"`
+	Type            string       `thrift:"type,12,optional" form:"type" json:"type" query:"type"`
+	Status          int64        `thrift:"status,13,optional" form:"status" json:"status" query:"status"`
+	CreatedAt       string       `thrift:"createdAt,14,optional" form:"createdAt" json:"createdAt" query:"createdAt"`
+	ValidityAt      string       `thrift:"validityAt,15,optional" form:"validityAt" json:"validityAt" query:"validityAt"`
+	CancelAt        string       `thrift:"cancelAt,16,optional" form:"cancelAt" json:"cancelAt" query:"cancelAt"`
+	Venue           []*base.List `thrift:"venue,17,optional" form:"venue" json:"venue" query:"venue"`
+	VenueId         []int64      `thrift:"venueId,18,optional" form:"venueId" json:"venueId" query:"venueId"`
+	Venues          string       `thrift:"venues,19,optional" form:"venues" json:"venues" query:"venues"`
 }
 
 func NewMemberPropertyInfo() *MemberPropertyInfo {
@@ -7741,7 +8630,7 @@ func NewMemberPropertyInfo() *MemberPropertyInfo {
 		CreatedAt:       "",
 		ValidityAt:      "",
 		CancelAt:        "",
-		Venue:           []*PropertyVenue{},
+		Venue:           []*base.List{},
 		VenueId:         []int64{},
 		Venues:          "",
 	}
@@ -7764,7 +8653,7 @@ func (p *MemberPropertyInfo) InitDefault() {
 	p.CreatedAt = ""
 	p.ValidityAt = ""
 	p.CancelAt = ""
-	p.Venue = []*PropertyVenue{}
+	p.Venue = []*base.List{}
 	p.VenueId = []int64{}
 	p.Venues = ""
 }
@@ -7913,9 +8802,9 @@ func (p *MemberPropertyInfo) GetCancelAt() (v string) {
 	return p.CancelAt
 }
 
-var MemberPropertyInfo_Venue_DEFAULT []*PropertyVenue = []*PropertyVenue{}
+var MemberPropertyInfo_Venue_DEFAULT []*base.List = []*base.List{}
 
-func (p *MemberPropertyInfo) GetVenue() (v []*PropertyVenue) {
+func (p *MemberPropertyInfo) GetVenue() (v []*base.List) {
 	if !p.IsSetVenue() {
 		return MemberPropertyInfo_Venue_DEFAULT
 	}
@@ -8419,8 +9308,8 @@ func (p *MemberPropertyInfo) ReadField17(iprot thrift.TProtocol) error {
 	if err != nil {
 		return err
 	}
-	_field := make([]*PropertyVenue, 0, size)
-	values := make([]PropertyVenue, size)
+	_field := make([]*base.List, 0, size)
+	values := make([]base.List, size)
 	for i := 0; i < size; i++ {
 		_elem := &values[i]
 		_elem.InitDefault()
@@ -8954,220 +9843,6 @@ func (p *MemberPropertyInfo) String() string {
 		return "<nil>"
 	}
 	return fmt.Sprintf("MemberPropertyInfo(%+v)", *p)
-
-}
-
-type PropertyVenue struct {
-	VenueId   int64  `thrift:"venueId,1,optional" form:"venueId" json:"venueId" query:"venueId"`
-	VenueName string `thrift:"venueName,2,optional" form:"venueName" json:"venueName" query:"venueName"`
-}
-
-func NewPropertyVenue() *PropertyVenue {
-	return &PropertyVenue{
-
-		VenueId:   0,
-		VenueName: "",
-	}
-}
-
-func (p *PropertyVenue) InitDefault() {
-	p.VenueId = 0
-	p.VenueName = ""
-}
-
-var PropertyVenue_VenueId_DEFAULT int64 = 0
-
-func (p *PropertyVenue) GetVenueId() (v int64) {
-	if !p.IsSetVenueId() {
-		return PropertyVenue_VenueId_DEFAULT
-	}
-	return p.VenueId
-}
-
-var PropertyVenue_VenueName_DEFAULT string = ""
-
-func (p *PropertyVenue) GetVenueName() (v string) {
-	if !p.IsSetVenueName() {
-		return PropertyVenue_VenueName_DEFAULT
-	}
-	return p.VenueName
-}
-
-var fieldIDToName_PropertyVenue = map[int16]string{
-	1: "venueId",
-	2: "venueName",
-}
-
-func (p *PropertyVenue) IsSetVenueId() bool {
-	return p.VenueId != PropertyVenue_VenueId_DEFAULT
-}
-
-func (p *PropertyVenue) IsSetVenueName() bool {
-	return p.VenueName != PropertyVenue_VenueName_DEFAULT
-}
-
-func (p *PropertyVenue) Read(iprot thrift.TProtocol) (err error) {
-
-	var fieldTypeId thrift.TType
-	var fieldId int16
-
-	if _, err = iprot.ReadStructBegin(); err != nil {
-		goto ReadStructBeginError
-	}
-
-	for {
-		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
-		if err != nil {
-			goto ReadFieldBeginError
-		}
-		if fieldTypeId == thrift.STOP {
-			break
-		}
-
-		switch fieldId {
-		case 1:
-			if fieldTypeId == thrift.I64 {
-				if err = p.ReadField1(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 2:
-			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField2(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		default:
-			if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		}
-		if err = iprot.ReadFieldEnd(); err != nil {
-			goto ReadFieldEndError
-		}
-	}
-	if err = iprot.ReadStructEnd(); err != nil {
-		goto ReadStructEndError
-	}
-
-	return nil
-ReadStructBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
-ReadFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
-ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_PropertyVenue[fieldId]), err)
-SkipFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
-
-ReadFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
-ReadStructEndError:
-	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-}
-
-func (p *PropertyVenue) ReadField1(iprot thrift.TProtocol) error {
-
-	var _field int64
-	if v, err := iprot.ReadI64(); err != nil {
-		return err
-	} else {
-		_field = v
-	}
-	p.VenueId = _field
-	return nil
-}
-func (p *PropertyVenue) ReadField2(iprot thrift.TProtocol) error {
-
-	var _field string
-	if v, err := iprot.ReadString(); err != nil {
-		return err
-	} else {
-		_field = v
-	}
-	p.VenueName = _field
-	return nil
-}
-
-func (p *PropertyVenue) Write(oprot thrift.TProtocol) (err error) {
-	var fieldId int16
-	if err = oprot.WriteStructBegin("PropertyVenue"); err != nil {
-		goto WriteStructBeginError
-	}
-	if p != nil {
-		if err = p.writeField1(oprot); err != nil {
-			fieldId = 1
-			goto WriteFieldError
-		}
-		if err = p.writeField2(oprot); err != nil {
-			fieldId = 2
-			goto WriteFieldError
-		}
-	}
-	if err = oprot.WriteFieldStop(); err != nil {
-		goto WriteFieldStopError
-	}
-	if err = oprot.WriteStructEnd(); err != nil {
-		goto WriteStructEndError
-	}
-	return nil
-WriteStructBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
-WriteFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
-WriteFieldStopError:
-	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
-WriteStructEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
-}
-
-func (p *PropertyVenue) writeField1(oprot thrift.TProtocol) (err error) {
-	if p.IsSetVenueId() {
-		if err = oprot.WriteFieldBegin("venueId", thrift.I64, 1); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteI64(p.VenueId); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
-}
-
-func (p *PropertyVenue) writeField2(oprot thrift.TProtocol) (err error) {
-	if p.IsSetVenueName() {
-		if err = oprot.WriteFieldBegin("venueName", thrift.STRING, 2); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteString(p.VenueName); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
-}
-
-func (p *PropertyVenue) String() string {
-	if p == nil {
-		return "<nil>"
-	}
-	return fmt.Sprintf("PropertyVenue(%+v)", *p)
 
 }
 

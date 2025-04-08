@@ -47,9 +47,11 @@ type DictionaryDetail struct {
 type DictionaryDetailEdges struct {
 	// Dictionary holds the value of the dictionary edge.
 	Dictionary *Dictionary `json:"dictionary,omitempty"`
+	// Property holds the value of the property edge.
+	Property []*ProductProperty `json:"property,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // DictionaryOrErr returns the Dictionary value or an error if the edge
@@ -61,6 +63,15 @@ func (e DictionaryDetailEdges) DictionaryOrErr() (*Dictionary, error) {
 		return nil, &NotFoundError{label: dictionary.Label}
 	}
 	return nil, &NotLoadedError{edge: "dictionary"}
+}
+
+// PropertyOrErr returns the Property value or an error if the edge
+// was not loaded in eager-loading.
+func (e DictionaryDetailEdges) PropertyOrErr() ([]*ProductProperty, error) {
+	if e.loadedTypes[1] {
+		return e.Property, nil
+	}
+	return nil, &NotLoadedError{edge: "property"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -165,6 +176,11 @@ func (dd *DictionaryDetail) GetValue(name string) (ent.Value, error) {
 // QueryDictionary queries the "dictionary" edge of the DictionaryDetail entity.
 func (dd *DictionaryDetail) QueryDictionary() *DictionaryQuery {
 	return NewDictionaryDetailClient(dd.config).QueryDictionary(dd)
+}
+
+// QueryProperty queries the "property" edge of the DictionaryDetail entity.
+func (dd *DictionaryDetail) QueryProperty() *ProductPropertyQuery {
+	return NewDictionaryDetailClient(dd.config).QueryProperty(dd)
 }
 
 // Update returns a builder for updating this DictionaryDetail.

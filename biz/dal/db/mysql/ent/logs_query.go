@@ -22,6 +22,7 @@ type LogsQuery struct {
 	order      []logs.OrderOption
 	inters     []Interceptor
 	predicates []predicate.Logs
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -251,8 +252,9 @@ func (lq *LogsQuery) Clone() *LogsQuery {
 		inters:     append([]Interceptor{}, lq.inters...),
 		predicates: append([]predicate.Logs{}, lq.predicates...),
 		// clone intermediate query.
-		sql:  lq.sql.Clone(),
-		path: lq.path,
+		sql:       lq.sql.Clone(),
+		path:      lq.path,
+		modifiers: append([]func(*sql.Selector){}, lq.modifiers...),
 	}
 }
 
@@ -343,6 +345,9 @@ func (lq *LogsQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Logs, e
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
+	if len(lq.modifiers) > 0 {
+		_spec.Modifiers = lq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -357,6 +362,9 @@ func (lq *LogsQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Logs, e
 
 func (lq *LogsQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := lq.querySpec()
+	if len(lq.modifiers) > 0 {
+		_spec.Modifiers = lq.modifiers
+	}
 	_spec.Node.Columns = lq.ctx.Fields
 	if len(lq.ctx.Fields) > 0 {
 		_spec.Unique = lq.ctx.Unique != nil && *lq.ctx.Unique
@@ -419,6 +427,9 @@ func (lq *LogsQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if lq.ctx.Unique != nil && *lq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range lq.modifiers {
+		m(selector)
+	}
 	for _, p := range lq.predicates {
 		p(selector)
 	}
@@ -434,6 +445,12 @@ func (lq *LogsQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (lq *LogsQuery) Modify(modifiers ...func(s *sql.Selector)) *LogsSelect {
+	lq.modifiers = append(lq.modifiers, modifiers...)
+	return lq.Select()
 }
 
 // LogsGroupBy is the group-by builder for Logs entities.
@@ -524,4 +541,10 @@ func (ls *LogsSelect) sqlScan(ctx context.Context, root *LogsQuery, v any) error
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (ls *LogsSelect) Modify(modifiers ...func(s *sql.Selector)) *LogsSelect {
+	ls.modifiers = append(ls.modifiers, modifiers...)
+	return ls
 }

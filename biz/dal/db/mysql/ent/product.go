@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/product"
 	"strings"
@@ -40,6 +41,12 @@ type Product struct {
 	Stock int64 `json:"stock,omitempty"`
 	// 创建人id
 	CreateID int64 `json:"create_id,omitempty"`
+	// 销售方式 1会员端 2PC端
+	IsSales []int64 `json:"is_sales,omitempty"`
+	// 开始售卖时间
+	SignSalesAt time.Time `json:"sign_sales_at,omitempty"`
+	// 结束售卖时间
+	EndSalesAt time.Time `json:"end_sales_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ProductQuery when eager-loading is set.
 	Edges        ProductEdges `json:"edges"`
@@ -48,17 +55,28 @@ type Product struct {
 
 // ProductEdges holds the relations/edges for other nodes in the graph.
 type ProductEdges struct {
+	// Venues holds the value of the venues edge.
+	Venues []*Venue `json:"venues,omitempty"`
 	// Propertys holds the value of the propertys edge.
 	Propertys []*ProductProperty `json:"propertys,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
+}
+
+// VenuesOrErr returns the Venues value or an error if the edge
+// was not loaded in eager-loading.
+func (e ProductEdges) VenuesOrErr() ([]*Venue, error) {
+	if e.loadedTypes[0] {
+		return e.Venues, nil
+	}
+	return nil, &NotLoadedError{edge: "venues"}
 }
 
 // PropertysOrErr returns the Propertys value or an error if the edge
 // was not loaded in eager-loading.
 func (e ProductEdges) PropertysOrErr() ([]*ProductProperty, error) {
-	if e.loadedTypes[0] {
+	if e.loadedTypes[1] {
 		return e.Propertys, nil
 	}
 	return nil, &NotLoadedError{edge: "propertys"}
@@ -69,13 +87,15 @@ func (*Product) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case product.FieldIsSales:
+			values[i] = new([]byte)
 		case product.FieldPrice:
 			values[i] = new(sql.NullFloat64)
 		case product.FieldID, product.FieldDelete, product.FieldCreatedID, product.FieldStatus, product.FieldStock, product.FieldCreateID:
 			values[i] = new(sql.NullInt64)
 		case product.FieldName, product.FieldPic, product.FieldDescription:
 			values[i] = new(sql.NullString)
-		case product.FieldCreatedAt, product.FieldUpdatedAt:
+		case product.FieldCreatedAt, product.FieldUpdatedAt, product.FieldSignSalesAt, product.FieldEndSalesAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -164,6 +184,26 @@ func (pr *Product) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				pr.CreateID = value.Int64
 			}
+		case product.FieldIsSales:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field is_sales", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &pr.IsSales); err != nil {
+					return fmt.Errorf("unmarshal field is_sales: %w", err)
+				}
+			}
+		case product.FieldSignSalesAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field sign_sales_at", values[i])
+			} else if value.Valid {
+				pr.SignSalesAt = value.Time
+			}
+		case product.FieldEndSalesAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field end_sales_at", values[i])
+			} else if value.Valid {
+				pr.EndSalesAt = value.Time
+			}
 		default:
 			pr.selectValues.Set(columns[i], values[i])
 		}
@@ -175,6 +215,11 @@ func (pr *Product) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (pr *Product) Value(name string) (ent.Value, error) {
 	return pr.selectValues.Get(name)
+}
+
+// QueryVenues queries the "venues" edge of the Product entity.
+func (pr *Product) QueryVenues() *VenueQuery {
+	return NewProductClient(pr.config).QueryVenues(pr)
 }
 
 // QueryPropertys queries the "propertys" edge of the Product entity.
@@ -237,6 +282,15 @@ func (pr *Product) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("create_id=")
 	builder.WriteString(fmt.Sprintf("%v", pr.CreateID))
+	builder.WriteString(", ")
+	builder.WriteString("is_sales=")
+	builder.WriteString(fmt.Sprintf("%v", pr.IsSales))
+	builder.WriteString(", ")
+	builder.WriteString("sign_sales_at=")
+	builder.WriteString(pr.SignSalesAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("end_sales_at=")
+	builder.WriteString(pr.EndSalesAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -29,24 +29,12 @@ type MemberDetails struct {
 	CreatedID int64 `json:"created_id,omitempty"`
 	// 会员id
 	MemberID int64 `json:"member_id,omitempty"`
-	// email | 邮箱号
-	Email string `json:"email,omitempty"`
-	// wecom | 微信号
-	Wecom string `json:"wecom,omitempty"`
-	// 性别 | [0:女性;1:男性;3:保密]
-	Gender int64 `json:"gender,omitempty"`
-	// 出生日期
-	Birthday time.Time `json:"birthday,omitempty"`
 	// 消费总金额
 	MoneySum float64 `json:"money_sum,omitempty"`
 	// 首次的产品
 	ProductID int64 `json:"product_id,omitempty"`
 	// 首次的产品
 	ProductName string `json:"product_name,omitempty"`
-	// 首次消费场馆
-	ProductVenue int64 `json:"product_venue,omitempty"`
-	// 首次消费场馆
-	ProductVenueName string `json:"product_venue_name,omitempty"`
 	// 进馆总次数
 	EntrySum int64 `json:"entry_sum,omitempty"`
 	// 最后一次进馆时间
@@ -55,18 +43,6 @@ type MemberDetails struct {
 	EntryDeadlineAt time.Time `json:"entry_deadline_at,omitempty"`
 	// 最后一次上课时间
 	ClassLastAt time.Time `json:"class_last_at,omitempty"`
-	// 关联员工
-	RelationUID int64 `json:"relation_uid,omitempty"`
-	// 关联员工
-	RelationUname string `json:"relation_uname,omitempty"`
-	// 关联会员
-	RelationMid int64 `json:"relation_mid,omitempty"`
-	// 关联会员
-	RelationMame string `json:"relation_mame,omitempty"`
-	// 创建人
-	CreateID int64 `json:"create_id,omitempty"`
-	// 创建人
-	CreateName string `json:"create_name,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MemberDetailsQuery when eager-loading is set.
 	Edges        MemberDetailsEdges `json:"edges"`
@@ -75,22 +51,22 @@ type MemberDetails struct {
 
 // MemberDetailsEdges holds the relations/edges for other nodes in the graph.
 type MemberDetailsEdges struct {
-	// Info holds the value of the info edge.
-	Info *Member `json:"info,omitempty"`
+	// Member holds the value of the member edge.
+	Member *Member `json:"member,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
-// InfoOrErr returns the Info value or an error if the edge
+// MemberOrErr returns the Member value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e MemberDetailsEdges) InfoOrErr() (*Member, error) {
-	if e.Info != nil {
-		return e.Info, nil
+func (e MemberDetailsEdges) MemberOrErr() (*Member, error) {
+	if e.Member != nil {
+		return e.Member, nil
 	} else if e.loadedTypes[0] {
 		return nil, &NotFoundError{label: member.Label}
 	}
-	return nil, &NotLoadedError{edge: "info"}
+	return nil, &NotLoadedError{edge: "member"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -100,11 +76,11 @@ func (*MemberDetails) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case memberdetails.FieldMoneySum:
 			values[i] = new(sql.NullFloat64)
-		case memberdetails.FieldID, memberdetails.FieldDelete, memberdetails.FieldCreatedID, memberdetails.FieldMemberID, memberdetails.FieldGender, memberdetails.FieldProductID, memberdetails.FieldProductVenue, memberdetails.FieldEntrySum, memberdetails.FieldRelationUID, memberdetails.FieldRelationMid, memberdetails.FieldCreateID:
+		case memberdetails.FieldID, memberdetails.FieldDelete, memberdetails.FieldCreatedID, memberdetails.FieldMemberID, memberdetails.FieldProductID, memberdetails.FieldEntrySum:
 			values[i] = new(sql.NullInt64)
-		case memberdetails.FieldEmail, memberdetails.FieldWecom, memberdetails.FieldProductName, memberdetails.FieldProductVenueName, memberdetails.FieldRelationUname, memberdetails.FieldRelationMame, memberdetails.FieldCreateName:
+		case memberdetails.FieldProductName:
 			values[i] = new(sql.NullString)
-		case memberdetails.FieldCreatedAt, memberdetails.FieldUpdatedAt, memberdetails.FieldBirthday, memberdetails.FieldEntryLastAt, memberdetails.FieldEntryDeadlineAt, memberdetails.FieldClassLastAt:
+		case memberdetails.FieldCreatedAt, memberdetails.FieldUpdatedAt, memberdetails.FieldEntryLastAt, memberdetails.FieldEntryDeadlineAt, memberdetails.FieldClassLastAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -157,30 +133,6 @@ func (md *MemberDetails) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				md.MemberID = value.Int64
 			}
-		case memberdetails.FieldEmail:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field email", values[i])
-			} else if value.Valid {
-				md.Email = value.String
-			}
-		case memberdetails.FieldWecom:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field wecom", values[i])
-			} else if value.Valid {
-				md.Wecom = value.String
-			}
-		case memberdetails.FieldGender:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field gender", values[i])
-			} else if value.Valid {
-				md.Gender = value.Int64
-			}
-		case memberdetails.FieldBirthday:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field birthday", values[i])
-			} else if value.Valid {
-				md.Birthday = value.Time
-			}
 		case memberdetails.FieldMoneySum:
 			if value, ok := values[i].(*sql.NullFloat64); !ok {
 				return fmt.Errorf("unexpected type %T for field money_sum", values[i])
@@ -198,18 +150,6 @@ func (md *MemberDetails) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field product_name", values[i])
 			} else if value.Valid {
 				md.ProductName = value.String
-			}
-		case memberdetails.FieldProductVenue:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field product_venue", values[i])
-			} else if value.Valid {
-				md.ProductVenue = value.Int64
-			}
-		case memberdetails.FieldProductVenueName:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field product_venue_name", values[i])
-			} else if value.Valid {
-				md.ProductVenueName = value.String
 			}
 		case memberdetails.FieldEntrySum:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -235,42 +175,6 @@ func (md *MemberDetails) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				md.ClassLastAt = value.Time
 			}
-		case memberdetails.FieldRelationUID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field relation_uid", values[i])
-			} else if value.Valid {
-				md.RelationUID = value.Int64
-			}
-		case memberdetails.FieldRelationUname:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field relation_uname", values[i])
-			} else if value.Valid {
-				md.RelationUname = value.String
-			}
-		case memberdetails.FieldRelationMid:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field relation_mid", values[i])
-			} else if value.Valid {
-				md.RelationMid = value.Int64
-			}
-		case memberdetails.FieldRelationMame:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field relation_mame", values[i])
-			} else if value.Valid {
-				md.RelationMame = value.String
-			}
-		case memberdetails.FieldCreateID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field create_id", values[i])
-			} else if value.Valid {
-				md.CreateID = value.Int64
-			}
-		case memberdetails.FieldCreateName:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field create_name", values[i])
-			} else if value.Valid {
-				md.CreateName = value.String
-			}
 		default:
 			md.selectValues.Set(columns[i], values[i])
 		}
@@ -284,9 +188,9 @@ func (md *MemberDetails) Value(name string) (ent.Value, error) {
 	return md.selectValues.Get(name)
 }
 
-// QueryInfo queries the "info" edge of the MemberDetails entity.
-func (md *MemberDetails) QueryInfo() *MemberQuery {
-	return NewMemberDetailsClient(md.config).QueryInfo(md)
+// QueryMember queries the "member" edge of the MemberDetails entity.
+func (md *MemberDetails) QueryMember() *MemberQuery {
+	return NewMemberDetailsClient(md.config).QueryMember(md)
 }
 
 // Update returns a builder for updating this MemberDetails.
@@ -327,18 +231,6 @@ func (md *MemberDetails) String() string {
 	builder.WriteString("member_id=")
 	builder.WriteString(fmt.Sprintf("%v", md.MemberID))
 	builder.WriteString(", ")
-	builder.WriteString("email=")
-	builder.WriteString(md.Email)
-	builder.WriteString(", ")
-	builder.WriteString("wecom=")
-	builder.WriteString(md.Wecom)
-	builder.WriteString(", ")
-	builder.WriteString("gender=")
-	builder.WriteString(fmt.Sprintf("%v", md.Gender))
-	builder.WriteString(", ")
-	builder.WriteString("birthday=")
-	builder.WriteString(md.Birthday.Format(time.ANSIC))
-	builder.WriteString(", ")
 	builder.WriteString("money_sum=")
 	builder.WriteString(fmt.Sprintf("%v", md.MoneySum))
 	builder.WriteString(", ")
@@ -347,12 +239,6 @@ func (md *MemberDetails) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("product_name=")
 	builder.WriteString(md.ProductName)
-	builder.WriteString(", ")
-	builder.WriteString("product_venue=")
-	builder.WriteString(fmt.Sprintf("%v", md.ProductVenue))
-	builder.WriteString(", ")
-	builder.WriteString("product_venue_name=")
-	builder.WriteString(md.ProductVenueName)
 	builder.WriteString(", ")
 	builder.WriteString("entry_sum=")
 	builder.WriteString(fmt.Sprintf("%v", md.EntrySum))
@@ -365,24 +251,6 @@ func (md *MemberDetails) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("class_last_at=")
 	builder.WriteString(md.ClassLastAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("relation_uid=")
-	builder.WriteString(fmt.Sprintf("%v", md.RelationUID))
-	builder.WriteString(", ")
-	builder.WriteString("relation_uname=")
-	builder.WriteString(md.RelationUname)
-	builder.WriteString(", ")
-	builder.WriteString("relation_mid=")
-	builder.WriteString(fmt.Sprintf("%v", md.RelationMid))
-	builder.WriteString(", ")
-	builder.WriteString("relation_mame=")
-	builder.WriteString(md.RelationMame)
-	builder.WriteString(", ")
-	builder.WriteString("create_id=")
-	builder.WriteString(fmt.Sprintf("%v", md.CreateID))
-	builder.WriteString(", ")
-	builder.WriteString("create_name=")
-	builder.WriteString(md.CreateName)
 	builder.WriteByte(')')
 	return builder.String()
 }

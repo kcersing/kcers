@@ -5,6 +5,8 @@ package ent
 import (
 	"context"
 	"fmt"
+	"kcers/biz/dal/db/mysql/ent/contract"
+	"kcers/biz/dal/db/mysql/ent/dictionarydetail"
 	"kcers/biz/dal/db/mysql/ent/product"
 	"kcers/biz/dal/db/mysql/ent/productproperty"
 	"kcers/biz/dal/db/mysql/ent/venue"
@@ -224,6 +226,36 @@ func (ppc *ProductPropertyCreate) AddProduct(p ...*Product) *ProductPropertyCrea
 	return ppc.AddProductIDs(ids...)
 }
 
+// AddTagIDs adds the "tags" edge to the DictionaryDetail entity by IDs.
+func (ppc *ProductPropertyCreate) AddTagIDs(ids ...int64) *ProductPropertyCreate {
+	ppc.mutation.AddTagIDs(ids...)
+	return ppc
+}
+
+// AddTags adds the "tags" edges to the DictionaryDetail entity.
+func (ppc *ProductPropertyCreate) AddTags(d ...*DictionaryDetail) *ProductPropertyCreate {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return ppc.AddTagIDs(ids...)
+}
+
+// AddContractIDs adds the "contracts" edge to the Contract entity by IDs.
+func (ppc *ProductPropertyCreate) AddContractIDs(ids ...int64) *ProductPropertyCreate {
+	ppc.mutation.AddContractIDs(ids...)
+	return ppc
+}
+
+// AddContracts adds the "contracts" edges to the Contract entity.
+func (ppc *ProductPropertyCreate) AddContracts(c ...*Contract) *ProductPropertyCreate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return ppc.AddContractIDs(ids...)
+}
+
 // AddVenueIDs adds the "venues" edge to the Venue entity by IDs.
 func (ppc *ProductPropertyCreate) AddVenueIDs(ids ...int64) *ProductPropertyCreate {
 	ppc.mutation.AddVenueIDs(ids...)
@@ -391,6 +423,38 @@ func (ppc *ProductPropertyCreate) createSpec() (*ProductProperty, *sqlgraph.Crea
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(product.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ppc.mutation.TagsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   productproperty.TagsTable,
+			Columns: productproperty.TagsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(dictionarydetail.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ppc.mutation.ContractsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   productproperty.ContractsTable,
+			Columns: productproperty.ContractsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(contract.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

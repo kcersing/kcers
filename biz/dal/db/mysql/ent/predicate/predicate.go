@@ -51,6 +51,9 @@ type MemberProduct func(*sql.Selector)
 // MemberProductProperty is the predicate function for memberproductproperty builders.
 type MemberProductProperty func(*sql.Selector)
 
+// MemberProfile is the predicate function for memberprofile builders.
+type MemberProfile func(*sql.Selector)
+
 // Menu is the predicate function for menu builders.
 type Menu func(*sql.Selector)
 
@@ -92,6 +95,12 @@ type ScheduleCoach func(*sql.Selector)
 
 // ScheduleMember is the predicate function for schedulemember builders.
 type ScheduleMember func(*sql.Selector)
+
+// Sms is the predicate function for sms builders.
+type Sms func(*sql.Selector)
+
+// SmsLog is the predicate function for smslog builders.
+type SmsLog func(*sql.Selector)
 
 // Token is the predicate function for token builders.
 type Token func(*sql.Selector)

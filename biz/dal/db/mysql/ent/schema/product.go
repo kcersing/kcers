@@ -23,6 +23,10 @@ func (Product) Fields() []ent.Field {
 		field.Float("price").Comment("价格").Optional(),
 		field.Int64("stock").Comment("库存").Optional(),
 		field.Int64("create_id").Comment("创建人id").Optional(),
+
+		field.JSON("is_sales", []int64{}).Comment("销售方式 1会员端 2PC端").Optional(),
+		field.Time("sign_sales_at").Comment("开始售卖时间").Optional(),
+		field.Time("end_sales_at").Comment("结束售卖时间").Optional(),
 	}
 }
 
@@ -35,6 +39,9 @@ func (Product) Mixin() []ent.Mixin {
 
 func (Product) Edges() []ent.Edge {
 	return []ent.Edge{
+
+		edge.To("venues", Venue.Type),
+
 		edge.To("propertys", ProductProperty.Type),
 	}
 }

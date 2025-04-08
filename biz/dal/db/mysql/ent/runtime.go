@@ -18,6 +18,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/membernote"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
+	"kcers/biz/dal/db/mysql/ent/memberprofile"
 	"kcers/biz/dal/db/mysql/ent/menu"
 	"kcers/biz/dal/db/mysql/ent/menuparam"
 	"kcers/biz/dal/db/mysql/ent/messages"
@@ -33,6 +34,8 @@ import (
 	"kcers/biz/dal/db/mysql/ent/schedulecoach"
 	"kcers/biz/dal/db/mysql/ent/schedulemember"
 	"kcers/biz/dal/db/mysql/ent/schema"
+	"kcers/biz/dal/db/mysql/ent/sms"
+	"kcers/biz/dal/db/mysql/ent/smslog"
 	"kcers/biz/dal/db/mysql/ent/token"
 	"kcers/biz/dal/db/mysql/ent/user"
 	"kcers/biz/dal/db/mysql/ent/venue"
@@ -401,34 +404,18 @@ func init() {
 	memberdetailsDescCreatedID := memberdetailsMixinFields0[4].Descriptor()
 	// memberdetails.DefaultCreatedID holds the default value on creation for the created_id field.
 	memberdetails.DefaultCreatedID = memberdetailsDescCreatedID.Default.(int64)
-	// memberdetailsDescGender is the schema descriptor for gender field.
-	memberdetailsDescGender := memberdetailsFields[3].Descriptor()
-	// memberdetails.DefaultGender holds the default value on creation for the gender field.
-	memberdetails.DefaultGender = memberdetailsDescGender.Default.(int64)
 	// memberdetailsDescMoneySum is the schema descriptor for money_sum field.
-	memberdetailsDescMoneySum := memberdetailsFields[5].Descriptor()
+	memberdetailsDescMoneySum := memberdetailsFields[1].Descriptor()
 	// memberdetails.DefaultMoneySum holds the default value on creation for the money_sum field.
 	memberdetails.DefaultMoneySum = memberdetailsDescMoneySum.Default.(float64)
 	// memberdetailsDescProductID is the schema descriptor for product_id field.
-	memberdetailsDescProductID := memberdetailsFields[6].Descriptor()
+	memberdetailsDescProductID := memberdetailsFields[2].Descriptor()
 	// memberdetails.DefaultProductID holds the default value on creation for the product_id field.
 	memberdetails.DefaultProductID = memberdetailsDescProductID.Default.(int64)
-	// memberdetailsDescProductVenue is the schema descriptor for product_venue field.
-	memberdetailsDescProductVenue := memberdetailsFields[8].Descriptor()
-	// memberdetails.DefaultProductVenue holds the default value on creation for the product_venue field.
-	memberdetails.DefaultProductVenue = memberdetailsDescProductVenue.Default.(int64)
 	// memberdetailsDescEntrySum is the schema descriptor for entry_sum field.
-	memberdetailsDescEntrySum := memberdetailsFields[10].Descriptor()
+	memberdetailsDescEntrySum := memberdetailsFields[4].Descriptor()
 	// memberdetails.DefaultEntrySum holds the default value on creation for the entry_sum field.
 	memberdetails.DefaultEntrySum = memberdetailsDescEntrySum.Default.(int64)
-	// memberdetailsDescRelationUID is the schema descriptor for relation_uid field.
-	memberdetailsDescRelationUID := memberdetailsFields[14].Descriptor()
-	// memberdetails.DefaultRelationUID holds the default value on creation for the relation_uid field.
-	memberdetails.DefaultRelationUID = memberdetailsDescRelationUID.Default.(int64)
-	// memberdetailsDescRelationMid is the schema descriptor for relation_mid field.
-	memberdetailsDescRelationMid := memberdetailsFields[16].Descriptor()
-	// memberdetails.DefaultRelationMid holds the default value on creation for the relation_mid field.
-	memberdetails.DefaultRelationMid = memberdetailsDescRelationMid.Default.(int64)
 	membernoteMixin := schema.MemberNote{}.Mixin()
 	membernoteMixinFields0 := membernoteMixin[0].Fields()
 	_ = membernoteMixinFields0
@@ -528,6 +515,49 @@ func init() {
 	memberproductpropertyDescCountSurplus := memberproductpropertyFields[9].Descriptor()
 	// memberproductproperty.DefaultCountSurplus holds the default value on creation for the count_surplus field.
 	memberproductproperty.DefaultCountSurplus = memberproductpropertyDescCountSurplus.Default.(int64)
+	memberprofileMixin := schema.MemberProfile{}.Mixin()
+	memberprofileMixinFields0 := memberprofileMixin[0].Fields()
+	_ = memberprofileMixinFields0
+	memberprofileFields := schema.MemberProfile{}.Fields()
+	_ = memberprofileFields
+	// memberprofileDescCreatedAt is the schema descriptor for created_at field.
+	memberprofileDescCreatedAt := memberprofileMixinFields0[1].Descriptor()
+	// memberprofile.DefaultCreatedAt holds the default value on creation for the created_at field.
+	memberprofile.DefaultCreatedAt = memberprofileDescCreatedAt.Default.(func() time.Time)
+	// memberprofileDescUpdatedAt is the schema descriptor for updated_at field.
+	memberprofileDescUpdatedAt := memberprofileMixinFields0[2].Descriptor()
+	// memberprofile.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	memberprofile.DefaultUpdatedAt = memberprofileDescUpdatedAt.Default.(func() time.Time)
+	// memberprofile.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	memberprofile.UpdateDefaultUpdatedAt = memberprofileDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// memberprofileDescDelete is the schema descriptor for delete field.
+	memberprofileDescDelete := memberprofileMixinFields0[3].Descriptor()
+	// memberprofile.DefaultDelete holds the default value on creation for the delete field.
+	memberprofile.DefaultDelete = memberprofileDescDelete.Default.(int64)
+	// memberprofileDescCreatedID is the schema descriptor for created_id field.
+	memberprofileDescCreatedID := memberprofileMixinFields0[4].Descriptor()
+	// memberprofile.DefaultCreatedID holds the default value on creation for the created_id field.
+	memberprofile.DefaultCreatedID = memberprofileDescCreatedID.Default.(int64)
+	// memberprofileDescIntention is the schema descriptor for intention field.
+	memberprofileDescIntention := memberprofileFields[0].Descriptor()
+	// memberprofile.DefaultIntention holds the default value on creation for the intention field.
+	memberprofile.DefaultIntention = memberprofileDescIntention.Default.(int64)
+	// memberprofileDescSource is the schema descriptor for source field.
+	memberprofileDescSource := memberprofileFields[1].Descriptor()
+	// memberprofile.DefaultSource holds the default value on creation for the source field.
+	memberprofile.DefaultSource = memberprofileDescSource.Default.(int64)
+	// memberprofileDescGender is the schema descriptor for gender field.
+	memberprofileDescGender := memberprofileFields[3].Descriptor()
+	// memberprofile.DefaultGender holds the default value on creation for the gender field.
+	memberprofile.DefaultGender = memberprofileDescGender.Default.(int64)
+	// memberprofileDescRelationMid is the schema descriptor for relation_mid field.
+	memberprofileDescRelationMid := memberprofileFields[7].Descriptor()
+	// memberprofile.DefaultRelationMid holds the default value on creation for the relation_mid field.
+	memberprofile.DefaultRelationMid = memberprofileDescRelationMid.Default.(int64)
+	// memberprofileDescRelationUID is the schema descriptor for relation_uid field.
+	memberprofileDescRelationUID := memberprofileFields[9].Descriptor()
+	// memberprofile.DefaultRelationUID holds the default value on creation for the relation_uid field.
+	memberprofile.DefaultRelationUID = memberprofileDescRelationUID.Default.(int64)
 	menuMixin := schema.Menu{}.Mixin()
 	menuMixinFields0 := menuMixin[0].Fields()
 	_ = menuMixinFields0
@@ -980,6 +1010,66 @@ func init() {
 	schedulememberDescSignEndAt := schedulememberFields[10].Descriptor()
 	// schedulemember.DefaultSignEndAt holds the default value on creation for the sign_end_at field.
 	schedulemember.DefaultSignEndAt = schedulememberDescSignEndAt.Default.(func() time.Time)
+	smsMixin := schema.Sms{}.Mixin()
+	smsMixinFields0 := smsMixin[0].Fields()
+	_ = smsMixinFields0
+	smsFields := schema.Sms{}.Fields()
+	_ = smsFields
+	// smsDescCreatedAt is the schema descriptor for created_at field.
+	smsDescCreatedAt := smsMixinFields0[1].Descriptor()
+	// sms.DefaultCreatedAt holds the default value on creation for the created_at field.
+	sms.DefaultCreatedAt = smsDescCreatedAt.Default.(func() time.Time)
+	// smsDescUpdatedAt is the schema descriptor for updated_at field.
+	smsDescUpdatedAt := smsMixinFields0[2].Descriptor()
+	// sms.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	sms.DefaultUpdatedAt = smsDescUpdatedAt.Default.(func() time.Time)
+	// sms.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	sms.UpdateDefaultUpdatedAt = smsDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// smsDescDelete is the schema descriptor for delete field.
+	smsDescDelete := smsMixinFields0[3].Descriptor()
+	// sms.DefaultDelete holds the default value on creation for the delete field.
+	sms.DefaultDelete = smsDescDelete.Default.(int64)
+	// smsDescCreatedID is the schema descriptor for created_id field.
+	smsDescCreatedID := smsMixinFields0[4].Descriptor()
+	// sms.DefaultCreatedID holds the default value on creation for the created_id field.
+	sms.DefaultCreatedID = smsDescCreatedID.Default.(int64)
+	// smsDescNoticeCount is the schema descriptor for notice_count field.
+	smsDescNoticeCount := smsFields[0].Descriptor()
+	// sms.DefaultNoticeCount holds the default value on creation for the notice_count field.
+	sms.DefaultNoticeCount = smsDescNoticeCount.Default.(int64)
+	// smsDescUsedNotice is the schema descriptor for used_notice field.
+	smsDescUsedNotice := smsFields[1].Descriptor()
+	// sms.DefaultUsedNotice holds the default value on creation for the used_notice field.
+	sms.DefaultUsedNotice = smsDescUsedNotice.Default.(int64)
+	smslogMixin := schema.SmsLog{}.Mixin()
+	smslogMixinFields0 := smslogMixin[0].Fields()
+	_ = smslogMixinFields0
+	smslogMixinFields1 := smslogMixin[1].Fields()
+	_ = smslogMixinFields1
+	smslogFields := schema.SmsLog{}.Fields()
+	_ = smslogFields
+	// smslogDescCreatedAt is the schema descriptor for created_at field.
+	smslogDescCreatedAt := smslogMixinFields0[1].Descriptor()
+	// smslog.DefaultCreatedAt holds the default value on creation for the created_at field.
+	smslog.DefaultCreatedAt = smslogDescCreatedAt.Default.(func() time.Time)
+	// smslogDescUpdatedAt is the schema descriptor for updated_at field.
+	smslogDescUpdatedAt := smslogMixinFields0[2].Descriptor()
+	// smslog.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	smslog.DefaultUpdatedAt = smslogDescUpdatedAt.Default.(func() time.Time)
+	// smslog.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	smslog.UpdateDefaultUpdatedAt = smslogDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// smslogDescDelete is the schema descriptor for delete field.
+	smslogDescDelete := smslogMixinFields0[3].Descriptor()
+	// smslog.DefaultDelete holds the default value on creation for the delete field.
+	smslog.DefaultDelete = smslogDescDelete.Default.(int64)
+	// smslogDescCreatedID is the schema descriptor for created_id field.
+	smslogDescCreatedID := smslogMixinFields0[4].Descriptor()
+	// smslog.DefaultCreatedID holds the default value on creation for the created_id field.
+	smslog.DefaultCreatedID = smslogDescCreatedID.Default.(int64)
+	// smslogDescStatus is the schema descriptor for status field.
+	smslogDescStatus := smslogMixinFields1[0].Descriptor()
+	// smslog.DefaultStatus holds the default value on creation for the status field.
+	smslog.DefaultStatus = smslogDescStatus.Default.(int64)
 	tokenMixin := schema.Token{}.Mixin()
 	tokenMixinFields0 := tokenMixin[0].Fields()
 	_ = tokenMixinFields0

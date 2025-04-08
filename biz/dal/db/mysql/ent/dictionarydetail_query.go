@@ -4,10 +4,12 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/dictionary"
 	"kcers/biz/dal/db/mysql/ent/dictionarydetail"
 	"kcers/biz/dal/db/mysql/ent/predicate"
+	"kcers/biz/dal/db/mysql/ent/productproperty"
 	"math"
 
 	"entgo.io/ent"
@@ -24,6 +26,8 @@ type DictionaryDetailQuery struct {
 	inters         []Interceptor
 	predicates     []predicate.DictionaryDetail
 	withDictionary *DictionaryQuery
+	withProperty   *ProductPropertyQuery
+	modifiers      []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -75,6 +79,28 @@ func (ddq *DictionaryDetailQuery) QueryDictionary() *DictionaryQuery {
 			sqlgraph.From(dictionarydetail.Table, dictionarydetail.FieldID, selector),
 			sqlgraph.To(dictionary.Table, dictionary.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, dictionarydetail.DictionaryTable, dictionarydetail.DictionaryColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(ddq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryProperty chains the current query on the "property" edge.
+func (ddq *DictionaryDetailQuery) QueryProperty() *ProductPropertyQuery {
+	query := (&ProductPropertyClient{config: ddq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := ddq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := ddq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(dictionarydetail.Table, dictionarydetail.FieldID, selector),
+			sqlgraph.To(productproperty.Table, productproperty.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, dictionarydetail.PropertyTable, dictionarydetail.PropertyPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(ddq.driver.Dialect(), step)
 		return fromU, nil
@@ -275,9 +301,11 @@ func (ddq *DictionaryDetailQuery) Clone() *DictionaryDetailQuery {
 		inters:         append([]Interceptor{}, ddq.inters...),
 		predicates:     append([]predicate.DictionaryDetail{}, ddq.predicates...),
 		withDictionary: ddq.withDictionary.Clone(),
+		withProperty:   ddq.withProperty.Clone(),
 		// clone intermediate query.
-		sql:  ddq.sql.Clone(),
-		path: ddq.path,
+		sql:       ddq.sql.Clone(),
+		path:      ddq.path,
+		modifiers: append([]func(*sql.Selector){}, ddq.modifiers...),
 	}
 }
 
@@ -289,6 +317,17 @@ func (ddq *DictionaryDetailQuery) WithDictionary(opts ...func(*DictionaryQuery))
 		opt(query)
 	}
 	ddq.withDictionary = query
+	return ddq
+}
+
+// WithProperty tells the query-builder to eager-load the nodes that are connected to
+// the "property" edge. The optional arguments are used to configure the query builder of the edge.
+func (ddq *DictionaryDetailQuery) WithProperty(opts ...func(*ProductPropertyQuery)) *DictionaryDetailQuery {
+	query := (&ProductPropertyClient{config: ddq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	ddq.withProperty = query
 	return ddq
 }
 
@@ -370,8 +409,9 @@ func (ddq *DictionaryDetailQuery) sqlAll(ctx context.Context, hooks ...queryHook
 	var (
 		nodes       = []*DictionaryDetail{}
 		_spec       = ddq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			ddq.withDictionary != nil,
+			ddq.withProperty != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -382,6 +422,9 @@ func (ddq *DictionaryDetailQuery) sqlAll(ctx context.Context, hooks ...queryHook
 		nodes = append(nodes, node)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
+	}
+	if len(ddq.modifiers) > 0 {
+		_spec.Modifiers = ddq.modifiers
 	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
@@ -395,6 +438,13 @@ func (ddq *DictionaryDetailQuery) sqlAll(ctx context.Context, hooks ...queryHook
 	if query := ddq.withDictionary; query != nil {
 		if err := ddq.loadDictionary(ctx, query, nodes, nil,
 			func(n *DictionaryDetail, e *Dictionary) { n.Edges.Dictionary = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := ddq.withProperty; query != nil {
+		if err := ddq.loadProperty(ctx, query, nodes,
+			func(n *DictionaryDetail) { n.Edges.Property = []*ProductProperty{} },
+			func(n *DictionaryDetail, e *ProductProperty) { n.Edges.Property = append(n.Edges.Property, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -430,9 +480,73 @@ func (ddq *DictionaryDetailQuery) loadDictionary(ctx context.Context, query *Dic
 	}
 	return nil
 }
+func (ddq *DictionaryDetailQuery) loadProperty(ctx context.Context, query *ProductPropertyQuery, nodes []*DictionaryDetail, init func(*DictionaryDetail), assign func(*DictionaryDetail, *ProductProperty)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int64]*DictionaryDetail)
+	nids := make(map[int64]map[*DictionaryDetail]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(dictionarydetail.PropertyTable)
+		s.Join(joinT).On(s.C(productproperty.FieldID), joinT.C(dictionarydetail.PropertyPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(dictionarydetail.PropertyPrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(dictionarydetail.PropertyPrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullInt64).Int64
+				inValue := values[1].(*sql.NullInt64).Int64
+				if nids[inValue] == nil {
+					nids[inValue] = map[*DictionaryDetail]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*ProductProperty](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "property" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
 
 func (ddq *DictionaryDetailQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := ddq.querySpec()
+	if len(ddq.modifiers) > 0 {
+		_spec.Modifiers = ddq.modifiers
+	}
 	_spec.Node.Columns = ddq.ctx.Fields
 	if len(ddq.ctx.Fields) > 0 {
 		_spec.Unique = ddq.ctx.Unique != nil && *ddq.ctx.Unique
@@ -498,6 +612,9 @@ func (ddq *DictionaryDetailQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if ddq.ctx.Unique != nil && *ddq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range ddq.modifiers {
+		m(selector)
+	}
 	for _, p := range ddq.predicates {
 		p(selector)
 	}
@@ -513,6 +630,12 @@ func (ddq *DictionaryDetailQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (ddq *DictionaryDetailQuery) Modify(modifiers ...func(s *sql.Selector)) *DictionaryDetailSelect {
+	ddq.modifiers = append(ddq.modifiers, modifiers...)
+	return ddq.Select()
 }
 
 // DictionaryDetailGroupBy is the group-by builder for DictionaryDetail entities.
@@ -603,4 +726,10 @@ func (dds *DictionaryDetailSelect) sqlScan(ctx context.Context, root *Dictionary
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (dds *DictionaryDetailSelect) Modify(modifiers ...func(s *sql.Selector)) *DictionaryDetailSelect {
+	dds.modifiers = append(dds.modifiers, modifiers...)
+	return dds
 }

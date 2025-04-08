@@ -17,10 +17,9 @@ type Member struct {
 func (Member) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("password").Optional().Comment("password | 密码"),
-		field.String("name").Optional().Comment("name | 账号"),
-		field.String("nickname").Unique().Comment("nickname | 姓名").Optional(),
+		field.String("username").Unique().Comment("账号 ").Optional(),
 		field.String("mobile").Optional().Comment("mobile number | 手机号"),
-
+		field.String("name").Optional().Comment("name | 名称"),
 		field.String("avatar").
 			SchemaType(map[string]string{dialect.MySQL: "varchar(512)"}).
 			Optional().
@@ -42,6 +41,7 @@ func (Member) Mixin() []ent.Mixin {
 
 func (Member) Edges() []ent.Edge {
 	return []ent.Edge{
+		edge.To("member_profile", MemberProfile.Type),
 		edge.To("member_details", MemberDetails.Type),
 		edge.To("member_notes", MemberNote.Type),
 		edge.To("member_orders", Order.Type),

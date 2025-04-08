@@ -8,6 +8,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
 	"kcers/biz/dal/db/mysql/ent/order"
+	"kcers/biz/dal/db/mysql/ent/product"
 	"kcers/biz/dal/db/mysql/ent/productproperty"
 	"kcers/biz/dal/db/mysql/ent/venue"
 	"kcers/biz/dal/db/mysql/ent/venueplace"
@@ -315,6 +316,21 @@ func (vc *VenueCreate) AddPropertyVenues(p ...*ProductProperty) *VenueCreate {
 	return vc.AddPropertyVenueIDs(ids...)
 }
 
+// AddProductIDs adds the "products" edge to the Product entity by IDs.
+func (vc *VenueCreate) AddProductIDs(ids ...int64) *VenueCreate {
+	vc.mutation.AddProductIDs(ids...)
+	return vc
+}
+
+// AddProducts adds the "products" edges to the Product entity.
+func (vc *VenueCreate) AddProducts(p ...*Product) *VenueCreate {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return vc.AddProductIDs(ids...)
+}
+
 // Mutation returns the VenueMutation object of the builder.
 func (vc *VenueCreate) Mutation() *VenueMutation {
 	return vc.mutation
@@ -539,6 +555,22 @@ func (vc *VenueCreate) createSpec() (*Venue, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(productproperty.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := vc.mutation.ProductsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   venue.ProductsTable,
+			Columns: venue.ProductsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(product.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

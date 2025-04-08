@@ -10,6 +10,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
 	"kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/predicate"
+	"kcers/biz/dal/db/mysql/ent/product"
 	"kcers/biz/dal/db/mysql/ent/productproperty"
 	"kcers/biz/dal/db/mysql/ent/venue"
 	"kcers/biz/dal/db/mysql/ent/venueplace"
@@ -23,8 +24,9 @@ import (
 // VenueUpdate is the builder for updating Venue entities.
 type VenueUpdate struct {
 	config
-	hooks    []Hook
-	mutation *VenueMutation
+	hooks     []Hook
+	mutation  *VenueMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the VenueUpdate builder.
@@ -401,6 +403,21 @@ func (vu *VenueUpdate) AddPropertyVenues(p ...*ProductProperty) *VenueUpdate {
 	return vu.AddPropertyVenueIDs(ids...)
 }
 
+// AddProductIDs adds the "products" edge to the Product entity by IDs.
+func (vu *VenueUpdate) AddProductIDs(ids ...int64) *VenueUpdate {
+	vu.mutation.AddProductIDs(ids...)
+	return vu
+}
+
+// AddProducts adds the "products" edges to the Product entity.
+func (vu *VenueUpdate) AddProducts(p ...*Product) *VenueUpdate {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return vu.AddProductIDs(ids...)
+}
+
 // Mutation returns the VenueMutation object of the builder.
 func (vu *VenueUpdate) Mutation() *VenueMutation {
 	return vu.mutation
@@ -511,6 +528,27 @@ func (vu *VenueUpdate) RemovePropertyVenues(p ...*ProductProperty) *VenueUpdate 
 	return vu.RemovePropertyVenueIDs(ids...)
 }
 
+// ClearProducts clears all "products" edges to the Product entity.
+func (vu *VenueUpdate) ClearProducts() *VenueUpdate {
+	vu.mutation.ClearProducts()
+	return vu
+}
+
+// RemoveProductIDs removes the "products" edge to Product entities by IDs.
+func (vu *VenueUpdate) RemoveProductIDs(ids ...int64) *VenueUpdate {
+	vu.mutation.RemoveProductIDs(ids...)
+	return vu
+}
+
+// RemoveProducts removes "products" edges to Product entities.
+func (vu *VenueUpdate) RemoveProducts(p ...*Product) *VenueUpdate {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return vu.RemoveProductIDs(ids...)
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (vu *VenueUpdate) Save(ctx context.Context) (int, error) {
 	vu.defaults()
@@ -545,6 +583,12 @@ func (vu *VenueUpdate) defaults() {
 		v := venue.UpdateDefaultUpdatedAt()
 		vu.mutation.SetUpdatedAt(v)
 	}
+}
+
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (vu *VenueUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *VenueUpdate {
+	vu.modifiers = append(vu.modifiers, modifiers...)
+	return vu
 }
 
 func (vu *VenueUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -877,6 +921,52 @@ func (vu *VenueUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if vu.mutation.ProductsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   venue.ProductsTable,
+			Columns: venue.ProductsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(product.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vu.mutation.RemovedProductsIDs(); len(nodes) > 0 && !vu.mutation.ProductsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   venue.ProductsTable,
+			Columns: venue.ProductsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(product.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vu.mutation.ProductsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   venue.ProductsTable,
+			Columns: venue.ProductsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(product.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	_spec.AddModifiers(vu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, vu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{venue.Label}
@@ -892,9 +982,10 @@ func (vu *VenueUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // VenueUpdateOne is the builder for updating a single Venue entity.
 type VenueUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *VenueMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *VenueMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -1265,6 +1356,21 @@ func (vuo *VenueUpdateOne) AddPropertyVenues(p ...*ProductProperty) *VenueUpdate
 	return vuo.AddPropertyVenueIDs(ids...)
 }
 
+// AddProductIDs adds the "products" edge to the Product entity by IDs.
+func (vuo *VenueUpdateOne) AddProductIDs(ids ...int64) *VenueUpdateOne {
+	vuo.mutation.AddProductIDs(ids...)
+	return vuo
+}
+
+// AddProducts adds the "products" edges to the Product entity.
+func (vuo *VenueUpdateOne) AddProducts(p ...*Product) *VenueUpdateOne {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return vuo.AddProductIDs(ids...)
+}
+
 // Mutation returns the VenueMutation object of the builder.
 func (vuo *VenueUpdateOne) Mutation() *VenueMutation {
 	return vuo.mutation
@@ -1375,6 +1481,27 @@ func (vuo *VenueUpdateOne) RemovePropertyVenues(p ...*ProductProperty) *VenueUpd
 	return vuo.RemovePropertyVenueIDs(ids...)
 }
 
+// ClearProducts clears all "products" edges to the Product entity.
+func (vuo *VenueUpdateOne) ClearProducts() *VenueUpdateOne {
+	vuo.mutation.ClearProducts()
+	return vuo
+}
+
+// RemoveProductIDs removes the "products" edge to Product entities by IDs.
+func (vuo *VenueUpdateOne) RemoveProductIDs(ids ...int64) *VenueUpdateOne {
+	vuo.mutation.RemoveProductIDs(ids...)
+	return vuo
+}
+
+// RemoveProducts removes "products" edges to Product entities.
+func (vuo *VenueUpdateOne) RemoveProducts(p ...*Product) *VenueUpdateOne {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return vuo.RemoveProductIDs(ids...)
+}
+
 // Where appends a list predicates to the VenueUpdate builder.
 func (vuo *VenueUpdateOne) Where(ps ...predicate.Venue) *VenueUpdateOne {
 	vuo.mutation.Where(ps...)
@@ -1422,6 +1549,12 @@ func (vuo *VenueUpdateOne) defaults() {
 		v := venue.UpdateDefaultUpdatedAt()
 		vuo.mutation.SetUpdatedAt(v)
 	}
+}
+
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (vuo *VenueUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *VenueUpdateOne {
+	vuo.modifiers = append(vuo.modifiers, modifiers...)
+	return vuo
 }
 
 func (vuo *VenueUpdateOne) sqlSave(ctx context.Context) (_node *Venue, err error) {
@@ -1771,6 +1904,52 @@ func (vuo *VenueUpdateOne) sqlSave(ctx context.Context) (_node *Venue, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if vuo.mutation.ProductsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   venue.ProductsTable,
+			Columns: venue.ProductsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(product.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vuo.mutation.RemovedProductsIDs(); len(nodes) > 0 && !vuo.mutation.ProductsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   venue.ProductsTable,
+			Columns: venue.ProductsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(product.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vuo.mutation.ProductsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   venue.ProductsTable,
+			Columns: venue.ProductsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(product.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	_spec.AddModifiers(vuo.modifiers...)
 	_node = &Venue{config: vuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

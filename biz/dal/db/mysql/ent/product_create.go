@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/product"
 	"kcers/biz/dal/db/mysql/ent/productproperty"
+	"kcers/biz/dal/db/mysql/ent/venue"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -174,10 +175,59 @@ func (pc *ProductCreate) SetNillableCreateID(i *int64) *ProductCreate {
 	return pc
 }
 
+// SetIsSales sets the "is_sales" field.
+func (pc *ProductCreate) SetIsSales(i []int64) *ProductCreate {
+	pc.mutation.SetIsSales(i)
+	return pc
+}
+
+// SetSignSalesAt sets the "sign_sales_at" field.
+func (pc *ProductCreate) SetSignSalesAt(t time.Time) *ProductCreate {
+	pc.mutation.SetSignSalesAt(t)
+	return pc
+}
+
+// SetNillableSignSalesAt sets the "sign_sales_at" field if the given value is not nil.
+func (pc *ProductCreate) SetNillableSignSalesAt(t *time.Time) *ProductCreate {
+	if t != nil {
+		pc.SetSignSalesAt(*t)
+	}
+	return pc
+}
+
+// SetEndSalesAt sets the "end_sales_at" field.
+func (pc *ProductCreate) SetEndSalesAt(t time.Time) *ProductCreate {
+	pc.mutation.SetEndSalesAt(t)
+	return pc
+}
+
+// SetNillableEndSalesAt sets the "end_sales_at" field if the given value is not nil.
+func (pc *ProductCreate) SetNillableEndSalesAt(t *time.Time) *ProductCreate {
+	if t != nil {
+		pc.SetEndSalesAt(*t)
+	}
+	return pc
+}
+
 // SetID sets the "id" field.
 func (pc *ProductCreate) SetID(i int64) *ProductCreate {
 	pc.mutation.SetID(i)
 	return pc
+}
+
+// AddVenueIDs adds the "venues" edge to the Venue entity by IDs.
+func (pc *ProductCreate) AddVenueIDs(ids ...int64) *ProductCreate {
+	pc.mutation.AddVenueIDs(ids...)
+	return pc
+}
+
+// AddVenues adds the "venues" edges to the Venue entity.
+func (pc *ProductCreate) AddVenues(v ...*Venue) *ProductCreate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return pc.AddVenueIDs(ids...)
 }
 
 // AddPropertyIDs adds the "propertys" edge to the ProductProperty entity by IDs.
@@ -329,6 +379,34 @@ func (pc *ProductCreate) createSpec() (*Product, *sqlgraph.CreateSpec) {
 	if value, ok := pc.mutation.CreateID(); ok {
 		_spec.SetField(product.FieldCreateID, field.TypeInt64, value)
 		_node.CreateID = value
+	}
+	if value, ok := pc.mutation.IsSales(); ok {
+		_spec.SetField(product.FieldIsSales, field.TypeJSON, value)
+		_node.IsSales = value
+	}
+	if value, ok := pc.mutation.SignSalesAt(); ok {
+		_spec.SetField(product.FieldSignSalesAt, field.TypeTime, value)
+		_node.SignSalesAt = value
+	}
+	if value, ok := pc.mutation.EndSalesAt(); ok {
+		_spec.SetField(product.FieldEndSalesAt, field.TypeTime, value)
+		_node.EndSalesAt = value
+	}
+	if nodes := pc.mutation.VenuesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   product.VenuesTable,
+			Columns: product.VenuesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(venue.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := pc.mutation.PropertysIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

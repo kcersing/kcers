@@ -22,6 +22,7 @@ type APIQuery struct {
 	order      []api.OrderOption
 	inters     []Interceptor
 	predicates []predicate.API
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -251,8 +252,9 @@ func (aq *APIQuery) Clone() *APIQuery {
 		inters:     append([]Interceptor{}, aq.inters...),
 		predicates: append([]predicate.API{}, aq.predicates...),
 		// clone intermediate query.
-		sql:  aq.sql.Clone(),
-		path: aq.path,
+		sql:       aq.sql.Clone(),
+		path:      aq.path,
+		modifiers: append([]func(*sql.Selector){}, aq.modifiers...),
 	}
 }
 
@@ -343,6 +345,9 @@ func (aq *APIQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*API, err
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
+	if len(aq.modifiers) > 0 {
+		_spec.Modifiers = aq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -357,6 +362,9 @@ func (aq *APIQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*API, err
 
 func (aq *APIQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := aq.querySpec()
+	if len(aq.modifiers) > 0 {
+		_spec.Modifiers = aq.modifiers
+	}
 	_spec.Node.Columns = aq.ctx.Fields
 	if len(aq.ctx.Fields) > 0 {
 		_spec.Unique = aq.ctx.Unique != nil && *aq.ctx.Unique
@@ -419,6 +427,9 @@ func (aq *APIQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if aq.ctx.Unique != nil && *aq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range aq.modifiers {
+		m(selector)
+	}
 	for _, p := range aq.predicates {
 		p(selector)
 	}
@@ -434,6 +445,12 @@ func (aq *APIQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (aq *APIQuery) Modify(modifiers ...func(s *sql.Selector)) *APISelect {
+	aq.modifiers = append(aq.modifiers, modifiers...)
+	return aq.Select()
 }
 
 // APIGroupBy is the group-by builder for API entities.
@@ -524,4 +541,10 @@ func (as *APISelect) sqlScan(ctx context.Context, root *APIQuery, v any) error {
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (as *APISelect) Modify(modifiers ...func(s *sql.Selector)) *APISelect {
+	as.modifiers = append(as.modifiers, modifiers...)
+	return as
 }

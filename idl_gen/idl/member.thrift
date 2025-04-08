@@ -4,18 +4,17 @@ include "../base/base.thrift"
 
 // Create or update user information request | 创建或更新用户信息
 struct CreateOrUpdateMemberReq {
-   1:  optional i64 id=0 (api.raw = "id")
+    1:  optional i64 id=0 (api.raw = "id")
     2:  optional string name="" (api.raw = "name")
+    3:  optional string username="" (api.raw = "username")
     4:  optional string mobile="" (api.raw = "mobile")
     5:  optional string gender="未知" (api.raw = "gender")
     6:  optional string birthday="" (api.raw = "birthday")
     7:  optional i64 source=0 (api.raw = "source")
     8:  optional i64 grade=0 (api.raw = "grade")
     9: optional i64  intention=0 (api.raw = "intention")
-    10:  optional string email (api.raw = "email")
-    11:  optional i64 status (api.raw = "status")
-    12:  optional string wecom (api.raw = "wecom")
-    13: optional i64 createId (api.raw = "createId")
+    10:  optional string email="" (api.raw = "email")
+    11:  optional string wecom="" (api.raw = "wecom")
 
 }
 
@@ -34,13 +33,34 @@ struct MemberInfo {
      7:optional	string avatar ="" (api.raw = "avatar")
      8:optional string createdAt ="" (api.raw = "createdAt")
      9:optional string updatedAt  =""(api.raw = "updatedAt")
+     10:optional i64 condition=0 (api.raw = "condition")
+     11:optional string conditionName  =""(api.raw = "conditionName")
+     12:optional i64 createdId=0 (api.raw = "createdId")
+     13:optional string createdName  =""(api.raw = "createdName")
 
 
      250:optional MemberProfile profile={} (api.raw = "profile")
-     252:optional MemberPrivacy privacy={} (api.raw = "privacy")
+     251:optional MemberPrivacy privacy={} (api.raw = "privacy")
+     252:optional MemberDetail detail={} (api.raw = "detail")
 }
+struct MemberDetail{
+	 /**消费总金额*/
+     2:optional double moneySum=0 (api.raw = "moneySum")
+     /**首次的产品*/
+     3:optional i64 productId =0  (api.raw = "productId")
+     4:optional string productName =""(api.raw = "productName")
+     /**进馆总次数*/
+     7:optional i64 entrySum=0 (api.raw = "entrySum")
+     /**最后一次进馆时间*/
+     8:optional string entryLastAt="" (api.raw = "entryLastAt")
+     /**进馆最后期限时间*/
+     9:optional string entryDeadlineAt =""(api.raw = "entryDeadlineAt")
+     /**最后一次上课时间*/
+     10:optional string classLastAt="" (api.raw = "classLastAt")
 
+}
 struct MemberProfile{
+    1:  optional string name="" (api.raw = "name")
     2:  optional string fatherName="" (api.raw = "fatherName")
     3:  optional string motherName="" (api.raw = "motherName")
     4:  optional i64 grade=0 (api.raw = "grade")
@@ -55,11 +75,12 @@ struct MemberProfile{
     12: optional i64 age  =0 (api.raw = "age")
     13: optional string wecom ="" (api.raw = "wecom")
     14: optional string birthday=""   (api.raw = "birthday")
-
-    250:optional i64 id=0  (api.raw = "id")
-   /**关联会员*/
+    /**关联会员*/
     15:optional i64 relationMid=0   (api.raw = "relationMid")
     16:optional string relationMname="" (api.raw = "relationMname")
+    /**关联员工*/
+    17:optional i64 relationUid =0  (api.raw = "relationUid")
+    18:optional string relationUname="" (api.raw = "relationUname")
 
 }
 
@@ -98,12 +119,12 @@ struct MemberSearchReq {
 }
 
 struct MemberProductListReq {
-    1:  optional i64 page (api.raw = "page")
-    2:  optional i64 pageSize (api.raw = "pageSize")
-    3:  optional i64 memberId (api.raw = "memberId")
-    4:  optional string name (api.raw = "name")
-    5:  optional i64 venueId (api.raw = "venueId")
-    6:  optional i64 status (api.raw = "status")
+    1:  optional i64 page=1 (api.raw = "page")
+    2:  optional i64 pageSize=10 (api.raw = "pageSize")
+    3:  optional i64 memberId=0 (api.raw = "memberId")
+    4:  optional string name="" (api.raw = "name")
+    5:  optional i64 venueId=0 (api.raw = "venueId")
+    6:  optional i64 status=0 (api.raw = "status")
    
 }
 
@@ -191,13 +212,9 @@ struct MemberPropertyInfo  {
 	14: optional string createdAt="" (api.raw ="createdAt")
 	15: optional string validityAt="" (api.raw ="validityAt")
 	16: optional string cancelAt="" (api.raw ="cancelAt")
-	17: optional list<PropertyVenue> venue={} (api.raw ="venue")
+	17: optional list<base.List> venue={} (api.raw ="venue")
 	18: optional list<i64> venueId=0 (api.raw ="venueId")
 	19: optional string venues="" (api.raw ="venues")
-}
-struct PropertyVenue  {
-	1: optional i64 venueId=0 (api.raw ="venueId")
-	2: optional string venueName="" (api.raw ="venueName")
 }
 
 struct MemberEntryInfo  {

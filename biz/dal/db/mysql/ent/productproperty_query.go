@@ -6,6 +6,8 @@ import (
 	"context"
 	"database/sql/driver"
 	"fmt"
+	"kcers/biz/dal/db/mysql/ent/contract"
+	"kcers/biz/dal/db/mysql/ent/dictionarydetail"
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	"kcers/biz/dal/db/mysql/ent/product"
 	"kcers/biz/dal/db/mysql/ent/productproperty"
@@ -21,12 +23,15 @@ import (
 // ProductPropertyQuery is the builder for querying ProductProperty entities.
 type ProductPropertyQuery struct {
 	config
-	ctx         *QueryContext
-	order       []productproperty.OrderOption
-	inters      []Interceptor
-	predicates  []predicate.ProductProperty
-	withProduct *ProductQuery
-	withVenues  *VenueQuery
+	ctx           *QueryContext
+	order         []productproperty.OrderOption
+	inters        []Interceptor
+	predicates    []predicate.ProductProperty
+	withProduct   *ProductQuery
+	withTags      *DictionaryDetailQuery
+	withContracts *ContractQuery
+	withVenues    *VenueQuery
+	modifiers     []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -78,6 +83,50 @@ func (ppq *ProductPropertyQuery) QueryProduct() *ProductQuery {
 			sqlgraph.From(productproperty.Table, productproperty.FieldID, selector),
 			sqlgraph.To(product.Table, product.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, productproperty.ProductTable, productproperty.ProductPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(ppq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryTags chains the current query on the "tags" edge.
+func (ppq *ProductPropertyQuery) QueryTags() *DictionaryDetailQuery {
+	query := (&DictionaryDetailClient{config: ppq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := ppq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := ppq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(productproperty.Table, productproperty.FieldID, selector),
+			sqlgraph.To(dictionarydetail.Table, dictionarydetail.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, productproperty.TagsTable, productproperty.TagsPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(ppq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryContracts chains the current query on the "contracts" edge.
+func (ppq *ProductPropertyQuery) QueryContracts() *ContractQuery {
+	query := (&ContractClient{config: ppq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := ppq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := ppq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(productproperty.Table, productproperty.FieldID, selector),
+			sqlgraph.To(contract.Table, contract.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, productproperty.ContractsTable, productproperty.ContractsPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(ppq.driver.Dialect(), step)
 		return fromU, nil
@@ -294,16 +343,19 @@ func (ppq *ProductPropertyQuery) Clone() *ProductPropertyQuery {
 		return nil
 	}
 	return &ProductPropertyQuery{
-		config:      ppq.config,
-		ctx:         ppq.ctx.Clone(),
-		order:       append([]productproperty.OrderOption{}, ppq.order...),
-		inters:      append([]Interceptor{}, ppq.inters...),
-		predicates:  append([]predicate.ProductProperty{}, ppq.predicates...),
-		withProduct: ppq.withProduct.Clone(),
-		withVenues:  ppq.withVenues.Clone(),
+		config:        ppq.config,
+		ctx:           ppq.ctx.Clone(),
+		order:         append([]productproperty.OrderOption{}, ppq.order...),
+		inters:        append([]Interceptor{}, ppq.inters...),
+		predicates:    append([]predicate.ProductProperty{}, ppq.predicates...),
+		withProduct:   ppq.withProduct.Clone(),
+		withTags:      ppq.withTags.Clone(),
+		withContracts: ppq.withContracts.Clone(),
+		withVenues:    ppq.withVenues.Clone(),
 		// clone intermediate query.
-		sql:  ppq.sql.Clone(),
-		path: ppq.path,
+		sql:       ppq.sql.Clone(),
+		path:      ppq.path,
+		modifiers: append([]func(*sql.Selector){}, ppq.modifiers...),
 	}
 }
 
@@ -315,6 +367,28 @@ func (ppq *ProductPropertyQuery) WithProduct(opts ...func(*ProductQuery)) *Produ
 		opt(query)
 	}
 	ppq.withProduct = query
+	return ppq
+}
+
+// WithTags tells the query-builder to eager-load the nodes that are connected to
+// the "tags" edge. The optional arguments are used to configure the query builder of the edge.
+func (ppq *ProductPropertyQuery) WithTags(opts ...func(*DictionaryDetailQuery)) *ProductPropertyQuery {
+	query := (&DictionaryDetailClient{config: ppq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	ppq.withTags = query
+	return ppq
+}
+
+// WithContracts tells the query-builder to eager-load the nodes that are connected to
+// the "contracts" edge. The optional arguments are used to configure the query builder of the edge.
+func (ppq *ProductPropertyQuery) WithContracts(opts ...func(*ContractQuery)) *ProductPropertyQuery {
+	query := (&ContractClient{config: ppq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	ppq.withContracts = query
 	return ppq
 }
 
@@ -407,8 +481,10 @@ func (ppq *ProductPropertyQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 	var (
 		nodes       = []*ProductProperty{}
 		_spec       = ppq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [4]bool{
 			ppq.withProduct != nil,
+			ppq.withTags != nil,
+			ppq.withContracts != nil,
 			ppq.withVenues != nil,
 		}
 	)
@@ -420,6 +496,9 @@ func (ppq *ProductPropertyQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 		nodes = append(nodes, node)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
+	}
+	if len(ppq.modifiers) > 0 {
+		_spec.Modifiers = ppq.modifiers
 	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
@@ -434,6 +513,20 @@ func (ppq *ProductPropertyQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 		if err := ppq.loadProduct(ctx, query, nodes,
 			func(n *ProductProperty) { n.Edges.Product = []*Product{} },
 			func(n *ProductProperty, e *Product) { n.Edges.Product = append(n.Edges.Product, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := ppq.withTags; query != nil {
+		if err := ppq.loadTags(ctx, query, nodes,
+			func(n *ProductProperty) { n.Edges.Tags = []*DictionaryDetail{} },
+			func(n *ProductProperty, e *DictionaryDetail) { n.Edges.Tags = append(n.Edges.Tags, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := ppq.withContracts; query != nil {
+		if err := ppq.loadContracts(ctx, query, nodes,
+			func(n *ProductProperty) { n.Edges.Contracts = []*Contract{} },
+			func(n *ProductProperty, e *Contract) { n.Edges.Contracts = append(n.Edges.Contracts, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -508,6 +601,128 @@ func (ppq *ProductPropertyQuery) loadProduct(ctx context.Context, query *Product
 	}
 	return nil
 }
+func (ppq *ProductPropertyQuery) loadTags(ctx context.Context, query *DictionaryDetailQuery, nodes []*ProductProperty, init func(*ProductProperty), assign func(*ProductProperty, *DictionaryDetail)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int64]*ProductProperty)
+	nids := make(map[int64]map[*ProductProperty]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(productproperty.TagsTable)
+		s.Join(joinT).On(s.C(dictionarydetail.FieldID), joinT.C(productproperty.TagsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(productproperty.TagsPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(productproperty.TagsPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullInt64).Int64
+				inValue := values[1].(*sql.NullInt64).Int64
+				if nids[inValue] == nil {
+					nids[inValue] = map[*ProductProperty]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*DictionaryDetail](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "tags" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (ppq *ProductPropertyQuery) loadContracts(ctx context.Context, query *ContractQuery, nodes []*ProductProperty, init func(*ProductProperty), assign func(*ProductProperty, *Contract)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int64]*ProductProperty)
+	nids := make(map[int64]map[*ProductProperty]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(productproperty.ContractsTable)
+		s.Join(joinT).On(s.C(contract.FieldID), joinT.C(productproperty.ContractsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(productproperty.ContractsPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(productproperty.ContractsPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullInt64).Int64
+				inValue := values[1].(*sql.NullInt64).Int64
+				if nids[inValue] == nil {
+					nids[inValue] = map[*ProductProperty]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Contract](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "contracts" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
 func (ppq *ProductPropertyQuery) loadVenues(ctx context.Context, query *VenueQuery, nodes []*ProductProperty, init func(*ProductProperty), assign func(*ProductProperty, *Venue)) error {
 	edgeIDs := make([]driver.Value, len(nodes))
 	byID := make(map[int64]*ProductProperty)
@@ -572,6 +787,9 @@ func (ppq *ProductPropertyQuery) loadVenues(ctx context.Context, query *VenueQue
 
 func (ppq *ProductPropertyQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := ppq.querySpec()
+	if len(ppq.modifiers) > 0 {
+		_spec.Modifiers = ppq.modifiers
+	}
 	_spec.Node.Columns = ppq.ctx.Fields
 	if len(ppq.ctx.Fields) > 0 {
 		_spec.Unique = ppq.ctx.Unique != nil && *ppq.ctx.Unique
@@ -634,6 +852,9 @@ func (ppq *ProductPropertyQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if ppq.ctx.Unique != nil && *ppq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range ppq.modifiers {
+		m(selector)
+	}
 	for _, p := range ppq.predicates {
 		p(selector)
 	}
@@ -649,6 +870,12 @@ func (ppq *ProductPropertyQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (ppq *ProductPropertyQuery) Modify(modifiers ...func(s *sql.Selector)) *ProductPropertySelect {
+	ppq.modifiers = append(ppq.modifiers, modifiers...)
+	return ppq.Select()
 }
 
 // ProductPropertyGroupBy is the group-by builder for ProductProperty entities.
@@ -739,4 +966,10 @@ func (pps *ProductPropertySelect) sqlScan(ctx context.Context, root *ProductProp
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (pps *ProductPropertySelect) Modify(modifiers ...func(s *sql.Selector)) *ProductPropertySelect {
+	pps.modifiers = append(pps.modifiers, modifiers...)
+	return pps
 }

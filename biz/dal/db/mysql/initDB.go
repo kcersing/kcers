@@ -10,9 +10,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/lib/pq"
+	"kcers/biz/dal/db/mysql/ent"
+	"kcers/biz/dal/db/mysql/ent/migrate"
 	"log"
-	"saas/biz/dal/db/ent"
-	migrate2 "saas/biz/dal/db/ent/migrate"
 	"time"
 )
 
@@ -65,9 +65,9 @@ func InItDB(databaseUrl string, isProd bool) (DB *ent.Client) {
 	ctx := context.Background()
 	if err := DB.Schema.Create(
 		ctx,
-		migrate2.WithGlobalUniqueID(false),
-		migrate2.WithDropIndex(true),
-		migrate2.WithDropColumn(true),
+		migrate.WithGlobalUniqueID(false),
+		migrate.WithDropIndex(true),
+		migrate.WithDropColumn(true),
 	); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}

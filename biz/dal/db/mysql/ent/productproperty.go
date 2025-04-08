@@ -54,11 +54,15 @@ type ProductProperty struct {
 type ProductPropertyEdges struct {
 	// Product holds the value of the product edge.
 	Product []*Product `json:"product,omitempty"`
+	// Tags holds the value of the tags edge.
+	Tags []*DictionaryDetail `json:"tags,omitempty"`
+	// Contracts holds the value of the contracts edge.
+	Contracts []*Contract `json:"contracts,omitempty"`
 	// Venues holds the value of the venues edge.
 	Venues []*Venue `json:"venues,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [4]bool
 }
 
 // ProductOrErr returns the Product value or an error if the edge
@@ -70,10 +74,28 @@ func (e ProductPropertyEdges) ProductOrErr() ([]*Product, error) {
 	return nil, &NotLoadedError{edge: "product"}
 }
 
+// TagsOrErr returns the Tags value or an error if the edge
+// was not loaded in eager-loading.
+func (e ProductPropertyEdges) TagsOrErr() ([]*DictionaryDetail, error) {
+	if e.loadedTypes[1] {
+		return e.Tags, nil
+	}
+	return nil, &NotLoadedError{edge: "tags"}
+}
+
+// ContractsOrErr returns the Contracts value or an error if the edge
+// was not loaded in eager-loading.
+func (e ProductPropertyEdges) ContractsOrErr() ([]*Contract, error) {
+	if e.loadedTypes[2] {
+		return e.Contracts, nil
+	}
+	return nil, &NotLoadedError{edge: "contracts"}
+}
+
 // VenuesOrErr returns the Venues value or an error if the edge
 // was not loaded in eager-loading.
 func (e ProductPropertyEdges) VenuesOrErr() ([]*Venue, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[3] {
 		return e.Venues, nil
 	}
 	return nil, &NotLoadedError{edge: "venues"}
@@ -207,6 +229,16 @@ func (pp *ProductProperty) Value(name string) (ent.Value, error) {
 // QueryProduct queries the "product" edge of the ProductProperty entity.
 func (pp *ProductProperty) QueryProduct() *ProductQuery {
 	return NewProductPropertyClient(pp.config).QueryProduct(pp)
+}
+
+// QueryTags queries the "tags" edge of the ProductProperty entity.
+func (pp *ProductProperty) QueryTags() *DictionaryDetailQuery {
+	return NewProductPropertyClient(pp.config).QueryTags(pp)
+}
+
+// QueryContracts queries the "contracts" edge of the ProductProperty entity.
+func (pp *ProductProperty) QueryContracts() *ContractQuery {
+	return NewProductPropertyClient(pp.config).QueryContracts(pp)
 }
 
 // QueryVenues queries the "venues" edge of the ProductProperty entity.

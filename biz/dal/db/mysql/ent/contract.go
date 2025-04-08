@@ -31,8 +31,29 @@ type Contract struct {
 	// name | 名称
 	Name string `json:"name,omitempty"`
 	// content | 内容
-	Content      string `json:"content,omitempty"`
+	Content string `json:"content,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the ContractQuery when eager-loading is set.
+	Edges        ContractEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// ContractEdges holds the relations/edges for other nodes in the graph.
+type ContractEdges struct {
+	// Property holds the value of the property edge.
+	Property []*ProductProperty `json:"property,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// PropertyOrErr returns the Property value or an error if the edge
+// was not loaded in eager-loading.
+func (e ContractEdges) PropertyOrErr() ([]*ProductProperty, error) {
+	if e.loadedTypes[0] {
+		return e.Property, nil
+	}
+	return nil, &NotLoadedError{edge: "property"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -120,6 +141,11 @@ func (c *Contract) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (c *Contract) Value(name string) (ent.Value, error) {
 	return c.selectValues.Get(name)
+}
+
+// QueryProperty queries the "property" edge of the Contract entity.
+func (c *Contract) QueryProperty() *ProductPropertyQuery {
+	return NewContractClient(c.config).QueryProperty(c)
 }
 
 // Update returns a builder for updating this Contract.

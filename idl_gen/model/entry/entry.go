@@ -1118,27 +1118,29 @@ func (p *EntryInfo) String() string {
 }
 
 type EntryListReq struct {
-	Page            int64  `thrift:"page,1,optional" form:"page" json:"page" query:"page"`
-	PageSize        int64  `thrift:"pageSize,2,optional" form:"pageSize" json:"pageSize" query:"pageSize"`
-	MemberId        int64  `thrift:"memberId,3,optional" form:"memberId" json:"memberId" query:"memberId"`
-	VenueId         int64  `thrift:"venueId,4,optional" form:"venueId" json:"venueId" query:"venueId"`
-	MemberProductId int64  `thrift:"memberProductId,5,optional" form:"memberProductId" json:"memberProductId" query:"memberProductId"`
-	UserId          int64  `thrift:"userId,7,optional" form:"userId" json:"userId" query:"userId"`
-	EntryAt         string `thrift:"entryAt,8,optional" form:"entryAt" json:"entryAt" query:"entryAt"`
-	LeavingAt       string `thrift:"leavingAt,9,optional" form:"leavingAt" json:"leavingAt" query:"leavingAt"`
+	Page             int64  `thrift:"page,1,optional" form:"page" json:"page" query:"page"`
+	PageSize         int64  `thrift:"pageSize,2,optional" form:"pageSize" json:"pageSize" query:"pageSize"`
+	MemberId         int64  `thrift:"memberId,3,optional" form:"memberId" json:"memberId" query:"memberId"`
+	VenueId          int64  `thrift:"venueId,4,optional" form:"venueId" json:"venueId" query:"venueId"`
+	MemberProductId  int64  `thrift:"memberProductId,5,optional" form:"memberProductId" json:"memberProductId" query:"memberProductId"`
+	MemberPropertyId int64  `thrift:"memberPropertyId,10,optional" form:"memberPropertyId" json:"memberPropertyId" query:"memberPropertyId"`
+	UserId           int64  `thrift:"userId,7,optional" form:"userId" json:"userId" query:"userId"`
+	EntryAt          string `thrift:"entryAt,8,optional" form:"entryAt" json:"entryAt" query:"entryAt"`
+	LeavingAt        string `thrift:"leavingAt,9,optional" form:"leavingAt" json:"leavingAt" query:"leavingAt"`
 }
 
 func NewEntryListReq() *EntryListReq {
 	return &EntryListReq{
 
-		Page:            1,
-		PageSize:        100,
-		MemberId:        0,
-		VenueId:         0,
-		MemberProductId: 0,
-		UserId:          0,
-		EntryAt:         "",
-		LeavingAt:       "",
+		Page:             1,
+		PageSize:         100,
+		MemberId:         0,
+		VenueId:          0,
+		MemberProductId:  0,
+		MemberPropertyId: 0,
+		UserId:           0,
+		EntryAt:          "",
+		LeavingAt:        "",
 	}
 }
 
@@ -1148,6 +1150,7 @@ func (p *EntryListReq) InitDefault() {
 	p.MemberId = 0
 	p.VenueId = 0
 	p.MemberProductId = 0
+	p.MemberPropertyId = 0
 	p.UserId = 0
 	p.EntryAt = ""
 	p.LeavingAt = ""
@@ -1198,6 +1201,15 @@ func (p *EntryListReq) GetMemberProductId() (v int64) {
 	return p.MemberProductId
 }
 
+var EntryListReq_MemberPropertyId_DEFAULT int64 = 0
+
+func (p *EntryListReq) GetMemberPropertyId() (v int64) {
+	if !p.IsSetMemberPropertyId() {
+		return EntryListReq_MemberPropertyId_DEFAULT
+	}
+	return p.MemberPropertyId
+}
+
 var EntryListReq_UserId_DEFAULT int64 = 0
 
 func (p *EntryListReq) GetUserId() (v int64) {
@@ -1226,14 +1238,15 @@ func (p *EntryListReq) GetLeavingAt() (v string) {
 }
 
 var fieldIDToName_EntryListReq = map[int16]string{
-	1: "page",
-	2: "pageSize",
-	3: "memberId",
-	4: "venueId",
-	5: "memberProductId",
-	7: "userId",
-	8: "entryAt",
-	9: "leavingAt",
+	1:  "page",
+	2:  "pageSize",
+	3:  "memberId",
+	4:  "venueId",
+	5:  "memberProductId",
+	10: "memberPropertyId",
+	7:  "userId",
+	8:  "entryAt",
+	9:  "leavingAt",
 }
 
 func (p *EntryListReq) IsSetPage() bool {
@@ -1254,6 +1267,10 @@ func (p *EntryListReq) IsSetVenueId() bool {
 
 func (p *EntryListReq) IsSetMemberProductId() bool {
 	return p.MemberProductId != EntryListReq_MemberProductId_DEFAULT
+}
+
+func (p *EntryListReq) IsSetMemberPropertyId() bool {
+	return p.MemberPropertyId != EntryListReq_MemberPropertyId_DEFAULT
 }
 
 func (p *EntryListReq) IsSetUserId() bool {
@@ -1322,6 +1339,14 @@ func (p *EntryListReq) Read(iprot thrift.TProtocol) (err error) {
 		case 5:
 			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField5(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 10:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField10(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -1435,6 +1460,17 @@ func (p *EntryListReq) ReadField5(iprot thrift.TProtocol) error {
 	p.MemberProductId = _field
 	return nil
 }
+func (p *EntryListReq) ReadField10(iprot thrift.TProtocol) error {
+
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.MemberPropertyId = _field
+	return nil
+}
 func (p *EntryListReq) ReadField7(iprot thrift.TProtocol) error {
 
 	var _field int64
@@ -1493,6 +1529,10 @@ func (p *EntryListReq) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField5(oprot); err != nil {
 			fieldId = 5
+			goto WriteFieldError
+		}
+		if err = p.writeField10(oprot); err != nil {
+			fieldId = 10
 			goto WriteFieldError
 		}
 		if err = p.writeField7(oprot); err != nil {
@@ -1618,6 +1658,25 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
+}
+
+func (p *EntryListReq) writeField10(oprot thrift.TProtocol) (err error) {
+	if p.IsSetMemberPropertyId() {
+		if err = oprot.WriteFieldBegin("memberPropertyId", thrift.I64, 10); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI64(p.MemberPropertyId); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 end error: ", p), err)
 }
 
 func (p *EntryListReq) writeField7(oprot thrift.TProtocol) (err error) {

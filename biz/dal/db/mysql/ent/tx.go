@@ -42,6 +42,8 @@ type Tx struct {
 	MemberProduct *MemberProductClient
 	// MemberProductProperty is the client for interacting with the MemberProductProperty builders.
 	MemberProductProperty *MemberProductPropertyClient
+	// MemberProfile is the client for interacting with the MemberProfile builders.
+	MemberProfile *MemberProfileClient
 	// Menu is the client for interacting with the Menu builders.
 	Menu *MenuClient
 	// MenuParam is the client for interacting with the MenuParam builders.
@@ -70,6 +72,10 @@ type Tx struct {
 	ScheduleCoach *ScheduleCoachClient
 	// ScheduleMember is the client for interacting with the ScheduleMember builders.
 	ScheduleMember *ScheduleMemberClient
+	// Sms is the client for interacting with the Sms builders.
+	Sms *SmsClient
+	// SmsLog is the client for interacting with the SmsLog builders.
+	SmsLog *SmsLogClient
 	// Token is the client for interacting with the Token builders.
 	Token *TokenClient
 	// User is the client for interacting with the User builders.
@@ -224,6 +230,7 @@ func (tx *Tx) init() {
 	tx.MemberNote = NewMemberNoteClient(tx.config)
 	tx.MemberProduct = NewMemberProductClient(tx.config)
 	tx.MemberProductProperty = NewMemberProductPropertyClient(tx.config)
+	tx.MemberProfile = NewMemberProfileClient(tx.config)
 	tx.Menu = NewMenuClient(tx.config)
 	tx.MenuParam = NewMenuParamClient(tx.config)
 	tx.Messages = NewMessagesClient(tx.config)
@@ -238,6 +245,8 @@ func (tx *Tx) init() {
 	tx.Schedule = NewScheduleClient(tx.config)
 	tx.ScheduleCoach = NewScheduleCoachClient(tx.config)
 	tx.ScheduleMember = NewScheduleMemberClient(tx.config)
+	tx.Sms = NewSmsClient(tx.config)
+	tx.SmsLog = NewSmsLogClient(tx.config)
 	tx.Token = NewTokenClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.Venue = NewVenueClient(tx.config)

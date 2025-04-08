@@ -9,6 +9,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/dictionary"
 	"kcers/biz/dal/db/mysql/ent/dictionarydetail"
 	"kcers/biz/dal/db/mysql/ent/predicate"
+	"kcers/biz/dal/db/mysql/ent/productproperty"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -19,8 +20,9 @@ import (
 // DictionaryDetailUpdate is the builder for updating DictionaryDetail entities.
 type DictionaryDetailUpdate struct {
 	config
-	hooks    []Hook
-	mutation *DictionaryDetailMutation
+	hooks     []Hook
+	mutation  *DictionaryDetailMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the DictionaryDetailUpdate builder.
@@ -189,6 +191,21 @@ func (ddu *DictionaryDetailUpdate) SetDictionary(d *Dictionary) *DictionaryDetai
 	return ddu.SetDictionaryID(d.ID)
 }
 
+// AddPropertyIDs adds the "property" edge to the ProductProperty entity by IDs.
+func (ddu *DictionaryDetailUpdate) AddPropertyIDs(ids ...int64) *DictionaryDetailUpdate {
+	ddu.mutation.AddPropertyIDs(ids...)
+	return ddu
+}
+
+// AddProperty adds the "property" edges to the ProductProperty entity.
+func (ddu *DictionaryDetailUpdate) AddProperty(p ...*ProductProperty) *DictionaryDetailUpdate {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ddu.AddPropertyIDs(ids...)
+}
+
 // Mutation returns the DictionaryDetailMutation object of the builder.
 func (ddu *DictionaryDetailUpdate) Mutation() *DictionaryDetailMutation {
 	return ddu.mutation
@@ -198,6 +215,27 @@ func (ddu *DictionaryDetailUpdate) Mutation() *DictionaryDetailMutation {
 func (ddu *DictionaryDetailUpdate) ClearDictionary() *DictionaryDetailUpdate {
 	ddu.mutation.ClearDictionary()
 	return ddu
+}
+
+// ClearProperty clears all "property" edges to the ProductProperty entity.
+func (ddu *DictionaryDetailUpdate) ClearProperty() *DictionaryDetailUpdate {
+	ddu.mutation.ClearProperty()
+	return ddu
+}
+
+// RemovePropertyIDs removes the "property" edge to ProductProperty entities by IDs.
+func (ddu *DictionaryDetailUpdate) RemovePropertyIDs(ids ...int64) *DictionaryDetailUpdate {
+	ddu.mutation.RemovePropertyIDs(ids...)
+	return ddu
+}
+
+// RemoveProperty removes "property" edges to ProductProperty entities.
+func (ddu *DictionaryDetailUpdate) RemoveProperty(p ...*ProductProperty) *DictionaryDetailUpdate {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ddu.RemovePropertyIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -234,6 +272,12 @@ func (ddu *DictionaryDetailUpdate) defaults() {
 		v := dictionarydetail.UpdateDefaultUpdatedAt()
 		ddu.mutation.SetUpdatedAt(v)
 	}
+}
+
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (ddu *DictionaryDetailUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *DictionaryDetailUpdate {
+	ddu.modifiers = append(ddu.modifiers, modifiers...)
+	return ddu
 }
 
 func (ddu *DictionaryDetailUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -319,6 +363,52 @@ func (ddu *DictionaryDetailUpdate) sqlSave(ctx context.Context) (n int, err erro
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ddu.mutation.PropertyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   dictionarydetail.PropertyTable,
+			Columns: dictionarydetail.PropertyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(productproperty.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ddu.mutation.RemovedPropertyIDs(); len(nodes) > 0 && !ddu.mutation.PropertyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   dictionarydetail.PropertyTable,
+			Columns: dictionarydetail.PropertyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(productproperty.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ddu.mutation.PropertyIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   dictionarydetail.PropertyTable,
+			Columns: dictionarydetail.PropertyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(productproperty.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	_spec.AddModifiers(ddu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, ddu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{dictionarydetail.Label}
@@ -334,9 +424,10 @@ func (ddu *DictionaryDetailUpdate) sqlSave(ctx context.Context) (n int, err erro
 // DictionaryDetailUpdateOne is the builder for updating a single DictionaryDetail entity.
 type DictionaryDetailUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *DictionaryDetailMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *DictionaryDetailMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -499,6 +590,21 @@ func (dduo *DictionaryDetailUpdateOne) SetDictionary(d *Dictionary) *DictionaryD
 	return dduo.SetDictionaryID(d.ID)
 }
 
+// AddPropertyIDs adds the "property" edge to the ProductProperty entity by IDs.
+func (dduo *DictionaryDetailUpdateOne) AddPropertyIDs(ids ...int64) *DictionaryDetailUpdateOne {
+	dduo.mutation.AddPropertyIDs(ids...)
+	return dduo
+}
+
+// AddProperty adds the "property" edges to the ProductProperty entity.
+func (dduo *DictionaryDetailUpdateOne) AddProperty(p ...*ProductProperty) *DictionaryDetailUpdateOne {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return dduo.AddPropertyIDs(ids...)
+}
+
 // Mutation returns the DictionaryDetailMutation object of the builder.
 func (dduo *DictionaryDetailUpdateOne) Mutation() *DictionaryDetailMutation {
 	return dduo.mutation
@@ -508,6 +614,27 @@ func (dduo *DictionaryDetailUpdateOne) Mutation() *DictionaryDetailMutation {
 func (dduo *DictionaryDetailUpdateOne) ClearDictionary() *DictionaryDetailUpdateOne {
 	dduo.mutation.ClearDictionary()
 	return dduo
+}
+
+// ClearProperty clears all "property" edges to the ProductProperty entity.
+func (dduo *DictionaryDetailUpdateOne) ClearProperty() *DictionaryDetailUpdateOne {
+	dduo.mutation.ClearProperty()
+	return dduo
+}
+
+// RemovePropertyIDs removes the "property" edge to ProductProperty entities by IDs.
+func (dduo *DictionaryDetailUpdateOne) RemovePropertyIDs(ids ...int64) *DictionaryDetailUpdateOne {
+	dduo.mutation.RemovePropertyIDs(ids...)
+	return dduo
+}
+
+// RemoveProperty removes "property" edges to ProductProperty entities.
+func (dduo *DictionaryDetailUpdateOne) RemoveProperty(p ...*ProductProperty) *DictionaryDetailUpdateOne {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return dduo.RemovePropertyIDs(ids...)
 }
 
 // Where appends a list predicates to the DictionaryDetailUpdate builder.
@@ -557,6 +684,12 @@ func (dduo *DictionaryDetailUpdateOne) defaults() {
 		v := dictionarydetail.UpdateDefaultUpdatedAt()
 		dduo.mutation.SetUpdatedAt(v)
 	}
+}
+
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (dduo *DictionaryDetailUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *DictionaryDetailUpdateOne {
+	dduo.modifiers = append(dduo.modifiers, modifiers...)
+	return dduo
 }
 
 func (dduo *DictionaryDetailUpdateOne) sqlSave(ctx context.Context) (_node *DictionaryDetail, err error) {
@@ -659,6 +792,52 @@ func (dduo *DictionaryDetailUpdateOne) sqlSave(ctx context.Context) (_node *Dict
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if dduo.mutation.PropertyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   dictionarydetail.PropertyTable,
+			Columns: dictionarydetail.PropertyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(productproperty.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := dduo.mutation.RemovedPropertyIDs(); len(nodes) > 0 && !dduo.mutation.PropertyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   dictionarydetail.PropertyTable,
+			Columns: dictionarydetail.PropertyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(productproperty.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := dduo.mutation.PropertyIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   dictionarydetail.PropertyTable,
+			Columns: dictionarydetail.PropertyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(productproperty.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	_spec.AddModifiers(dduo.modifiers...)
 	_node = &DictionaryDetail{config: dduo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

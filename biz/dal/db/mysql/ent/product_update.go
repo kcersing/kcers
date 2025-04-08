@@ -9,18 +9,21 @@ import (
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	"kcers/biz/dal/db/mysql/ent/product"
 	"kcers/biz/dal/db/mysql/ent/productproperty"
+	"kcers/biz/dal/db/mysql/ent/venue"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 )
 
 // ProductUpdate is the builder for updating Product entities.
 type ProductUpdate struct {
 	config
-	hooks    []Hook
-	mutation *ProductMutation
+	hooks     []Hook
+	mutation  *ProductMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the ProductUpdate builder.
@@ -263,6 +266,79 @@ func (pu *ProductUpdate) ClearCreateID() *ProductUpdate {
 	return pu
 }
 
+// SetIsSales sets the "is_sales" field.
+func (pu *ProductUpdate) SetIsSales(i []int64) *ProductUpdate {
+	pu.mutation.SetIsSales(i)
+	return pu
+}
+
+// AppendIsSales appends i to the "is_sales" field.
+func (pu *ProductUpdate) AppendIsSales(i []int64) *ProductUpdate {
+	pu.mutation.AppendIsSales(i)
+	return pu
+}
+
+// ClearIsSales clears the value of the "is_sales" field.
+func (pu *ProductUpdate) ClearIsSales() *ProductUpdate {
+	pu.mutation.ClearIsSales()
+	return pu
+}
+
+// SetSignSalesAt sets the "sign_sales_at" field.
+func (pu *ProductUpdate) SetSignSalesAt(t time.Time) *ProductUpdate {
+	pu.mutation.SetSignSalesAt(t)
+	return pu
+}
+
+// SetNillableSignSalesAt sets the "sign_sales_at" field if the given value is not nil.
+func (pu *ProductUpdate) SetNillableSignSalesAt(t *time.Time) *ProductUpdate {
+	if t != nil {
+		pu.SetSignSalesAt(*t)
+	}
+	return pu
+}
+
+// ClearSignSalesAt clears the value of the "sign_sales_at" field.
+func (pu *ProductUpdate) ClearSignSalesAt() *ProductUpdate {
+	pu.mutation.ClearSignSalesAt()
+	return pu
+}
+
+// SetEndSalesAt sets the "end_sales_at" field.
+func (pu *ProductUpdate) SetEndSalesAt(t time.Time) *ProductUpdate {
+	pu.mutation.SetEndSalesAt(t)
+	return pu
+}
+
+// SetNillableEndSalesAt sets the "end_sales_at" field if the given value is not nil.
+func (pu *ProductUpdate) SetNillableEndSalesAt(t *time.Time) *ProductUpdate {
+	if t != nil {
+		pu.SetEndSalesAt(*t)
+	}
+	return pu
+}
+
+// ClearEndSalesAt clears the value of the "end_sales_at" field.
+func (pu *ProductUpdate) ClearEndSalesAt() *ProductUpdate {
+	pu.mutation.ClearEndSalesAt()
+	return pu
+}
+
+// AddVenueIDs adds the "venues" edge to the Venue entity by IDs.
+func (pu *ProductUpdate) AddVenueIDs(ids ...int64) *ProductUpdate {
+	pu.mutation.AddVenueIDs(ids...)
+	return pu
+}
+
+// AddVenues adds the "venues" edges to the Venue entity.
+func (pu *ProductUpdate) AddVenues(v ...*Venue) *ProductUpdate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return pu.AddVenueIDs(ids...)
+}
+
 // AddPropertyIDs adds the "propertys" edge to the ProductProperty entity by IDs.
 func (pu *ProductUpdate) AddPropertyIDs(ids ...int64) *ProductUpdate {
 	pu.mutation.AddPropertyIDs(ids...)
@@ -281,6 +357,27 @@ func (pu *ProductUpdate) AddPropertys(p ...*ProductProperty) *ProductUpdate {
 // Mutation returns the ProductMutation object of the builder.
 func (pu *ProductUpdate) Mutation() *ProductMutation {
 	return pu.mutation
+}
+
+// ClearVenues clears all "venues" edges to the Venue entity.
+func (pu *ProductUpdate) ClearVenues() *ProductUpdate {
+	pu.mutation.ClearVenues()
+	return pu
+}
+
+// RemoveVenueIDs removes the "venues" edge to Venue entities by IDs.
+func (pu *ProductUpdate) RemoveVenueIDs(ids ...int64) *ProductUpdate {
+	pu.mutation.RemoveVenueIDs(ids...)
+	return pu
+}
+
+// RemoveVenues removes "venues" edges to Venue entities.
+func (pu *ProductUpdate) RemoveVenues(v ...*Venue) *ProductUpdate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return pu.RemoveVenueIDs(ids...)
 }
 
 // ClearPropertys clears all "propertys" edges to the ProductProperty entity.
@@ -338,6 +435,12 @@ func (pu *ProductUpdate) defaults() {
 		v := product.UpdateDefaultUpdatedAt()
 		pu.mutation.SetUpdatedAt(v)
 	}
+}
+
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (pu *ProductUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ProductUpdate {
+	pu.modifiers = append(pu.modifiers, modifiers...)
+	return pu
 }
 
 func (pu *ProductUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -430,6 +533,74 @@ func (pu *ProductUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if pu.mutation.CreateIDCleared() {
 		_spec.ClearField(product.FieldCreateID, field.TypeInt64)
 	}
+	if value, ok := pu.mutation.IsSales(); ok {
+		_spec.SetField(product.FieldIsSales, field.TypeJSON, value)
+	}
+	if value, ok := pu.mutation.AppendedIsSales(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, product.FieldIsSales, value)
+		})
+	}
+	if pu.mutation.IsSalesCleared() {
+		_spec.ClearField(product.FieldIsSales, field.TypeJSON)
+	}
+	if value, ok := pu.mutation.SignSalesAt(); ok {
+		_spec.SetField(product.FieldSignSalesAt, field.TypeTime, value)
+	}
+	if pu.mutation.SignSalesAtCleared() {
+		_spec.ClearField(product.FieldSignSalesAt, field.TypeTime)
+	}
+	if value, ok := pu.mutation.EndSalesAt(); ok {
+		_spec.SetField(product.FieldEndSalesAt, field.TypeTime, value)
+	}
+	if pu.mutation.EndSalesAtCleared() {
+		_spec.ClearField(product.FieldEndSalesAt, field.TypeTime)
+	}
+	if pu.mutation.VenuesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   product.VenuesTable,
+			Columns: product.VenuesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(venue.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pu.mutation.RemovedVenuesIDs(); len(nodes) > 0 && !pu.mutation.VenuesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   product.VenuesTable,
+			Columns: product.VenuesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(venue.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pu.mutation.VenuesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   product.VenuesTable,
+			Columns: product.VenuesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(venue.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if pu.mutation.PropertysCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -475,6 +646,7 @@ func (pu *ProductUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(pu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{product.Label}
@@ -490,9 +662,10 @@ func (pu *ProductUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // ProductUpdateOne is the builder for updating a single Product entity.
 type ProductUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *ProductMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *ProductMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -729,6 +902,79 @@ func (puo *ProductUpdateOne) ClearCreateID() *ProductUpdateOne {
 	return puo
 }
 
+// SetIsSales sets the "is_sales" field.
+func (puo *ProductUpdateOne) SetIsSales(i []int64) *ProductUpdateOne {
+	puo.mutation.SetIsSales(i)
+	return puo
+}
+
+// AppendIsSales appends i to the "is_sales" field.
+func (puo *ProductUpdateOne) AppendIsSales(i []int64) *ProductUpdateOne {
+	puo.mutation.AppendIsSales(i)
+	return puo
+}
+
+// ClearIsSales clears the value of the "is_sales" field.
+func (puo *ProductUpdateOne) ClearIsSales() *ProductUpdateOne {
+	puo.mutation.ClearIsSales()
+	return puo
+}
+
+// SetSignSalesAt sets the "sign_sales_at" field.
+func (puo *ProductUpdateOne) SetSignSalesAt(t time.Time) *ProductUpdateOne {
+	puo.mutation.SetSignSalesAt(t)
+	return puo
+}
+
+// SetNillableSignSalesAt sets the "sign_sales_at" field if the given value is not nil.
+func (puo *ProductUpdateOne) SetNillableSignSalesAt(t *time.Time) *ProductUpdateOne {
+	if t != nil {
+		puo.SetSignSalesAt(*t)
+	}
+	return puo
+}
+
+// ClearSignSalesAt clears the value of the "sign_sales_at" field.
+func (puo *ProductUpdateOne) ClearSignSalesAt() *ProductUpdateOne {
+	puo.mutation.ClearSignSalesAt()
+	return puo
+}
+
+// SetEndSalesAt sets the "end_sales_at" field.
+func (puo *ProductUpdateOne) SetEndSalesAt(t time.Time) *ProductUpdateOne {
+	puo.mutation.SetEndSalesAt(t)
+	return puo
+}
+
+// SetNillableEndSalesAt sets the "end_sales_at" field if the given value is not nil.
+func (puo *ProductUpdateOne) SetNillableEndSalesAt(t *time.Time) *ProductUpdateOne {
+	if t != nil {
+		puo.SetEndSalesAt(*t)
+	}
+	return puo
+}
+
+// ClearEndSalesAt clears the value of the "end_sales_at" field.
+func (puo *ProductUpdateOne) ClearEndSalesAt() *ProductUpdateOne {
+	puo.mutation.ClearEndSalesAt()
+	return puo
+}
+
+// AddVenueIDs adds the "venues" edge to the Venue entity by IDs.
+func (puo *ProductUpdateOne) AddVenueIDs(ids ...int64) *ProductUpdateOne {
+	puo.mutation.AddVenueIDs(ids...)
+	return puo
+}
+
+// AddVenues adds the "venues" edges to the Venue entity.
+func (puo *ProductUpdateOne) AddVenues(v ...*Venue) *ProductUpdateOne {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return puo.AddVenueIDs(ids...)
+}
+
 // AddPropertyIDs adds the "propertys" edge to the ProductProperty entity by IDs.
 func (puo *ProductUpdateOne) AddPropertyIDs(ids ...int64) *ProductUpdateOne {
 	puo.mutation.AddPropertyIDs(ids...)
@@ -747,6 +993,27 @@ func (puo *ProductUpdateOne) AddPropertys(p ...*ProductProperty) *ProductUpdateO
 // Mutation returns the ProductMutation object of the builder.
 func (puo *ProductUpdateOne) Mutation() *ProductMutation {
 	return puo.mutation
+}
+
+// ClearVenues clears all "venues" edges to the Venue entity.
+func (puo *ProductUpdateOne) ClearVenues() *ProductUpdateOne {
+	puo.mutation.ClearVenues()
+	return puo
+}
+
+// RemoveVenueIDs removes the "venues" edge to Venue entities by IDs.
+func (puo *ProductUpdateOne) RemoveVenueIDs(ids ...int64) *ProductUpdateOne {
+	puo.mutation.RemoveVenueIDs(ids...)
+	return puo
+}
+
+// RemoveVenues removes "venues" edges to Venue entities.
+func (puo *ProductUpdateOne) RemoveVenues(v ...*Venue) *ProductUpdateOne {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return puo.RemoveVenueIDs(ids...)
 }
 
 // ClearPropertys clears all "propertys" edges to the ProductProperty entity.
@@ -817,6 +1084,12 @@ func (puo *ProductUpdateOne) defaults() {
 		v := product.UpdateDefaultUpdatedAt()
 		puo.mutation.SetUpdatedAt(v)
 	}
+}
+
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (puo *ProductUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ProductUpdateOne {
+	puo.modifiers = append(puo.modifiers, modifiers...)
+	return puo
 }
 
 func (puo *ProductUpdateOne) sqlSave(ctx context.Context) (_node *Product, err error) {
@@ -926,6 +1199,74 @@ func (puo *ProductUpdateOne) sqlSave(ctx context.Context) (_node *Product, err e
 	if puo.mutation.CreateIDCleared() {
 		_spec.ClearField(product.FieldCreateID, field.TypeInt64)
 	}
+	if value, ok := puo.mutation.IsSales(); ok {
+		_spec.SetField(product.FieldIsSales, field.TypeJSON, value)
+	}
+	if value, ok := puo.mutation.AppendedIsSales(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, product.FieldIsSales, value)
+		})
+	}
+	if puo.mutation.IsSalesCleared() {
+		_spec.ClearField(product.FieldIsSales, field.TypeJSON)
+	}
+	if value, ok := puo.mutation.SignSalesAt(); ok {
+		_spec.SetField(product.FieldSignSalesAt, field.TypeTime, value)
+	}
+	if puo.mutation.SignSalesAtCleared() {
+		_spec.ClearField(product.FieldSignSalesAt, field.TypeTime)
+	}
+	if value, ok := puo.mutation.EndSalesAt(); ok {
+		_spec.SetField(product.FieldEndSalesAt, field.TypeTime, value)
+	}
+	if puo.mutation.EndSalesAtCleared() {
+		_spec.ClearField(product.FieldEndSalesAt, field.TypeTime)
+	}
+	if puo.mutation.VenuesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   product.VenuesTable,
+			Columns: product.VenuesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(venue.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := puo.mutation.RemovedVenuesIDs(); len(nodes) > 0 && !puo.mutation.VenuesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   product.VenuesTable,
+			Columns: product.VenuesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(venue.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := puo.mutation.VenuesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   product.VenuesTable,
+			Columns: product.VenuesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(venue.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if puo.mutation.PropertysCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -971,6 +1312,7 @@ func (puo *ProductUpdateOne) sqlSave(ctx context.Context) (_node *Product, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(puo.modifiers...)
 	_node = &Product{config: puo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

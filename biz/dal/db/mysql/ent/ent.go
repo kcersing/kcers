@@ -21,6 +21,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/membernote"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
+	"kcers/biz/dal/db/mysql/ent/memberprofile"
 	"kcers/biz/dal/db/mysql/ent/menu"
 	"kcers/biz/dal/db/mysql/ent/menuparam"
 	"kcers/biz/dal/db/mysql/ent/messages"
@@ -35,6 +36,8 @@ import (
 	"kcers/biz/dal/db/mysql/ent/schedule"
 	"kcers/biz/dal/db/mysql/ent/schedulecoach"
 	"kcers/biz/dal/db/mysql/ent/schedulemember"
+	"kcers/biz/dal/db/mysql/ent/sms"
+	"kcers/biz/dal/db/mysql/ent/smslog"
 	"kcers/biz/dal/db/mysql/ent/token"
 	"kcers/biz/dal/db/mysql/ent/user"
 	"kcers/biz/dal/db/mysql/ent/venue"
@@ -120,6 +123,7 @@ func checkColumn(table, column string) error {
 			membernote.Table:            membernote.ValidColumn,
 			memberproduct.Table:         memberproduct.ValidColumn,
 			memberproductproperty.Table: memberproductproperty.ValidColumn,
+			memberprofile.Table:         memberprofile.ValidColumn,
 			menu.Table:                  menu.ValidColumn,
 			menuparam.Table:             menuparam.ValidColumn,
 			messages.Table:              messages.ValidColumn,
@@ -134,6 +138,8 @@ func checkColumn(table, column string) error {
 			schedule.Table:              schedule.ValidColumn,
 			schedulecoach.Table:         schedulecoach.ValidColumn,
 			schedulemember.Table:        schedulemember.ValidColumn,
+			sms.Table:                   sms.ValidColumn,
+			smslog.Table:                smslog.ValidColumn,
 			token.Table:                 token.ValidColumn,
 			user.Table:                  user.ValidColumn,
 			venue.Table:                 venue.ValidColumn,

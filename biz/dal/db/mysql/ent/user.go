@@ -33,8 +33,8 @@ type User struct {
 	Username string `json:"username,omitempty"`
 	// password | 密码
 	Password string `json:"password,omitempty"`
-	// nickname | 昵称
-	Nickname string `json:"nickname,omitempty"`
+	// 姓名
+	Name string `json:"name,omitempty"`
 	// template mode | 布局方式
 	SideMode string `json:"side_mode,omitempty"`
 	// base color of template | 后台页面色调
@@ -127,7 +127,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldID, user.FieldDelete, user.FieldCreatedID, user.FieldStatus, user.FieldRoleID, user.FieldDefaultVenueID, user.FieldGender:
 			values[i] = new(sql.NullInt64)
-		case user.FieldUsername, user.FieldPassword, user.FieldNickname, user.FieldSideMode, user.FieldBaseColor, user.FieldActiveColor, user.FieldMobile, user.FieldEmail, user.FieldWecom, user.FieldJob, user.FieldOrganization, user.FieldAvatar:
+		case user.FieldUsername, user.FieldPassword, user.FieldName, user.FieldSideMode, user.FieldBaseColor, user.FieldActiveColor, user.FieldMobile, user.FieldEmail, user.FieldWecom, user.FieldJob, user.FieldOrganization, user.FieldAvatar:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldBirthday:
 			values[i] = new(sql.NullTime)
@@ -194,11 +194,11 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.Password = value.String
 			}
-		case user.FieldNickname:
+		case user.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field nickname", values[i])
+				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
-				u.Nickname = value.String
+				u.Name = value.String
 			}
 		case user.FieldSideMode:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -355,8 +355,8 @@ func (u *User) String() string {
 	builder.WriteString("password=")
 	builder.WriteString(u.Password)
 	builder.WriteString(", ")
-	builder.WriteString("nickname=")
-	builder.WriteString(u.Nickname)
+	builder.WriteString("name=")
+	builder.WriteString(u.Name)
 	builder.WriteString(", ")
 	builder.WriteString("side_mode=")
 	builder.WriteString(u.SideMode)

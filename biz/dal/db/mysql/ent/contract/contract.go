@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -27,8 +28,15 @@ const (
 	FieldName = "name"
 	// FieldContent holds the string denoting the content field in the database.
 	FieldContent = "content"
+	// EdgeProperty holds the string denoting the property edge name in mutations.
+	EdgeProperty = "property"
 	// Table holds the table name of the contract in the database.
 	Table = "contracts"
+	// PropertyTable is the table that holds the property relation/edge. The primary key declared below.
+	PropertyTable = "product_property_contracts"
+	// PropertyInverseTable is the table name for the ProductProperty entity.
+	// It exists in this package in order to avoid circular dependency with the "productproperty" package.
+	PropertyInverseTable = "product_property"
 )
 
 // Columns holds all SQL columns for contract fields.
@@ -42,6 +50,12 @@ var Columns = []string{
 	FieldName,
 	FieldContent,
 }
+
+var (
+	// PropertyPrimaryKey and PropertyColumn2 are the table columns denoting the
+	// primary key for the property relation (M2M).
+	PropertyPrimaryKey = []string{"product_property_id", "contract_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -109,4 +123,25 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 // ByContent orders the results by the content field.
 func ByContent(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldContent, opts...).ToFunc()
+}
+
+// ByPropertyCount orders the results by property count.
+func ByPropertyCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newPropertyStep(), opts...)
+	}
+}
+
+// ByProperty orders the results by property terms.
+func ByProperty(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPropertyStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newPropertyStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PropertyInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, PropertyTable, PropertyPrimaryKey...),
+	)
 }

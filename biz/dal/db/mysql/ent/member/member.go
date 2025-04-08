@@ -26,16 +26,18 @@ const (
 	FieldStatus = "status"
 	// FieldPassword holds the string denoting the password field in the database.
 	FieldPassword = "password"
-	// FieldName holds the string denoting the name field in the database.
-	FieldName = "name"
-	// FieldNickname holds the string denoting the nickname field in the database.
-	FieldNickname = "nickname"
+	// FieldUsername holds the string denoting the username field in the database.
+	FieldUsername = "username"
 	// FieldMobile holds the string denoting the mobile field in the database.
 	FieldMobile = "mobile"
+	// FieldName holds the string denoting the name field in the database.
+	FieldName = "name"
 	// FieldAvatar holds the string denoting the avatar field in the database.
 	FieldAvatar = "avatar"
 	// FieldCondition holds the string denoting the condition field in the database.
 	FieldCondition = "condition"
+	// EdgeMemberProfile holds the string denoting the member_profile edge name in mutations.
+	EdgeMemberProfile = "member_profile"
 	// EdgeMemberDetails holds the string denoting the member_details edge name in mutations.
 	EdgeMemberDetails = "member_details"
 	// EdgeMemberNotes holds the string denoting the member_notes edge name in mutations.
@@ -52,6 +54,13 @@ const (
 	EdgeMemberFace = "member_face"
 	// Table holds the table name of the member in the database.
 	Table = "member"
+	// MemberProfileTable is the table that holds the member_profile relation/edge.
+	MemberProfileTable = "member_profile"
+	// MemberProfileInverseTable is the table name for the MemberProfile entity.
+	// It exists in this package in order to avoid circular dependency with the "memberprofile" package.
+	MemberProfileInverseTable = "member_profile"
+	// MemberProfileColumn is the table column denoting the member_profile relation/edge.
+	MemberProfileColumn = "member_id"
 	// MemberDetailsTable is the table that holds the member_details relation/edge.
 	MemberDetailsTable = "member_details"
 	// MemberDetailsInverseTable is the table name for the MemberDetails entity.
@@ -112,9 +121,9 @@ var Columns = []string{
 	FieldCreatedID,
 	FieldStatus,
 	FieldPassword,
-	FieldName,
-	FieldNickname,
+	FieldUsername,
 	FieldMobile,
+	FieldName,
 	FieldAvatar,
 	FieldCondition,
 }
@@ -186,19 +195,19 @@ func ByPassword(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPassword, opts...).ToFunc()
 }
 
-// ByName orders the results by the name field.
-func ByName(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldName, opts...).ToFunc()
-}
-
-// ByNickname orders the results by the nickname field.
-func ByNickname(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldNickname, opts...).ToFunc()
+// ByUsername orders the results by the username field.
+func ByUsername(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUsername, opts...).ToFunc()
 }
 
 // ByMobile orders the results by the mobile field.
 func ByMobile(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMobile, opts...).ToFunc()
+}
+
+// ByName orders the results by the name field.
+func ByName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldName, opts...).ToFunc()
 }
 
 // ByAvatar orders the results by the avatar field.
@@ -209,6 +218,20 @@ func ByAvatar(opts ...sql.OrderTermOption) OrderOption {
 // ByCondition orders the results by the condition field.
 func ByCondition(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCondition, opts...).ToFunc()
+}
+
+// ByMemberProfileCount orders the results by member_profile count.
+func ByMemberProfileCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newMemberProfileStep(), opts...)
+	}
+}
+
+// ByMemberProfile orders the results by member_profile terms.
+func ByMemberProfile(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMemberProfileStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
 }
 
 // ByMemberDetailsCount orders the results by member_details count.
@@ -307,6 +330,13 @@ func ByMemberFace(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newMemberFaceStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
+}
+func newMemberProfileStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MemberProfileInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, MemberProfileTable, MemberProfileColumn),
+	)
 }
 func newMemberDetailsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(

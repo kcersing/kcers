@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/dictionary"
 	"kcers/biz/dal/db/mysql/ent/dictionarydetail"
+	"kcers/biz/dal/db/mysql/ent/productproperty"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -132,6 +133,21 @@ func (ddc *DictionaryDetailCreate) SetID(i int64) *DictionaryDetailCreate {
 // SetDictionary sets the "dictionary" edge to the Dictionary entity.
 func (ddc *DictionaryDetailCreate) SetDictionary(d *Dictionary) *DictionaryDetailCreate {
 	return ddc.SetDictionaryID(d.ID)
+}
+
+// AddPropertyIDs adds the "property" edge to the ProductProperty entity by IDs.
+func (ddc *DictionaryDetailCreate) AddPropertyIDs(ids ...int64) *DictionaryDetailCreate {
+	ddc.mutation.AddPropertyIDs(ids...)
+	return ddc
+}
+
+// AddProperty adds the "property" edges to the ProductProperty entity.
+func (ddc *DictionaryDetailCreate) AddProperty(p ...*ProductProperty) *DictionaryDetailCreate {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ddc.AddPropertyIDs(ids...)
 }
 
 // Mutation returns the DictionaryDetailMutation object of the builder.
@@ -281,6 +297,22 @@ func (ddc *DictionaryDetailCreate) createSpec() (*DictionaryDetail, *sqlgraph.Cr
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.DictionaryID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ddc.mutation.PropertyIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   dictionarydetail.PropertyTable,
+			Columns: dictionarydetail.PropertyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(productproperty.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

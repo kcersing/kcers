@@ -28,8 +28,8 @@ const (
 	FieldUsername = "username"
 	// FieldPassword holds the string denoting the password field in the database.
 	FieldPassword = "password"
-	// FieldNickname holds the string denoting the nickname field in the database.
-	FieldNickname = "nickname"
+	// FieldName holds the string denoting the name field in the database.
+	FieldName = "name"
 	// FieldSideMode holds the string denoting the side_mode field in the database.
 	FieldSideMode = "side_mode"
 	// FieldBaseColor holds the string denoting the base_color field in the database.
@@ -106,7 +106,7 @@ var Columns = []string{
 	FieldStatus,
 	FieldUsername,
 	FieldPassword,
-	FieldNickname,
+	FieldName,
 	FieldSideMode,
 	FieldBaseColor,
 	FieldActiveColor,
@@ -200,9 +200,9 @@ func ByPassword(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPassword, opts...).ToFunc()
 }
 
-// ByNickname orders the results by the nickname field.
-func ByNickname(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldNickname, opts...).ToFunc()
+// ByName orders the results by the name field.
+func ByName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldName, opts...).ToFunc()
 }
 
 // BySideMode orders the results by the side_mode field.

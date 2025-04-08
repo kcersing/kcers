@@ -54,6 +54,8 @@ const (
 	EdgeMemberPropertyVenues = "member_property_venues"
 	// EdgePropertyVenues holds the string denoting the property_venues edge name in mutations.
 	EdgePropertyVenues = "property_venues"
+	// EdgeProducts holds the string denoting the products edge name in mutations.
+	EdgeProducts = "products"
 	// Table holds the table name of the venue in the database.
 	Table = "venue"
 	// PlacesTable is the table that holds the places relation/edge.
@@ -87,6 +89,11 @@ const (
 	// PropertyVenuesInverseTable is the table name for the ProductProperty entity.
 	// It exists in this package in order to avoid circular dependency with the "productproperty" package.
 	PropertyVenuesInverseTable = "product_property"
+	// ProductsTable is the table that holds the products relation/edge. The primary key declared below.
+	ProductsTable = "product_venues"
+	// ProductsInverseTable is the table name for the Product entity.
+	// It exists in this package in order to avoid circular dependency with the "product" package.
+	ProductsInverseTable = "product"
 )
 
 // Columns holds all SQL columns for venue fields.
@@ -116,6 +123,9 @@ var (
 	// PropertyVenuesPrimaryKey and PropertyVenuesColumn2 are the table columns denoting the
 	// primary key for the property_venues relation (M2M).
 	PropertyVenuesPrimaryKey = []string{"product_property_id", "venue_id"}
+	// ProductsPrimaryKey and ProductsColumn2 are the table columns denoting the
+	// primary key for the products relation (M2M).
+	ProductsPrimaryKey = []string{"product_id", "venue_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -295,6 +305,20 @@ func ByPropertyVenues(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newPropertyVenuesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByProductsCount orders the results by products count.
+func ByProductsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newProductsStep(), opts...)
+	}
+}
+
+// ByProducts orders the results by products terms.
+func ByProducts(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newProductsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newPlacesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -328,5 +352,12 @@ func newPropertyVenuesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(PropertyVenuesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, true, PropertyVenuesTable, PropertyVenuesPrimaryKey...),
+	)
+}
+func newProductsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ProductsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, ProductsTable, ProductsPrimaryKey...),
 	)
 }
