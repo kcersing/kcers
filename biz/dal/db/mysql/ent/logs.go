@@ -43,9 +43,11 @@ type Logs struct {
 	// user_agent of log | 日志用户客户端
 	UserAgent string `json:"user_agent,omitempty"`
 	// operator of log | 日志操作者
-	Operator string `json:"operator,omitempty"`
+	Operatorsr string `json:"operatorsr,omitempty"`
 	// time of log(millisecond) | 日志时间(毫秒)
-	Time         int64 `json:"time,omitempty"`
+	Time int64 `json:"time,omitempty"`
+	// 1会员2员工 | 身份
+	Identity     int64 `json:"identity,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -56,9 +58,9 @@ func (*Logs) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case logs.FieldSuccess:
 			values[i] = new(sql.NullBool)
-		case logs.FieldID, logs.FieldDelete, logs.FieldCreatedID, logs.FieldTime:
+		case logs.FieldID, logs.FieldDelete, logs.FieldCreatedID, logs.FieldTime, logs.FieldIdentity:
 			values[i] = new(sql.NullInt64)
-		case logs.FieldType, logs.FieldMethod, logs.FieldAPI, logs.FieldReqContent, logs.FieldRespContent, logs.FieldIP, logs.FieldUserAgent, logs.FieldOperator:
+		case logs.FieldType, logs.FieldMethod, logs.FieldAPI, logs.FieldReqContent, logs.FieldRespContent, logs.FieldIP, logs.FieldUserAgent, logs.FieldOperatorsr:
 			values[i] = new(sql.NullString)
 		case logs.FieldCreatedAt, logs.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -155,17 +157,23 @@ func (l *Logs) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				l.UserAgent = value.String
 			}
-		case logs.FieldOperator:
+		case logs.FieldOperatorsr:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field operator", values[i])
+				return fmt.Errorf("unexpected type %T for field operatorsr", values[i])
 			} else if value.Valid {
-				l.Operator = value.String
+				l.Operatorsr = value.String
 			}
 		case logs.FieldTime:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field time", values[i])
 			} else if value.Valid {
 				l.Time = value.Int64
+			}
+		case logs.FieldIdentity:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field identity", values[i])
+			} else if value.Valid {
+				l.Identity = value.Int64
 			}
 		default:
 			l.selectValues.Set(columns[i], values[i])
@@ -239,11 +247,14 @@ func (l *Logs) String() string {
 	builder.WriteString("user_agent=")
 	builder.WriteString(l.UserAgent)
 	builder.WriteString(", ")
-	builder.WriteString("operator=")
-	builder.WriteString(l.Operator)
+	builder.WriteString("operatorsr=")
+	builder.WriteString(l.Operatorsr)
 	builder.WriteString(", ")
 	builder.WriteString("time=")
 	builder.WriteString(fmt.Sprintf("%v", l.Time))
+	builder.WriteString(", ")
+	builder.WriteString("identity=")
+	builder.WriteString(fmt.Sprintf("%v", l.Identity))
 	builder.WriteByte(')')
 	return builder.String()
 }

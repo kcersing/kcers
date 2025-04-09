@@ -4,12 +4,13 @@ package ent
 
 import (
 	"context"
-	"kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 )
 
 // OrderDelete is the builder for deleting a Order entity.
@@ -40,7 +41,7 @@ func (od *OrderDelete) ExecX(ctx context.Context) int {
 }
 
 func (od *OrderDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(order.Table, sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewDeleteSpec(entorder.Table, sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64))
 	if ps := od.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -74,7 +75,7 @@ func (odo *OrderDeleteOne) Exec(ctx context.Context) error {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{order.Label}
+		return &NotFoundError{entorder.Label}
 	default:
 		return nil
 	}

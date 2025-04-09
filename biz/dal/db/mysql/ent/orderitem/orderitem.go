@@ -24,10 +24,16 @@ const (
 	FieldCreatedID = "created_id"
 	// FieldOrderID holds the string denoting the order_id field in the database.
 	FieldOrderID = "order_id"
+	// FieldNumber holds the string denoting the number field in the database.
+	FieldNumber = "number"
+	// FieldName holds the string denoting the name field in the database.
+	FieldName = "name"
 	// FieldProductID holds the string denoting the product_id field in the database.
 	FieldProductID = "product_id"
 	// FieldRelatedUserProductID holds the string denoting the related_user_product_id field in the database.
 	FieldRelatedUserProductID = "related_user_product_id"
+	// FieldData holds the string denoting the data field in the database.
+	FieldData = "data"
 	// EdgeOrder holds the string denoting the order edge name in mutations.
 	EdgeOrder = "order"
 	// Table holds the table name of the orderitem in the database.
@@ -35,7 +41,7 @@ const (
 	// OrderTable is the table that holds the order relation/edge.
 	OrderTable = "order_item"
 	// OrderInverseTable is the table name for the Order entity.
-	// It exists in this package in order to avoid circular dependency with the "order" package.
+	// It exists in this package in order to avoid circular dependency with the "entorder" package.
 	OrderInverseTable = "order"
 	// OrderColumn is the table column denoting the order relation/edge.
 	OrderColumn = "order_id"
@@ -49,8 +55,11 @@ var Columns = []string{
 	FieldDelete,
 	FieldCreatedID,
 	FieldOrderID,
+	FieldNumber,
+	FieldName,
 	FieldProductID,
 	FieldRelatedUserProductID,
+	FieldData,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -74,6 +83,8 @@ var (
 	DefaultDelete int64
 	// DefaultCreatedID holds the default value on creation for the "created_id" field.
 	DefaultCreatedID int64
+	// DefaultNumber holds the default value on creation for the "number" field.
+	DefaultNumber int64
 	// DefaultRelatedUserProductID holds the default value on creation for the "related_user_product_id" field.
 	DefaultRelatedUserProductID int64
 )
@@ -109,6 +120,16 @@ func ByCreatedID(opts ...sql.OrderTermOption) OrderOption {
 // ByOrderID orders the results by the order_id field.
 func ByOrderID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOrderID, opts...).ToFunc()
+}
+
+// ByNumber orders the results by the number field.
+func ByNumber(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNumber, opts...).ToFunc()
+}
+
+// ByName orders the results by the name field.
+func ByName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldName, opts...).ToFunc()
 }
 
 // ByProductID orders the results by the product_id field.

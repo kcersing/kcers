@@ -44,8 +44,9 @@ func (l *Logs) Create(logsReq *logs.LogsInfo) error {
 		SetRespContent(logsReq.RespContent).
 		SetIP(logsReq.IP).
 		SetUserAgent(logsReq.UserAgent).
-		SetOperator(logsReq.Operators).
+		SetOperatorsr(logsReq.Operatorsr).
 		SetTime(logsReq.Time).
+		SetIdentity(logsReq.Identity).
 		Exec(l.ctx)
 	if err != nil {
 		err = errors.Wrap(err, "create logs failed")
@@ -65,8 +66,8 @@ func (l *Logs) List(req *logs.LogsListReq) (list []*logs.LogsInfo, total int, er
 	if req.API != "" {
 		predicates = append(predicates, logs2.APIContains(req.API))
 	}
-	if req.Operators != "" {
-		predicates = append(predicates, logs2.OperatorContains(req.Operators))
+	if req.Operatorsr != "" {
+		predicates = append(predicates, logs2.OperatorsrContains(req.Operatorsr))
 	}
 	if req.Success != true {
 		predicates = append(predicates, logs2.SuccessEQ(req.Success))
@@ -88,7 +89,8 @@ func (l *Logs) List(req *logs.LogsListReq) (list []*logs.LogsInfo, total int, er
 			RespContent: v.RespContent,
 			IP:          v.IP,
 			UserAgent:   v.UserAgent,
-			Operators:   v.Operator,
+			Operatorsr:  v.Operatorsr,
+			Identity:    v.Identity,
 			Time:        v.Time,
 			CreatedAt:   v.CreatedAt.Format(time.DateTime),
 			UpdatedAt:   v.UpdatedAt.Format(time.DateTime),

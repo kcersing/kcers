@@ -228,14 +228,10 @@ struct MemberEntryInfo  {
 	8: optional i64 userId=0 (api.raw ="userId")
 	9: optional i64 venueId=0 (api.raw ="venueId")
 }
-
-
-
-
-
-
-
-
+struct LoginReq{
+     1:optional	string mobile ="" (api.raw = "mobile")
+     2:optional	string smsCaptcha ="" (api.raw = "smsCaptcha")
+}
 
 
 service MemberService {

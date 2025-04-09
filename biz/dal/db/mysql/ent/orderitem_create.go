@@ -5,8 +5,9 @@ package ent
 import (
 	"context"
 	"fmt"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/orderitem"
+	"kcers/idl_gen/model/order"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -90,6 +91,34 @@ func (oic *OrderItemCreate) SetNillableOrderID(i *int64) *OrderItemCreate {
 	return oic
 }
 
+// SetNumber sets the "number" field.
+func (oic *OrderItemCreate) SetNumber(i int64) *OrderItemCreate {
+	oic.mutation.SetNumber(i)
+	return oic
+}
+
+// SetNillableNumber sets the "number" field if the given value is not nil.
+func (oic *OrderItemCreate) SetNillableNumber(i *int64) *OrderItemCreate {
+	if i != nil {
+		oic.SetNumber(*i)
+	}
+	return oic
+}
+
+// SetName sets the "name" field.
+func (oic *OrderItemCreate) SetName(s string) *OrderItemCreate {
+	oic.mutation.SetName(s)
+	return oic
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (oic *OrderItemCreate) SetNillableName(s *string) *OrderItemCreate {
+	if s != nil {
+		oic.SetName(*s)
+	}
+	return oic
+}
+
 // SetProductID sets the "product_id" field.
 func (oic *OrderItemCreate) SetProductID(i int64) *OrderItemCreate {
 	oic.mutation.SetProductID(i)
@@ -114,6 +143,20 @@ func (oic *OrderItemCreate) SetRelatedUserProductID(i int64) *OrderItemCreate {
 func (oic *OrderItemCreate) SetNillableRelatedUserProductID(i *int64) *OrderItemCreate {
 	if i != nil {
 		oic.SetRelatedUserProductID(*i)
+	}
+	return oic
+}
+
+// SetData sets the "data" field.
+func (oic *OrderItemCreate) SetData(or order.BuyReq) *OrderItemCreate {
+	oic.mutation.SetData(or)
+	return oic
+}
+
+// SetNillableData sets the "data" field if the given value is not nil.
+func (oic *OrderItemCreate) SetNillableData(or *order.BuyReq) *OrderItemCreate {
+	if or != nil {
+		oic.SetData(*or)
 	}
 	return oic
 }
@@ -180,6 +223,10 @@ func (oic *OrderItemCreate) defaults() {
 		v := orderitem.DefaultCreatedID
 		oic.mutation.SetCreatedID(v)
 	}
+	if _, ok := oic.mutation.Number(); !ok {
+		v := orderitem.DefaultNumber
+		oic.mutation.SetNumber(v)
+	}
 	if _, ok := oic.mutation.RelatedUserProductID(); !ok {
 		v := orderitem.DefaultRelatedUserProductID
 		oic.mutation.SetRelatedUserProductID(v)
@@ -236,6 +283,14 @@ func (oic *OrderItemCreate) createSpec() (*OrderItem, *sqlgraph.CreateSpec) {
 		_spec.SetField(orderitem.FieldCreatedID, field.TypeInt64, value)
 		_node.CreatedID = value
 	}
+	if value, ok := oic.mutation.Number(); ok {
+		_spec.SetField(orderitem.FieldNumber, field.TypeInt64, value)
+		_node.Number = value
+	}
+	if value, ok := oic.mutation.Name(); ok {
+		_spec.SetField(orderitem.FieldName, field.TypeString, value)
+		_node.Name = value
+	}
 	if value, ok := oic.mutation.ProductID(); ok {
 		_spec.SetField(orderitem.FieldProductID, field.TypeInt64, value)
 		_node.ProductID = value
@@ -243,6 +298,10 @@ func (oic *OrderItemCreate) createSpec() (*OrderItem, *sqlgraph.CreateSpec) {
 	if value, ok := oic.mutation.RelatedUserProductID(); ok {
 		_spec.SetField(orderitem.FieldRelatedUserProductID, field.TypeInt64, value)
 		_node.RelatedUserProductID = value
+	}
+	if value, ok := oic.mutation.Data(); ok {
+		_spec.SetField(orderitem.FieldData, field.TypeJSON, value)
+		_node.Data = value
 	}
 	if nodes := oic.mutation.OrderIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -252,7 +311,7 @@ func (oic *OrderItemCreate) createSpec() (*OrderItem, *sqlgraph.CreateSpec) {
 			Columns: []string{orderitem.OrderColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -33,6 +33,17 @@ type Member struct {
 	cache *ristretto.Cache
 }
 
+func (m *Member) Login(req *member.LoginReq) (resp *member.MemberInfo, err error) {
+	memberEnt, err := m.db.Member.Query().Where(member2.MobileEQ(req.Mobile)).First(m.ctx)
+	if err != nil {
+		err = errors.Wrap(err, "get member failed")
+		return nil, err
+	}
+	resp = m.entMemberInfo(*memberEnt)
+
+	return resp, nil
+}
+
 func (m *Member) Create(req *member.CreateOrUpdateMemberReq) error {
 
 	birthday, _ := time.Parse(time.DateOnly, req.Birthday)

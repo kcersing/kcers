@@ -5,7 +5,7 @@ package ent
 import (
 	"context"
 	"fmt"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/orderpay"
 	"time"
 
@@ -132,6 +132,20 @@ func (opc *OrderPayCreate) SetNillableNote(s *string) *OrderPayCreate {
 	return opc
 }
 
+// SetPayAt sets the "pay_at" field.
+func (opc *OrderPayCreate) SetPayAt(t time.Time) *OrderPayCreate {
+	opc.mutation.SetPayAt(t)
+	return opc
+}
+
+// SetNillablePayAt sets the "pay_at" field if the given value is not nil.
+func (opc *OrderPayCreate) SetNillablePayAt(t *time.Time) *OrderPayCreate {
+	if t != nil {
+		opc.SetPayAt(*t)
+	}
+	return opc
+}
+
 // SetPayWay sets the "pay_way" field.
 func (opc *OrderPayCreate) SetPayWay(s string) *OrderPayCreate {
 	opc.mutation.SetPayWay(s)
@@ -146,17 +160,37 @@ func (opc *OrderPayCreate) SetNillablePayWay(s *string) *OrderPayCreate {
 	return opc
 }
 
-// SetCreateID sets the "create_id" field.
-func (opc *OrderPayCreate) SetCreateID(i int64) *OrderPayCreate {
-	opc.mutation.SetCreateID(i)
+// SetPaySn sets the "pay_sn" field.
+func (opc *OrderPayCreate) SetPaySn(s string) *OrderPayCreate {
+	opc.mutation.SetPaySn(s)
 	return opc
 }
 
-// SetNillableCreateID sets the "create_id" field if the given value is not nil.
-func (opc *OrderPayCreate) SetNillableCreateID(i *int64) *OrderPayCreate {
-	if i != nil {
-		opc.SetCreateID(*i)
+// SetNillablePaySn sets the "pay_sn" field if the given value is not nil.
+func (opc *OrderPayCreate) SetNillablePaySn(s *string) *OrderPayCreate {
+	if s != nil {
+		opc.SetPaySn(*s)
 	}
+	return opc
+}
+
+// SetPrepayID sets the "prepay_id" field.
+func (opc *OrderPayCreate) SetPrepayID(s string) *OrderPayCreate {
+	opc.mutation.SetPrepayID(s)
+	return opc
+}
+
+// SetNillablePrepayID sets the "prepay_id" field if the given value is not nil.
+func (opc *OrderPayCreate) SetNillablePrepayID(s *string) *OrderPayCreate {
+	if s != nil {
+		opc.SetPrepayID(*s)
+	}
+	return opc
+}
+
+// SetPayExtra sets the "pay_extra" field.
+func (opc *OrderPayCreate) SetPayExtra(u []uint8) *OrderPayCreate {
+	opc.mutation.SetPayExtra(u)
 	return opc
 }
 
@@ -286,13 +320,25 @@ func (opc *OrderPayCreate) createSpec() (*OrderPay, *sqlgraph.CreateSpec) {
 		_spec.SetField(orderpay.FieldNote, field.TypeString, value)
 		_node.Note = value
 	}
+	if value, ok := opc.mutation.PayAt(); ok {
+		_spec.SetField(orderpay.FieldPayAt, field.TypeTime, value)
+		_node.PayAt = value
+	}
 	if value, ok := opc.mutation.PayWay(); ok {
 		_spec.SetField(orderpay.FieldPayWay, field.TypeString, value)
 		_node.PayWay = value
 	}
-	if value, ok := opc.mutation.CreateID(); ok {
-		_spec.SetField(orderpay.FieldCreateID, field.TypeInt64, value)
-		_node.CreateID = value
+	if value, ok := opc.mutation.PaySn(); ok {
+		_spec.SetField(orderpay.FieldPaySn, field.TypeString, value)
+		_node.PaySn = value
+	}
+	if value, ok := opc.mutation.PrepayID(); ok {
+		_spec.SetField(orderpay.FieldPrepayID, field.TypeString, value)
+		_node.PrepayID = value
+	}
+	if value, ok := opc.mutation.PayExtra(); ok {
+		_spec.SetField(orderpay.FieldPayExtra, field.TypeJSON, value)
+		_node.PayExtra = value
 	}
 	if nodes := opc.mutation.OrderIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -302,7 +348,7 @@ func (opc *OrderPayCreate) createSpec() (*OrderPay, *sqlgraph.CreateSpec) {
 			Columns: []string{orderpay.OrderColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

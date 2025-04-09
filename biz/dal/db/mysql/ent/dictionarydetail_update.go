@@ -10,6 +10,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/dictionarydetail"
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	"kcers/biz/dal/db/mysql/ent/productproperty"
+	"kcers/biz/dal/db/mysql/ent/user"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -206,6 +207,21 @@ func (ddu *DictionaryDetailUpdate) AddProperty(p ...*ProductProperty) *Dictionar
 	return ddu.AddPropertyIDs(ids...)
 }
 
+// AddUserIDs adds the "users" edge to the User entity by IDs.
+func (ddu *DictionaryDetailUpdate) AddUserIDs(ids ...int64) *DictionaryDetailUpdate {
+	ddu.mutation.AddUserIDs(ids...)
+	return ddu
+}
+
+// AddUsers adds the "users" edges to the User entity.
+func (ddu *DictionaryDetailUpdate) AddUsers(u ...*User) *DictionaryDetailUpdate {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return ddu.AddUserIDs(ids...)
+}
+
 // Mutation returns the DictionaryDetailMutation object of the builder.
 func (ddu *DictionaryDetailUpdate) Mutation() *DictionaryDetailMutation {
 	return ddu.mutation
@@ -236,6 +252,27 @@ func (ddu *DictionaryDetailUpdate) RemoveProperty(p ...*ProductProperty) *Dictio
 		ids[i] = p[i].ID
 	}
 	return ddu.RemovePropertyIDs(ids...)
+}
+
+// ClearUsers clears all "users" edges to the User entity.
+func (ddu *DictionaryDetailUpdate) ClearUsers() *DictionaryDetailUpdate {
+	ddu.mutation.ClearUsers()
+	return ddu
+}
+
+// RemoveUserIDs removes the "users" edge to User entities by IDs.
+func (ddu *DictionaryDetailUpdate) RemoveUserIDs(ids ...int64) *DictionaryDetailUpdate {
+	ddu.mutation.RemoveUserIDs(ids...)
+	return ddu
+}
+
+// RemoveUsers removes "users" edges to User entities.
+func (ddu *DictionaryDetailUpdate) RemoveUsers(u ...*User) *DictionaryDetailUpdate {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return ddu.RemoveUserIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -401,6 +438,51 @@ func (ddu *DictionaryDetailUpdate) sqlSave(ctx context.Context) (n int, err erro
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(productproperty.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ddu.mutation.UsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   dictionarydetail.UsersTable,
+			Columns: dictionarydetail.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ddu.mutation.RemovedUsersIDs(); len(nodes) > 0 && !ddu.mutation.UsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   dictionarydetail.UsersTable,
+			Columns: dictionarydetail.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ddu.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   dictionarydetail.UsersTable,
+			Columns: dictionarydetail.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -605,6 +687,21 @@ func (dduo *DictionaryDetailUpdateOne) AddProperty(p ...*ProductProperty) *Dicti
 	return dduo.AddPropertyIDs(ids...)
 }
 
+// AddUserIDs adds the "users" edge to the User entity by IDs.
+func (dduo *DictionaryDetailUpdateOne) AddUserIDs(ids ...int64) *DictionaryDetailUpdateOne {
+	dduo.mutation.AddUserIDs(ids...)
+	return dduo
+}
+
+// AddUsers adds the "users" edges to the User entity.
+func (dduo *DictionaryDetailUpdateOne) AddUsers(u ...*User) *DictionaryDetailUpdateOne {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return dduo.AddUserIDs(ids...)
+}
+
 // Mutation returns the DictionaryDetailMutation object of the builder.
 func (dduo *DictionaryDetailUpdateOne) Mutation() *DictionaryDetailMutation {
 	return dduo.mutation
@@ -635,6 +732,27 @@ func (dduo *DictionaryDetailUpdateOne) RemoveProperty(p ...*ProductProperty) *Di
 		ids[i] = p[i].ID
 	}
 	return dduo.RemovePropertyIDs(ids...)
+}
+
+// ClearUsers clears all "users" edges to the User entity.
+func (dduo *DictionaryDetailUpdateOne) ClearUsers() *DictionaryDetailUpdateOne {
+	dduo.mutation.ClearUsers()
+	return dduo
+}
+
+// RemoveUserIDs removes the "users" edge to User entities by IDs.
+func (dduo *DictionaryDetailUpdateOne) RemoveUserIDs(ids ...int64) *DictionaryDetailUpdateOne {
+	dduo.mutation.RemoveUserIDs(ids...)
+	return dduo
+}
+
+// RemoveUsers removes "users" edges to User entities.
+func (dduo *DictionaryDetailUpdateOne) RemoveUsers(u ...*User) *DictionaryDetailUpdateOne {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return dduo.RemoveUserIDs(ids...)
 }
 
 // Where appends a list predicates to the DictionaryDetailUpdate builder.
@@ -830,6 +948,51 @@ func (dduo *DictionaryDetailUpdateOne) sqlSave(ctx context.Context) (_node *Dict
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(productproperty.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if dduo.mutation.UsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   dictionarydetail.UsersTable,
+			Columns: dictionarydetail.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := dduo.mutation.RemovedUsersIDs(); len(nodes) > 0 && !dduo.mutation.UsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   dictionarydetail.UsersTable,
+			Columns: dictionarydetail.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := dduo.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   dictionarydetail.UsersTable,
+			Columns: dictionarydetail.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

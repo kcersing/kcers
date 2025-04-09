@@ -231,23 +231,23 @@ func (lu *LogsUpdate) ClearUserAgent() *LogsUpdate {
 	return lu
 }
 
-// SetOperator sets the "operator" field.
-func (lu *LogsUpdate) SetOperator(s string) *LogsUpdate {
-	lu.mutation.SetOperator(s)
+// SetOperatorsr sets the "operatorsr" field.
+func (lu *LogsUpdate) SetOperatorsr(s string) *LogsUpdate {
+	lu.mutation.SetOperatorsr(s)
 	return lu
 }
 
-// SetNillableOperator sets the "operator" field if the given value is not nil.
-func (lu *LogsUpdate) SetNillableOperator(s *string) *LogsUpdate {
+// SetNillableOperatorsr sets the "operatorsr" field if the given value is not nil.
+func (lu *LogsUpdate) SetNillableOperatorsr(s *string) *LogsUpdate {
 	if s != nil {
-		lu.SetOperator(*s)
+		lu.SetOperatorsr(*s)
 	}
 	return lu
 }
 
-// ClearOperator clears the value of the "operator" field.
-func (lu *LogsUpdate) ClearOperator() *LogsUpdate {
-	lu.mutation.ClearOperator()
+// ClearOperatorsr clears the value of the "operatorsr" field.
+func (lu *LogsUpdate) ClearOperatorsr() *LogsUpdate {
+	lu.mutation.ClearOperatorsr()
 	return lu
 }
 
@@ -275,6 +275,33 @@ func (lu *LogsUpdate) AddTime(i int64) *LogsUpdate {
 // ClearTime clears the value of the "time" field.
 func (lu *LogsUpdate) ClearTime() *LogsUpdate {
 	lu.mutation.ClearTime()
+	return lu
+}
+
+// SetIdentity sets the "identity" field.
+func (lu *LogsUpdate) SetIdentity(i int64) *LogsUpdate {
+	lu.mutation.ResetIdentity()
+	lu.mutation.SetIdentity(i)
+	return lu
+}
+
+// SetNillableIdentity sets the "identity" field if the given value is not nil.
+func (lu *LogsUpdate) SetNillableIdentity(i *int64) *LogsUpdate {
+	if i != nil {
+		lu.SetIdentity(*i)
+	}
+	return lu
+}
+
+// AddIdentity adds i to the "identity" field.
+func (lu *LogsUpdate) AddIdentity(i int64) *LogsUpdate {
+	lu.mutation.AddIdentity(i)
+	return lu
+}
+
+// ClearIdentity clears the value of the "identity" field.
+func (lu *LogsUpdate) ClearIdentity() *LogsUpdate {
+	lu.mutation.ClearIdentity()
 	return lu
 }
 
@@ -397,11 +424,11 @@ func (lu *LogsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if lu.mutation.UserAgentCleared() {
 		_spec.ClearField(logs.FieldUserAgent, field.TypeString)
 	}
-	if value, ok := lu.mutation.Operator(); ok {
-		_spec.SetField(logs.FieldOperator, field.TypeString, value)
+	if value, ok := lu.mutation.Operatorsr(); ok {
+		_spec.SetField(logs.FieldOperatorsr, field.TypeString, value)
 	}
-	if lu.mutation.OperatorCleared() {
-		_spec.ClearField(logs.FieldOperator, field.TypeString)
+	if lu.mutation.OperatorsrCleared() {
+		_spec.ClearField(logs.FieldOperatorsr, field.TypeString)
 	}
 	if value, ok := lu.mutation.Time(); ok {
 		_spec.SetField(logs.FieldTime, field.TypeInt64, value)
@@ -411,6 +438,15 @@ func (lu *LogsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if lu.mutation.TimeCleared() {
 		_spec.ClearField(logs.FieldTime, field.TypeInt64)
+	}
+	if value, ok := lu.mutation.Identity(); ok {
+		_spec.SetField(logs.FieldIdentity, field.TypeInt64, value)
+	}
+	if value, ok := lu.mutation.AddedIdentity(); ok {
+		_spec.AddField(logs.FieldIdentity, field.TypeInt64, value)
+	}
+	if lu.mutation.IdentityCleared() {
+		_spec.ClearField(logs.FieldIdentity, field.TypeInt64)
 	}
 	_spec.AddModifiers(lu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, lu.driver, _spec); err != nil {
@@ -636,23 +672,23 @@ func (luo *LogsUpdateOne) ClearUserAgent() *LogsUpdateOne {
 	return luo
 }
 
-// SetOperator sets the "operator" field.
-func (luo *LogsUpdateOne) SetOperator(s string) *LogsUpdateOne {
-	luo.mutation.SetOperator(s)
+// SetOperatorsr sets the "operatorsr" field.
+func (luo *LogsUpdateOne) SetOperatorsr(s string) *LogsUpdateOne {
+	luo.mutation.SetOperatorsr(s)
 	return luo
 }
 
-// SetNillableOperator sets the "operator" field if the given value is not nil.
-func (luo *LogsUpdateOne) SetNillableOperator(s *string) *LogsUpdateOne {
+// SetNillableOperatorsr sets the "operatorsr" field if the given value is not nil.
+func (luo *LogsUpdateOne) SetNillableOperatorsr(s *string) *LogsUpdateOne {
 	if s != nil {
-		luo.SetOperator(*s)
+		luo.SetOperatorsr(*s)
 	}
 	return luo
 }
 
-// ClearOperator clears the value of the "operator" field.
-func (luo *LogsUpdateOne) ClearOperator() *LogsUpdateOne {
-	luo.mutation.ClearOperator()
+// ClearOperatorsr clears the value of the "operatorsr" field.
+func (luo *LogsUpdateOne) ClearOperatorsr() *LogsUpdateOne {
+	luo.mutation.ClearOperatorsr()
 	return luo
 }
 
@@ -680,6 +716,33 @@ func (luo *LogsUpdateOne) AddTime(i int64) *LogsUpdateOne {
 // ClearTime clears the value of the "time" field.
 func (luo *LogsUpdateOne) ClearTime() *LogsUpdateOne {
 	luo.mutation.ClearTime()
+	return luo
+}
+
+// SetIdentity sets the "identity" field.
+func (luo *LogsUpdateOne) SetIdentity(i int64) *LogsUpdateOne {
+	luo.mutation.ResetIdentity()
+	luo.mutation.SetIdentity(i)
+	return luo
+}
+
+// SetNillableIdentity sets the "identity" field if the given value is not nil.
+func (luo *LogsUpdateOne) SetNillableIdentity(i *int64) *LogsUpdateOne {
+	if i != nil {
+		luo.SetIdentity(*i)
+	}
+	return luo
+}
+
+// AddIdentity adds i to the "identity" field.
+func (luo *LogsUpdateOne) AddIdentity(i int64) *LogsUpdateOne {
+	luo.mutation.AddIdentity(i)
+	return luo
+}
+
+// ClearIdentity clears the value of the "identity" field.
+func (luo *LogsUpdateOne) ClearIdentity() *LogsUpdateOne {
+	luo.mutation.ClearIdentity()
 	return luo
 }
 
@@ -832,11 +895,11 @@ func (luo *LogsUpdateOne) sqlSave(ctx context.Context) (_node *Logs, err error) 
 	if luo.mutation.UserAgentCleared() {
 		_spec.ClearField(logs.FieldUserAgent, field.TypeString)
 	}
-	if value, ok := luo.mutation.Operator(); ok {
-		_spec.SetField(logs.FieldOperator, field.TypeString, value)
+	if value, ok := luo.mutation.Operatorsr(); ok {
+		_spec.SetField(logs.FieldOperatorsr, field.TypeString, value)
 	}
-	if luo.mutation.OperatorCleared() {
-		_spec.ClearField(logs.FieldOperator, field.TypeString)
+	if luo.mutation.OperatorsrCleared() {
+		_spec.ClearField(logs.FieldOperatorsr, field.TypeString)
 	}
 	if value, ok := luo.mutation.Time(); ok {
 		_spec.SetField(logs.FieldTime, field.TypeInt64, value)
@@ -846,6 +909,15 @@ func (luo *LogsUpdateOne) sqlSave(ctx context.Context) (_node *Logs, err error) 
 	}
 	if luo.mutation.TimeCleared() {
 		_spec.ClearField(logs.FieldTime, field.TypeInt64)
+	}
+	if value, ok := luo.mutation.Identity(); ok {
+		_spec.SetField(logs.FieldIdentity, field.TypeInt64, value)
+	}
+	if value, ok := luo.mutation.AddedIdentity(); ok {
+		_spec.AddField(logs.FieldIdentity, field.TypeInt64, value)
+	}
+	if luo.mutation.IdentityCleared() {
+		_spec.ClearField(logs.FieldIdentity, field.TypeInt64)
 	}
 	_spec.AddModifiers(luo.modifiers...)
 	_node = &Logs{config: luo.config}

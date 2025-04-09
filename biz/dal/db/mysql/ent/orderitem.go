@@ -3,9 +3,11 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/orderitem"
+	"kcers/idl_gen/model/order"
 	"strings"
 	"time"
 
@@ -29,10 +31,16 @@ type OrderItem struct {
 	CreatedID int64 `json:"created_id,omitempty"`
 	// 订单id
 	OrderID int64 `json:"order_id,omitempty"`
+	// 数量
+	Number int64 `json:"number,omitempty"`
+	// 名称
+	Name string `json:"name,omitempty"`
 	// 产品id
 	ProductID int64 `json:"product_id,omitempty"`
 	// 关联会员产品id
 	RelatedUserProductID int64 `json:"related_user_product_id,omitempty"`
+	// 数据附件
+	Data order.BuyReq `json:"data,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OrderItemQuery when eager-loading is set.
 	Edges        OrderItemEdges `json:"edges"`
@@ -54,7 +62,7 @@ func (e OrderItemEdges) OrderOrErr() (*Order, error) {
 	if e.Order != nil {
 		return e.Order, nil
 	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: order.Label}
+		return nil, &NotFoundError{label: entorder.Label}
 	}
 	return nil, &NotLoadedError{edge: "order"}
 }
@@ -64,8 +72,12 @@ func (*OrderItem) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case orderitem.FieldID, orderitem.FieldDelete, orderitem.FieldCreatedID, orderitem.FieldOrderID, orderitem.FieldProductID, orderitem.FieldRelatedUserProductID:
+		case orderitem.FieldData:
+			values[i] = new([]byte)
+		case orderitem.FieldID, orderitem.FieldDelete, orderitem.FieldCreatedID, orderitem.FieldOrderID, orderitem.FieldNumber, orderitem.FieldProductID, orderitem.FieldRelatedUserProductID:
 			values[i] = new(sql.NullInt64)
+		case orderitem.FieldName:
+			values[i] = new(sql.NullString)
 		case orderitem.FieldCreatedAt, orderitem.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		default:
@@ -119,6 +131,18 @@ func (oi *OrderItem) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				oi.OrderID = value.Int64
 			}
+		case orderitem.FieldNumber:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field number", values[i])
+			} else if value.Valid {
+				oi.Number = value.Int64
+			}
+		case orderitem.FieldName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field name", values[i])
+			} else if value.Valid {
+				oi.Name = value.String
+			}
 		case orderitem.FieldProductID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field product_id", values[i])
@@ -130,6 +154,14 @@ func (oi *OrderItem) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field related_user_product_id", values[i])
 			} else if value.Valid {
 				oi.RelatedUserProductID = value.Int64
+			}
+		case orderitem.FieldData:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field data", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &oi.Data); err != nil {
+					return fmt.Errorf("unmarshal field data: %w", err)
+				}
 			}
 		default:
 			oi.selectValues.Set(columns[i], values[i])
@@ -187,11 +219,20 @@ func (oi *OrderItem) String() string {
 	builder.WriteString("order_id=")
 	builder.WriteString(fmt.Sprintf("%v", oi.OrderID))
 	builder.WriteString(", ")
+	builder.WriteString("number=")
+	builder.WriteString(fmt.Sprintf("%v", oi.Number))
+	builder.WriteString(", ")
+	builder.WriteString("name=")
+	builder.WriteString(oi.Name)
+	builder.WriteString(", ")
 	builder.WriteString("product_id=")
 	builder.WriteString(fmt.Sprintf("%v", oi.ProductID))
 	builder.WriteString(", ")
 	builder.WriteString("related_user_product_id=")
 	builder.WriteString(fmt.Sprintf("%v", oi.RelatedUserProductID))
+	builder.WriteString(", ")
+	builder.WriteString("data=")
+	builder.WriteString(fmt.Sprintf("%v", oi.Data))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -4,7 +4,7 @@ package ent
 
 import (
 	"fmt"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/ordersales"
 	"strings"
 	"time"
@@ -58,7 +58,7 @@ func (e OrderSalesEdges) OrderOrErr() (*Order, error) {
 	if e.Order != nil {
 		return e.Order, nil
 	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: order.Label}
+		return nil, &NotFoundError{label: entorder.Label}
 	}
 	return nil, &NotLoadedError{edge: "order"}
 }

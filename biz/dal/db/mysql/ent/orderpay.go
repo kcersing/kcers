@@ -3,8 +3,9 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/orderpay"
 	"strings"
 	"time"
@@ -35,10 +36,16 @@ type OrderPay struct {
 	Pay float64 `json:"pay,omitempty"`
 	// 备注
 	Note string `json:"note,omitempty"`
+	// 支付时间
+	PayAt time.Time `json:"pay_at,omitempty"`
 	// 支付方式
 	PayWay string `json:"pay_way,omitempty"`
-	// 操作人id
-	CreateID int64 `json:"create_id,omitempty"`
+	// 支付单号
+	PaySn string `json:"pay_sn,omitempty"`
+	// 预支付交易会话标识
+	PrepayID string `json:"prepay_id,omitempty"`
+	// 支付额外信息
+	PayExtra []uint8 `json:"pay_extra,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OrderPayQuery when eager-loading is set.
 	Edges        OrderPayEdges `json:"edges"`
@@ -60,7 +67,7 @@ func (e OrderPayEdges) OrderOrErr() (*Order, error) {
 	if e.Order != nil {
 		return e.Order, nil
 	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: order.Label}
+		return nil, &NotFoundError{label: entorder.Label}
 	}
 	return nil, &NotLoadedError{edge: "order"}
 }
@@ -70,13 +77,15 @@ func (*OrderPay) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case orderpay.FieldPayExtra:
+			values[i] = new([]byte)
 		case orderpay.FieldRemission, orderpay.FieldPay:
 			values[i] = new(sql.NullFloat64)
-		case orderpay.FieldID, orderpay.FieldDelete, orderpay.FieldCreatedID, orderpay.FieldOrderID, orderpay.FieldCreateID:
+		case orderpay.FieldID, orderpay.FieldDelete, orderpay.FieldCreatedID, orderpay.FieldOrderID:
 			values[i] = new(sql.NullInt64)
-		case orderpay.FieldNote, orderpay.FieldPayWay:
+		case orderpay.FieldNote, orderpay.FieldPayWay, orderpay.FieldPaySn, orderpay.FieldPrepayID:
 			values[i] = new(sql.NullString)
-		case orderpay.FieldCreatedAt, orderpay.FieldUpdatedAt:
+		case orderpay.FieldCreatedAt, orderpay.FieldUpdatedAt, orderpay.FieldPayAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -147,17 +156,37 @@ func (op *OrderPay) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				op.Note = value.String
 			}
+		case orderpay.FieldPayAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field pay_at", values[i])
+			} else if value.Valid {
+				op.PayAt = value.Time
+			}
 		case orderpay.FieldPayWay:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field pay_way", values[i])
 			} else if value.Valid {
 				op.PayWay = value.String
 			}
-		case orderpay.FieldCreateID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field create_id", values[i])
+		case orderpay.FieldPaySn:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field pay_sn", values[i])
 			} else if value.Valid {
-				op.CreateID = value.Int64
+				op.PaySn = value.String
+			}
+		case orderpay.FieldPrepayID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field prepay_id", values[i])
+			} else if value.Valid {
+				op.PrepayID = value.String
+			}
+		case orderpay.FieldPayExtra:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field pay_extra", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &op.PayExtra); err != nil {
+					return fmt.Errorf("unmarshal field pay_extra: %w", err)
+				}
 			}
 		default:
 			op.selectValues.Set(columns[i], values[i])
@@ -224,11 +253,20 @@ func (op *OrderPay) String() string {
 	builder.WriteString("note=")
 	builder.WriteString(op.Note)
 	builder.WriteString(", ")
+	builder.WriteString("pay_at=")
+	builder.WriteString(op.PayAt.Format(time.ANSIC))
+	builder.WriteString(", ")
 	builder.WriteString("pay_way=")
 	builder.WriteString(op.PayWay)
 	builder.WriteString(", ")
-	builder.WriteString("create_id=")
-	builder.WriteString(fmt.Sprintf("%v", op.CreateID))
+	builder.WriteString("pay_sn=")
+	builder.WriteString(op.PaySn)
+	builder.WriteString(", ")
+	builder.WriteString("prepay_id=")
+	builder.WriteString(op.PrepayID)
+	builder.WriteString(", ")
+	builder.WriteString("pay_extra=")
+	builder.WriteString(fmt.Sprintf("%v", op.PayExtra))
 	builder.WriteByte(')')
 	return builder.String()
 }

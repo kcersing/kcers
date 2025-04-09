@@ -80,6 +80,16 @@ func OrderID(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldEQ(FieldOrderID, v))
 }
 
+// Number applies equality check predicate on the "number" field. It's identical to NumberEQ.
+func Number(v int64) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldEQ(FieldNumber, v))
+}
+
+// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
+func Name(v string) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldEQ(FieldName, v))
+}
+
 // ProductID applies equality check predicate on the "product_id" field. It's identical to ProductIDEQ.
 func ProductID(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldEQ(FieldProductID, v))
@@ -320,6 +330,131 @@ func OrderIDNotNil() predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldNotNull(FieldOrderID))
 }
 
+// NumberEQ applies the EQ predicate on the "number" field.
+func NumberEQ(v int64) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldEQ(FieldNumber, v))
+}
+
+// NumberNEQ applies the NEQ predicate on the "number" field.
+func NumberNEQ(v int64) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldNEQ(FieldNumber, v))
+}
+
+// NumberIn applies the In predicate on the "number" field.
+func NumberIn(vs ...int64) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldIn(FieldNumber, vs...))
+}
+
+// NumberNotIn applies the NotIn predicate on the "number" field.
+func NumberNotIn(vs ...int64) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldNotIn(FieldNumber, vs...))
+}
+
+// NumberGT applies the GT predicate on the "number" field.
+func NumberGT(v int64) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldGT(FieldNumber, v))
+}
+
+// NumberGTE applies the GTE predicate on the "number" field.
+func NumberGTE(v int64) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldGTE(FieldNumber, v))
+}
+
+// NumberLT applies the LT predicate on the "number" field.
+func NumberLT(v int64) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldLT(FieldNumber, v))
+}
+
+// NumberLTE applies the LTE predicate on the "number" field.
+func NumberLTE(v int64) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldLTE(FieldNumber, v))
+}
+
+// NumberIsNil applies the IsNil predicate on the "number" field.
+func NumberIsNil() predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldIsNull(FieldNumber))
+}
+
+// NumberNotNil applies the NotNil predicate on the "number" field.
+func NumberNotNil() predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldNotNull(FieldNumber))
+}
+
+// NameEQ applies the EQ predicate on the "name" field.
+func NameEQ(v string) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldEQ(FieldName, v))
+}
+
+// NameNEQ applies the NEQ predicate on the "name" field.
+func NameNEQ(v string) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldNEQ(FieldName, v))
+}
+
+// NameIn applies the In predicate on the "name" field.
+func NameIn(vs ...string) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldIn(FieldName, vs...))
+}
+
+// NameNotIn applies the NotIn predicate on the "name" field.
+func NameNotIn(vs ...string) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldNotIn(FieldName, vs...))
+}
+
+// NameGT applies the GT predicate on the "name" field.
+func NameGT(v string) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldGT(FieldName, v))
+}
+
+// NameGTE applies the GTE predicate on the "name" field.
+func NameGTE(v string) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldGTE(FieldName, v))
+}
+
+// NameLT applies the LT predicate on the "name" field.
+func NameLT(v string) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldLT(FieldName, v))
+}
+
+// NameLTE applies the LTE predicate on the "name" field.
+func NameLTE(v string) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldLTE(FieldName, v))
+}
+
+// NameContains applies the Contains predicate on the "name" field.
+func NameContains(v string) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldContains(FieldName, v))
+}
+
+// NameHasPrefix applies the HasPrefix predicate on the "name" field.
+func NameHasPrefix(v string) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldHasPrefix(FieldName, v))
+}
+
+// NameHasSuffix applies the HasSuffix predicate on the "name" field.
+func NameHasSuffix(v string) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldHasSuffix(FieldName, v))
+}
+
+// NameIsNil applies the IsNil predicate on the "name" field.
+func NameIsNil() predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldIsNull(FieldName))
+}
+
+// NameNotNil applies the NotNil predicate on the "name" field.
+func NameNotNil() predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldNotNull(FieldName))
+}
+
+// NameEqualFold applies the EqualFold predicate on the "name" field.
+func NameEqualFold(v string) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldEqualFold(FieldName, v))
+}
+
+// NameContainsFold applies the ContainsFold predicate on the "name" field.
+func NameContainsFold(v string) predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldContainsFold(FieldName, v))
+}
+
 // ProductIDEQ applies the EQ predicate on the "product_id" field.
 func ProductIDEQ(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldEQ(FieldProductID, v))
@@ -418,6 +553,16 @@ func RelatedUserProductIDIsNil() predicate.OrderItem {
 // RelatedUserProductIDNotNil applies the NotNil predicate on the "related_user_product_id" field.
 func RelatedUserProductIDNotNil() predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldNotNull(FieldRelatedUserProductID))
+}
+
+// DataIsNil applies the IsNil predicate on the "data" field.
+func DataIsNil() predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldIsNull(FieldData))
+}
+
+// DataNotNil applies the NotNil predicate on the "data" field.
+func DataNotNil() predicate.OrderItem {
+	return predicate.OrderItem(sql.FieldNotNull(FieldData))
 }
 
 // HasOrder applies the HasEdge predicate on the "order" edge.

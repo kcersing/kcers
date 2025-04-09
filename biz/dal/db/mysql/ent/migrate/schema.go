@@ -228,8 +228,9 @@ var (
 		{Name: "resp_content", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "content of response log | 日志返回内容"},
 		{Name: "ip", Type: field.TypeString, Nullable: true, Comment: "ip of log | 日志IP"},
 		{Name: "user_agent", Type: field.TypeString, Nullable: true, Comment: "user_agent of log | 日志用户客户端"},
-		{Name: "operator", Type: field.TypeString, Nullable: true, Comment: "operator of log | 日志操作者"},
+		{Name: "operatorsr", Type: field.TypeString, Nullable: true, Comment: "operator of log | 日志操作者"},
 		{Name: "time", Type: field.TypeInt64, Nullable: true, Comment: "time of log(millisecond) | 日志时间(毫秒)"},
+		{Name: "identity", Type: field.TypeInt64, Nullable: true, Comment: "1会员2员工 | 身份"},
 	}
 	// SysLogsTable holds the schema information for the "sys_logs" table.
 	SysLogsTable = &schema.Table{
@@ -580,6 +581,45 @@ var (
 			},
 		},
 	}
+	// MemberTokenColumns holds the columns for the "member_token" table.
+	MemberTokenColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "created time"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "last update time"},
+		{Name: "delete", Type: field.TypeInt64, Nullable: true, Comment: "last delete  1:已删除", Default: 0},
+		{Name: "created_id", Type: field.TypeInt64, Nullable: true, Comment: "created", Default: 0},
+		{Name: "member_id", Type: field.TypeInt64, Unique: true, Comment: " User's ID | 用户的ID"},
+		{Name: "token", Type: field.TypeString, Comment: "Token string | Token 字符串"},
+		{Name: "source", Type: field.TypeString, Comment: "Log in source such as GitHub | Token 来源 （本地为core, 第三方如github等）"},
+		{Name: "expired_at", Type: field.TypeTime, Comment: " Expire time | 过期时间"},
+		{Name: "member_token", Type: field.TypeInt64, Unique: true, Nullable: true},
+	}
+	// MemberTokenTable holds the schema information for the "member_token" table.
+	MemberTokenTable = &schema.Table{
+		Name:       "member_token",
+		Columns:    MemberTokenColumns,
+		PrimaryKey: []*schema.Column{MemberTokenColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "member_token_member_token",
+				Columns:    []*schema.Column{MemberTokenColumns[9]},
+				RefColumns: []*schema.Column{MemberColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "membertoken_member_id",
+				Unique:  false,
+				Columns: []*schema.Column{MemberTokenColumns[5]},
+			},
+			{
+				Name:    "membertoken_expired_at",
+				Unique:  false,
+				Columns: []*schema.Column{MemberTokenColumns[8]},
+			},
+		},
+	}
 	// SysMenusColumns holds the columns for the "sys_menus" table.
 	SysMenusColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "primary key"},
@@ -665,16 +705,17 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "created time"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "last update time"},
 		{Name: "delete", Type: field.TypeInt64, Nullable: true, Comment: "last delete  1:已删除", Default: 0},
-		{Name: "created_id", Type: field.TypeInt64, Nullable: true, Comment: "created", Default: 0},
 		{Name: "order_sn", Type: field.TypeString, Nullable: true, Comment: "订单编号"},
 		{Name: "member_product_id", Type: field.TypeInt64, Nullable: true, Comment: "会员产品id"},
-		{Name: "status", Type: field.TypeInt64, Nullable: true, Comment: "状态 | [0:正常;1:禁用]", Default: 0},
+		{Name: "status", Type: field.TypeInt64, Nullable: true, Default: 0},
 		{Name: "source", Type: field.TypeString, Nullable: true, Comment: "订单来源", Default: ""},
 		{Name: "device", Type: field.TypeString, Nullable: true, Comment: "设备来源", Default: ""},
 		{Name: "nature", Type: field.TypeInt64, Nullable: true, Comment: "业务类型"},
 		{Name: "completion_at", Type: field.TypeTime, Nullable: true, Comment: "订单完成时间"},
+		{Name: "close_at", Type: field.TypeTime, Nullable: true, Comment: "订单关闭时间"},
+		{Name: "refund_at", Type: field.TypeTime, Nullable: true, Comment: "订单退费时间"},
 		{Name: "member_id", Type: field.TypeInt64, Nullable: true, Comment: "会员id"},
-		{Name: "create_id", Type: field.TypeInt64, Nullable: true, Comment: "创建人id"},
+		{Name: "created_id", Type: field.TypeInt64, Nullable: true, Comment: "created", Default: 0},
 		{Name: "venue_id", Type: field.TypeInt64, Nullable: true, Comment: "场馆id"},
 	}
 	// OrderTable holds the schema information for the "order" table.
@@ -685,19 +726,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "order_member_member_orders",
-				Columns:    []*schema.Column{OrderColumns[12]},
+				Columns:    []*schema.Column{OrderColumns[13]},
 				RefColumns: []*schema.Column{MemberColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "order_sys_users_created_orders",
-				Columns:    []*schema.Column{OrderColumns[13]},
+				Columns:    []*schema.Column{OrderColumns[14]},
 				RefColumns: []*schema.Column{SysUsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "order_venue_venue_orders",
-				Columns:    []*schema.Column{OrderColumns[14]},
+				Columns:    []*schema.Column{OrderColumns[15]},
 				RefColumns: []*schema.Column{VenueColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -706,27 +747,27 @@ var (
 			{
 				Name:    "order_order_sn",
 				Unique:  false,
-				Columns: []*schema.Column{OrderColumns[5]},
+				Columns: []*schema.Column{OrderColumns[4]},
 			},
 			{
 				Name:    "order_venue_id",
 				Unique:  false,
-				Columns: []*schema.Column{OrderColumns[14]},
+				Columns: []*schema.Column{OrderColumns[15]},
 			},
 			{
 				Name:    "order_member_id",
 				Unique:  false,
-				Columns: []*schema.Column{OrderColumns[12]},
+				Columns: []*schema.Column{OrderColumns[13]},
 			},
 			{
 				Name:    "order_completion_at",
 				Unique:  false,
-				Columns: []*schema.Column{OrderColumns[11]},
+				Columns: []*schema.Column{OrderColumns[10]},
 			},
 			{
 				Name:    "order_member_product_id",
 				Unique:  false,
-				Columns: []*schema.Column{OrderColumns[6]},
+				Columns: []*schema.Column{OrderColumns[5]},
 			},
 		},
 	}
@@ -741,6 +782,7 @@ var (
 		{Name: "actual", Type: field.TypeFloat64, Nullable: true, Comment: "实际已付款"},
 		{Name: "residue", Type: field.TypeFloat64, Nullable: true, Comment: "未支付金额"},
 		{Name: "remission", Type: field.TypeFloat64, Nullable: true, Comment: "减免"},
+		{Name: "refund", Type: field.TypeFloat64, Nullable: true, Comment: "退费金额"},
 		{Name: "order_id", Type: field.TypeInt64, Nullable: true, Comment: "订单id"},
 	}
 	// OrderAmountTable holds the schema information for the "order_amount" table.
@@ -751,7 +793,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "order_amount_order_amount",
-				Columns:    []*schema.Column{OrderAmountColumns[9]},
+				Columns:    []*schema.Column{OrderAmountColumns[10]},
 				RefColumns: []*schema.Column{OrderColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -760,7 +802,7 @@ var (
 			{
 				Name:    "orderamount_order_id",
 				Unique:  false,
-				Columns: []*schema.Column{OrderAmountColumns[9]},
+				Columns: []*schema.Column{OrderAmountColumns[10]},
 			},
 		},
 	}
@@ -771,8 +813,11 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "last update time"},
 		{Name: "delete", Type: field.TypeInt64, Nullable: true, Comment: "last delete  1:已删除", Default: 0},
 		{Name: "created_id", Type: field.TypeInt64, Nullable: true, Comment: "created", Default: 0},
+		{Name: "number", Type: field.TypeInt64, Nullable: true, Comment: "数量", Default: 1},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "名称"},
 		{Name: "product_id", Type: field.TypeInt64, Nullable: true, Comment: "产品id"},
 		{Name: "related_user_product_id", Type: field.TypeInt64, Nullable: true, Comment: "关联会员产品id", Default: 0},
+		{Name: "data", Type: field.TypeJSON, Nullable: true, Comment: "数据附件"},
 		{Name: "order_id", Type: field.TypeInt64, Nullable: true, Comment: "订单id"},
 	}
 	// OrderItemTable holds the schema information for the "order_item" table.
@@ -783,7 +828,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "order_item_order_item",
-				Columns:    []*schema.Column{OrderItemColumns[7]},
+				Columns:    []*schema.Column{OrderItemColumns[10]},
 				RefColumns: []*schema.Column{OrderColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -792,12 +837,12 @@ var (
 			{
 				Name:    "orderitem_order_id",
 				Unique:  false,
-				Columns: []*schema.Column{OrderItemColumns[7]},
+				Columns: []*schema.Column{OrderItemColumns[10]},
 			},
 			{
 				Name:    "orderitem_product_id",
 				Unique:  false,
-				Columns: []*schema.Column{OrderItemColumns[5]},
+				Columns: []*schema.Column{OrderItemColumns[7]},
 			},
 		},
 	}
@@ -811,8 +856,11 @@ var (
 		{Name: "remission", Type: field.TypeFloat64, Nullable: true, Comment: "减免"},
 		{Name: "pay", Type: field.TypeFloat64, Nullable: true, Comment: "实际付款"},
 		{Name: "note", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "pay_at", Type: field.TypeTime, Nullable: true, Comment: "支付时间"},
 		{Name: "pay_way", Type: field.TypeString, Nullable: true, Comment: "支付方式"},
-		{Name: "create_id", Type: field.TypeInt64, Nullable: true, Comment: "操作人id"},
+		{Name: "pay_sn", Type: field.TypeString, Nullable: true, Comment: "支付单号"},
+		{Name: "prepay_id", Type: field.TypeString, Nullable: true, Comment: "预支付交易会话标识"},
+		{Name: "pay_extra", Type: field.TypeJSON, Nullable: true, Comment: "支付额外信息"},
 		{Name: "order_id", Type: field.TypeInt64, Nullable: true, Comment: "订单id"},
 	}
 	// OrderPayTable holds the schema information for the "order_pay" table.
@@ -823,7 +871,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "order_pay_order_pay",
-				Columns:    []*schema.Column{OrderPayColumns[10]},
+				Columns:    []*schema.Column{OrderPayColumns[13]},
 				RefColumns: []*schema.Column{OrderColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -832,7 +880,7 @@ var (
 			{
 				Name:    "orderpay_order_id",
 				Unique:  false,
-				Columns: []*schema.Column{OrderPayColumns[10]},
+				Columns: []*schema.Column{OrderPayColumns[13]},
 			},
 		},
 	}
@@ -893,7 +941,6 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "详情"},
 		{Name: "price", Type: field.TypeFloat64, Nullable: true, Comment: "价格"},
 		{Name: "stock", Type: field.TypeInt64, Nullable: true, Comment: "库存"},
-		{Name: "create_id", Type: field.TypeInt64, Nullable: true, Comment: "创建人id"},
 		{Name: "is_sales", Type: field.TypeJSON, Nullable: true, Comment: "销售方式 1会员端 2PC端"},
 		{Name: "sign_sales_at", Type: field.TypeTime, Nullable: true, Comment: "开始售卖时间"},
 		{Name: "end_sales_at", Type: field.TypeTime, Nullable: true, Comment: "结束售卖时间"},
@@ -926,7 +973,6 @@ var (
 		{Name: "count", Type: field.TypeInt64, Nullable: true, Comment: "次数"},
 		{Name: "price", Type: field.TypeFloat64, Nullable: true, Comment: "定价"},
 		{Name: "data", Type: field.TypeString, Nullable: true},
-		{Name: "create_id", Type: field.TypeInt64, Nullable: true, Comment: "创建人id"},
 	}
 	// ProductPropertyTable holds the schema information for the "product_property" table.
 	ProductPropertyTable = &schema.Table{
@@ -1196,21 +1242,22 @@ var (
 		{Name: "delete", Type: field.TypeInt64, Nullable: true, Comment: "last delete  1:已删除", Default: 0},
 		{Name: "created_id", Type: field.TypeInt64, Nullable: true, Comment: "created", Default: 0},
 		{Name: "status", Type: field.TypeInt64, Nullable: true, Comment: "状态[0:禁用;1:正常]", Default: 1},
+		{Name: "mobile", Type: field.TypeString, Unique: true, Comment: "mobile number | 手机号"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "姓名"},
+		{Name: "gender", Type: field.TypeInt64, Nullable: true, Comment: "性别 | [0:女性;1:男性;3:保密]", Default: 3},
 		{Name: "username", Type: field.TypeString, Unique: true, Comment: "user's login name | 登录名"},
 		{Name: "password", Type: field.TypeString, Comment: "password | 密码"},
-		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "姓名"},
+		{Name: "functions", Type: field.TypeJSON, Comment: "functions | 职能"},
+		{Name: "job_time", Type: field.TypeInt64, Nullable: true, Comment: "job time | [1:全职;2:兼职;]", Default: 1},
+		{Name: "detail", Type: field.TypeString, Nullable: true, Comment: "详情"},
 		{Name: "side_mode", Type: field.TypeString, Nullable: true, Comment: "template mode | 布局方式", Default: "dark"},
 		{Name: "base_color", Type: field.TypeString, Nullable: true, Comment: "base color of template | 后台页面色调", Default: "#fff"},
 		{Name: "active_color", Type: field.TypeString, Nullable: true, Comment: "active color of template | 当前激活的颜色设定", Default: "#1890ff"},
-		{Name: "role_id", Type: field.TypeInt64, Nullable: true, Comment: "role id | 角色ID", Default: 2},
-		{Name: "mobile", Type: field.TypeString, Unique: true, Comment: "mobile number | 手机号"},
 		{Name: "email", Type: field.TypeString, Nullable: true, Comment: "email | 邮箱号"},
 		{Name: "wecom", Type: field.TypeString, Nullable: true, Comment: "wecom | 微信号"},
-		{Name: "job", Type: field.TypeString, Nullable: true, Comment: "职业"},
 		{Name: "organization", Type: field.TypeString, Nullable: true, Comment: "部门"},
 		{Name: "default_venue_id", Type: field.TypeInt64, Nullable: true, Comment: "登陆后默认场馆ID"},
 		{Name: "avatar", Type: field.TypeString, Nullable: true, Comment: "avatar | 头像路径", SchemaType: map[string]string{"mysql": "varchar(512)"}},
-		{Name: "gender", Type: field.TypeInt64, Nullable: true, Comment: "性别 | [0:女性;1:男性;3:保密]", Default: 3},
 		{Name: "birthday", Type: field.TypeTime, Nullable: true, Comment: "出生日期"},
 	}
 	// SysUsersTable holds the schema information for the "sys_users" table.
@@ -1222,7 +1269,7 @@ var (
 			{
 				Name:    "user_username_email",
 				Unique:  true,
-				Columns: []*schema.Column{SysUsersColumns[6], SysUsersColumns[14]},
+				Columns: []*schema.Column{SysUsersColumns[9], SysUsersColumns[17]},
 			},
 		},
 	}
@@ -1463,6 +1510,106 @@ var (
 			},
 		},
 	}
+	// UserTagsColumns holds the columns for the "user_tags" table.
+	UserTagsColumns = []*schema.Column{
+		{Name: "user_id", Type: field.TypeInt64},
+		{Name: "dictionary_detail_id", Type: field.TypeInt64},
+	}
+	// UserTagsTable holds the schema information for the "user_tags" table.
+	UserTagsTable = &schema.Table{
+		Name:       "user_tags",
+		Columns:    UserTagsColumns,
+		PrimaryKey: []*schema.Column{UserTagsColumns[0], UserTagsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_tags_user_id",
+				Columns:    []*schema.Column{UserTagsColumns[0]},
+				RefColumns: []*schema.Column{SysUsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "user_tags_dictionary_detail_id",
+				Columns:    []*schema.Column{UserTagsColumns[1]},
+				RefColumns: []*schema.Column{SysDictionaryDetailsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// UserVenuesColumns holds the columns for the "user_venues" table.
+	UserVenuesColumns = []*schema.Column{
+		{Name: "user_id", Type: field.TypeInt64},
+		{Name: "venue_id", Type: field.TypeInt64},
+	}
+	// UserVenuesTable holds the schema information for the "user_venues" table.
+	UserVenuesTable = &schema.Table{
+		Name:       "user_venues",
+		Columns:    UserVenuesColumns,
+		PrimaryKey: []*schema.Column{UserVenuesColumns[0], UserVenuesColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_venues_user_id",
+				Columns:    []*schema.Column{UserVenuesColumns[0]},
+				RefColumns: []*schema.Column{SysUsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "user_venues_venue_id",
+				Columns:    []*schema.Column{UserVenuesColumns[1]},
+				RefColumns: []*schema.Column{VenueColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// UserRolesColumns holds the columns for the "user_roles" table.
+	UserRolesColumns = []*schema.Column{
+		{Name: "user_id", Type: field.TypeInt64},
+		{Name: "role_id", Type: field.TypeInt64},
+	}
+	// UserRolesTable holds the schema information for the "user_roles" table.
+	UserRolesTable = &schema.Table{
+		Name:       "user_roles",
+		Columns:    UserRolesColumns,
+		PrimaryKey: []*schema.Column{UserRolesColumns[0], UserRolesColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_roles_user_id",
+				Columns:    []*schema.Column{UserRolesColumns[0]},
+				RefColumns: []*schema.Column{SysUsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "user_roles_role_id",
+				Columns:    []*schema.Column{UserRolesColumns[1]},
+				RefColumns: []*schema.Column{SysRolesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// VenueRolesColumns holds the columns for the "venue_roles" table.
+	VenueRolesColumns = []*schema.Column{
+		{Name: "venue_id", Type: field.TypeInt64},
+		{Name: "role_id", Type: field.TypeInt64},
+	}
+	// VenueRolesTable holds the schema information for the "venue_roles" table.
+	VenueRolesTable = &schema.Table{
+		Name:       "venue_roles",
+		Columns:    VenueRolesColumns,
+		PrimaryKey: []*schema.Column{VenueRolesColumns[0], VenueRolesColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "venue_roles_venue_id",
+				Columns:    []*schema.Column{VenueRolesColumns[0]},
+				RefColumns: []*schema.Column{VenueColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "venue_roles_role_id",
+				Columns:    []*schema.Column{VenueRolesColumns[1]},
+				RefColumns: []*schema.Column{SysRolesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		SysApisTable,
@@ -1481,6 +1628,7 @@ var (
 		MemberProductTable,
 		MemberProductPropertyTable,
 		MemberProfileTable,
+		MemberTokenTable,
 		SysMenusTable,
 		SysMenuParamsTable,
 		MessagesTable,
@@ -1508,6 +1656,10 @@ var (
 		ProductPropertyContractsTable,
 		ProductPropertyVenuesTable,
 		RoleMenusTable,
+		UserTagsTable,
+		UserVenuesTable,
+		UserRolesTable,
+		VenueRolesTable,
 	}
 )
 
@@ -1585,6 +1737,10 @@ func init() {
 	MemberProfileTable.Annotation = &entsql.Annotation{
 		Table:   "member_profile",
 		Options: "AUTO_INCREMENT = 100000",
+	}
+	MemberTokenTable.ForeignKeys[0].RefTable = MemberTable
+	MemberTokenTable.Annotation = &entsql.Annotation{
+		Table: "member_token",
 	}
 	SysMenusTable.ForeignKeys[0].RefTable = SysMenusTable
 	SysMenusTable.Annotation = &entsql.Annotation{
@@ -1686,4 +1842,12 @@ func init() {
 	ProductPropertyVenuesTable.ForeignKeys[1].RefTable = VenueTable
 	RoleMenusTable.ForeignKeys[0].RefTable = SysRolesTable
 	RoleMenusTable.ForeignKeys[1].RefTable = SysMenusTable
+	UserTagsTable.ForeignKeys[0].RefTable = SysUsersTable
+	UserTagsTable.ForeignKeys[1].RefTable = SysDictionaryDetailsTable
+	UserVenuesTable.ForeignKeys[0].RefTable = SysUsersTable
+	UserVenuesTable.ForeignKeys[1].RefTable = VenueTable
+	UserRolesTable.ForeignKeys[0].RefTable = SysUsersTable
+	UserRolesTable.ForeignKeys[1].RefTable = SysRolesTable
+	VenueRolesTable.ForeignKeys[0].RefTable = VenueTable
+	VenueRolesTable.ForeignKeys[1].RefTable = SysRolesTable
 }

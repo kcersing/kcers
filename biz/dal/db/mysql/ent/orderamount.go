@@ -4,7 +4,7 @@ package ent
 
 import (
 	"fmt"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/orderamount"
 	"strings"
 	"time"
@@ -37,6 +37,8 @@ type OrderAmount struct {
 	Residue float64 `json:"residue,omitempty"`
 	// 减免
 	Remission float64 `json:"remission,omitempty"`
+	// 退费金额
+	Refund float64 `json:"refund,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OrderAmountQuery when eager-loading is set.
 	Edges        OrderAmountEdges `json:"edges"`
@@ -58,7 +60,7 @@ func (e OrderAmountEdges) OrderOrErr() (*Order, error) {
 	if e.Order != nil {
 		return e.Order, nil
 	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: order.Label}
+		return nil, &NotFoundError{label: entorder.Label}
 	}
 	return nil, &NotLoadedError{edge: "order"}
 }
@@ -68,7 +70,7 @@ func (*OrderAmount) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case orderamount.FieldTotal, orderamount.FieldActual, orderamount.FieldResidue, orderamount.FieldRemission:
+		case orderamount.FieldTotal, orderamount.FieldActual, orderamount.FieldResidue, orderamount.FieldRemission, orderamount.FieldRefund:
 			values[i] = new(sql.NullFloat64)
 		case orderamount.FieldID, orderamount.FieldDelete, orderamount.FieldCreatedID, orderamount.FieldOrderID:
 			values[i] = new(sql.NullInt64)
@@ -149,6 +151,12 @@ func (oa *OrderAmount) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				oa.Remission = value.Float64
 			}
+		case orderamount.FieldRefund:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field refund", values[i])
+			} else if value.Valid {
+				oa.Refund = value.Float64
+			}
 		default:
 			oa.selectValues.Set(columns[i], values[i])
 		}
@@ -216,6 +224,9 @@ func (oa *OrderAmount) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("remission=")
 	builder.WriteString(fmt.Sprintf("%v", oa.Remission))
+	builder.WriteString(", ")
+	builder.WriteString("refund=")
+	builder.WriteString(fmt.Sprintf("%v", oa.Refund))
 	builder.WriteByte(')')
 	return builder.String()
 }

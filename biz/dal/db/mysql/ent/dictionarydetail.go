@@ -49,9 +49,11 @@ type DictionaryDetailEdges struct {
 	Dictionary *Dictionary `json:"dictionary,omitempty"`
 	// Property holds the value of the property edge.
 	Property []*ProductProperty `json:"property,omitempty"`
+	// Users holds the value of the users edge.
+	Users []*User `json:"users,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // DictionaryOrErr returns the Dictionary value or an error if the edge
@@ -72,6 +74,15 @@ func (e DictionaryDetailEdges) PropertyOrErr() ([]*ProductProperty, error) {
 		return e.Property, nil
 	}
 	return nil, &NotLoadedError{edge: "property"}
+}
+
+// UsersOrErr returns the Users value or an error if the edge
+// was not loaded in eager-loading.
+func (e DictionaryDetailEdges) UsersOrErr() ([]*User, error) {
+	if e.loadedTypes[2] {
+		return e.Users, nil
+	}
+	return nil, &NotLoadedError{edge: "users"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -181,6 +192,11 @@ func (dd *DictionaryDetail) QueryDictionary() *DictionaryQuery {
 // QueryProperty queries the "property" edge of the DictionaryDetail entity.
 func (dd *DictionaryDetail) QueryProperty() *ProductPropertyQuery {
 	return NewDictionaryDetailClient(dd.config).QueryProperty(dd)
+}
+
+// QueryUsers queries the "users" edge of the DictionaryDetail entity.
+func (dd *DictionaryDetail) QueryUsers() *UserQuery {
+	return NewDictionaryDetailClient(dd.config).QueryUsers(dd)
 }
 
 // Update returns a builder for updating this DictionaryDetail.

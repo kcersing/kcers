@@ -68,9 +68,13 @@ type VenueEdges struct {
 	PropertyVenues []*ProductProperty `json:"property_venues,omitempty"`
 	// Products holds the value of the products edge.
 	Products []*Product `json:"products,omitempty"`
+	// Users holds the value of the users edge.
+	Users []*User `json:"users,omitempty"`
+	// Roles holds the value of the roles edge.
+	Roles []*Role `json:"roles,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [8]bool
 }
 
 // PlacesOrErr returns the Places value or an error if the edge
@@ -125,6 +129,24 @@ func (e VenueEdges) ProductsOrErr() ([]*Product, error) {
 		return e.Products, nil
 	}
 	return nil, &NotLoadedError{edge: "products"}
+}
+
+// UsersOrErr returns the Users value or an error if the edge
+// was not loaded in eager-loading.
+func (e VenueEdges) UsersOrErr() ([]*User, error) {
+	if e.loadedTypes[6] {
+		return e.Users, nil
+	}
+	return nil, &NotLoadedError{edge: "users"}
+}
+
+// RolesOrErr returns the Roles value or an error if the edge
+// was not loaded in eager-loading.
+func (e VenueEdges) RolesOrErr() ([]*Role, error) {
+	if e.loadedTypes[7] {
+		return e.Roles, nil
+	}
+	return nil, &NotLoadedError{edge: "roles"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -290,6 +312,16 @@ func (v *Venue) QueryPropertyVenues() *ProductPropertyQuery {
 // QueryProducts queries the "products" edge of the Venue entity.
 func (v *Venue) QueryProducts() *ProductQuery {
 	return NewVenueClient(v.config).QueryProducts(v)
+}
+
+// QueryUsers queries the "users" edge of the Venue entity.
+func (v *Venue) QueryUsers() *UserQuery {
+	return NewVenueClient(v.config).QueryUsers(v)
+}
+
+// QueryRoles queries the "roles" edge of the Venue entity.
+func (v *Venue) QueryRoles() *RoleQuery {
+	return NewVenueClient(v.config).QueryRoles(v)
 }
 
 // Update returns a builder for updating this Venue.

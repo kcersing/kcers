@@ -19,10 +19,11 @@ import (
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
 	"kcers/biz/dal/db/mysql/ent/memberprofile"
+	"kcers/biz/dal/db/mysql/ent/membertoken"
 	"kcers/biz/dal/db/mysql/ent/menu"
 	"kcers/biz/dal/db/mysql/ent/menuparam"
 	"kcers/biz/dal/db/mysql/ent/messages"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/orderamount"
 	"kcers/biz/dal/db/mysql/ent/orderitem"
 	"kcers/biz/dal/db/mysql/ent/orderpay"
@@ -558,6 +559,29 @@ func init() {
 	memberprofileDescRelationUID := memberprofileFields[9].Descriptor()
 	// memberprofile.DefaultRelationUID holds the default value on creation for the relation_uid field.
 	memberprofile.DefaultRelationUID = memberprofileDescRelationUID.Default.(int64)
+	membertokenMixin := schema.MemberToken{}.Mixin()
+	membertokenMixinFields0 := membertokenMixin[0].Fields()
+	_ = membertokenMixinFields0
+	membertokenFields := schema.MemberToken{}.Fields()
+	_ = membertokenFields
+	// membertokenDescCreatedAt is the schema descriptor for created_at field.
+	membertokenDescCreatedAt := membertokenMixinFields0[1].Descriptor()
+	// membertoken.DefaultCreatedAt holds the default value on creation for the created_at field.
+	membertoken.DefaultCreatedAt = membertokenDescCreatedAt.Default.(func() time.Time)
+	// membertokenDescUpdatedAt is the schema descriptor for updated_at field.
+	membertokenDescUpdatedAt := membertokenMixinFields0[2].Descriptor()
+	// membertoken.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	membertoken.DefaultUpdatedAt = membertokenDescUpdatedAt.Default.(func() time.Time)
+	// membertoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	membertoken.UpdateDefaultUpdatedAt = membertokenDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// membertokenDescDelete is the schema descriptor for delete field.
+	membertokenDescDelete := membertokenMixinFields0[3].Descriptor()
+	// membertoken.DefaultDelete holds the default value on creation for the delete field.
+	membertoken.DefaultDelete = membertokenDescDelete.Default.(int64)
+	// membertokenDescCreatedID is the schema descriptor for created_id field.
+	membertokenDescCreatedID := membertokenMixinFields0[4].Descriptor()
+	// membertoken.DefaultCreatedID holds the default value on creation for the created_id field.
+	membertoken.DefaultCreatedID = membertokenDescCreatedID.Default.(int64)
 	menuMixin := schema.Menu{}.Mixin()
 	menuMixinFields0 := menuMixin[0].Fields()
 	_ = menuMixinFields0
@@ -643,41 +667,41 @@ func init() {
 	messagesDescCreatedID := messagesMixinFields0[4].Descriptor()
 	// messages.DefaultCreatedID holds the default value on creation for the created_id field.
 	messages.DefaultCreatedID = messagesDescCreatedID.Default.(int64)
-	orderMixin := schema.Order{}.Mixin()
-	orderMixinFields0 := orderMixin[0].Fields()
-	_ = orderMixinFields0
-	orderFields := schema.Order{}.Fields()
-	_ = orderFields
-	// orderDescCreatedAt is the schema descriptor for created_at field.
-	orderDescCreatedAt := orderMixinFields0[1].Descriptor()
-	// order.DefaultCreatedAt holds the default value on creation for the created_at field.
-	order.DefaultCreatedAt = orderDescCreatedAt.Default.(func() time.Time)
-	// orderDescUpdatedAt is the schema descriptor for updated_at field.
-	orderDescUpdatedAt := orderMixinFields0[2].Descriptor()
-	// order.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	order.DefaultUpdatedAt = orderDescUpdatedAt.Default.(func() time.Time)
-	// order.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	order.UpdateDefaultUpdatedAt = orderDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// orderDescDelete is the schema descriptor for delete field.
-	orderDescDelete := orderMixinFields0[3].Descriptor()
-	// order.DefaultDelete holds the default value on creation for the delete field.
-	order.DefaultDelete = orderDescDelete.Default.(int64)
-	// orderDescCreatedID is the schema descriptor for created_id field.
-	orderDescCreatedID := orderMixinFields0[4].Descriptor()
-	// order.DefaultCreatedID holds the default value on creation for the created_id field.
-	order.DefaultCreatedID = orderDescCreatedID.Default.(int64)
-	// orderDescStatus is the schema descriptor for status field.
-	orderDescStatus := orderFields[4].Descriptor()
-	// order.DefaultStatus holds the default value on creation for the status field.
-	order.DefaultStatus = orderDescStatus.Default.(int64)
-	// orderDescSource is the schema descriptor for source field.
-	orderDescSource := orderFields[5].Descriptor()
-	// order.DefaultSource holds the default value on creation for the source field.
-	order.DefaultSource = orderDescSource.Default.(string)
-	// orderDescDevice is the schema descriptor for device field.
-	orderDescDevice := orderFields[6].Descriptor()
-	// order.DefaultDevice holds the default value on creation for the device field.
-	order.DefaultDevice = orderDescDevice.Default.(string)
+	entorderMixin := schema.Order{}.Mixin()
+	entorderMixinFields0 := entorderMixin[0].Fields()
+	_ = entorderMixinFields0
+	entorderFields := schema.Order{}.Fields()
+	_ = entorderFields
+	// entorderDescCreatedAt is the schema descriptor for created_at field.
+	entorderDescCreatedAt := entorderMixinFields0[1].Descriptor()
+	// entorder.DefaultCreatedAt holds the default value on creation for the created_at field.
+	entorder.DefaultCreatedAt = entorderDescCreatedAt.Default.(func() time.Time)
+	// entorderDescUpdatedAt is the schema descriptor for updated_at field.
+	entorderDescUpdatedAt := entorderMixinFields0[2].Descriptor()
+	// entorder.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	entorder.DefaultUpdatedAt = entorderDescUpdatedAt.Default.(func() time.Time)
+	// entorder.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	entorder.UpdateDefaultUpdatedAt = entorderDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// entorderDescDelete is the schema descriptor for delete field.
+	entorderDescDelete := entorderMixinFields0[3].Descriptor()
+	// entorder.DefaultDelete holds the default value on creation for the delete field.
+	entorder.DefaultDelete = entorderDescDelete.Default.(int64)
+	// entorderDescCreatedID is the schema descriptor for created_id field.
+	entorderDescCreatedID := entorderMixinFields0[4].Descriptor()
+	// entorder.DefaultCreatedID holds the default value on creation for the created_id field.
+	entorder.DefaultCreatedID = entorderDescCreatedID.Default.(int64)
+	// entorderDescStatus is the schema descriptor for status field.
+	entorderDescStatus := entorderFields[4].Descriptor()
+	// entorder.DefaultStatus holds the default value on creation for the status field.
+	entorder.DefaultStatus = entorderDescStatus.Default.(int64)
+	// entorderDescSource is the schema descriptor for source field.
+	entorderDescSource := entorderFields[5].Descriptor()
+	// entorder.DefaultSource holds the default value on creation for the source field.
+	entorder.DefaultSource = entorderDescSource.Default.(string)
+	// entorderDescDevice is the schema descriptor for device field.
+	entorderDescDevice := entorderFields[6].Descriptor()
+	// entorder.DefaultDevice holds the default value on creation for the device field.
+	entorder.DefaultDevice = entorderDescDevice.Default.(string)
 	orderamountMixin := schema.OrderAmount{}.Mixin()
 	orderamountMixinFields0 := orderamountMixin[0].Fields()
 	_ = orderamountMixinFields0
@@ -728,8 +752,12 @@ func init() {
 	orderitemDescCreatedID := orderitemMixinFields0[4].Descriptor()
 	// orderitem.DefaultCreatedID holds the default value on creation for the created_id field.
 	orderitem.DefaultCreatedID = orderitemDescCreatedID.Default.(int64)
+	// orderitemDescNumber is the schema descriptor for number field.
+	orderitemDescNumber := orderitemFields[1].Descriptor()
+	// orderitem.DefaultNumber holds the default value on creation for the number field.
+	orderitem.DefaultNumber = orderitemDescNumber.Default.(int64)
 	// orderitemDescRelatedUserProductID is the schema descriptor for related_user_product_id field.
-	orderitemDescRelatedUserProductID := orderitemFields[2].Descriptor()
+	orderitemDescRelatedUserProductID := orderitemFields[4].Descriptor()
 	// orderitem.DefaultRelatedUserProductID holds the default value on creation for the related_user_product_id field.
 	orderitem.DefaultRelatedUserProductID = orderitemDescRelatedUserProductID.Default.(int64)
 	orderpayMixin := schema.OrderPay{}.Mixin()
@@ -1122,26 +1150,26 @@ func init() {
 	userDescStatus := userMixinFields1[0].Descriptor()
 	// user.DefaultStatus holds the default value on creation for the status field.
 	user.DefaultStatus = userDescStatus.Default.(int64)
+	// userDescGender is the schema descriptor for gender field.
+	userDescGender := userFields[2].Descriptor()
+	// user.DefaultGender holds the default value on creation for the gender field.
+	user.DefaultGender = userDescGender.Default.(int64)
+	// userDescJobTime is the schema descriptor for job_time field.
+	userDescJobTime := userFields[6].Descriptor()
+	// user.DefaultJobTime holds the default value on creation for the job_time field.
+	user.DefaultJobTime = userDescJobTime.Default.(int64)
 	// userDescSideMode is the schema descriptor for side_mode field.
-	userDescSideMode := userFields[3].Descriptor()
+	userDescSideMode := userFields[8].Descriptor()
 	// user.DefaultSideMode holds the default value on creation for the side_mode field.
 	user.DefaultSideMode = userDescSideMode.Default.(string)
 	// userDescBaseColor is the schema descriptor for base_color field.
-	userDescBaseColor := userFields[4].Descriptor()
+	userDescBaseColor := userFields[9].Descriptor()
 	// user.DefaultBaseColor holds the default value on creation for the base_color field.
 	user.DefaultBaseColor = userDescBaseColor.Default.(string)
 	// userDescActiveColor is the schema descriptor for active_color field.
-	userDescActiveColor := userFields[5].Descriptor()
+	userDescActiveColor := userFields[10].Descriptor()
 	// user.DefaultActiveColor holds the default value on creation for the active_color field.
 	user.DefaultActiveColor = userDescActiveColor.Default.(string)
-	// userDescRoleID is the schema descriptor for role_id field.
-	userDescRoleID := userFields[6].Descriptor()
-	// user.DefaultRoleID holds the default value on creation for the role_id field.
-	user.DefaultRoleID = userDescRoleID.Default.(int64)
-	// userDescGender is the schema descriptor for gender field.
-	userDescGender := userFields[14].Descriptor()
-	// user.DefaultGender holds the default value on creation for the gender field.
-	user.DefaultGender = userDescGender.Default.(int64)
 	venueMixin := schema.Venue{}.Mixin()
 	venueMixinFields0 := venueMixin[0].Fields()
 	_ = venueMixinFields0

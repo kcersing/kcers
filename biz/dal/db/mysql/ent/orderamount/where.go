@@ -100,6 +100,11 @@ func Remission(v float64) predicate.OrderAmount {
 	return predicate.OrderAmount(sql.FieldEQ(FieldRemission, v))
 }
 
+// Refund applies equality check predicate on the "refund" field. It's identical to RefundEQ.
+func Refund(v float64) predicate.OrderAmount {
+	return predicate.OrderAmount(sql.FieldEQ(FieldRefund, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.OrderAmount {
 	return predicate.OrderAmount(sql.FieldEQ(FieldCreatedAt, v))
@@ -528,6 +533,56 @@ func RemissionIsNil() predicate.OrderAmount {
 // RemissionNotNil applies the NotNil predicate on the "remission" field.
 func RemissionNotNil() predicate.OrderAmount {
 	return predicate.OrderAmount(sql.FieldNotNull(FieldRemission))
+}
+
+// RefundEQ applies the EQ predicate on the "refund" field.
+func RefundEQ(v float64) predicate.OrderAmount {
+	return predicate.OrderAmount(sql.FieldEQ(FieldRefund, v))
+}
+
+// RefundNEQ applies the NEQ predicate on the "refund" field.
+func RefundNEQ(v float64) predicate.OrderAmount {
+	return predicate.OrderAmount(sql.FieldNEQ(FieldRefund, v))
+}
+
+// RefundIn applies the In predicate on the "refund" field.
+func RefundIn(vs ...float64) predicate.OrderAmount {
+	return predicate.OrderAmount(sql.FieldIn(FieldRefund, vs...))
+}
+
+// RefundNotIn applies the NotIn predicate on the "refund" field.
+func RefundNotIn(vs ...float64) predicate.OrderAmount {
+	return predicate.OrderAmount(sql.FieldNotIn(FieldRefund, vs...))
+}
+
+// RefundGT applies the GT predicate on the "refund" field.
+func RefundGT(v float64) predicate.OrderAmount {
+	return predicate.OrderAmount(sql.FieldGT(FieldRefund, v))
+}
+
+// RefundGTE applies the GTE predicate on the "refund" field.
+func RefundGTE(v float64) predicate.OrderAmount {
+	return predicate.OrderAmount(sql.FieldGTE(FieldRefund, v))
+}
+
+// RefundLT applies the LT predicate on the "refund" field.
+func RefundLT(v float64) predicate.OrderAmount {
+	return predicate.OrderAmount(sql.FieldLT(FieldRefund, v))
+}
+
+// RefundLTE applies the LTE predicate on the "refund" field.
+func RefundLTE(v float64) predicate.OrderAmount {
+	return predicate.OrderAmount(sql.FieldLTE(FieldRefund, v))
+}
+
+// RefundIsNil applies the IsNil predicate on the "refund" field.
+func RefundIsNil() predicate.OrderAmount {
+	return predicate.OrderAmount(sql.FieldIsNull(FieldRefund))
+}
+
+// RefundNotNil applies the NotNil predicate on the "refund" field.
+func RefundNotNil() predicate.OrderAmount {
+	return predicate.OrderAmount(sql.FieldNotNull(FieldRefund))
 }
 
 // HasOrder applies the HasEdge predicate on the "order" edge.

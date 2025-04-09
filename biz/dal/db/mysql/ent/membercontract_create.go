@@ -9,7 +9,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/membercontract"
 	"kcers/biz/dal/db/mysql/ent/membercontractcontent"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -395,7 +395,7 @@ func (mcc *MemberContractCreate) createSpec() (*MemberContract, *sqlgraph.Create
 			Columns: []string{membercontract.OrderColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

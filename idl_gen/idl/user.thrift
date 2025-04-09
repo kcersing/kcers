@@ -19,10 +19,14 @@ struct UserInfo {
     17:optional i64 jobAt (api.raw = "jobAt")
     18: list<dictionary.DictionaryDetail> userTags (api.raw = "userTags")
     19: list<Venues> venues (api.raw = "venues")
-    20: optional i64 type=1 (api.raw = "type")
 
+    20:optional i64 jobTime (api.raw = "jobTime")
     21: list<UserRole> userRole (api.raw = "userRole")
     22: list<i64> userRoleIds (api.raw = "userRoleIds")
+
+    23:  optional string email (api.raw = "email")
+    25:  optional string wecom (api.raw = "wecom")
+
     254:i64 defaultVenueId (api.raw = "defaultVenueId")
 }
 struct Venues {
@@ -81,9 +85,12 @@ struct CreateOrUpdateUserReq {
     15:  optional string detail="" (api.raw = "detail")
     16:  optional i64 jobAt=0 (api.raw = "jobAt")
     18: optional list<i64> userTags="" (api.raw = "userTags")
-    19:  optional i64 type=1 (api.raw = "type")
+    19:optional i64 jobTime=0 (api.raw = "jobTime")
     20: optional list<i64> venueId=0 (api.raw = "venueId")
 
+	24:string birthday="" (api.raw = "birthday")
+    23:  optional string email="" (api.raw = "email")
+    25:  optional string wecom="" (api.raw = "wecom")
     254:optional i64 defaultVenueId=0 (api.raw = "defaultVenueId")
 }
 

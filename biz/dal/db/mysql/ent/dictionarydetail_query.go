@@ -10,6 +10,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/dictionarydetail"
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	"kcers/biz/dal/db/mysql/ent/productproperty"
+	"kcers/biz/dal/db/mysql/ent/user"
 	"math"
 
 	"entgo.io/ent"
@@ -27,6 +28,7 @@ type DictionaryDetailQuery struct {
 	predicates     []predicate.DictionaryDetail
 	withDictionary *DictionaryQuery
 	withProperty   *ProductPropertyQuery
+	withUsers      *UserQuery
 	modifiers      []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -101,6 +103,28 @@ func (ddq *DictionaryDetailQuery) QueryProperty() *ProductPropertyQuery {
 			sqlgraph.From(dictionarydetail.Table, dictionarydetail.FieldID, selector),
 			sqlgraph.To(productproperty.Table, productproperty.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, dictionarydetail.PropertyTable, dictionarydetail.PropertyPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(ddq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryUsers chains the current query on the "users" edge.
+func (ddq *DictionaryDetailQuery) QueryUsers() *UserQuery {
+	query := (&UserClient{config: ddq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := ddq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := ddq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(dictionarydetail.Table, dictionarydetail.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, dictionarydetail.UsersTable, dictionarydetail.UsersPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(ddq.driver.Dialect(), step)
 		return fromU, nil
@@ -302,6 +326,7 @@ func (ddq *DictionaryDetailQuery) Clone() *DictionaryDetailQuery {
 		predicates:     append([]predicate.DictionaryDetail{}, ddq.predicates...),
 		withDictionary: ddq.withDictionary.Clone(),
 		withProperty:   ddq.withProperty.Clone(),
+		withUsers:      ddq.withUsers.Clone(),
 		// clone intermediate query.
 		sql:       ddq.sql.Clone(),
 		path:      ddq.path,
@@ -328,6 +353,17 @@ func (ddq *DictionaryDetailQuery) WithProperty(opts ...func(*ProductPropertyQuer
 		opt(query)
 	}
 	ddq.withProperty = query
+	return ddq
+}
+
+// WithUsers tells the query-builder to eager-load the nodes that are connected to
+// the "users" edge. The optional arguments are used to configure the query builder of the edge.
+func (ddq *DictionaryDetailQuery) WithUsers(opts ...func(*UserQuery)) *DictionaryDetailQuery {
+	query := (&UserClient{config: ddq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	ddq.withUsers = query
 	return ddq
 }
 
@@ -409,9 +445,10 @@ func (ddq *DictionaryDetailQuery) sqlAll(ctx context.Context, hooks ...queryHook
 	var (
 		nodes       = []*DictionaryDetail{}
 		_spec       = ddq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			ddq.withDictionary != nil,
 			ddq.withProperty != nil,
+			ddq.withUsers != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -445,6 +482,13 @@ func (ddq *DictionaryDetailQuery) sqlAll(ctx context.Context, hooks ...queryHook
 		if err := ddq.loadProperty(ctx, query, nodes,
 			func(n *DictionaryDetail) { n.Edges.Property = []*ProductProperty{} },
 			func(n *DictionaryDetail, e *ProductProperty) { n.Edges.Property = append(n.Edges.Property, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := ddq.withUsers; query != nil {
+		if err := ddq.loadUsers(ctx, query, nodes,
+			func(n *DictionaryDetail) { n.Edges.Users = []*User{} },
+			func(n *DictionaryDetail, e *User) { n.Edges.Users = append(n.Edges.Users, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -534,6 +578,67 @@ func (ddq *DictionaryDetailQuery) loadProperty(ctx context.Context, query *Produ
 		nodes, ok := nids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected "property" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (ddq *DictionaryDetailQuery) loadUsers(ctx context.Context, query *UserQuery, nodes []*DictionaryDetail, init func(*DictionaryDetail), assign func(*DictionaryDetail, *User)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int64]*DictionaryDetail)
+	nids := make(map[int64]map[*DictionaryDetail]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(dictionarydetail.UsersTable)
+		s.Join(joinT).On(s.C(user.FieldID), joinT.C(dictionarydetail.UsersPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(dictionarydetail.UsersPrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(dictionarydetail.UsersPrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullInt64).Int64
+				inValue := values[1].(*sql.NullInt64).Int64
+				if nids[inValue] == nil {
+					nids[inValue] = map[*DictionaryDetail]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*User](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "users" node returned %v`, n.ID)
 		}
 		for kn := range nodes {
 			assign(kn, n)

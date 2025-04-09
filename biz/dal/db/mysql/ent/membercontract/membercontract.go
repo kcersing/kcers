@@ -65,7 +65,7 @@ const (
 	// OrderTable is the table that holds the order relation/edge.
 	OrderTable = "member_contract"
 	// OrderInverseTable is the table name for the Order entity.
-	// It exists in this package in order to avoid circular dependency with the "order" package.
+	// It exists in this package in order to avoid circular dependency with the "entorder" package.
 	OrderInverseTable = "order"
 	// OrderColumn is the table column denoting the order relation/edge.
 	OrderColumn = "order_id"

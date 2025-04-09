@@ -6,12 +6,15 @@ import (
 	"context"
 	"database/sql/driver"
 	"fmt"
+	"kcers/biz/dal/db/mysql/ent/dictionarydetail"
 	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/face"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/predicate"
+	"kcers/biz/dal/db/mysql/ent/role"
 	"kcers/biz/dal/db/mysql/ent/token"
 	"kcers/biz/dal/db/mysql/ent/user"
+	"kcers/biz/dal/db/mysql/ent/venue"
 	"math"
 
 	"entgo.io/ent"
@@ -27,10 +30,13 @@ type UserQuery struct {
 	order             []user.OrderOption
 	inters            []Interceptor
 	predicates        []predicate.User
+	withUserFace      *FaceQuery
 	withToken         *TokenQuery
+	withTags          *DictionaryDetailQuery
 	withCreatedOrders *OrderQuery
 	withUserEntry     *EntryLogsQuery
-	withUserFace      *FaceQuery
+	withVenues        *VenueQuery
+	withRoles         *RoleQuery
 	modifiers         []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -68,6 +74,28 @@ func (uq *UserQuery) Order(o ...user.OrderOption) *UserQuery {
 	return uq
 }
 
+// QueryUserFace chains the current query on the "user_face" edge.
+func (uq *UserQuery) QueryUserFace() *FaceQuery {
+	query := (&FaceClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(face.Table, face.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UserFaceTable, user.UserFaceColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // QueryToken chains the current query on the "token" edge.
 func (uq *UserQuery) QueryToken() *TokenQuery {
 	query := (&TokenClient{config: uq.config}).Query()
@@ -90,6 +118,28 @@ func (uq *UserQuery) QueryToken() *TokenQuery {
 	return query
 }
 
+// QueryTags chains the current query on the "tags" edge.
+func (uq *UserQuery) QueryTags() *DictionaryDetailQuery {
+	query := (&DictionaryDetailClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(dictionarydetail.Table, dictionarydetail.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.TagsTable, user.TagsPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // QueryCreatedOrders chains the current query on the "created_orders" edge.
 func (uq *UserQuery) QueryCreatedOrders() *OrderQuery {
 	query := (&OrderClient{config: uq.config}).Query()
@@ -103,7 +153,7 @@ func (uq *UserQuery) QueryCreatedOrders() *OrderQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(order.Table, order.FieldID),
+			sqlgraph.To(entorder.Table, entorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.CreatedOrdersTable, user.CreatedOrdersColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
@@ -134,9 +184,9 @@ func (uq *UserQuery) QueryUserEntry() *EntryLogsQuery {
 	return query
 }
 
-// QueryUserFace chains the current query on the "user_face" edge.
-func (uq *UserQuery) QueryUserFace() *FaceQuery {
-	query := (&FaceClient{config: uq.config}).Query()
+// QueryVenues chains the current query on the "venues" edge.
+func (uq *UserQuery) QueryVenues() *VenueQuery {
+	query := (&VenueClient{config: uq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := uq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -147,8 +197,30 @@ func (uq *UserQuery) QueryUserFace() *FaceQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(face.Table, face.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.UserFaceTable, user.UserFaceColumn),
+			sqlgraph.To(venue.Table, venue.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.VenuesTable, user.VenuesPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryRoles chains the current query on the "roles" edge.
+func (uq *UserQuery) QueryRoles() *RoleQuery {
+	query := (&RoleClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(role.Table, role.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.RolesTable, user.RolesPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -348,15 +420,29 @@ func (uq *UserQuery) Clone() *UserQuery {
 		order:             append([]user.OrderOption{}, uq.order...),
 		inters:            append([]Interceptor{}, uq.inters...),
 		predicates:        append([]predicate.User{}, uq.predicates...),
+		withUserFace:      uq.withUserFace.Clone(),
 		withToken:         uq.withToken.Clone(),
+		withTags:          uq.withTags.Clone(),
 		withCreatedOrders: uq.withCreatedOrders.Clone(),
 		withUserEntry:     uq.withUserEntry.Clone(),
-		withUserFace:      uq.withUserFace.Clone(),
+		withVenues:        uq.withVenues.Clone(),
+		withRoles:         uq.withRoles.Clone(),
 		// clone intermediate query.
 		sql:       uq.sql.Clone(),
 		path:      uq.path,
 		modifiers: append([]func(*sql.Selector){}, uq.modifiers...),
 	}
+}
+
+// WithUserFace tells the query-builder to eager-load the nodes that are connected to
+// the "user_face" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithUserFace(opts ...func(*FaceQuery)) *UserQuery {
+	query := (&FaceClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withUserFace = query
+	return uq
 }
 
 // WithToken tells the query-builder to eager-load the nodes that are connected to
@@ -367,6 +453,17 @@ func (uq *UserQuery) WithToken(opts ...func(*TokenQuery)) *UserQuery {
 		opt(query)
 	}
 	uq.withToken = query
+	return uq
+}
+
+// WithTags tells the query-builder to eager-load the nodes that are connected to
+// the "tags" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithTags(opts ...func(*DictionaryDetailQuery)) *UserQuery {
+	query := (&DictionaryDetailClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withTags = query
 	return uq
 }
 
@@ -392,14 +489,25 @@ func (uq *UserQuery) WithUserEntry(opts ...func(*EntryLogsQuery)) *UserQuery {
 	return uq
 }
 
-// WithUserFace tells the query-builder to eager-load the nodes that are connected to
-// the "user_face" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithUserFace(opts ...func(*FaceQuery)) *UserQuery {
-	query := (&FaceClient{config: uq.config}).Query()
+// WithVenues tells the query-builder to eager-load the nodes that are connected to
+// the "venues" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithVenues(opts ...func(*VenueQuery)) *UserQuery {
+	query := (&VenueClient{config: uq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	uq.withUserFace = query
+	uq.withVenues = query
+	return uq
+}
+
+// WithRoles tells the query-builder to eager-load the nodes that are connected to
+// the "roles" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithRoles(opts ...func(*RoleQuery)) *UserQuery {
+	query := (&RoleClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withRoles = query
 	return uq
 }
 
@@ -481,11 +589,14 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [7]bool{
+			uq.withUserFace != nil,
 			uq.withToken != nil,
+			uq.withTags != nil,
 			uq.withCreatedOrders != nil,
 			uq.withUserEntry != nil,
-			uq.withUserFace != nil,
+			uq.withVenues != nil,
+			uq.withRoles != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -509,9 +620,23 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := uq.withUserFace; query != nil {
+		if err := uq.loadUserFace(ctx, query, nodes,
+			func(n *User) { n.Edges.UserFace = []*Face{} },
+			func(n *User, e *Face) { n.Edges.UserFace = append(n.Edges.UserFace, e) }); err != nil {
+			return nil, err
+		}
+	}
 	if query := uq.withToken; query != nil {
 		if err := uq.loadToken(ctx, query, nodes, nil,
 			func(n *User, e *Token) { n.Edges.Token = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withTags; query != nil {
+		if err := uq.loadTags(ctx, query, nodes,
+			func(n *User) { n.Edges.Tags = []*DictionaryDetail{} },
+			func(n *User, e *DictionaryDetail) { n.Edges.Tags = append(n.Edges.Tags, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -529,16 +654,53 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
-	if query := uq.withUserFace; query != nil {
-		if err := uq.loadUserFace(ctx, query, nodes,
-			func(n *User) { n.Edges.UserFace = []*Face{} },
-			func(n *User, e *Face) { n.Edges.UserFace = append(n.Edges.UserFace, e) }); err != nil {
+	if query := uq.withVenues; query != nil {
+		if err := uq.loadVenues(ctx, query, nodes,
+			func(n *User) { n.Edges.Venues = []*Venue{} },
+			func(n *User, e *Venue) { n.Edges.Venues = append(n.Edges.Venues, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withRoles; query != nil {
+		if err := uq.loadRoles(ctx, query, nodes,
+			func(n *User) { n.Edges.Roles = []*Role{} },
+			func(n *User, e *Role) { n.Edges.Roles = append(n.Edges.Roles, e) }); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
 }
 
+func (uq *UserQuery) loadUserFace(ctx context.Context, query *FaceQuery, nodes []*User, init func(*User), assign func(*User, *Face)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(face.FieldUserID)
+	}
+	query.Where(predicate.Face(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.UserFaceColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
 func (uq *UserQuery) loadToken(ctx context.Context, query *TokenQuery, nodes []*User, init func(*User), assign func(*User, *Token)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*User)
@@ -567,6 +729,67 @@ func (uq *UserQuery) loadToken(ctx context.Context, query *TokenQuery, nodes []*
 	}
 	return nil
 }
+func (uq *UserQuery) loadTags(ctx context.Context, query *DictionaryDetailQuery, nodes []*User, init func(*User), assign func(*User, *DictionaryDetail)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int64]*User)
+	nids := make(map[int64]map[*User]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(user.TagsTable)
+		s.Join(joinT).On(s.C(dictionarydetail.FieldID), joinT.C(user.TagsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(user.TagsPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(user.TagsPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullInt64).Int64
+				inValue := values[1].(*sql.NullInt64).Int64
+				if nids[inValue] == nil {
+					nids[inValue] = map[*User]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*DictionaryDetail](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "tags" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
 func (uq *UserQuery) loadCreatedOrders(ctx context.Context, query *OrderQuery, nodes []*User, init func(*User), assign func(*User, *Order)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*User)
@@ -578,7 +801,7 @@ func (uq *UserQuery) loadCreatedOrders(ctx context.Context, query *OrderQuery, n
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(order.FieldCreateID)
+		query.ctx.AppendFieldOnce(entorder.FieldCreatedID)
 	}
 	query.Where(predicate.Order(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(user.CreatedOrdersColumn), fks...))
@@ -588,10 +811,10 @@ func (uq *UserQuery) loadCreatedOrders(ctx context.Context, query *OrderQuery, n
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.CreateID
+		fk := n.CreatedID
 		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "create_id" returned %v for node %v`, fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "created_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -627,33 +850,125 @@ func (uq *UserQuery) loadUserEntry(ctx context.Context, query *EntryLogsQuery, n
 	}
 	return nil
 }
-func (uq *UserQuery) loadUserFace(ctx context.Context, query *FaceQuery, nodes []*User, init func(*User), assign func(*User, *Face)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int64]*User)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
+func (uq *UserQuery) loadVenues(ctx context.Context, query *VenueQuery, nodes []*User, init func(*User), assign func(*User, *Venue)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int64]*User)
+	nids := make(map[int64]map[*User]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
 		if init != nil {
-			init(nodes[i])
+			init(node)
 		}
 	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(face.FieldUserID)
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(user.VenuesTable)
+		s.Join(joinT).On(s.C(venue.FieldID), joinT.C(user.VenuesPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(user.VenuesPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(user.VenuesPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
 	}
-	query.Where(predicate.Face(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.UserFaceColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullInt64).Int64
+				inValue := values[1].(*sql.NullInt64).Int64
+				if nids[inValue] == nil {
+					nids[inValue] = map[*User]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Venue](ctx, query, qr, query.inters)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.UserID
-		node, ok := nodeids[fk]
+		nodes, ok := nids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+			return fmt.Errorf(`unexpected "venues" node returned %v`, n.ID)
 		}
-		assign(node, n)
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (uq *UserQuery) loadRoles(ctx context.Context, query *RoleQuery, nodes []*User, init func(*User), assign func(*User, *Role)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int64]*User)
+	nids := make(map[int64]map[*User]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(user.RolesTable)
+		s.Join(joinT).On(s.C(role.FieldID), joinT.C(user.RolesPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(user.RolesPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(user.RolesPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullInt64).Int64
+				inValue := values[1].(*sql.NullInt64).Int64
+				if nids[inValue] == nil {
+					nids[inValue] = map[*User]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Role](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "roles" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
 	}
 	return nil
 }

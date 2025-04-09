@@ -5,7 +5,7 @@ package ent
 import (
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/member"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/user"
 	"kcers/biz/dal/db/mysql/ent/venue"
 	"strings"
@@ -37,7 +37,7 @@ type Order struct {
 	MemberID int64 `json:"member_id,omitempty"`
 	// 会员产品id
 	MemberProductID int64 `json:"member_product_id,omitempty"`
-	// 状态 | [0:正常;1:禁用]
+	// Status holds the value of the "status" field.
 	Status int64 `json:"status,omitempty"`
 	// 订单来源
 	Source string `json:"source,omitempty"`
@@ -47,8 +47,10 @@ type Order struct {
 	Nature int64 `json:"nature,omitempty"`
 	// 订单完成时间
 	CompletionAt time.Time `json:"completion_at,omitempty"`
-	// 创建人id
-	CreateID int64 `json:"create_id,omitempty"`
+	// 订单关闭时间
+	CloseAt time.Time `json:"close_at,omitempty"`
+	// 订单退费时间
+	RefundAt time.Time `json:"refund_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OrderQuery when eager-loading is set.
 	Edges        OrderEdges `json:"edges"`
@@ -161,11 +163,11 @@ func (*Order) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case order.FieldID, order.FieldDelete, order.FieldCreatedID, order.FieldVenueID, order.FieldMemberID, order.FieldMemberProductID, order.FieldStatus, order.FieldNature, order.FieldCreateID:
+		case entorder.FieldID, entorder.FieldDelete, entorder.FieldCreatedID, entorder.FieldVenueID, entorder.FieldMemberID, entorder.FieldMemberProductID, entorder.FieldStatus, entorder.FieldNature:
 			values[i] = new(sql.NullInt64)
-		case order.FieldOrderSn, order.FieldSource, order.FieldDevice:
+		case entorder.FieldOrderSn, entorder.FieldSource, entorder.FieldDevice:
 			values[i] = new(sql.NullString)
-		case order.FieldCreatedAt, order.FieldUpdatedAt, order.FieldCompletionAt:
+		case entorder.FieldCreatedAt, entorder.FieldUpdatedAt, entorder.FieldCompletionAt, entorder.FieldCloseAt, entorder.FieldRefundAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -182,95 +184,101 @@ func (o *Order) assignValues(columns []string, values []any) error {
 	}
 	for i := range columns {
 		switch columns[i] {
-		case order.FieldID:
+		case entorder.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			o.ID = int64(value.Int64)
-		case order.FieldCreatedAt:
+		case entorder.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				o.CreatedAt = value.Time
 			}
-		case order.FieldUpdatedAt:
+		case entorder.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				o.UpdatedAt = value.Time
 			}
-		case order.FieldDelete:
+		case entorder.FieldDelete:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field delete", values[i])
 			} else if value.Valid {
 				o.Delete = value.Int64
 			}
-		case order.FieldCreatedID:
+		case entorder.FieldCreatedID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_id", values[i])
 			} else if value.Valid {
 				o.CreatedID = value.Int64
 			}
-		case order.FieldOrderSn:
+		case entorder.FieldOrderSn:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field order_sn", values[i])
 			} else if value.Valid {
 				o.OrderSn = value.String
 			}
-		case order.FieldVenueID:
+		case entorder.FieldVenueID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field venue_id", values[i])
 			} else if value.Valid {
 				o.VenueID = value.Int64
 			}
-		case order.FieldMemberID:
+		case entorder.FieldMemberID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field member_id", values[i])
 			} else if value.Valid {
 				o.MemberID = value.Int64
 			}
-		case order.FieldMemberProductID:
+		case entorder.FieldMemberProductID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field member_product_id", values[i])
 			} else if value.Valid {
 				o.MemberProductID = value.Int64
 			}
-		case order.FieldStatus:
+		case entorder.FieldStatus:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
 				o.Status = value.Int64
 			}
-		case order.FieldSource:
+		case entorder.FieldSource:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field source", values[i])
 			} else if value.Valid {
 				o.Source = value.String
 			}
-		case order.FieldDevice:
+		case entorder.FieldDevice:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field device", values[i])
 			} else if value.Valid {
 				o.Device = value.String
 			}
-		case order.FieldNature:
+		case entorder.FieldNature:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field nature", values[i])
 			} else if value.Valid {
 				o.Nature = value.Int64
 			}
-		case order.FieldCompletionAt:
+		case entorder.FieldCompletionAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field completion_at", values[i])
 			} else if value.Valid {
 				o.CompletionAt = value.Time
 			}
-		case order.FieldCreateID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field create_id", values[i])
+		case entorder.FieldCloseAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field close_at", values[i])
 			} else if value.Valid {
-				o.CreateID = value.Int64
+				o.CloseAt = value.Time
+			}
+		case entorder.FieldRefundAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field refund_at", values[i])
+			} else if value.Valid {
+				o.RefundAt = value.Time
 			}
 		default:
 			o.selectValues.Set(columns[i], values[i])
@@ -387,8 +395,11 @@ func (o *Order) String() string {
 	builder.WriteString("completion_at=")
 	builder.WriteString(o.CompletionAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("create_id=")
-	builder.WriteString(fmt.Sprintf("%v", o.CreateID))
+	builder.WriteString("close_at=")
+	builder.WriteString(o.CloseAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("refund_at=")
+	builder.WriteString(o.RefundAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

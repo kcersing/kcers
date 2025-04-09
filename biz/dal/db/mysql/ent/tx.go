@@ -44,6 +44,8 @@ type Tx struct {
 	MemberProductProperty *MemberProductPropertyClient
 	// MemberProfile is the client for interacting with the MemberProfile builders.
 	MemberProfile *MemberProfileClient
+	// MemberToken is the client for interacting with the MemberToken builders.
+	MemberToken *MemberTokenClient
 	// Menu is the client for interacting with the Menu builders.
 	Menu *MenuClient
 	// MenuParam is the client for interacting with the MenuParam builders.
@@ -231,6 +233,7 @@ func (tx *Tx) init() {
 	tx.MemberProduct = NewMemberProductClient(tx.config)
 	tx.MemberProductProperty = NewMemberProductPropertyClient(tx.config)
 	tx.MemberProfile = NewMemberProfileClient(tx.config)
+	tx.MemberToken = NewMemberTokenClient(tx.config)
 	tx.Menu = NewMenuClient(tx.config)
 	tx.MenuParam = NewMenuParamClient(tx.config)
 	tx.Messages = NewMessagesClient(tx.config)

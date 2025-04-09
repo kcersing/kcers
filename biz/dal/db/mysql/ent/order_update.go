@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/member"
 	"kcers/biz/dal/db/mysql/ent/membercontract"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/orderamount"
 	"kcers/biz/dal/db/mysql/ent/orderitem"
 	"kcers/biz/dal/db/mysql/ent/orderpay"
@@ -78,7 +78,6 @@ func (ou *OrderUpdate) ClearDelete() *OrderUpdate {
 
 // SetCreatedID sets the "created_id" field.
 func (ou *OrderUpdate) SetCreatedID(i int64) *OrderUpdate {
-	ou.mutation.ResetCreatedID()
 	ou.mutation.SetCreatedID(i)
 	return ou
 }
@@ -88,12 +87,6 @@ func (ou *OrderUpdate) SetNillableCreatedID(i *int64) *OrderUpdate {
 	if i != nil {
 		ou.SetCreatedID(*i)
 	}
-	return ou
-}
-
-// AddCreatedID adds i to the "created_id" field.
-func (ou *OrderUpdate) AddCreatedID(i int64) *OrderUpdate {
-	ou.mutation.AddCreatedID(i)
 	return ou
 }
 
@@ -304,23 +297,43 @@ func (ou *OrderUpdate) ClearCompletionAt() *OrderUpdate {
 	return ou
 }
 
-// SetCreateID sets the "create_id" field.
-func (ou *OrderUpdate) SetCreateID(i int64) *OrderUpdate {
-	ou.mutation.SetCreateID(i)
+// SetCloseAt sets the "close_at" field.
+func (ou *OrderUpdate) SetCloseAt(t time.Time) *OrderUpdate {
+	ou.mutation.SetCloseAt(t)
 	return ou
 }
 
-// SetNillableCreateID sets the "create_id" field if the given value is not nil.
-func (ou *OrderUpdate) SetNillableCreateID(i *int64) *OrderUpdate {
-	if i != nil {
-		ou.SetCreateID(*i)
+// SetNillableCloseAt sets the "close_at" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableCloseAt(t *time.Time) *OrderUpdate {
+	if t != nil {
+		ou.SetCloseAt(*t)
 	}
 	return ou
 }
 
-// ClearCreateID clears the value of the "create_id" field.
-func (ou *OrderUpdate) ClearCreateID() *OrderUpdate {
-	ou.mutation.ClearCreateID()
+// ClearCloseAt clears the value of the "close_at" field.
+func (ou *OrderUpdate) ClearCloseAt() *OrderUpdate {
+	ou.mutation.ClearCloseAt()
+	return ou
+}
+
+// SetRefundAt sets the "refund_at" field.
+func (ou *OrderUpdate) SetRefundAt(t time.Time) *OrderUpdate {
+	ou.mutation.SetRefundAt(t)
+	return ou
+}
+
+// SetNillableRefundAt sets the "refund_at" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableRefundAt(t *time.Time) *OrderUpdate {
+	if t != nil {
+		ou.SetRefundAt(*t)
+	}
+	return ou
+}
+
+// ClearRefundAt clears the value of the "refund_at" field.
+func (ou *OrderUpdate) ClearRefundAt() *OrderUpdate {
+	ou.mutation.ClearRefundAt()
 	return ou
 }
 
@@ -615,7 +628,7 @@ func (ou *OrderUpdate) ExecX(ctx context.Context) {
 // defaults sets the default values of the builder before save.
 func (ou *OrderUpdate) defaults() {
 	if _, ok := ou.mutation.UpdatedAt(); !ok && !ou.mutation.UpdatedAtCleared() {
-		v := order.UpdateDefaultUpdatedAt()
+		v := entorder.UpdateDefaultUpdatedAt()
 		ou.mutation.SetUpdatedAt(v)
 	}
 }
@@ -627,7 +640,7 @@ func (ou *OrderUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *OrderUpd
 }
 
 func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(order.Table, order.Columns, sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewUpdateSpec(entorder.Table, entorder.Columns, sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64))
 	if ps := ou.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -636,89 +649,92 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 	}
 	if ou.mutation.CreatedAtCleared() {
-		_spec.ClearField(order.FieldCreatedAt, field.TypeTime)
+		_spec.ClearField(entorder.FieldCreatedAt, field.TypeTime)
 	}
 	if value, ok := ou.mutation.UpdatedAt(); ok {
-		_spec.SetField(order.FieldUpdatedAt, field.TypeTime, value)
+		_spec.SetField(entorder.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if ou.mutation.UpdatedAtCleared() {
-		_spec.ClearField(order.FieldUpdatedAt, field.TypeTime)
+		_spec.ClearField(entorder.FieldUpdatedAt, field.TypeTime)
 	}
 	if value, ok := ou.mutation.Delete(); ok {
-		_spec.SetField(order.FieldDelete, field.TypeInt64, value)
+		_spec.SetField(entorder.FieldDelete, field.TypeInt64, value)
 	}
 	if value, ok := ou.mutation.AddedDelete(); ok {
-		_spec.AddField(order.FieldDelete, field.TypeInt64, value)
+		_spec.AddField(entorder.FieldDelete, field.TypeInt64, value)
 	}
 	if ou.mutation.DeleteCleared() {
-		_spec.ClearField(order.FieldDelete, field.TypeInt64)
-	}
-	if value, ok := ou.mutation.CreatedID(); ok {
-		_spec.SetField(order.FieldCreatedID, field.TypeInt64, value)
-	}
-	if value, ok := ou.mutation.AddedCreatedID(); ok {
-		_spec.AddField(order.FieldCreatedID, field.TypeInt64, value)
-	}
-	if ou.mutation.CreatedIDCleared() {
-		_spec.ClearField(order.FieldCreatedID, field.TypeInt64)
+		_spec.ClearField(entorder.FieldDelete, field.TypeInt64)
 	}
 	if value, ok := ou.mutation.OrderSn(); ok {
-		_spec.SetField(order.FieldOrderSn, field.TypeString, value)
+		_spec.SetField(entorder.FieldOrderSn, field.TypeString, value)
 	}
 	if ou.mutation.OrderSnCleared() {
-		_spec.ClearField(order.FieldOrderSn, field.TypeString)
+		_spec.ClearField(entorder.FieldOrderSn, field.TypeString)
 	}
 	if value, ok := ou.mutation.MemberProductID(); ok {
-		_spec.SetField(order.FieldMemberProductID, field.TypeInt64, value)
+		_spec.SetField(entorder.FieldMemberProductID, field.TypeInt64, value)
 	}
 	if value, ok := ou.mutation.AddedMemberProductID(); ok {
-		_spec.AddField(order.FieldMemberProductID, field.TypeInt64, value)
+		_spec.AddField(entorder.FieldMemberProductID, field.TypeInt64, value)
 	}
 	if ou.mutation.MemberProductIDCleared() {
-		_spec.ClearField(order.FieldMemberProductID, field.TypeInt64)
+		_spec.ClearField(entorder.FieldMemberProductID, field.TypeInt64)
 	}
 	if value, ok := ou.mutation.Status(); ok {
-		_spec.SetField(order.FieldStatus, field.TypeInt64, value)
+		_spec.SetField(entorder.FieldStatus, field.TypeInt64, value)
 	}
 	if value, ok := ou.mutation.AddedStatus(); ok {
-		_spec.AddField(order.FieldStatus, field.TypeInt64, value)
+		_spec.AddField(entorder.FieldStatus, field.TypeInt64, value)
 	}
 	if ou.mutation.StatusCleared() {
-		_spec.ClearField(order.FieldStatus, field.TypeInt64)
+		_spec.ClearField(entorder.FieldStatus, field.TypeInt64)
 	}
 	if value, ok := ou.mutation.Source(); ok {
-		_spec.SetField(order.FieldSource, field.TypeString, value)
+		_spec.SetField(entorder.FieldSource, field.TypeString, value)
 	}
 	if ou.mutation.SourceCleared() {
-		_spec.ClearField(order.FieldSource, field.TypeString)
+		_spec.ClearField(entorder.FieldSource, field.TypeString)
 	}
 	if value, ok := ou.mutation.Device(); ok {
-		_spec.SetField(order.FieldDevice, field.TypeString, value)
+		_spec.SetField(entorder.FieldDevice, field.TypeString, value)
 	}
 	if ou.mutation.DeviceCleared() {
-		_spec.ClearField(order.FieldDevice, field.TypeString)
+		_spec.ClearField(entorder.FieldDevice, field.TypeString)
 	}
 	if value, ok := ou.mutation.Nature(); ok {
-		_spec.SetField(order.FieldNature, field.TypeInt64, value)
+		_spec.SetField(entorder.FieldNature, field.TypeInt64, value)
 	}
 	if value, ok := ou.mutation.AddedNature(); ok {
-		_spec.AddField(order.FieldNature, field.TypeInt64, value)
+		_spec.AddField(entorder.FieldNature, field.TypeInt64, value)
 	}
 	if ou.mutation.NatureCleared() {
-		_spec.ClearField(order.FieldNature, field.TypeInt64)
+		_spec.ClearField(entorder.FieldNature, field.TypeInt64)
 	}
 	if value, ok := ou.mutation.CompletionAt(); ok {
-		_spec.SetField(order.FieldCompletionAt, field.TypeTime, value)
+		_spec.SetField(entorder.FieldCompletionAt, field.TypeTime, value)
 	}
 	if ou.mutation.CompletionAtCleared() {
-		_spec.ClearField(order.FieldCompletionAt, field.TypeTime)
+		_spec.ClearField(entorder.FieldCompletionAt, field.TypeTime)
+	}
+	if value, ok := ou.mutation.CloseAt(); ok {
+		_spec.SetField(entorder.FieldCloseAt, field.TypeTime, value)
+	}
+	if ou.mutation.CloseAtCleared() {
+		_spec.ClearField(entorder.FieldCloseAt, field.TypeTime)
+	}
+	if value, ok := ou.mutation.RefundAt(); ok {
+		_spec.SetField(entorder.FieldRefundAt, field.TypeTime, value)
+	}
+	if ou.mutation.RefundAtCleared() {
+		_spec.ClearField(entorder.FieldRefundAt, field.TypeTime)
 	}
 	if ou.mutation.AmountCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.AmountTable,
-			Columns: []string{order.AmountColumn},
+			Table:   entorder.AmountTable,
+			Columns: []string{entorder.AmountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(orderamount.FieldID, field.TypeInt64),
@@ -730,8 +746,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.AmountTable,
-			Columns: []string{order.AmountColumn},
+			Table:   entorder.AmountTable,
+			Columns: []string{entorder.AmountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(orderamount.FieldID, field.TypeInt64),
@@ -746,8 +762,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.AmountTable,
-			Columns: []string{order.AmountColumn},
+			Table:   entorder.AmountTable,
+			Columns: []string{entorder.AmountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(orderamount.FieldID, field.TypeInt64),
@@ -762,8 +778,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.ItemTable,
-			Columns: []string{order.ItemColumn},
+			Table:   entorder.ItemTable,
+			Columns: []string{entorder.ItemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(orderitem.FieldID, field.TypeInt64),
@@ -775,8 +791,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.ItemTable,
-			Columns: []string{order.ItemColumn},
+			Table:   entorder.ItemTable,
+			Columns: []string{entorder.ItemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(orderitem.FieldID, field.TypeInt64),
@@ -791,8 +807,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.ItemTable,
-			Columns: []string{order.ItemColumn},
+			Table:   entorder.ItemTable,
+			Columns: []string{entorder.ItemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(orderitem.FieldID, field.TypeInt64),
@@ -807,8 +823,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.PayTable,
-			Columns: []string{order.PayColumn},
+			Table:   entorder.PayTable,
+			Columns: []string{entorder.PayColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(orderpay.FieldID, field.TypeInt64),
@@ -820,8 +836,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.PayTable,
-			Columns: []string{order.PayColumn},
+			Table:   entorder.PayTable,
+			Columns: []string{entorder.PayColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(orderpay.FieldID, field.TypeInt64),
@@ -836,8 +852,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.PayTable,
-			Columns: []string{order.PayColumn},
+			Table:   entorder.PayTable,
+			Columns: []string{entorder.PayColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(orderpay.FieldID, field.TypeInt64),
@@ -852,8 +868,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.OrderContentsTable,
-			Columns: []string{order.OrderContentsColumn},
+			Table:   entorder.OrderContentsTable,
+			Columns: []string{entorder.OrderContentsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(membercontract.FieldID, field.TypeInt64),
@@ -865,8 +881,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.OrderContentsTable,
-			Columns: []string{order.OrderContentsColumn},
+			Table:   entorder.OrderContentsTable,
+			Columns: []string{entorder.OrderContentsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(membercontract.FieldID, field.TypeInt64),
@@ -881,8 +897,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.OrderContentsTable,
-			Columns: []string{order.OrderContentsColumn},
+			Table:   entorder.OrderContentsTable,
+			Columns: []string{entorder.OrderContentsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(membercontract.FieldID, field.TypeInt64),
@@ -897,8 +913,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.SalesTable,
-			Columns: []string{order.SalesColumn},
+			Table:   entorder.SalesTable,
+			Columns: []string{entorder.SalesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(ordersales.FieldID, field.TypeInt64),
@@ -910,8 +926,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.SalesTable,
-			Columns: []string{order.SalesColumn},
+			Table:   entorder.SalesTable,
+			Columns: []string{entorder.SalesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(ordersales.FieldID, field.TypeInt64),
@@ -926,8 +942,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.SalesTable,
-			Columns: []string{order.SalesColumn},
+			Table:   entorder.SalesTable,
+			Columns: []string{entorder.SalesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(ordersales.FieldID, field.TypeInt64),
@@ -942,8 +958,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   order.OrderVenuesTable,
-			Columns: []string{order.OrderVenuesColumn},
+			Table:   entorder.OrderVenuesTable,
+			Columns: []string{entorder.OrderVenuesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(venue.FieldID, field.TypeInt64),
@@ -955,8 +971,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   order.OrderVenuesTable,
-			Columns: []string{order.OrderVenuesColumn},
+			Table:   entorder.OrderVenuesTable,
+			Columns: []string{entorder.OrderVenuesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(venue.FieldID, field.TypeInt64),
@@ -971,8 +987,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   order.OrderMembersTable,
-			Columns: []string{order.OrderMembersColumn},
+			Table:   entorder.OrderMembersTable,
+			Columns: []string{entorder.OrderMembersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt64),
@@ -984,8 +1000,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   order.OrderMembersTable,
-			Columns: []string{order.OrderMembersColumn},
+			Table:   entorder.OrderMembersTable,
+			Columns: []string{entorder.OrderMembersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt64),
@@ -1000,8 +1016,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   order.OrderCreatesTable,
-			Columns: []string{order.OrderCreatesColumn},
+			Table:   entorder.OrderCreatesTable,
+			Columns: []string{entorder.OrderCreatesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
@@ -1013,8 +1029,8 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   order.OrderCreatesTable,
-			Columns: []string{order.OrderCreatesColumn},
+			Table:   entorder.OrderCreatesTable,
+			Columns: []string{entorder.OrderCreatesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
@@ -1028,7 +1044,7 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec.AddModifiers(ou.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, ou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{order.Label}
+			err = &NotFoundError{entorder.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -1088,7 +1104,6 @@ func (ouo *OrderUpdateOne) ClearDelete() *OrderUpdateOne {
 
 // SetCreatedID sets the "created_id" field.
 func (ouo *OrderUpdateOne) SetCreatedID(i int64) *OrderUpdateOne {
-	ouo.mutation.ResetCreatedID()
 	ouo.mutation.SetCreatedID(i)
 	return ouo
 }
@@ -1098,12 +1113,6 @@ func (ouo *OrderUpdateOne) SetNillableCreatedID(i *int64) *OrderUpdateOne {
 	if i != nil {
 		ouo.SetCreatedID(*i)
 	}
-	return ouo
-}
-
-// AddCreatedID adds i to the "created_id" field.
-func (ouo *OrderUpdateOne) AddCreatedID(i int64) *OrderUpdateOne {
-	ouo.mutation.AddCreatedID(i)
 	return ouo
 }
 
@@ -1314,23 +1323,43 @@ func (ouo *OrderUpdateOne) ClearCompletionAt() *OrderUpdateOne {
 	return ouo
 }
 
-// SetCreateID sets the "create_id" field.
-func (ouo *OrderUpdateOne) SetCreateID(i int64) *OrderUpdateOne {
-	ouo.mutation.SetCreateID(i)
+// SetCloseAt sets the "close_at" field.
+func (ouo *OrderUpdateOne) SetCloseAt(t time.Time) *OrderUpdateOne {
+	ouo.mutation.SetCloseAt(t)
 	return ouo
 }
 
-// SetNillableCreateID sets the "create_id" field if the given value is not nil.
-func (ouo *OrderUpdateOne) SetNillableCreateID(i *int64) *OrderUpdateOne {
-	if i != nil {
-		ouo.SetCreateID(*i)
+// SetNillableCloseAt sets the "close_at" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableCloseAt(t *time.Time) *OrderUpdateOne {
+	if t != nil {
+		ouo.SetCloseAt(*t)
 	}
 	return ouo
 }
 
-// ClearCreateID clears the value of the "create_id" field.
-func (ouo *OrderUpdateOne) ClearCreateID() *OrderUpdateOne {
-	ouo.mutation.ClearCreateID()
+// ClearCloseAt clears the value of the "close_at" field.
+func (ouo *OrderUpdateOne) ClearCloseAt() *OrderUpdateOne {
+	ouo.mutation.ClearCloseAt()
+	return ouo
+}
+
+// SetRefundAt sets the "refund_at" field.
+func (ouo *OrderUpdateOne) SetRefundAt(t time.Time) *OrderUpdateOne {
+	ouo.mutation.SetRefundAt(t)
+	return ouo
+}
+
+// SetNillableRefundAt sets the "refund_at" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableRefundAt(t *time.Time) *OrderUpdateOne {
+	if t != nil {
+		ouo.SetRefundAt(*t)
+	}
+	return ouo
+}
+
+// ClearRefundAt clears the value of the "refund_at" field.
+func (ouo *OrderUpdateOne) ClearRefundAt() *OrderUpdateOne {
+	ouo.mutation.ClearRefundAt()
 	return ouo
 }
 
@@ -1638,7 +1667,7 @@ func (ouo *OrderUpdateOne) ExecX(ctx context.Context) {
 // defaults sets the default values of the builder before save.
 func (ouo *OrderUpdateOne) defaults() {
 	if _, ok := ouo.mutation.UpdatedAt(); !ok && !ouo.mutation.UpdatedAtCleared() {
-		v := order.UpdateDefaultUpdatedAt()
+		v := entorder.UpdateDefaultUpdatedAt()
 		ouo.mutation.SetUpdatedAt(v)
 	}
 }
@@ -1650,7 +1679,7 @@ func (ouo *OrderUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Orde
 }
 
 func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error) {
-	_spec := sqlgraph.NewUpdateSpec(order.Table, order.Columns, sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewUpdateSpec(entorder.Table, entorder.Columns, sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64))
 	id, ok := ouo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Order.id" for update`)}
@@ -1658,12 +1687,12 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 	_spec.Node.ID.Value = id
 	if fields := ouo.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, order.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, entorder.FieldID)
 		for _, f := range fields {
-			if !order.ValidColumn(f) {
+			if !entorder.ValidColumn(f) {
 				return nil, &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 			}
-			if f != order.FieldID {
+			if f != entorder.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, f)
 			}
 		}
@@ -1676,89 +1705,92 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		}
 	}
 	if ouo.mutation.CreatedAtCleared() {
-		_spec.ClearField(order.FieldCreatedAt, field.TypeTime)
+		_spec.ClearField(entorder.FieldCreatedAt, field.TypeTime)
 	}
 	if value, ok := ouo.mutation.UpdatedAt(); ok {
-		_spec.SetField(order.FieldUpdatedAt, field.TypeTime, value)
+		_spec.SetField(entorder.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if ouo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(order.FieldUpdatedAt, field.TypeTime)
+		_spec.ClearField(entorder.FieldUpdatedAt, field.TypeTime)
 	}
 	if value, ok := ouo.mutation.Delete(); ok {
-		_spec.SetField(order.FieldDelete, field.TypeInt64, value)
+		_spec.SetField(entorder.FieldDelete, field.TypeInt64, value)
 	}
 	if value, ok := ouo.mutation.AddedDelete(); ok {
-		_spec.AddField(order.FieldDelete, field.TypeInt64, value)
+		_spec.AddField(entorder.FieldDelete, field.TypeInt64, value)
 	}
 	if ouo.mutation.DeleteCleared() {
-		_spec.ClearField(order.FieldDelete, field.TypeInt64)
-	}
-	if value, ok := ouo.mutation.CreatedID(); ok {
-		_spec.SetField(order.FieldCreatedID, field.TypeInt64, value)
-	}
-	if value, ok := ouo.mutation.AddedCreatedID(); ok {
-		_spec.AddField(order.FieldCreatedID, field.TypeInt64, value)
-	}
-	if ouo.mutation.CreatedIDCleared() {
-		_spec.ClearField(order.FieldCreatedID, field.TypeInt64)
+		_spec.ClearField(entorder.FieldDelete, field.TypeInt64)
 	}
 	if value, ok := ouo.mutation.OrderSn(); ok {
-		_spec.SetField(order.FieldOrderSn, field.TypeString, value)
+		_spec.SetField(entorder.FieldOrderSn, field.TypeString, value)
 	}
 	if ouo.mutation.OrderSnCleared() {
-		_spec.ClearField(order.FieldOrderSn, field.TypeString)
+		_spec.ClearField(entorder.FieldOrderSn, field.TypeString)
 	}
 	if value, ok := ouo.mutation.MemberProductID(); ok {
-		_spec.SetField(order.FieldMemberProductID, field.TypeInt64, value)
+		_spec.SetField(entorder.FieldMemberProductID, field.TypeInt64, value)
 	}
 	if value, ok := ouo.mutation.AddedMemberProductID(); ok {
-		_spec.AddField(order.FieldMemberProductID, field.TypeInt64, value)
+		_spec.AddField(entorder.FieldMemberProductID, field.TypeInt64, value)
 	}
 	if ouo.mutation.MemberProductIDCleared() {
-		_spec.ClearField(order.FieldMemberProductID, field.TypeInt64)
+		_spec.ClearField(entorder.FieldMemberProductID, field.TypeInt64)
 	}
 	if value, ok := ouo.mutation.Status(); ok {
-		_spec.SetField(order.FieldStatus, field.TypeInt64, value)
+		_spec.SetField(entorder.FieldStatus, field.TypeInt64, value)
 	}
 	if value, ok := ouo.mutation.AddedStatus(); ok {
-		_spec.AddField(order.FieldStatus, field.TypeInt64, value)
+		_spec.AddField(entorder.FieldStatus, field.TypeInt64, value)
 	}
 	if ouo.mutation.StatusCleared() {
-		_spec.ClearField(order.FieldStatus, field.TypeInt64)
+		_spec.ClearField(entorder.FieldStatus, field.TypeInt64)
 	}
 	if value, ok := ouo.mutation.Source(); ok {
-		_spec.SetField(order.FieldSource, field.TypeString, value)
+		_spec.SetField(entorder.FieldSource, field.TypeString, value)
 	}
 	if ouo.mutation.SourceCleared() {
-		_spec.ClearField(order.FieldSource, field.TypeString)
+		_spec.ClearField(entorder.FieldSource, field.TypeString)
 	}
 	if value, ok := ouo.mutation.Device(); ok {
-		_spec.SetField(order.FieldDevice, field.TypeString, value)
+		_spec.SetField(entorder.FieldDevice, field.TypeString, value)
 	}
 	if ouo.mutation.DeviceCleared() {
-		_spec.ClearField(order.FieldDevice, field.TypeString)
+		_spec.ClearField(entorder.FieldDevice, field.TypeString)
 	}
 	if value, ok := ouo.mutation.Nature(); ok {
-		_spec.SetField(order.FieldNature, field.TypeInt64, value)
+		_spec.SetField(entorder.FieldNature, field.TypeInt64, value)
 	}
 	if value, ok := ouo.mutation.AddedNature(); ok {
-		_spec.AddField(order.FieldNature, field.TypeInt64, value)
+		_spec.AddField(entorder.FieldNature, field.TypeInt64, value)
 	}
 	if ouo.mutation.NatureCleared() {
-		_spec.ClearField(order.FieldNature, field.TypeInt64)
+		_spec.ClearField(entorder.FieldNature, field.TypeInt64)
 	}
 	if value, ok := ouo.mutation.CompletionAt(); ok {
-		_spec.SetField(order.FieldCompletionAt, field.TypeTime, value)
+		_spec.SetField(entorder.FieldCompletionAt, field.TypeTime, value)
 	}
 	if ouo.mutation.CompletionAtCleared() {
-		_spec.ClearField(order.FieldCompletionAt, field.TypeTime)
+		_spec.ClearField(entorder.FieldCompletionAt, field.TypeTime)
+	}
+	if value, ok := ouo.mutation.CloseAt(); ok {
+		_spec.SetField(entorder.FieldCloseAt, field.TypeTime, value)
+	}
+	if ouo.mutation.CloseAtCleared() {
+		_spec.ClearField(entorder.FieldCloseAt, field.TypeTime)
+	}
+	if value, ok := ouo.mutation.RefundAt(); ok {
+		_spec.SetField(entorder.FieldRefundAt, field.TypeTime, value)
+	}
+	if ouo.mutation.RefundAtCleared() {
+		_spec.ClearField(entorder.FieldRefundAt, field.TypeTime)
 	}
 	if ouo.mutation.AmountCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.AmountTable,
-			Columns: []string{order.AmountColumn},
+			Table:   entorder.AmountTable,
+			Columns: []string{entorder.AmountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(orderamount.FieldID, field.TypeInt64),
@@ -1770,8 +1802,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.AmountTable,
-			Columns: []string{order.AmountColumn},
+			Table:   entorder.AmountTable,
+			Columns: []string{entorder.AmountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(orderamount.FieldID, field.TypeInt64),
@@ -1786,8 +1818,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.AmountTable,
-			Columns: []string{order.AmountColumn},
+			Table:   entorder.AmountTable,
+			Columns: []string{entorder.AmountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(orderamount.FieldID, field.TypeInt64),
@@ -1802,8 +1834,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.ItemTable,
-			Columns: []string{order.ItemColumn},
+			Table:   entorder.ItemTable,
+			Columns: []string{entorder.ItemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(orderitem.FieldID, field.TypeInt64),
@@ -1815,8 +1847,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.ItemTable,
-			Columns: []string{order.ItemColumn},
+			Table:   entorder.ItemTable,
+			Columns: []string{entorder.ItemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(orderitem.FieldID, field.TypeInt64),
@@ -1831,8 +1863,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.ItemTable,
-			Columns: []string{order.ItemColumn},
+			Table:   entorder.ItemTable,
+			Columns: []string{entorder.ItemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(orderitem.FieldID, field.TypeInt64),
@@ -1847,8 +1879,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.PayTable,
-			Columns: []string{order.PayColumn},
+			Table:   entorder.PayTable,
+			Columns: []string{entorder.PayColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(orderpay.FieldID, field.TypeInt64),
@@ -1860,8 +1892,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.PayTable,
-			Columns: []string{order.PayColumn},
+			Table:   entorder.PayTable,
+			Columns: []string{entorder.PayColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(orderpay.FieldID, field.TypeInt64),
@@ -1876,8 +1908,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.PayTable,
-			Columns: []string{order.PayColumn},
+			Table:   entorder.PayTable,
+			Columns: []string{entorder.PayColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(orderpay.FieldID, field.TypeInt64),
@@ -1892,8 +1924,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.OrderContentsTable,
-			Columns: []string{order.OrderContentsColumn},
+			Table:   entorder.OrderContentsTable,
+			Columns: []string{entorder.OrderContentsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(membercontract.FieldID, field.TypeInt64),
@@ -1905,8 +1937,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.OrderContentsTable,
-			Columns: []string{order.OrderContentsColumn},
+			Table:   entorder.OrderContentsTable,
+			Columns: []string{entorder.OrderContentsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(membercontract.FieldID, field.TypeInt64),
@@ -1921,8 +1953,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.OrderContentsTable,
-			Columns: []string{order.OrderContentsColumn},
+			Table:   entorder.OrderContentsTable,
+			Columns: []string{entorder.OrderContentsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(membercontract.FieldID, field.TypeInt64),
@@ -1937,8 +1969,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.SalesTable,
-			Columns: []string{order.SalesColumn},
+			Table:   entorder.SalesTable,
+			Columns: []string{entorder.SalesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(ordersales.FieldID, field.TypeInt64),
@@ -1950,8 +1982,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.SalesTable,
-			Columns: []string{order.SalesColumn},
+			Table:   entorder.SalesTable,
+			Columns: []string{entorder.SalesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(ordersales.FieldID, field.TypeInt64),
@@ -1966,8 +1998,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   order.SalesTable,
-			Columns: []string{order.SalesColumn},
+			Table:   entorder.SalesTable,
+			Columns: []string{entorder.SalesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(ordersales.FieldID, field.TypeInt64),
@@ -1982,8 +2014,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   order.OrderVenuesTable,
-			Columns: []string{order.OrderVenuesColumn},
+			Table:   entorder.OrderVenuesTable,
+			Columns: []string{entorder.OrderVenuesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(venue.FieldID, field.TypeInt64),
@@ -1995,8 +2027,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   order.OrderVenuesTable,
-			Columns: []string{order.OrderVenuesColumn},
+			Table:   entorder.OrderVenuesTable,
+			Columns: []string{entorder.OrderVenuesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(venue.FieldID, field.TypeInt64),
@@ -2011,8 +2043,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   order.OrderMembersTable,
-			Columns: []string{order.OrderMembersColumn},
+			Table:   entorder.OrderMembersTable,
+			Columns: []string{entorder.OrderMembersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt64),
@@ -2024,8 +2056,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   order.OrderMembersTable,
-			Columns: []string{order.OrderMembersColumn},
+			Table:   entorder.OrderMembersTable,
+			Columns: []string{entorder.OrderMembersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt64),
@@ -2040,8 +2072,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   order.OrderCreatesTable,
-			Columns: []string{order.OrderCreatesColumn},
+			Table:   entorder.OrderCreatesTable,
+			Columns: []string{entorder.OrderCreatesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
@@ -2053,8 +2085,8 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   order.OrderCreatesTable,
-			Columns: []string{order.OrderCreatesColumn},
+			Table:   entorder.OrderCreatesTable,
+			Columns: []string{entorder.OrderCreatesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
@@ -2071,7 +2103,7 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 	_spec.ScanValues = _node.scanValues
 	if err = sqlgraph.UpdateNode(ctx, ouo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{order.Label}
+			err = &NotFoundError{entorder.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}

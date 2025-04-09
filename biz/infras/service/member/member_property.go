@@ -7,6 +7,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	"kcers/biz/dal/db/mysql/ent/venue"
+	"kcers/idl_gen/model/base"
 	"kcers/idl_gen/model/member"
 	"time"
 )
@@ -96,7 +97,7 @@ func (m *Member) entMemberPropertyInfo(req *ent.MemberProductProperty) (info *me
 
 	venues, err := req.QueryVenues().Select(venue.FieldID, venue.FieldName).All(m.ctx)
 	if err == nil {
-		var ven []*member.PropertyVenue
+		var ven []*base.List
 		err = copier.Copy(&ven, &venues)
 		info.Venue = ven
 		for i2, v := range ven {

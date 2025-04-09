@@ -105,11 +105,6 @@ func Stock(v int64) predicate.Product {
 	return predicate.Product(sql.FieldEQ(FieldStock, v))
 }
 
-// CreateID applies equality check predicate on the "create_id" field. It's identical to CreateIDEQ.
-func CreateID(v int64) predicate.Product {
-	return predicate.Product(sql.FieldEQ(FieldCreateID, v))
-}
-
 // SignSalesAt applies equality check predicate on the "sign_sales_at" field. It's identical to SignSalesAtEQ.
 func SignSalesAt(v time.Time) predicate.Product {
 	return predicate.Product(sql.FieldEQ(FieldSignSalesAt, v))
@@ -693,56 +688,6 @@ func StockIsNil() predicate.Product {
 // StockNotNil applies the NotNil predicate on the "stock" field.
 func StockNotNil() predicate.Product {
 	return predicate.Product(sql.FieldNotNull(FieldStock))
-}
-
-// CreateIDEQ applies the EQ predicate on the "create_id" field.
-func CreateIDEQ(v int64) predicate.Product {
-	return predicate.Product(sql.FieldEQ(FieldCreateID, v))
-}
-
-// CreateIDNEQ applies the NEQ predicate on the "create_id" field.
-func CreateIDNEQ(v int64) predicate.Product {
-	return predicate.Product(sql.FieldNEQ(FieldCreateID, v))
-}
-
-// CreateIDIn applies the In predicate on the "create_id" field.
-func CreateIDIn(vs ...int64) predicate.Product {
-	return predicate.Product(sql.FieldIn(FieldCreateID, vs...))
-}
-
-// CreateIDNotIn applies the NotIn predicate on the "create_id" field.
-func CreateIDNotIn(vs ...int64) predicate.Product {
-	return predicate.Product(sql.FieldNotIn(FieldCreateID, vs...))
-}
-
-// CreateIDGT applies the GT predicate on the "create_id" field.
-func CreateIDGT(v int64) predicate.Product {
-	return predicate.Product(sql.FieldGT(FieldCreateID, v))
-}
-
-// CreateIDGTE applies the GTE predicate on the "create_id" field.
-func CreateIDGTE(v int64) predicate.Product {
-	return predicate.Product(sql.FieldGTE(FieldCreateID, v))
-}
-
-// CreateIDLT applies the LT predicate on the "create_id" field.
-func CreateIDLT(v int64) predicate.Product {
-	return predicate.Product(sql.FieldLT(FieldCreateID, v))
-}
-
-// CreateIDLTE applies the LTE predicate on the "create_id" field.
-func CreateIDLTE(v int64) predicate.Product {
-	return predicate.Product(sql.FieldLTE(FieldCreateID, v))
-}
-
-// CreateIDIsNil applies the IsNil predicate on the "create_id" field.
-func CreateIDIsNil() predicate.Product {
-	return predicate.Product(sql.FieldIsNull(FieldCreateID))
-}
-
-// CreateIDNotNil applies the NotNil predicate on the "create_id" field.
-func CreateIDNotNil() predicate.Product {
-	return predicate.Product(sql.FieldNotNull(FieldCreateID))
 }
 
 // IsSalesIsNil applies the IsNil predicate on the "is_sales" field.

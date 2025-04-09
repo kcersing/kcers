@@ -22,7 +22,6 @@ func (ProductProperty) Fields() []ent.Field {
 		field.Int64("count").Comment("次数").Optional(),
 		field.Float("price").Comment("定价").Optional(),
 		field.String("data").Comment("").Optional(),
-		field.Int64("create_id").Comment("创建人id").Optional(),
 	}
 }
 

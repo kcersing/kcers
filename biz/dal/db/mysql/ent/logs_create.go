@@ -156,16 +156,16 @@ func (lc *LogsCreate) SetNillableUserAgent(s *string) *LogsCreate {
 	return lc
 }
 
-// SetOperator sets the "operator" field.
-func (lc *LogsCreate) SetOperator(s string) *LogsCreate {
-	lc.mutation.SetOperator(s)
+// SetOperatorsr sets the "operatorsr" field.
+func (lc *LogsCreate) SetOperatorsr(s string) *LogsCreate {
+	lc.mutation.SetOperatorsr(s)
 	return lc
 }
 
-// SetNillableOperator sets the "operator" field if the given value is not nil.
-func (lc *LogsCreate) SetNillableOperator(s *string) *LogsCreate {
+// SetNillableOperatorsr sets the "operatorsr" field if the given value is not nil.
+func (lc *LogsCreate) SetNillableOperatorsr(s *string) *LogsCreate {
 	if s != nil {
-		lc.SetOperator(*s)
+		lc.SetOperatorsr(*s)
 	}
 	return lc
 }
@@ -180,6 +180,20 @@ func (lc *LogsCreate) SetTime(i int64) *LogsCreate {
 func (lc *LogsCreate) SetNillableTime(i *int64) *LogsCreate {
 	if i != nil {
 		lc.SetTime(*i)
+	}
+	return lc
+}
+
+// SetIdentity sets the "identity" field.
+func (lc *LogsCreate) SetIdentity(i int64) *LogsCreate {
+	lc.mutation.SetIdentity(i)
+	return lc
+}
+
+// SetNillableIdentity sets the "identity" field if the given value is not nil.
+func (lc *LogsCreate) SetNillableIdentity(i *int64) *LogsCreate {
+	if i != nil {
+		lc.SetIdentity(*i)
 	}
 	return lc
 }
@@ -337,13 +351,17 @@ func (lc *LogsCreate) createSpec() (*Logs, *sqlgraph.CreateSpec) {
 		_spec.SetField(logs.FieldUserAgent, field.TypeString, value)
 		_node.UserAgent = value
 	}
-	if value, ok := lc.mutation.Operator(); ok {
-		_spec.SetField(logs.FieldOperator, field.TypeString, value)
-		_node.Operator = value
+	if value, ok := lc.mutation.Operatorsr(); ok {
+		_spec.SetField(logs.FieldOperatorsr, field.TypeString, value)
+		_node.Operatorsr = value
 	}
 	if value, ok := lc.mutation.Time(); ok {
 		_spec.SetField(logs.FieldTime, field.TypeInt64, value)
 		_node.Time = value
+	}
+	if value, ok := lc.mutation.Identity(); ok {
+		_spec.SetField(logs.FieldIdentity, field.TypeInt64, value)
+		_node.Identity = value
 	}
 	return _node, _spec
 }

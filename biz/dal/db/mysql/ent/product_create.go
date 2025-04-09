@@ -161,20 +161,6 @@ func (pc *ProductCreate) SetNillableStock(i *int64) *ProductCreate {
 	return pc
 }
 
-// SetCreateID sets the "create_id" field.
-func (pc *ProductCreate) SetCreateID(i int64) *ProductCreate {
-	pc.mutation.SetCreateID(i)
-	return pc
-}
-
-// SetNillableCreateID sets the "create_id" field if the given value is not nil.
-func (pc *ProductCreate) SetNillableCreateID(i *int64) *ProductCreate {
-	if i != nil {
-		pc.SetCreateID(*i)
-	}
-	return pc
-}
-
 // SetIsSales sets the "is_sales" field.
 func (pc *ProductCreate) SetIsSales(i []int64) *ProductCreate {
 	pc.mutation.SetIsSales(i)
@@ -375,10 +361,6 @@ func (pc *ProductCreate) createSpec() (*Product, *sqlgraph.CreateSpec) {
 	if value, ok := pc.mutation.Stock(); ok {
 		_spec.SetField(product.FieldStock, field.TypeInt64, value)
 		_node.Stock = value
-	}
-	if value, ok := pc.mutation.CreateID(); ok {
-		_spec.SetField(product.FieldCreateID, field.TypeInt64, value)
-		_node.CreateID = value
 	}
 	if value, ok := pc.mutation.IsSales(); ok {
 		_spec.SetField(product.FieldIsSales, field.TypeJSON, value)

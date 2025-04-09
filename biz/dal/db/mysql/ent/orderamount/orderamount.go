@@ -32,6 +32,8 @@ const (
 	FieldResidue = "residue"
 	// FieldRemission holds the string denoting the remission field in the database.
 	FieldRemission = "remission"
+	// FieldRefund holds the string denoting the refund field in the database.
+	FieldRefund = "refund"
 	// EdgeOrder holds the string denoting the order edge name in mutations.
 	EdgeOrder = "order"
 	// Table holds the table name of the orderamount in the database.
@@ -39,7 +41,7 @@ const (
 	// OrderTable is the table that holds the order relation/edge.
 	OrderTable = "order_amount"
 	// OrderInverseTable is the table name for the Order entity.
-	// It exists in this package in order to avoid circular dependency with the "order" package.
+	// It exists in this package in order to avoid circular dependency with the "entorder" package.
 	OrderInverseTable = "order"
 	// OrderColumn is the table column denoting the order relation/edge.
 	OrderColumn = "order_id"
@@ -57,6 +59,7 @@ var Columns = []string{
 	FieldActual,
 	FieldResidue,
 	FieldRemission,
+	FieldRefund,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -135,6 +138,11 @@ func ByResidue(opts ...sql.OrderTermOption) OrderOption {
 // ByRemission orders the results by the remission field.
 func ByRemission(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRemission, opts...).ToFunc()
+}
+
+// ByRefund orders the results by the refund field.
+func ByRefund(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRefund, opts...).ToFunc()
 }
 
 // ByOrderField orders the results by order field.

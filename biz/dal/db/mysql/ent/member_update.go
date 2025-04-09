@@ -14,7 +14,8 @@ import (
 	"kcers/biz/dal/db/mysql/ent/membernote"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/memberprofile"
-	"kcers/biz/dal/db/mysql/ent/order"
+	"kcers/biz/dal/db/mysql/ent/membertoken"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	"time"
 
@@ -257,6 +258,25 @@ func (mu *MemberUpdate) ClearCondition() *MemberUpdate {
 	return mu
 }
 
+// SetTokenID sets the "token" edge to the MemberToken entity by ID.
+func (mu *MemberUpdate) SetTokenID(id int64) *MemberUpdate {
+	mu.mutation.SetTokenID(id)
+	return mu
+}
+
+// SetNillableTokenID sets the "token" edge to the MemberToken entity by ID if the given value is not nil.
+func (mu *MemberUpdate) SetNillableTokenID(id *int64) *MemberUpdate {
+	if id != nil {
+		mu = mu.SetTokenID(*id)
+	}
+	return mu
+}
+
+// SetToken sets the "token" edge to the MemberToken entity.
+func (mu *MemberUpdate) SetToken(m *MemberToken) *MemberUpdate {
+	return mu.SetTokenID(m.ID)
+}
+
 // AddMemberProfileIDs adds the "member_profile" edge to the MemberProfile entity by IDs.
 func (mu *MemberUpdate) AddMemberProfileIDs(ids ...int64) *MemberUpdate {
 	mu.mutation.AddMemberProfileIDs(ids...)
@@ -380,6 +400,12 @@ func (mu *MemberUpdate) AddMemberFace(f ...*Face) *MemberUpdate {
 // Mutation returns the MemberMutation object of the builder.
 func (mu *MemberUpdate) Mutation() *MemberMutation {
 	return mu.mutation
+}
+
+// ClearToken clears the "token" edge to the MemberToken entity.
+func (mu *MemberUpdate) ClearToken() *MemberUpdate {
+	mu.mutation.ClearToken()
+	return mu
 }
 
 // ClearMemberProfile clears all "member_profile" edges to the MemberProfile entity.
@@ -676,6 +702,35 @@ func (mu *MemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if mu.mutation.ConditionCleared() {
 		_spec.ClearField(member.FieldCondition, field.TypeInt64)
 	}
+	if mu.mutation.TokenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   member.TokenTable,
+			Columns: []string{member.TokenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(membertoken.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.TokenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   member.TokenTable,
+			Columns: []string{member.TokenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(membertoken.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if mu.mutation.MemberProfileCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -819,7 +874,7 @@ func (mu *MemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{member.MemberOrdersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -832,7 +887,7 @@ func (mu *MemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{member.MemberOrdersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -848,7 +903,7 @@ func (mu *MemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{member.MemberOrdersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1278,6 +1333,25 @@ func (muo *MemberUpdateOne) ClearCondition() *MemberUpdateOne {
 	return muo
 }
 
+// SetTokenID sets the "token" edge to the MemberToken entity by ID.
+func (muo *MemberUpdateOne) SetTokenID(id int64) *MemberUpdateOne {
+	muo.mutation.SetTokenID(id)
+	return muo
+}
+
+// SetNillableTokenID sets the "token" edge to the MemberToken entity by ID if the given value is not nil.
+func (muo *MemberUpdateOne) SetNillableTokenID(id *int64) *MemberUpdateOne {
+	if id != nil {
+		muo = muo.SetTokenID(*id)
+	}
+	return muo
+}
+
+// SetToken sets the "token" edge to the MemberToken entity.
+func (muo *MemberUpdateOne) SetToken(m *MemberToken) *MemberUpdateOne {
+	return muo.SetTokenID(m.ID)
+}
+
 // AddMemberProfileIDs adds the "member_profile" edge to the MemberProfile entity by IDs.
 func (muo *MemberUpdateOne) AddMemberProfileIDs(ids ...int64) *MemberUpdateOne {
 	muo.mutation.AddMemberProfileIDs(ids...)
@@ -1401,6 +1475,12 @@ func (muo *MemberUpdateOne) AddMemberFace(f ...*Face) *MemberUpdateOne {
 // Mutation returns the MemberMutation object of the builder.
 func (muo *MemberUpdateOne) Mutation() *MemberMutation {
 	return muo.mutation
+}
+
+// ClearToken clears the "token" edge to the MemberToken entity.
+func (muo *MemberUpdateOne) ClearToken() *MemberUpdateOne {
+	muo.mutation.ClearToken()
+	return muo
 }
 
 // ClearMemberProfile clears all "member_profile" edges to the MemberProfile entity.
@@ -1727,6 +1807,35 @@ func (muo *MemberUpdateOne) sqlSave(ctx context.Context) (_node *Member, err err
 	if muo.mutation.ConditionCleared() {
 		_spec.ClearField(member.FieldCondition, field.TypeInt64)
 	}
+	if muo.mutation.TokenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   member.TokenTable,
+			Columns: []string{member.TokenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(membertoken.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.TokenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   member.TokenTable,
+			Columns: []string{member.TokenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(membertoken.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if muo.mutation.MemberProfileCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -1870,7 +1979,7 @@ func (muo *MemberUpdateOne) sqlSave(ctx context.Context) (_node *Member, err err
 			Columns: []string{member.MemberOrdersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1883,7 +1992,7 @@ func (muo *MemberUpdateOne) sqlSave(ctx context.Context) (_node *Member, err err
 			Columns: []string{member.MemberOrdersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1899,7 +2008,7 @@ func (muo *MemberUpdateOne) sqlSave(ctx context.Context) (_node *Member, err err
 			Columns: []string{member.MemberOrdersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -57,7 +57,7 @@ func (a *Auth) QueryApiAll(id []int64) (resp []*auth.ApiAuthInfo, err error) {
 func (a *Auth) UpdateApiAuth(roleIDStr string, apis []int64) error {
 	// clear old policies
 	var oldPolicies [][]string
-	oldPolicies = a.Cbs.GetFilteredPolicy(0, roleIDStr)
+	oldPolicies, _ = a.Cbs.GetFilteredPolicy(0, roleIDStr)
 	if len(oldPolicies) != 0 {
 		removeResult, err := a.Cbs.RemoveFilteredPolicy(0, roleIDStr)
 		if err != nil {
@@ -94,7 +94,7 @@ func (a *Auth) UpdateApiAuth(roleIDStr string, apis []int64) error {
 
 func (a *Auth) ApiAuth(roleIDStr string) (infos []*auth.ApiAuthInfo, err error) {
 
-	policies := a.Cbs.GetFilteredPolicy(0, roleIDStr)
+	policies, _ := a.Cbs.GetFilteredPolicy(0, roleIDStr)
 	for _, v := range policies {
 		infos = append(infos, &auth.ApiAuthInfo{
 			Path:   v[1],

@@ -30,7 +30,7 @@ func MenuAuth(ctx context.Context, c *app.RequestContext) {
 // MenuRole .
 // @router /service/menu/role [POST]
 func MenuRole(ctx context.Context, c *app.RequestContext) {
-	var err error
+	var _ error
 
 	resp := new(base.NilResponse)
 

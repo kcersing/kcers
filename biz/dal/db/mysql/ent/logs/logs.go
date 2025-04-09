@@ -37,10 +37,12 @@ const (
 	FieldIP = "ip"
 	// FieldUserAgent holds the string denoting the user_agent field in the database.
 	FieldUserAgent = "user_agent"
-	// FieldOperator holds the string denoting the operator field in the database.
-	FieldOperator = "operator"
+	// FieldOperatorsr holds the string denoting the operatorsr field in the database.
+	FieldOperatorsr = "operatorsr"
 	// FieldTime holds the string denoting the time field in the database.
 	FieldTime = "time"
+	// FieldIdentity holds the string denoting the identity field in the database.
+	FieldIdentity = "identity"
 	// Table holds the table name of the logs in the database.
 	Table = "sys_logs"
 )
@@ -60,8 +62,9 @@ var Columns = []string{
 	FieldRespContent,
 	FieldIP,
 	FieldUserAgent,
-	FieldOperator,
+	FieldOperatorsr,
 	FieldTime,
+	FieldIdentity,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -155,12 +158,17 @@ func ByUserAgent(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUserAgent, opts...).ToFunc()
 }
 
-// ByOperator orders the results by the operator field.
-func ByOperator(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldOperator, opts...).ToFunc()
+// ByOperatorsr orders the results by the operatorsr field.
+func ByOperatorsr(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOperatorsr, opts...).ToFunc()
 }
 
 // ByTime orders the results by the time field.
 func ByTime(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTime, opts...).ToFunc()
+}
+
+// ByIdentity orders the results by the identity field.
+func ByIdentity(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIdentity, opts...).ToFunc()
 }

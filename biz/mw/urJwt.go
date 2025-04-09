@@ -6,20 +6,20 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/hertz-contrib/jwt"
-	"saas/biz/infras/service"
-	"saas/config"
-	"saas/idl_gen/model/member"
-	"saas/idl_gen/model/token"
-	"saas/idl_gen/model/wx"
-	"saas/pkg/errno"
-	"saas/pkg/utils"
+	"kcers/biz/dal/config"
+	tokenService "kcers/biz/infras/service/common"
+	memberService "kcers/biz/infras/service/member"
+	"kcers/biz/pkg/errno"
+	"kcers/biz/pkg/utils"
+	"kcers/idl_gen/model/member"
+	"kcers/idl_gen/model/token"
 	"strconv"
 	"time"
 )
 
 type jwtUsLogin struct {
 	Mobile     string `form:"mobile,required" json:"mobile,required"`
-	VerifyCode string `form:"verifyCode,required" json:"verifyCode,required"`
+	SmsCaptcha string `form:"smsCaptcha,required" json:"smsCaptcha,required"`
 }
 
 // jwt identityUsKey
@@ -74,9 +74,9 @@ func newUsJWT(enforcer *casbin.Enforcer) (jwtMiddleware *jwt.HertzJWTMiddleware,
 			}
 			// 验证码
 
-			res, err = service.NewMember(ctx, c).Login(&wx.MemberLoginReq{
-				Mobile:  loginVal.Mobile,
-				Captcha: loginVal.VerifyCode,
+			res, err = memberService.NewMember(ctx, c).Login(&member.LoginReq{
+				Mobile:     loginVal.Mobile,
+				SmsCaptcha: loginVal.SmsCaptcha,
 			})
 
 			if err != nil {
@@ -90,7 +90,7 @@ func newUsJWT(enforcer *casbin.Enforcer) (jwtMiddleware *jwt.HertzJWTMiddleware,
 			tokenInfo.Name = res.Name
 			tokenInfo.ExpiredAt = time.Now().Add(time.Duration(config.GlobalServerConfig.Auth.AccessExpire) * time.Second).Format(time.DateTime)
 
-			err = service.NewToken(ctx, c).CreateMemberToken(&tokenInfo)
+			err = tokenService.NewToken(ctx, c).CreateMemberToken(&tokenInfo)
 			if err != nil {
 				hlog.Error(err, "jwtLogin error, store token error")
 				return nil, err
@@ -122,7 +122,7 @@ func newUsJWT(enforcer *casbin.Enforcer) (jwtMiddleware *jwt.HertzJWTMiddleware,
 				return false
 			}
 
-			existToken := service.NewToken(ctx, c).IsExistByMemberIdToken(int64(memberIdInt))
+			existToken := tokenService.NewToken(ctx, c).IsExistByMemberIdToken(int64(memberIdInt))
 			if !existToken {
 				return false
 			}

@@ -5,7 +5,7 @@ package ent
 import (
 	"context"
 	"fmt"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/orderamount"
 	"time"
 
@@ -146,6 +146,20 @@ func (oac *OrderAmountCreate) SetNillableRemission(f *float64) *OrderAmountCreat
 	return oac
 }
 
+// SetRefund sets the "refund" field.
+func (oac *OrderAmountCreate) SetRefund(f float64) *OrderAmountCreate {
+	oac.mutation.SetRefund(f)
+	return oac
+}
+
+// SetNillableRefund sets the "refund" field if the given value is not nil.
+func (oac *OrderAmountCreate) SetNillableRefund(f *float64) *OrderAmountCreate {
+	if f != nil {
+		oac.SetRefund(*f)
+	}
+	return oac
+}
+
 // SetID sets the "id" field.
 func (oac *OrderAmountCreate) SetID(i int64) *OrderAmountCreate {
 	oac.mutation.SetID(i)
@@ -281,6 +295,10 @@ func (oac *OrderAmountCreate) createSpec() (*OrderAmount, *sqlgraph.CreateSpec) 
 		_spec.SetField(orderamount.FieldRemission, field.TypeFloat64, value)
 		_node.Remission = value
 	}
+	if value, ok := oac.mutation.Refund(); ok {
+		_spec.SetField(orderamount.FieldRefund, field.TypeFloat64, value)
+		_node.Refund = value
+	}
 	if nodes := oac.mutation.OrderIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -289,7 +307,7 @@ func (oac *OrderAmountCreate) createSpec() (*OrderAmount, *sqlgraph.CreateSpec) 
 			Columns: []string{orderamount.OrderColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

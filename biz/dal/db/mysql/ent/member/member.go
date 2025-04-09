@@ -36,6 +36,8 @@ const (
 	FieldAvatar = "avatar"
 	// FieldCondition holds the string denoting the condition field in the database.
 	FieldCondition = "condition"
+	// EdgeToken holds the string denoting the token edge name in mutations.
+	EdgeToken = "token"
 	// EdgeMemberProfile holds the string denoting the member_profile edge name in mutations.
 	EdgeMemberProfile = "member_profile"
 	// EdgeMemberDetails holds the string denoting the member_details edge name in mutations.
@@ -54,6 +56,13 @@ const (
 	EdgeMemberFace = "member_face"
 	// Table holds the table name of the member in the database.
 	Table = "member"
+	// TokenTable is the table that holds the token relation/edge.
+	TokenTable = "member_token"
+	// TokenInverseTable is the table name for the MemberToken entity.
+	// It exists in this package in order to avoid circular dependency with the "membertoken" package.
+	TokenInverseTable = "member_token"
+	// TokenColumn is the table column denoting the token relation/edge.
+	TokenColumn = "member_token"
 	// MemberProfileTable is the table that holds the member_profile relation/edge.
 	MemberProfileTable = "member_profile"
 	// MemberProfileInverseTable is the table name for the MemberProfile entity.
@@ -78,7 +87,7 @@ const (
 	// MemberOrdersTable is the table that holds the member_orders relation/edge.
 	MemberOrdersTable = "order"
 	// MemberOrdersInverseTable is the table name for the Order entity.
-	// It exists in this package in order to avoid circular dependency with the "order" package.
+	// It exists in this package in order to avoid circular dependency with the "entorder" package.
 	MemberOrdersInverseTable = "order"
 	// MemberOrdersColumn is the table column denoting the member_orders relation/edge.
 	MemberOrdersColumn = "member_id"
@@ -220,6 +229,13 @@ func ByCondition(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCondition, opts...).ToFunc()
 }
 
+// ByTokenField orders the results by token field.
+func ByTokenField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTokenStep(), sql.OrderByField(field, opts...))
+	}
+}
+
 // ByMemberProfileCount orders the results by member_profile count.
 func ByMemberProfileCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -330,6 +346,13 @@ func ByMemberFace(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newMemberFaceStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
+}
+func newTokenStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TokenInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, TokenTable, TokenColumn),
+	)
 }
 func newMemberProfileStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(

@@ -6,7 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/orderamount"
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	"time"
@@ -224,6 +224,33 @@ func (oau *OrderAmountUpdate) ClearRemission() *OrderAmountUpdate {
 	return oau
 }
 
+// SetRefund sets the "refund" field.
+func (oau *OrderAmountUpdate) SetRefund(f float64) *OrderAmountUpdate {
+	oau.mutation.ResetRefund()
+	oau.mutation.SetRefund(f)
+	return oau
+}
+
+// SetNillableRefund sets the "refund" field if the given value is not nil.
+func (oau *OrderAmountUpdate) SetNillableRefund(f *float64) *OrderAmountUpdate {
+	if f != nil {
+		oau.SetRefund(*f)
+	}
+	return oau
+}
+
+// AddRefund adds f to the "refund" field.
+func (oau *OrderAmountUpdate) AddRefund(f float64) *OrderAmountUpdate {
+	oau.mutation.AddRefund(f)
+	return oau
+}
+
+// ClearRefund clears the value of the "refund" field.
+func (oau *OrderAmountUpdate) ClearRefund() *OrderAmountUpdate {
+	oau.mutation.ClearRefund()
+	return oau
+}
+
 // SetOrder sets the "order" edge to the Order entity.
 func (oau *OrderAmountUpdate) SetOrder(o *Order) *OrderAmountUpdate {
 	return oau.SetOrderID(o.ID)
@@ -367,6 +394,15 @@ func (oau *OrderAmountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if oau.mutation.RemissionCleared() {
 		_spec.ClearField(orderamount.FieldRemission, field.TypeFloat64)
 	}
+	if value, ok := oau.mutation.Refund(); ok {
+		_spec.SetField(orderamount.FieldRefund, field.TypeFloat64, value)
+	}
+	if value, ok := oau.mutation.AddedRefund(); ok {
+		_spec.AddField(orderamount.FieldRefund, field.TypeFloat64, value)
+	}
+	if oau.mutation.RefundCleared() {
+		_spec.ClearField(orderamount.FieldRefund, field.TypeFloat64)
+	}
 	if oau.mutation.OrderCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -375,7 +411,7 @@ func (oau *OrderAmountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{orderamount.OrderColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -388,7 +424,7 @@ func (oau *OrderAmountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{orderamount.OrderColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -612,6 +648,33 @@ func (oauo *OrderAmountUpdateOne) ClearRemission() *OrderAmountUpdateOne {
 	return oauo
 }
 
+// SetRefund sets the "refund" field.
+func (oauo *OrderAmountUpdateOne) SetRefund(f float64) *OrderAmountUpdateOne {
+	oauo.mutation.ResetRefund()
+	oauo.mutation.SetRefund(f)
+	return oauo
+}
+
+// SetNillableRefund sets the "refund" field if the given value is not nil.
+func (oauo *OrderAmountUpdateOne) SetNillableRefund(f *float64) *OrderAmountUpdateOne {
+	if f != nil {
+		oauo.SetRefund(*f)
+	}
+	return oauo
+}
+
+// AddRefund adds f to the "refund" field.
+func (oauo *OrderAmountUpdateOne) AddRefund(f float64) *OrderAmountUpdateOne {
+	oauo.mutation.AddRefund(f)
+	return oauo
+}
+
+// ClearRefund clears the value of the "refund" field.
+func (oauo *OrderAmountUpdateOne) ClearRefund() *OrderAmountUpdateOne {
+	oauo.mutation.ClearRefund()
+	return oauo
+}
+
 // SetOrder sets the "order" edge to the Order entity.
 func (oauo *OrderAmountUpdateOne) SetOrder(o *Order) *OrderAmountUpdateOne {
 	return oauo.SetOrderID(o.ID)
@@ -785,6 +848,15 @@ func (oauo *OrderAmountUpdateOne) sqlSave(ctx context.Context) (_node *OrderAmou
 	if oauo.mutation.RemissionCleared() {
 		_spec.ClearField(orderamount.FieldRemission, field.TypeFloat64)
 	}
+	if value, ok := oauo.mutation.Refund(); ok {
+		_spec.SetField(orderamount.FieldRefund, field.TypeFloat64, value)
+	}
+	if value, ok := oauo.mutation.AddedRefund(); ok {
+		_spec.AddField(orderamount.FieldRefund, field.TypeFloat64, value)
+	}
+	if oauo.mutation.RefundCleared() {
+		_spec.ClearField(orderamount.FieldRefund, field.TypeFloat64)
+	}
 	if oauo.mutation.OrderCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -793,7 +865,7 @@ func (oauo *OrderAmountUpdateOne) sqlSave(ctx context.Context) (_node *OrderAmou
 			Columns: []string{orderamount.OrderColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -806,7 +878,7 @@ func (oauo *OrderAmountUpdateOne) sqlSave(ctx context.Context) (_node *OrderAmou
 			Columns: []string{orderamount.OrderColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

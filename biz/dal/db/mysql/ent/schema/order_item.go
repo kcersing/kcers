@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent/schema/index"
+	"kcers/idl_gen/model/order"
 
 	"kcers/biz/dal/db/mysql/ent/schema/mixins"
 
@@ -19,10 +20,11 @@ type OrderItem struct {
 func (OrderItem) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("order_id").Comment("订单id").Optional(),
+		field.Int64("number").Default(1).Comment("数量").Optional(),
+		field.String("name").Comment("名称").Optional(),
 		field.Int64("product_id").Comment("产品id").Optional(),
 		field.Int64("related_user_product_id").Default(0).Comment("关联会员产品id").Optional(),
-		//field.Text("data").Default("").Comment("数据附件").Optional(),
-		//field.JSON("data", do.CreateOrder{}).Comment("数据附件").Optional(),
+		field.JSON("data", order.BuyReq{}).Comment("数据附件").Optional(),
 	}
 }
 

@@ -5,7 +5,7 @@ import (
 	"github.com/pkg/errors"
 	"kcers/biz/dal/db/mysql/ent/membercontract"
 	"kcers/biz/dal/db/mysql/ent/predicate"
-	"kcers/biz/infras/service"
+	venueService "kcers/biz/infras/service/venue"
 	"kcers/idl_gen/model/member"
 )
 
@@ -35,7 +35,7 @@ func (m *Member) ContractList(req *member.MemberContractListReq) (resp []*member
 		return resp, 0, err
 	}
 	for i, v := range lists {
-		vInfo, err := service.NewVenue(m.ctx, m.c).VenueInfo(v.VenueID)
+		vInfo, err := venueService.NewVenue(m.ctx, m.c).VenueInfo(v.VenueID)
 		if err == nil {
 			resp[i].VenueName = vInfo.Name
 		}

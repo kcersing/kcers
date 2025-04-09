@@ -100,6 +100,11 @@ struct MenuInfoTree {
     3: string updatedAt;
     4: list<MenuInfoTree> children;
     5: bool ignore;
+    6: i64 id (api.raw = "id" )
+    7: string name (api.raw = "name")
+    8: i64 orderNo (api.raw = "orderNo" )
+    9: string key    (api.raw = "key")
+
 }
 struct ListApiReq{
     1:  optional i64 page=1 (api.raw = "page")

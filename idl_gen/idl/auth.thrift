@@ -40,11 +40,7 @@ service AuthService {
   // 获取角色api权限列表
   base.NilResponse ApiAuth(1: base.IDReq req) (api.post = "/service/auth/api/role")
 
-  // Get logs list | 获取日志列表
-  base.NilResponse GetLogsList(1: LogsListReq req) (api.post = "/service/logs/list")
 
-  // Delete logs | 删除日志信息
-  base.NilResponse DeleteLogs(1: base.Ids req) (api.post = "/service/logs/deleteAll")
 }
 
 // 菜单授权请求数据
@@ -77,16 +73,7 @@ struct RoleInfo {
 
     12:optional i64 venueId=0 (api.raw = "venueId")
 }
-//日志列表请求数据
-struct LogsListReq {
-    1:  optional i64 page=1 (api.raw = "page")
-    2:  optional i64 pageSize=100 (api.raw = "pageSize")
-    3:  optional string type = ""(api.raw = "type")
-    4:  optional string method = "" (api.raw = "method")
-    5:  optional string api = "" (api.raw = "api")
-    6:  optional string success = "" (api.raw = "success")
-    7:  optional string operatorsr = "" (api.raw = "operatorsr")
-}
+
 
 // authorization message
 // API授权数据
@@ -100,20 +87,5 @@ struct CreateOrUpdateApiAuthReq {
     1: i64 roleId (api.raw = "roleId")
 //    2:  ApiAuthInfo data (api.raw = "api_auth_info")
     2: list<i64> apis (api.raw = "apis")
-}
-
-struct LogsInfo {
-	1: string type
-	2: string method
-	3: string api
-	4: bool success
-	5: string reqContent
-	6: string respContent
-	7: string ip
-	8: string userAgent
-	9: string operatorsr
-	10: i64 time
-	11: string createdAt
-	12: string updatedAt
 }
 

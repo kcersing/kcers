@@ -6,11 +6,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"kcers/biz/dal/db/mysql/ent/dictionarydetail"
 	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/face"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
+	"kcers/biz/dal/db/mysql/ent/role"
 	"kcers/biz/dal/db/mysql/ent/token"
 	"kcers/biz/dal/db/mysql/ent/user"
+	"kcers/biz/dal/db/mysql/ent/venue"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -94,15 +97,9 @@ func (uc *UserCreate) SetNillableStatus(i *int64) *UserCreate {
 	return uc
 }
 
-// SetUsername sets the "username" field.
-func (uc *UserCreate) SetUsername(s string) *UserCreate {
-	uc.mutation.SetUsername(s)
-	return uc
-}
-
-// SetPassword sets the "password" field.
-func (uc *UserCreate) SetPassword(s string) *UserCreate {
-	uc.mutation.SetPassword(s)
+// SetMobile sets the "mobile" field.
+func (uc *UserCreate) SetMobile(s string) *UserCreate {
+	uc.mutation.SetMobile(s)
 	return uc
 }
 
@@ -116,6 +113,66 @@ func (uc *UserCreate) SetName(s string) *UserCreate {
 func (uc *UserCreate) SetNillableName(s *string) *UserCreate {
 	if s != nil {
 		uc.SetName(*s)
+	}
+	return uc
+}
+
+// SetGender sets the "gender" field.
+func (uc *UserCreate) SetGender(i int64) *UserCreate {
+	uc.mutation.SetGender(i)
+	return uc
+}
+
+// SetNillableGender sets the "gender" field if the given value is not nil.
+func (uc *UserCreate) SetNillableGender(i *int64) *UserCreate {
+	if i != nil {
+		uc.SetGender(*i)
+	}
+	return uc
+}
+
+// SetUsername sets the "username" field.
+func (uc *UserCreate) SetUsername(s string) *UserCreate {
+	uc.mutation.SetUsername(s)
+	return uc
+}
+
+// SetPassword sets the "password" field.
+func (uc *UserCreate) SetPassword(s string) *UserCreate {
+	uc.mutation.SetPassword(s)
+	return uc
+}
+
+// SetFunctions sets the "functions" field.
+func (uc *UserCreate) SetFunctions(s []string) *UserCreate {
+	uc.mutation.SetFunctions(s)
+	return uc
+}
+
+// SetJobTime sets the "job_time" field.
+func (uc *UserCreate) SetJobTime(i int64) *UserCreate {
+	uc.mutation.SetJobTime(i)
+	return uc
+}
+
+// SetNillableJobTime sets the "job_time" field if the given value is not nil.
+func (uc *UserCreate) SetNillableJobTime(i *int64) *UserCreate {
+	if i != nil {
+		uc.SetJobTime(*i)
+	}
+	return uc
+}
+
+// SetDetail sets the "detail" field.
+func (uc *UserCreate) SetDetail(s string) *UserCreate {
+	uc.mutation.SetDetail(s)
+	return uc
+}
+
+// SetNillableDetail sets the "detail" field if the given value is not nil.
+func (uc *UserCreate) SetNillableDetail(s *string) *UserCreate {
+	if s != nil {
+		uc.SetDetail(*s)
 	}
 	return uc
 }
@@ -162,26 +219,6 @@ func (uc *UserCreate) SetNillableActiveColor(s *string) *UserCreate {
 	return uc
 }
 
-// SetRoleID sets the "role_id" field.
-func (uc *UserCreate) SetRoleID(i int64) *UserCreate {
-	uc.mutation.SetRoleID(i)
-	return uc
-}
-
-// SetNillableRoleID sets the "role_id" field if the given value is not nil.
-func (uc *UserCreate) SetNillableRoleID(i *int64) *UserCreate {
-	if i != nil {
-		uc.SetRoleID(*i)
-	}
-	return uc
-}
-
-// SetMobile sets the "mobile" field.
-func (uc *UserCreate) SetMobile(s string) *UserCreate {
-	uc.mutation.SetMobile(s)
-	return uc
-}
-
 // SetEmail sets the "email" field.
 func (uc *UserCreate) SetEmail(s string) *UserCreate {
 	uc.mutation.SetEmail(s)
@@ -206,20 +243,6 @@ func (uc *UserCreate) SetWecom(s string) *UserCreate {
 func (uc *UserCreate) SetNillableWecom(s *string) *UserCreate {
 	if s != nil {
 		uc.SetWecom(*s)
-	}
-	return uc
-}
-
-// SetJob sets the "job" field.
-func (uc *UserCreate) SetJob(s string) *UserCreate {
-	uc.mutation.SetJob(s)
-	return uc
-}
-
-// SetNillableJob sets the "job" field if the given value is not nil.
-func (uc *UserCreate) SetNillableJob(s *string) *UserCreate {
-	if s != nil {
-		uc.SetJob(*s)
 	}
 	return uc
 }
@@ -266,20 +289,6 @@ func (uc *UserCreate) SetNillableAvatar(s *string) *UserCreate {
 	return uc
 }
 
-// SetGender sets the "gender" field.
-func (uc *UserCreate) SetGender(i int64) *UserCreate {
-	uc.mutation.SetGender(i)
-	return uc
-}
-
-// SetNillableGender sets the "gender" field if the given value is not nil.
-func (uc *UserCreate) SetNillableGender(i *int64) *UserCreate {
-	if i != nil {
-		uc.SetGender(*i)
-	}
-	return uc
-}
-
 // SetBirthday sets the "birthday" field.
 func (uc *UserCreate) SetBirthday(t time.Time) *UserCreate {
 	uc.mutation.SetBirthday(t)
@@ -300,6 +309,21 @@ func (uc *UserCreate) SetID(i int64) *UserCreate {
 	return uc
 }
 
+// AddUserFaceIDs adds the "user_face" edge to the Face entity by IDs.
+func (uc *UserCreate) AddUserFaceIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddUserFaceIDs(ids...)
+	return uc
+}
+
+// AddUserFace adds the "user_face" edges to the Face entity.
+func (uc *UserCreate) AddUserFace(f ...*Face) *UserCreate {
+	ids := make([]int64, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uc.AddUserFaceIDs(ids...)
+}
+
 // SetTokenID sets the "token" edge to the Token entity by ID.
 func (uc *UserCreate) SetTokenID(id int64) *UserCreate {
 	uc.mutation.SetTokenID(id)
@@ -317,6 +341,21 @@ func (uc *UserCreate) SetNillableTokenID(id *int64) *UserCreate {
 // SetToken sets the "token" edge to the Token entity.
 func (uc *UserCreate) SetToken(t *Token) *UserCreate {
 	return uc.SetTokenID(t.ID)
+}
+
+// AddTagIDs adds the "tags" edge to the DictionaryDetail entity by IDs.
+func (uc *UserCreate) AddTagIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddTagIDs(ids...)
+	return uc
+}
+
+// AddTags adds the "tags" edges to the DictionaryDetail entity.
+func (uc *UserCreate) AddTags(d ...*DictionaryDetail) *UserCreate {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return uc.AddTagIDs(ids...)
 }
 
 // AddCreatedOrderIDs adds the "created_orders" edge to the Order entity by IDs.
@@ -349,19 +388,34 @@ func (uc *UserCreate) AddUserEntry(e ...*EntryLogs) *UserCreate {
 	return uc.AddUserEntryIDs(ids...)
 }
 
-// AddUserFaceIDs adds the "user_face" edge to the Face entity by IDs.
-func (uc *UserCreate) AddUserFaceIDs(ids ...int64) *UserCreate {
-	uc.mutation.AddUserFaceIDs(ids...)
+// AddVenueIDs adds the "venues" edge to the Venue entity by IDs.
+func (uc *UserCreate) AddVenueIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddVenueIDs(ids...)
 	return uc
 }
 
-// AddUserFace adds the "user_face" edges to the Face entity.
-func (uc *UserCreate) AddUserFace(f ...*Face) *UserCreate {
-	ids := make([]int64, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
+// AddVenues adds the "venues" edges to the Venue entity.
+func (uc *UserCreate) AddVenues(v ...*Venue) *UserCreate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return uc.AddUserFaceIDs(ids...)
+	return uc.AddVenueIDs(ids...)
+}
+
+// AddRoleIDs adds the "roles" edge to the Role entity by IDs.
+func (uc *UserCreate) AddRoleIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddRoleIDs(ids...)
+	return uc
+}
+
+// AddRoles adds the "roles" edges to the Role entity.
+func (uc *UserCreate) AddRoles(r ...*Role) *UserCreate {
+	ids := make([]int64, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uc.AddRoleIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -419,6 +473,14 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultStatus
 		uc.mutation.SetStatus(v)
 	}
+	if _, ok := uc.mutation.Gender(); !ok {
+		v := user.DefaultGender
+		uc.mutation.SetGender(v)
+	}
+	if _, ok := uc.mutation.JobTime(); !ok {
+		v := user.DefaultJobTime
+		uc.mutation.SetJobTime(v)
+	}
 	if _, ok := uc.mutation.SideMode(); !ok {
 		v := user.DefaultSideMode
 		uc.mutation.SetSideMode(v)
@@ -431,26 +493,21 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultActiveColor
 		uc.mutation.SetActiveColor(v)
 	}
-	if _, ok := uc.mutation.RoleID(); !ok {
-		v := user.DefaultRoleID
-		uc.mutation.SetRoleID(v)
-	}
-	if _, ok := uc.mutation.Gender(); !ok {
-		v := user.DefaultGender
-		uc.mutation.SetGender(v)
-	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (uc *UserCreate) check() error {
+	if _, ok := uc.mutation.Mobile(); !ok {
+		return &ValidationError{Name: "mobile", err: errors.New(`ent: missing required field "User.mobile"`)}
+	}
 	if _, ok := uc.mutation.Username(); !ok {
 		return &ValidationError{Name: "username", err: errors.New(`ent: missing required field "User.username"`)}
 	}
 	if _, ok := uc.mutation.Password(); !ok {
 		return &ValidationError{Name: "password", err: errors.New(`ent: missing required field "User.password"`)}
 	}
-	if _, ok := uc.mutation.Mobile(); !ok {
-		return &ValidationError{Name: "mobile", err: errors.New(`ent: missing required field "User.mobile"`)}
+	if _, ok := uc.mutation.Functions(); !ok {
+		return &ValidationError{Name: "functions", err: errors.New(`ent: missing required field "User.functions"`)}
 	}
 	return nil
 }
@@ -504,6 +561,18 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldStatus, field.TypeInt64, value)
 		_node.Status = value
 	}
+	if value, ok := uc.mutation.Mobile(); ok {
+		_spec.SetField(user.FieldMobile, field.TypeString, value)
+		_node.Mobile = value
+	}
+	if value, ok := uc.mutation.Name(); ok {
+		_spec.SetField(user.FieldName, field.TypeString, value)
+		_node.Name = value
+	}
+	if value, ok := uc.mutation.Gender(); ok {
+		_spec.SetField(user.FieldGender, field.TypeInt64, value)
+		_node.Gender = value
+	}
 	if value, ok := uc.mutation.Username(); ok {
 		_spec.SetField(user.FieldUsername, field.TypeString, value)
 		_node.Username = value
@@ -512,9 +581,17 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
 		_node.Password = value
 	}
-	if value, ok := uc.mutation.Name(); ok {
-		_spec.SetField(user.FieldName, field.TypeString, value)
-		_node.Name = value
+	if value, ok := uc.mutation.Functions(); ok {
+		_spec.SetField(user.FieldFunctions, field.TypeJSON, value)
+		_node.Functions = value
+	}
+	if value, ok := uc.mutation.JobTime(); ok {
+		_spec.SetField(user.FieldJobTime, field.TypeInt64, value)
+		_node.JobTime = value
+	}
+	if value, ok := uc.mutation.Detail(); ok {
+		_spec.SetField(user.FieldDetail, field.TypeString, value)
+		_node.Detail = value
 	}
 	if value, ok := uc.mutation.SideMode(); ok {
 		_spec.SetField(user.FieldSideMode, field.TypeString, value)
@@ -528,14 +605,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldActiveColor, field.TypeString, value)
 		_node.ActiveColor = value
 	}
-	if value, ok := uc.mutation.RoleID(); ok {
-		_spec.SetField(user.FieldRoleID, field.TypeInt64, value)
-		_node.RoleID = value
-	}
-	if value, ok := uc.mutation.Mobile(); ok {
-		_spec.SetField(user.FieldMobile, field.TypeString, value)
-		_node.Mobile = value
-	}
 	if value, ok := uc.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
 		_node.Email = value
@@ -543,10 +612,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Wecom(); ok {
 		_spec.SetField(user.FieldWecom, field.TypeString, value)
 		_node.Wecom = value
-	}
-	if value, ok := uc.mutation.Job(); ok {
-		_spec.SetField(user.FieldJob, field.TypeString, value)
-		_node.Job = value
 	}
 	if value, ok := uc.mutation.Organization(); ok {
 		_spec.SetField(user.FieldOrganization, field.TypeString, value)
@@ -560,13 +625,25 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldAvatar, field.TypeString, value)
 		_node.Avatar = value
 	}
-	if value, ok := uc.mutation.Gender(); ok {
-		_spec.SetField(user.FieldGender, field.TypeInt64, value)
-		_node.Gender = value
-	}
 	if value, ok := uc.mutation.Birthday(); ok {
 		_spec.SetField(user.FieldBirthday, field.TypeTime, value)
 		_node.Birthday = value
+	}
+	if nodes := uc.mutation.UserFaceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UserFaceTable,
+			Columns: []string{user.UserFaceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(face.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := uc.mutation.TokenIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -584,6 +661,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
+	if nodes := uc.mutation.TagsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.TagsTable,
+			Columns: user.TagsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(dictionarydetail.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	if nodes := uc.mutation.CreatedOrdersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -592,7 +685,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.CreatedOrdersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -616,15 +709,31 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := uc.mutation.UserFaceIDs(); len(nodes) > 0 {
+	if nodes := uc.mutation.VenuesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   user.UserFaceTable,
-			Columns: []string{user.UserFaceColumn},
+			Table:   user.VenuesTable,
+			Columns: user.VenuesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(face.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venue.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.RolesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.RolesTable,
+			Columns: user.RolesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -785,6 +785,29 @@ func ConditionNotNil() predicate.Member {
 	return predicate.Member(sql.FieldNotNull(FieldCondition))
 }
 
+// HasToken applies the HasEdge predicate on the "token" edge.
+func HasToken() predicate.Member {
+	return predicate.Member(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, TokenTable, TokenColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTokenWith applies the HasEdge predicate on the "token" edge with a given conditions (other predicates).
+func HasTokenWith(preds ...predicate.MemberToken) predicate.Member {
+	return predicate.Member(func(s *sql.Selector) {
+		step := newTokenStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasMemberProfile applies the HasEdge predicate on the "member_profile" edge.
 func HasMemberProfile() predicate.Member {
 	return predicate.Member(func(s *sql.Selector) {

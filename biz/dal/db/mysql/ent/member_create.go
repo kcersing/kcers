@@ -13,7 +13,8 @@ import (
 	"kcers/biz/dal/db/mysql/ent/membernote"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/memberprofile"
-	"kcers/biz/dal/db/mysql/ent/order"
+	"kcers/biz/dal/db/mysql/ent/membertoken"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -185,6 +186,25 @@ func (mc *MemberCreate) SetNillableCondition(i *int64) *MemberCreate {
 func (mc *MemberCreate) SetID(i int64) *MemberCreate {
 	mc.mutation.SetID(i)
 	return mc
+}
+
+// SetTokenID sets the "token" edge to the MemberToken entity by ID.
+func (mc *MemberCreate) SetTokenID(id int64) *MemberCreate {
+	mc.mutation.SetTokenID(id)
+	return mc
+}
+
+// SetNillableTokenID sets the "token" edge to the MemberToken entity by ID if the given value is not nil.
+func (mc *MemberCreate) SetNillableTokenID(id *int64) *MemberCreate {
+	if id != nil {
+		mc = mc.SetTokenID(*id)
+	}
+	return mc
+}
+
+// SetToken sets the "token" edge to the MemberToken entity.
+func (mc *MemberCreate) SetToken(m *MemberToken) *MemberCreate {
+	return mc.SetTokenID(m.ID)
 }
 
 // AddMemberProfileIDs adds the "member_profile" edge to the MemberProfile entity by IDs.
@@ -450,6 +470,22 @@ func (mc *MemberCreate) createSpec() (*Member, *sqlgraph.CreateSpec) {
 		_spec.SetField(member.FieldCondition, field.TypeInt64, value)
 		_node.Condition = value
 	}
+	if nodes := mc.mutation.TokenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   member.TokenTable,
+			Columns: []string{member.TokenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(membertoken.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	if nodes := mc.mutation.MemberProfileIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -506,7 +542,7 @@ func (mc *MemberCreate) createSpec() (*Member, *sqlgraph.CreateSpec) {
 			Columns: []string{member.MemberOrdersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

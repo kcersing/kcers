@@ -305,8 +305,7 @@ func findMenuChildren(data []*ent.Menu, parentID int64) []*menu.MenuInfoTree {
 
 		if v.ParentID == parentID && v.ID != parentID {
 			var m = new(menu.MenuInfoTree)
-			m.Children = nil
-			m.Id = v.ID
+			m.ID = v.ID
 			m.Name = v.Name
 			m.Key = v.Path
 			m.OrderNo = v.OrderNo

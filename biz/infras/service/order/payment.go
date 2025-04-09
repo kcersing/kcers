@@ -221,7 +221,7 @@ func (p *Payment) RefundOrder(req payment.RefundOrderReq) (*response.ResponseRef
 
 func (p *Payment) orderRefund(orderSn string) {
 
-	order, err := p.db.Order.Query().Where(order2.OrderSn(orderSn)).First(p.ctx)
+	_, err := p.db.Order.Query().Where(order2.OrderSn(orderSn)).First(p.ctx)
 	if err != nil {
 		hlog.Error(err)
 		return

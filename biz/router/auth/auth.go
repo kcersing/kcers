@@ -39,11 +39,6 @@ func Register(r *server.Hertz) {
 			}
 		}
 		{
-			_logs := _service.Group("/logs", _logsMw()...)
-			_logs.POST("/deleteAll", append(_deletelogsMw(), auth.DeleteLogs)...)
-			_logs.POST("/list", append(_getlogslistMw(), auth.GetLogsList)...)
-		}
-		{
 			_role0 := _service.Group("/role", _role0Mw()...)
 			_role0.POST("/create", append(_createroleMw(), auth.CreateRole)...)
 			_role0.POST("/del", append(_deleteroleMw(), auth.DeleteRole)...)

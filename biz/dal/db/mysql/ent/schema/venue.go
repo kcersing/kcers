@@ -45,6 +45,9 @@ func (Venue) Edges() []ent.Edge {
 		edge.From("property_venues", ProductProperty.Type).Ref("venues"),
 
 		edge.From("products", Product.Type).Ref("venues"),
+
+		edge.From("users", User.Type).Ref("venues"),
+		edge.To("roles", Role.Type),
 	}
 }
 

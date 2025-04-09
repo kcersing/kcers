@@ -239,33 +239,6 @@ func (pu *ProductUpdate) ClearStock() *ProductUpdate {
 	return pu
 }
 
-// SetCreateID sets the "create_id" field.
-func (pu *ProductUpdate) SetCreateID(i int64) *ProductUpdate {
-	pu.mutation.ResetCreateID()
-	pu.mutation.SetCreateID(i)
-	return pu
-}
-
-// SetNillableCreateID sets the "create_id" field if the given value is not nil.
-func (pu *ProductUpdate) SetNillableCreateID(i *int64) *ProductUpdate {
-	if i != nil {
-		pu.SetCreateID(*i)
-	}
-	return pu
-}
-
-// AddCreateID adds i to the "create_id" field.
-func (pu *ProductUpdate) AddCreateID(i int64) *ProductUpdate {
-	pu.mutation.AddCreateID(i)
-	return pu
-}
-
-// ClearCreateID clears the value of the "create_id" field.
-func (pu *ProductUpdate) ClearCreateID() *ProductUpdate {
-	pu.mutation.ClearCreateID()
-	return pu
-}
-
 // SetIsSales sets the "is_sales" field.
 func (pu *ProductUpdate) SetIsSales(i []int64) *ProductUpdate {
 	pu.mutation.SetIsSales(i)
@@ -523,15 +496,6 @@ func (pu *ProductUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if pu.mutation.StockCleared() {
 		_spec.ClearField(product.FieldStock, field.TypeInt64)
-	}
-	if value, ok := pu.mutation.CreateID(); ok {
-		_spec.SetField(product.FieldCreateID, field.TypeInt64, value)
-	}
-	if value, ok := pu.mutation.AddedCreateID(); ok {
-		_spec.AddField(product.FieldCreateID, field.TypeInt64, value)
-	}
-	if pu.mutation.CreateIDCleared() {
-		_spec.ClearField(product.FieldCreateID, field.TypeInt64)
 	}
 	if value, ok := pu.mutation.IsSales(); ok {
 		_spec.SetField(product.FieldIsSales, field.TypeJSON, value)
@@ -875,33 +839,6 @@ func (puo *ProductUpdateOne) ClearStock() *ProductUpdateOne {
 	return puo
 }
 
-// SetCreateID sets the "create_id" field.
-func (puo *ProductUpdateOne) SetCreateID(i int64) *ProductUpdateOne {
-	puo.mutation.ResetCreateID()
-	puo.mutation.SetCreateID(i)
-	return puo
-}
-
-// SetNillableCreateID sets the "create_id" field if the given value is not nil.
-func (puo *ProductUpdateOne) SetNillableCreateID(i *int64) *ProductUpdateOne {
-	if i != nil {
-		puo.SetCreateID(*i)
-	}
-	return puo
-}
-
-// AddCreateID adds i to the "create_id" field.
-func (puo *ProductUpdateOne) AddCreateID(i int64) *ProductUpdateOne {
-	puo.mutation.AddCreateID(i)
-	return puo
-}
-
-// ClearCreateID clears the value of the "create_id" field.
-func (puo *ProductUpdateOne) ClearCreateID() *ProductUpdateOne {
-	puo.mutation.ClearCreateID()
-	return puo
-}
-
 // SetIsSales sets the "is_sales" field.
 func (puo *ProductUpdateOne) SetIsSales(i []int64) *ProductUpdateOne {
 	puo.mutation.SetIsSales(i)
@@ -1189,15 +1126,6 @@ func (puo *ProductUpdateOne) sqlSave(ctx context.Context) (_node *Product, err e
 	}
 	if puo.mutation.StockCleared() {
 		_spec.ClearField(product.FieldStock, field.TypeInt64)
-	}
-	if value, ok := puo.mutation.CreateID(); ok {
-		_spec.SetField(product.FieldCreateID, field.TypeInt64, value)
-	}
-	if value, ok := puo.mutation.AddedCreateID(); ok {
-		_spec.AddField(product.FieldCreateID, field.TypeInt64, value)
-	}
-	if puo.mutation.CreateIDCleared() {
-		_spec.ClearField(product.FieldCreateID, field.TypeInt64)
 	}
 	if value, ok := puo.mutation.IsSales(); ok {
 		_spec.SetField(product.FieldIsSales, field.TypeJSON, value)

@@ -7,9 +7,11 @@ import (
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/product"
 	"kcers/biz/dal/db/mysql/ent/productproperty"
+	"kcers/biz/dal/db/mysql/ent/role"
+	"kcers/biz/dal/db/mysql/ent/user"
 	"kcers/biz/dal/db/mysql/ent/venue"
 	"kcers/biz/dal/db/mysql/ent/venueplace"
 	"time"
@@ -331,6 +333,36 @@ func (vc *VenueCreate) AddProducts(p ...*Product) *VenueCreate {
 	return vc.AddProductIDs(ids...)
 }
 
+// AddUserIDs adds the "users" edge to the User entity by IDs.
+func (vc *VenueCreate) AddUserIDs(ids ...int64) *VenueCreate {
+	vc.mutation.AddUserIDs(ids...)
+	return vc
+}
+
+// AddUsers adds the "users" edges to the User entity.
+func (vc *VenueCreate) AddUsers(u ...*User) *VenueCreate {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return vc.AddUserIDs(ids...)
+}
+
+// AddRoleIDs adds the "roles" edge to the Role entity by IDs.
+func (vc *VenueCreate) AddRoleIDs(ids ...int64) *VenueCreate {
+	vc.mutation.AddRoleIDs(ids...)
+	return vc
+}
+
+// AddRoles adds the "roles" edges to the Role entity.
+func (vc *VenueCreate) AddRoles(r ...*Role) *VenueCreate {
+	ids := make([]int64, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return vc.AddRoleIDs(ids...)
+}
+
 // Mutation returns the VenueMutation object of the builder.
 func (vc *VenueCreate) Mutation() *VenueMutation {
 	return vc.mutation
@@ -506,7 +538,7 @@ func (vc *VenueCreate) createSpec() (*Venue, *sqlgraph.CreateSpec) {
 			Columns: []string{venue.VenueOrdersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -571,6 +603,38 @@ func (vc *VenueCreate) createSpec() (*Venue, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(product.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := vc.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   venue.UsersTable,
+			Columns: venue.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := vc.mutation.RolesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   venue.RolesTable,
+			Columns: venue.RolesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/member"
 	"kcers/biz/dal/db/mysql/ent/membercontract"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/orderamount"
 	"kcers/biz/dal/db/mysql/ent/orderitem"
 	"kcers/biz/dal/db/mysql/ent/orderpay"
@@ -28,7 +28,7 @@ import (
 type OrderQuery struct {
 	config
 	ctx               *QueryContext
-	order             []order.OrderOption
+	order             []entorder.OrderOption
 	inters            []Interceptor
 	predicates        []predicate.Order
 	withAmount        *OrderAmountQuery
@@ -71,7 +71,7 @@ func (oq *OrderQuery) Unique(unique bool) *OrderQuery {
 }
 
 // Order specifies how the records should be ordered.
-func (oq *OrderQuery) Order(o ...order.OrderOption) *OrderQuery {
+func (oq *OrderQuery) Order(o ...entorder.OrderOption) *OrderQuery {
 	oq.order = append(oq.order, o...)
 	return oq
 }
@@ -88,9 +88,9 @@ func (oq *OrderQuery) QueryAmount() *OrderAmountQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(order.Table, order.FieldID, selector),
+			sqlgraph.From(entorder.Table, entorder.FieldID, selector),
 			sqlgraph.To(orderamount.Table, orderamount.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, order.AmountTable, order.AmountColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, entorder.AmountTable, entorder.AmountColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
@@ -110,9 +110,9 @@ func (oq *OrderQuery) QueryItem() *OrderItemQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(order.Table, order.FieldID, selector),
+			sqlgraph.From(entorder.Table, entorder.FieldID, selector),
 			sqlgraph.To(orderitem.Table, orderitem.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, order.ItemTable, order.ItemColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, entorder.ItemTable, entorder.ItemColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
@@ -132,9 +132,9 @@ func (oq *OrderQuery) QueryPay() *OrderPayQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(order.Table, order.FieldID, selector),
+			sqlgraph.From(entorder.Table, entorder.FieldID, selector),
 			sqlgraph.To(orderpay.Table, orderpay.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, order.PayTable, order.PayColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, entorder.PayTable, entorder.PayColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
@@ -154,9 +154,9 @@ func (oq *OrderQuery) QueryOrderContents() *MemberContractQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(order.Table, order.FieldID, selector),
+			sqlgraph.From(entorder.Table, entorder.FieldID, selector),
 			sqlgraph.To(membercontract.Table, membercontract.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, order.OrderContentsTable, order.OrderContentsColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, entorder.OrderContentsTable, entorder.OrderContentsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
@@ -176,9 +176,9 @@ func (oq *OrderQuery) QuerySales() *OrderSalesQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(order.Table, order.FieldID, selector),
+			sqlgraph.From(entorder.Table, entorder.FieldID, selector),
 			sqlgraph.To(ordersales.Table, ordersales.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, order.SalesTable, order.SalesColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, entorder.SalesTable, entorder.SalesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
@@ -198,9 +198,9 @@ func (oq *OrderQuery) QueryOrderVenues() *VenueQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(order.Table, order.FieldID, selector),
+			sqlgraph.From(entorder.Table, entorder.FieldID, selector),
 			sqlgraph.To(venue.Table, venue.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, order.OrderVenuesTable, order.OrderVenuesColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, entorder.OrderVenuesTable, entorder.OrderVenuesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
@@ -220,9 +220,9 @@ func (oq *OrderQuery) QueryOrderMembers() *MemberQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(order.Table, order.FieldID, selector),
+			sqlgraph.From(entorder.Table, entorder.FieldID, selector),
 			sqlgraph.To(member.Table, member.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, order.OrderMembersTable, order.OrderMembersColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, entorder.OrderMembersTable, entorder.OrderMembersColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
@@ -242,9 +242,9 @@ func (oq *OrderQuery) QueryOrderCreates() *UserQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(order.Table, order.FieldID, selector),
+			sqlgraph.From(entorder.Table, entorder.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, order.OrderCreatesTable, order.OrderCreatesColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, entorder.OrderCreatesTable, entorder.OrderCreatesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
@@ -260,7 +260,7 @@ func (oq *OrderQuery) First(ctx context.Context) (*Order, error) {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{order.Label}
+		return nil, &NotFoundError{entorder.Label}
 	}
 	return nodes[0], nil
 }
@@ -282,7 +282,7 @@ func (oq *OrderQuery) FirstID(ctx context.Context) (id int64, err error) {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{order.Label}
+		err = &NotFoundError{entorder.Label}
 		return
 	}
 	return ids[0], nil
@@ -309,9 +309,9 @@ func (oq *OrderQuery) Only(ctx context.Context) (*Order, error) {
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{order.Label}
+		return nil, &NotFoundError{entorder.Label}
 	default:
-		return nil, &NotSingularError{order.Label}
+		return nil, &NotSingularError{entorder.Label}
 	}
 }
 
@@ -336,9 +336,9 @@ func (oq *OrderQuery) OnlyID(ctx context.Context) (id int64, err error) {
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{order.Label}
+		err = &NotFoundError{entorder.Label}
 	default:
-		err = &NotSingularError{order.Label}
+		err = &NotSingularError{entorder.Label}
 	}
 	return
 }
@@ -377,7 +377,7 @@ func (oq *OrderQuery) IDs(ctx context.Context) (ids []int64, err error) {
 		oq.Unique(true)
 	}
 	ctx = setContextOp(ctx, oq.ctx, ent.OpQueryIDs)
-	if err = oq.Select(order.FieldID).Scan(ctx, &ids); err != nil {
+	if err = oq.Select(entorder.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
@@ -441,7 +441,7 @@ func (oq *OrderQuery) Clone() *OrderQuery {
 	return &OrderQuery{
 		config:            oq.config,
 		ctx:               oq.ctx.Clone(),
-		order:             append([]order.OrderOption{}, oq.order...),
+		order:             append([]entorder.OrderOption{}, oq.order...),
 		inters:            append([]Interceptor{}, oq.inters...),
 		predicates:        append([]predicate.Order{}, oq.predicates...),
 		withAmount:        oq.withAmount.Clone(),
@@ -558,14 +558,14 @@ func (oq *OrderQuery) WithOrderCreates(opts ...func(*UserQuery)) *OrderQuery {
 //	}
 //
 //	client.Order.Query().
-//		GroupBy(order.FieldCreatedAt).
+//		GroupBy(entorder.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (oq *OrderQuery) GroupBy(field string, fields ...string) *OrderGroupBy {
 	oq.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &OrderGroupBy{build: oq}
 	grbuild.flds = &oq.ctx.Fields
-	grbuild.label = order.Label
+	grbuild.label = entorder.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
 }
@@ -580,12 +580,12 @@ func (oq *OrderQuery) GroupBy(field string, fields ...string) *OrderGroupBy {
 //	}
 //
 //	client.Order.Query().
-//		Select(order.FieldCreatedAt).
+//		Select(entorder.FieldCreatedAt).
 //		Scan(ctx, &v)
 func (oq *OrderQuery) Select(fields ...string) *OrderSelect {
 	oq.ctx.Fields = append(oq.ctx.Fields, fields...)
 	sbuild := &OrderSelect{OrderQuery: oq}
-	sbuild.label = order.Label
+	sbuild.label = entorder.Label
 	sbuild.flds, sbuild.scan = &oq.ctx.Fields, sbuild.Scan
 	return sbuild
 }
@@ -607,7 +607,7 @@ func (oq *OrderQuery) prepareQuery(ctx context.Context) error {
 		}
 	}
 	for _, f := range oq.ctx.Fields {
-		if !order.ValidColumn(f) {
+		if !entorder.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
@@ -727,7 +727,7 @@ func (oq *OrderQuery) loadAmount(ctx context.Context, query *OrderAmountQuery, n
 		query.ctx.AppendFieldOnce(orderamount.FieldOrderID)
 	}
 	query.Where(predicate.OrderAmount(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(order.AmountColumn), fks...))
+		s.Where(sql.InValues(s.C(entorder.AmountColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -757,7 +757,7 @@ func (oq *OrderQuery) loadItem(ctx context.Context, query *OrderItemQuery, nodes
 		query.ctx.AppendFieldOnce(orderitem.FieldOrderID)
 	}
 	query.Where(predicate.OrderItem(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(order.ItemColumn), fks...))
+		s.Where(sql.InValues(s.C(entorder.ItemColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -787,7 +787,7 @@ func (oq *OrderQuery) loadPay(ctx context.Context, query *OrderPayQuery, nodes [
 		query.ctx.AppendFieldOnce(orderpay.FieldOrderID)
 	}
 	query.Where(predicate.OrderPay(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(order.PayColumn), fks...))
+		s.Where(sql.InValues(s.C(entorder.PayColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -817,7 +817,7 @@ func (oq *OrderQuery) loadOrderContents(ctx context.Context, query *MemberContra
 		query.ctx.AppendFieldOnce(membercontract.FieldOrderID)
 	}
 	query.Where(predicate.MemberContract(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(order.OrderContentsColumn), fks...))
+		s.Where(sql.InValues(s.C(entorder.OrderContentsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -847,7 +847,7 @@ func (oq *OrderQuery) loadSales(ctx context.Context, query *OrderSalesQuery, nod
 		query.ctx.AppendFieldOnce(ordersales.FieldOrderID)
 	}
 	query.Where(predicate.OrderSales(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(order.SalesColumn), fks...))
+		s.Where(sql.InValues(s.C(entorder.SalesColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -925,7 +925,7 @@ func (oq *OrderQuery) loadOrderCreates(ctx context.Context, query *UserQuery, no
 	ids := make([]int64, 0, len(nodes))
 	nodeids := make(map[int64][]*Order)
 	for i := range nodes {
-		fk := nodes[i].CreateID
+		fk := nodes[i].CreatedID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -942,7 +942,7 @@ func (oq *OrderQuery) loadOrderCreates(ctx context.Context, query *UserQuery, no
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "create_id" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "created_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -964,7 +964,7 @@ func (oq *OrderQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (oq *OrderQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(order.Table, order.Columns, sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewQuerySpec(entorder.Table, entorder.Columns, sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64))
 	_spec.From = oq.sql
 	if unique := oq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -973,20 +973,20 @@ func (oq *OrderQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := oq.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, order.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, entorder.FieldID)
 		for i := range fields {
-			if fields[i] != order.FieldID {
+			if fields[i] != entorder.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
 		if oq.withOrderVenues != nil {
-			_spec.Node.AddColumnOnce(order.FieldVenueID)
+			_spec.Node.AddColumnOnce(entorder.FieldVenueID)
 		}
 		if oq.withOrderMembers != nil {
-			_spec.Node.AddColumnOnce(order.FieldMemberID)
+			_spec.Node.AddColumnOnce(entorder.FieldMemberID)
 		}
 		if oq.withOrderCreates != nil {
-			_spec.Node.AddColumnOnce(order.FieldCreateID)
+			_spec.Node.AddColumnOnce(entorder.FieldCreatedID)
 		}
 	}
 	if ps := oq.predicates; len(ps) > 0 {
@@ -1014,10 +1014,10 @@ func (oq *OrderQuery) querySpec() *sqlgraph.QuerySpec {
 
 func (oq *OrderQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(oq.driver.Dialect())
-	t1 := builder.Table(order.Table)
+	t1 := builder.Table(entorder.Table)
 	columns := oq.ctx.Fields
 	if len(columns) == 0 {
-		columns = order.Columns
+		columns = entorder.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if oq.sql != nil {

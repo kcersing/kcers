@@ -30,10 +30,16 @@ const (
 	FieldPay = "pay"
 	// FieldNote holds the string denoting the note field in the database.
 	FieldNote = "note"
+	// FieldPayAt holds the string denoting the pay_at field in the database.
+	FieldPayAt = "pay_at"
 	// FieldPayWay holds the string denoting the pay_way field in the database.
 	FieldPayWay = "pay_way"
-	// FieldCreateID holds the string denoting the create_id field in the database.
-	FieldCreateID = "create_id"
+	// FieldPaySn holds the string denoting the pay_sn field in the database.
+	FieldPaySn = "pay_sn"
+	// FieldPrepayID holds the string denoting the prepay_id field in the database.
+	FieldPrepayID = "prepay_id"
+	// FieldPayExtra holds the string denoting the pay_extra field in the database.
+	FieldPayExtra = "pay_extra"
 	// EdgeOrder holds the string denoting the order edge name in mutations.
 	EdgeOrder = "order"
 	// Table holds the table name of the orderpay in the database.
@@ -41,7 +47,7 @@ const (
 	// OrderTable is the table that holds the order relation/edge.
 	OrderTable = "order_pay"
 	// OrderInverseTable is the table name for the Order entity.
-	// It exists in this package in order to avoid circular dependency with the "order" package.
+	// It exists in this package in order to avoid circular dependency with the "entorder" package.
 	OrderInverseTable = "order"
 	// OrderColumn is the table column denoting the order relation/edge.
 	OrderColumn = "order_id"
@@ -58,8 +64,11 @@ var Columns = []string{
 	FieldRemission,
 	FieldPay,
 	FieldNote,
+	FieldPayAt,
 	FieldPayWay,
-	FieldCreateID,
+	FieldPaySn,
+	FieldPrepayID,
+	FieldPayExtra,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -133,14 +142,24 @@ func ByNote(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldNote, opts...).ToFunc()
 }
 
+// ByPayAt orders the results by the pay_at field.
+func ByPayAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPayAt, opts...).ToFunc()
+}
+
 // ByPayWay orders the results by the pay_way field.
 func ByPayWay(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPayWay, opts...).ToFunc()
 }
 
-// ByCreateID orders the results by the create_id field.
-func ByCreateID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCreateID, opts...).ToFunc()
+// ByPaySn orders the results by the pay_sn field.
+func ByPaySn(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPaySn, opts...).ToFunc()
+}
+
+// ByPrepayID orders the results by the prepay_id field.
+func ByPrepayID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPrepayID, opts...).ToFunc()
 }
 
 // ByOrderField orders the results by order field.

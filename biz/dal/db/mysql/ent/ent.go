@@ -22,10 +22,18 @@ import (
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
 	"kcers/biz/dal/db/mysql/ent/memberprofile"
+	"kcers/biz/dal/db/mysql/ent/membertoken"
 	"kcers/biz/dal/db/mysql/ent/menu"
 	"kcers/biz/dal/db/mysql/ent/menuparam"
 	"kcers/biz/dal/db/mysql/ent/messages"
-	"kcers/biz/dal/db/mysql/ent/order"
+	"reflect"
+	"sync"
+
+	"entgo.io/ent"
+	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
+
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/orderamount"
 	"kcers/biz/dal/db/mysql/ent/orderitem"
 	"kcers/biz/dal/db/mysql/ent/orderpay"
@@ -42,12 +50,6 @@ import (
 	"kcers/biz/dal/db/mysql/ent/user"
 	"kcers/biz/dal/db/mysql/ent/venue"
 	"kcers/biz/dal/db/mysql/ent/venueplace"
-	"reflect"
-	"sync"
-
-	"entgo.io/ent"
-	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -124,10 +126,11 @@ func checkColumn(table, column string) error {
 			memberproduct.Table:         memberproduct.ValidColumn,
 			memberproductproperty.Table: memberproductproperty.ValidColumn,
 			memberprofile.Table:         memberprofile.ValidColumn,
+			membertoken.Table:           membertoken.ValidColumn,
 			menu.Table:                  menu.ValidColumn,
 			menuparam.Table:             menuparam.ValidColumn,
 			messages.Table:              messages.ValidColumn,
-			order.Table:                 order.ValidColumn,
+			entorder.Table:              entorder.ValidColumn,
 			orderamount.Table:           orderamount.ValidColumn,
 			orderitem.Table:             orderitem.ValidColumn,
 			orderpay.Table:              orderpay.ValidColumn,

@@ -7,7 +7,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/member"
 	"kcers/biz/dal/db/mysql/ent/membercontract"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"strings"
 	"time"
 
@@ -92,7 +92,7 @@ func (e MemberContractEdges) OrderOrErr() (*Order, error) {
 	if e.Order != nil {
 		return e.Order, nil
 	} else if e.loadedTypes[2] {
-		return nil, &NotFoundError{label: order.Label}
+		return nil, &NotFoundError{label: entorder.Label}
 	}
 	return nil, &NotLoadedError{edge: "order"}
 }

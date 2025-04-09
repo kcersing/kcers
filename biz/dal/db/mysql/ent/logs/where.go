@@ -114,14 +114,19 @@ func UserAgent(v string) predicate.Logs {
 	return predicate.Logs(sql.FieldEQ(FieldUserAgent, v))
 }
 
-// Operator applies equality check predicate on the "operator" field. It's identical to OperatorEQ.
-func Operator(v string) predicate.Logs {
-	return predicate.Logs(sql.FieldEQ(FieldOperator, v))
+// Operatorsr applies equality check predicate on the "operatorsr" field. It's identical to OperatorsrEQ.
+func Operatorsr(v string) predicate.Logs {
+	return predicate.Logs(sql.FieldEQ(FieldOperatorsr, v))
 }
 
 // Time applies equality check predicate on the "time" field. It's identical to TimeEQ.
 func Time(v int64) predicate.Logs {
 	return predicate.Logs(sql.FieldEQ(FieldTime, v))
+}
+
+// Identity applies equality check predicate on the "identity" field. It's identical to IdentityEQ.
+func Identity(v int64) predicate.Logs {
+	return predicate.Logs(sql.FieldEQ(FieldIdentity, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -829,79 +834,79 @@ func UserAgentContainsFold(v string) predicate.Logs {
 	return predicate.Logs(sql.FieldContainsFold(FieldUserAgent, v))
 }
 
-// OperatorEQ applies the EQ predicate on the "operator" field.
-func OperatorEQ(v string) predicate.Logs {
-	return predicate.Logs(sql.FieldEQ(FieldOperator, v))
+// OperatorsrEQ applies the EQ predicate on the "operatorsr" field.
+func OperatorsrEQ(v string) predicate.Logs {
+	return predicate.Logs(sql.FieldEQ(FieldOperatorsr, v))
 }
 
-// OperatorNEQ applies the NEQ predicate on the "operator" field.
-func OperatorNEQ(v string) predicate.Logs {
-	return predicate.Logs(sql.FieldNEQ(FieldOperator, v))
+// OperatorsrNEQ applies the NEQ predicate on the "operatorsr" field.
+func OperatorsrNEQ(v string) predicate.Logs {
+	return predicate.Logs(sql.FieldNEQ(FieldOperatorsr, v))
 }
 
-// OperatorIn applies the In predicate on the "operator" field.
-func OperatorIn(vs ...string) predicate.Logs {
-	return predicate.Logs(sql.FieldIn(FieldOperator, vs...))
+// OperatorsrIn applies the In predicate on the "operatorsr" field.
+func OperatorsrIn(vs ...string) predicate.Logs {
+	return predicate.Logs(sql.FieldIn(FieldOperatorsr, vs...))
 }
 
-// OperatorNotIn applies the NotIn predicate on the "operator" field.
-func OperatorNotIn(vs ...string) predicate.Logs {
-	return predicate.Logs(sql.FieldNotIn(FieldOperator, vs...))
+// OperatorsrNotIn applies the NotIn predicate on the "operatorsr" field.
+func OperatorsrNotIn(vs ...string) predicate.Logs {
+	return predicate.Logs(sql.FieldNotIn(FieldOperatorsr, vs...))
 }
 
-// OperatorGT applies the GT predicate on the "operator" field.
-func OperatorGT(v string) predicate.Logs {
-	return predicate.Logs(sql.FieldGT(FieldOperator, v))
+// OperatorsrGT applies the GT predicate on the "operatorsr" field.
+func OperatorsrGT(v string) predicate.Logs {
+	return predicate.Logs(sql.FieldGT(FieldOperatorsr, v))
 }
 
-// OperatorGTE applies the GTE predicate on the "operator" field.
-func OperatorGTE(v string) predicate.Logs {
-	return predicate.Logs(sql.FieldGTE(FieldOperator, v))
+// OperatorsrGTE applies the GTE predicate on the "operatorsr" field.
+func OperatorsrGTE(v string) predicate.Logs {
+	return predicate.Logs(sql.FieldGTE(FieldOperatorsr, v))
 }
 
-// OperatorLT applies the LT predicate on the "operator" field.
-func OperatorLT(v string) predicate.Logs {
-	return predicate.Logs(sql.FieldLT(FieldOperator, v))
+// OperatorsrLT applies the LT predicate on the "operatorsr" field.
+func OperatorsrLT(v string) predicate.Logs {
+	return predicate.Logs(sql.FieldLT(FieldOperatorsr, v))
 }
 
-// OperatorLTE applies the LTE predicate on the "operator" field.
-func OperatorLTE(v string) predicate.Logs {
-	return predicate.Logs(sql.FieldLTE(FieldOperator, v))
+// OperatorsrLTE applies the LTE predicate on the "operatorsr" field.
+func OperatorsrLTE(v string) predicate.Logs {
+	return predicate.Logs(sql.FieldLTE(FieldOperatorsr, v))
 }
 
-// OperatorContains applies the Contains predicate on the "operator" field.
-func OperatorContains(v string) predicate.Logs {
-	return predicate.Logs(sql.FieldContains(FieldOperator, v))
+// OperatorsrContains applies the Contains predicate on the "operatorsr" field.
+func OperatorsrContains(v string) predicate.Logs {
+	return predicate.Logs(sql.FieldContains(FieldOperatorsr, v))
 }
 
-// OperatorHasPrefix applies the HasPrefix predicate on the "operator" field.
-func OperatorHasPrefix(v string) predicate.Logs {
-	return predicate.Logs(sql.FieldHasPrefix(FieldOperator, v))
+// OperatorsrHasPrefix applies the HasPrefix predicate on the "operatorsr" field.
+func OperatorsrHasPrefix(v string) predicate.Logs {
+	return predicate.Logs(sql.FieldHasPrefix(FieldOperatorsr, v))
 }
 
-// OperatorHasSuffix applies the HasSuffix predicate on the "operator" field.
-func OperatorHasSuffix(v string) predicate.Logs {
-	return predicate.Logs(sql.FieldHasSuffix(FieldOperator, v))
+// OperatorsrHasSuffix applies the HasSuffix predicate on the "operatorsr" field.
+func OperatorsrHasSuffix(v string) predicate.Logs {
+	return predicate.Logs(sql.FieldHasSuffix(FieldOperatorsr, v))
 }
 
-// OperatorIsNil applies the IsNil predicate on the "operator" field.
-func OperatorIsNil() predicate.Logs {
-	return predicate.Logs(sql.FieldIsNull(FieldOperator))
+// OperatorsrIsNil applies the IsNil predicate on the "operatorsr" field.
+func OperatorsrIsNil() predicate.Logs {
+	return predicate.Logs(sql.FieldIsNull(FieldOperatorsr))
 }
 
-// OperatorNotNil applies the NotNil predicate on the "operator" field.
-func OperatorNotNil() predicate.Logs {
-	return predicate.Logs(sql.FieldNotNull(FieldOperator))
+// OperatorsrNotNil applies the NotNil predicate on the "operatorsr" field.
+func OperatorsrNotNil() predicate.Logs {
+	return predicate.Logs(sql.FieldNotNull(FieldOperatorsr))
 }
 
-// OperatorEqualFold applies the EqualFold predicate on the "operator" field.
-func OperatorEqualFold(v string) predicate.Logs {
-	return predicate.Logs(sql.FieldEqualFold(FieldOperator, v))
+// OperatorsrEqualFold applies the EqualFold predicate on the "operatorsr" field.
+func OperatorsrEqualFold(v string) predicate.Logs {
+	return predicate.Logs(sql.FieldEqualFold(FieldOperatorsr, v))
 }
 
-// OperatorContainsFold applies the ContainsFold predicate on the "operator" field.
-func OperatorContainsFold(v string) predicate.Logs {
-	return predicate.Logs(sql.FieldContainsFold(FieldOperator, v))
+// OperatorsrContainsFold applies the ContainsFold predicate on the "operatorsr" field.
+func OperatorsrContainsFold(v string) predicate.Logs {
+	return predicate.Logs(sql.FieldContainsFold(FieldOperatorsr, v))
 }
 
 // TimeEQ applies the EQ predicate on the "time" field.
@@ -952,6 +957,56 @@ func TimeIsNil() predicate.Logs {
 // TimeNotNil applies the NotNil predicate on the "time" field.
 func TimeNotNil() predicate.Logs {
 	return predicate.Logs(sql.FieldNotNull(FieldTime))
+}
+
+// IdentityEQ applies the EQ predicate on the "identity" field.
+func IdentityEQ(v int64) predicate.Logs {
+	return predicate.Logs(sql.FieldEQ(FieldIdentity, v))
+}
+
+// IdentityNEQ applies the NEQ predicate on the "identity" field.
+func IdentityNEQ(v int64) predicate.Logs {
+	return predicate.Logs(sql.FieldNEQ(FieldIdentity, v))
+}
+
+// IdentityIn applies the In predicate on the "identity" field.
+func IdentityIn(vs ...int64) predicate.Logs {
+	return predicate.Logs(sql.FieldIn(FieldIdentity, vs...))
+}
+
+// IdentityNotIn applies the NotIn predicate on the "identity" field.
+func IdentityNotIn(vs ...int64) predicate.Logs {
+	return predicate.Logs(sql.FieldNotIn(FieldIdentity, vs...))
+}
+
+// IdentityGT applies the GT predicate on the "identity" field.
+func IdentityGT(v int64) predicate.Logs {
+	return predicate.Logs(sql.FieldGT(FieldIdentity, v))
+}
+
+// IdentityGTE applies the GTE predicate on the "identity" field.
+func IdentityGTE(v int64) predicate.Logs {
+	return predicate.Logs(sql.FieldGTE(FieldIdentity, v))
+}
+
+// IdentityLT applies the LT predicate on the "identity" field.
+func IdentityLT(v int64) predicate.Logs {
+	return predicate.Logs(sql.FieldLT(FieldIdentity, v))
+}
+
+// IdentityLTE applies the LTE predicate on the "identity" field.
+func IdentityLTE(v int64) predicate.Logs {
+	return predicate.Logs(sql.FieldLTE(FieldIdentity, v))
+}
+
+// IdentityIsNil applies the IsNil predicate on the "identity" field.
+func IdentityIsNil() predicate.Logs {
+	return predicate.Logs(sql.FieldIsNull(FieldIdentity))
+}
+
+// IdentityNotNil applies the NotNil predicate on the "identity" field.
+func IdentityNotNil() predicate.Logs {
+	return predicate.Logs(sql.FieldNotNull(FieldIdentity))
 }
 
 // And groups predicates with the AND operator between them.

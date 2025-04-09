@@ -27,10 +27,11 @@ import (
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
 	"kcers/biz/dal/db/mysql/ent/memberprofile"
+	"kcers/biz/dal/db/mysql/ent/membertoken"
 	"kcers/biz/dal/db/mysql/ent/menu"
 	"kcers/biz/dal/db/mysql/ent/menuparam"
 	"kcers/biz/dal/db/mysql/ent/messages"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/orderamount"
 	"kcers/biz/dal/db/mysql/ent/orderitem"
 	"kcers/biz/dal/db/mysql/ent/orderpay"
@@ -91,6 +92,8 @@ type Client struct {
 	MemberProductProperty *MemberProductPropertyClient
 	// MemberProfile is the client for interacting with the MemberProfile builders.
 	MemberProfile *MemberProfileClient
+	// MemberToken is the client for interacting with the MemberToken builders.
+	MemberToken *MemberTokenClient
 	// Menu is the client for interacting with the Menu builders.
 	Menu *MenuClient
 	// MenuParam is the client for interacting with the MenuParam builders.
@@ -158,6 +161,7 @@ func (c *Client) init() {
 	c.MemberProduct = NewMemberProductClient(c.config)
 	c.MemberProductProperty = NewMemberProductPropertyClient(c.config)
 	c.MemberProfile = NewMemberProfileClient(c.config)
+	c.MemberToken = NewMemberTokenClient(c.config)
 	c.Menu = NewMenuClient(c.config)
 	c.MenuParam = NewMenuParamClient(c.config)
 	c.Messages = NewMessagesClient(c.config)
@@ -286,6 +290,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		MemberProduct:         NewMemberProductClient(cfg),
 		MemberProductProperty: NewMemberProductPropertyClient(cfg),
 		MemberProfile:         NewMemberProfileClient(cfg),
+		MemberToken:           NewMemberTokenClient(cfg),
 		Menu:                  NewMenuClient(cfg),
 		MenuParam:             NewMenuParamClient(cfg),
 		Messages:              NewMessagesClient(cfg),
@@ -341,6 +346,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		MemberProduct:         NewMemberProductClient(cfg),
 		MemberProductProperty: NewMemberProductPropertyClient(cfg),
 		MemberProfile:         NewMemberProfileClient(cfg),
+		MemberToken:           NewMemberTokenClient(cfg),
 		Menu:                  NewMenuClient(cfg),
 		MenuParam:             NewMenuParamClient(cfg),
 		Messages:              NewMessagesClient(cfg),
@@ -393,10 +399,10 @@ func (c *Client) Use(hooks ...Hook) {
 		c.API, c.Banner, c.Contract, c.Dictionary, c.DictionaryDetail, c.EntryLogs,
 		c.Face, c.Logs, c.Member, c.MemberContract, c.MemberContractContent,
 		c.MemberDetails, c.MemberNote, c.MemberProduct, c.MemberProductProperty,
-		c.MemberProfile, c.Menu, c.MenuParam, c.Messages, c.Order, c.OrderAmount,
-		c.OrderItem, c.OrderPay, c.OrderSales, c.Product, c.ProductProperty, c.Role,
-		c.Schedule, c.ScheduleCoach, c.ScheduleMember, c.Sms, c.SmsLog, c.Token,
-		c.User, c.Venue, c.VenuePlace,
+		c.MemberProfile, c.MemberToken, c.Menu, c.MenuParam, c.Messages, c.Order,
+		c.OrderAmount, c.OrderItem, c.OrderPay, c.OrderSales, c.Product,
+		c.ProductProperty, c.Role, c.Schedule, c.ScheduleCoach, c.ScheduleMember,
+		c.Sms, c.SmsLog, c.Token, c.User, c.Venue, c.VenuePlace,
 	} {
 		n.Use(hooks...)
 	}
@@ -409,10 +415,10 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.API, c.Banner, c.Contract, c.Dictionary, c.DictionaryDetail, c.EntryLogs,
 		c.Face, c.Logs, c.Member, c.MemberContract, c.MemberContractContent,
 		c.MemberDetails, c.MemberNote, c.MemberProduct, c.MemberProductProperty,
-		c.MemberProfile, c.Menu, c.MenuParam, c.Messages, c.Order, c.OrderAmount,
-		c.OrderItem, c.OrderPay, c.OrderSales, c.Product, c.ProductProperty, c.Role,
-		c.Schedule, c.ScheduleCoach, c.ScheduleMember, c.Sms, c.SmsLog, c.Token,
-		c.User, c.Venue, c.VenuePlace,
+		c.MemberProfile, c.MemberToken, c.Menu, c.MenuParam, c.Messages, c.Order,
+		c.OrderAmount, c.OrderItem, c.OrderPay, c.OrderSales, c.Product,
+		c.ProductProperty, c.Role, c.Schedule, c.ScheduleCoach, c.ScheduleMember,
+		c.Sms, c.SmsLog, c.Token, c.User, c.Venue, c.VenuePlace,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -453,6 +459,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.MemberProductProperty.mutate(ctx, m)
 	case *MemberProfileMutation:
 		return c.MemberProfile.mutate(ctx, m)
+	case *MemberTokenMutation:
+		return c.MemberToken.mutate(ctx, m)
 	case *MenuMutation:
 		return c.Menu.mutate(ctx, m)
 	case *MenuParamMutation:
@@ -1202,6 +1210,22 @@ func (c *DictionaryDetailClient) QueryProperty(dd *DictionaryDetail) *ProductPro
 	return query
 }
 
+// QueryUsers queries the users edge of a DictionaryDetail.
+func (c *DictionaryDetailClient) QueryUsers(dd *DictionaryDetail) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := dd.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(dictionarydetail.Table, dictionarydetail.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, dictionarydetail.UsersTable, dictionarydetail.UsersPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(dd.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *DictionaryDetailClient) Hooks() []Hook {
 	return c.hooks.DictionaryDetail
@@ -1830,6 +1854,22 @@ func (c *MemberClient) GetX(ctx context.Context, id int64) *Member {
 	return obj
 }
 
+// QueryToken queries the token edge of a Member.
+func (c *MemberClient) QueryToken(m *Member) *MemberTokenQuery {
+	query := (&MemberTokenClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(member.Table, member.FieldID, id),
+			sqlgraph.To(membertoken.Table, membertoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, member.TokenTable, member.TokenColumn),
+		)
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryMemberProfile queries the member_profile edge of a Member.
 func (c *MemberClient) QueryMemberProfile(m *Member) *MemberProfileQuery {
 	query := (&MemberProfileClient{config: c.config}).Query()
@@ -1885,7 +1925,7 @@ func (c *MemberClient) QueryMemberOrders(m *Member) *OrderQuery {
 		id := m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(member.Table, member.FieldID, id),
-			sqlgraph.To(order.Table, order.FieldID),
+			sqlgraph.To(entorder.Table, entorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, member.MemberOrdersTable, member.MemberOrdersColumn),
 		)
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
@@ -2130,7 +2170,7 @@ func (c *MemberContractClient) QueryOrder(mc *MemberContract) *OrderQuery {
 		id := mc.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(membercontract.Table, membercontract.FieldID, id),
-			sqlgraph.To(order.Table, order.FieldID),
+			sqlgraph.To(entorder.Table, entorder.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, membercontract.OrderTable, membercontract.OrderColumn),
 		)
 		fromV = sqlgraph.Neighbors(mc.driver.Dialect(), step)
@@ -3138,6 +3178,155 @@ func (c *MemberProfileClient) mutate(ctx context.Context, m *MemberProfileMutati
 	}
 }
 
+// MemberTokenClient is a client for the MemberToken schema.
+type MemberTokenClient struct {
+	config
+}
+
+// NewMemberTokenClient returns a client for the MemberToken from the given config.
+func NewMemberTokenClient(c config) *MemberTokenClient {
+	return &MemberTokenClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `membertoken.Hooks(f(g(h())))`.
+func (c *MemberTokenClient) Use(hooks ...Hook) {
+	c.hooks.MemberToken = append(c.hooks.MemberToken, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `membertoken.Intercept(f(g(h())))`.
+func (c *MemberTokenClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MemberToken = append(c.inters.MemberToken, interceptors...)
+}
+
+// Create returns a builder for creating a MemberToken entity.
+func (c *MemberTokenClient) Create() *MemberTokenCreate {
+	mutation := newMemberTokenMutation(c.config, OpCreate)
+	return &MemberTokenCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MemberToken entities.
+func (c *MemberTokenClient) CreateBulk(builders ...*MemberTokenCreate) *MemberTokenCreateBulk {
+	return &MemberTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MemberTokenClient) MapCreateBulk(slice any, setFunc func(*MemberTokenCreate, int)) *MemberTokenCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MemberTokenCreateBulk{err: fmt.Errorf("calling to MemberTokenClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MemberTokenCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MemberTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MemberToken.
+func (c *MemberTokenClient) Update() *MemberTokenUpdate {
+	mutation := newMemberTokenMutation(c.config, OpUpdate)
+	return &MemberTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MemberTokenClient) UpdateOne(mt *MemberToken) *MemberTokenUpdateOne {
+	mutation := newMemberTokenMutation(c.config, OpUpdateOne, withMemberToken(mt))
+	return &MemberTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MemberTokenClient) UpdateOneID(id int64) *MemberTokenUpdateOne {
+	mutation := newMemberTokenMutation(c.config, OpUpdateOne, withMemberTokenID(id))
+	return &MemberTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MemberToken.
+func (c *MemberTokenClient) Delete() *MemberTokenDelete {
+	mutation := newMemberTokenMutation(c.config, OpDelete)
+	return &MemberTokenDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MemberTokenClient) DeleteOne(mt *MemberToken) *MemberTokenDeleteOne {
+	return c.DeleteOneID(mt.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MemberTokenClient) DeleteOneID(id int64) *MemberTokenDeleteOne {
+	builder := c.Delete().Where(membertoken.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MemberTokenDeleteOne{builder}
+}
+
+// Query returns a query builder for MemberToken.
+func (c *MemberTokenClient) Query() *MemberTokenQuery {
+	return &MemberTokenQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMemberToken},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MemberToken entity by its id.
+func (c *MemberTokenClient) Get(ctx context.Context, id int64) (*MemberToken, error) {
+	return c.Query().Where(membertoken.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MemberTokenClient) GetX(ctx context.Context, id int64) *MemberToken {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryOwner queries the owner edge of a MemberToken.
+func (c *MemberTokenClient) QueryOwner(mt *MemberToken) *MemberQuery {
+	query := (&MemberClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(membertoken.Table, membertoken.FieldID, id),
+			sqlgraph.To(member.Table, member.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, membertoken.OwnerTable, membertoken.OwnerColumn),
+		)
+		fromV = sqlgraph.Neighbors(mt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *MemberTokenClient) Hooks() []Hook {
+	return c.hooks.MemberToken
+}
+
+// Interceptors returns the client interceptors.
+func (c *MemberTokenClient) Interceptors() []Interceptor {
+	return c.inters.MemberToken
+}
+
+func (c *MemberTokenClient) mutate(ctx context.Context, m *MemberTokenMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MemberTokenCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MemberTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MemberTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MemberTokenDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown MemberToken mutation op: %q", m.Op())
+	}
+}
+
 // MenuClient is a client for the Menu schema.
 type MenuClient struct {
 	config
@@ -3628,13 +3817,13 @@ func NewOrderClient(c config) *OrderClient {
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `order.Hooks(f(g(h())))`.
+// A call to `Use(f, g, h)` equals to `entorder.Hooks(f(g(h())))`.
 func (c *OrderClient) Use(hooks ...Hook) {
 	c.hooks.Order = append(c.hooks.Order, hooks...)
 }
 
 // Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `order.Intercept(f(g(h())))`.
+// A call to `Intercept(f, g, h)` equals to `entorder.Intercept(f(g(h())))`.
 func (c *OrderClient) Intercept(interceptors ...Interceptor) {
 	c.inters.Order = append(c.inters.Order, interceptors...)
 }
@@ -3696,7 +3885,7 @@ func (c *OrderClient) DeleteOne(o *Order) *OrderDeleteOne {
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
 func (c *OrderClient) DeleteOneID(id int64) *OrderDeleteOne {
-	builder := c.Delete().Where(order.ID(id))
+	builder := c.Delete().Where(entorder.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
 	return &OrderDeleteOne{builder}
@@ -3713,7 +3902,7 @@ func (c *OrderClient) Query() *OrderQuery {
 
 // Get returns a Order entity by its id.
 func (c *OrderClient) Get(ctx context.Context, id int64) (*Order, error) {
-	return c.Query().Where(order.ID(id)).Only(ctx)
+	return c.Query().Where(entorder.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
@@ -3731,9 +3920,9 @@ func (c *OrderClient) QueryAmount(o *Order) *OrderAmountQuery {
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := o.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(order.Table, order.FieldID, id),
+			sqlgraph.From(entorder.Table, entorder.FieldID, id),
 			sqlgraph.To(orderamount.Table, orderamount.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, order.AmountTable, order.AmountColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, entorder.AmountTable, entorder.AmountColumn),
 		)
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
@@ -3747,9 +3936,9 @@ func (c *OrderClient) QueryItem(o *Order) *OrderItemQuery {
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := o.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(order.Table, order.FieldID, id),
+			sqlgraph.From(entorder.Table, entorder.FieldID, id),
 			sqlgraph.To(orderitem.Table, orderitem.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, order.ItemTable, order.ItemColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, entorder.ItemTable, entorder.ItemColumn),
 		)
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
@@ -3763,9 +3952,9 @@ func (c *OrderClient) QueryPay(o *Order) *OrderPayQuery {
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := o.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(order.Table, order.FieldID, id),
+			sqlgraph.From(entorder.Table, entorder.FieldID, id),
 			sqlgraph.To(orderpay.Table, orderpay.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, order.PayTable, order.PayColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, entorder.PayTable, entorder.PayColumn),
 		)
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
@@ -3779,9 +3968,9 @@ func (c *OrderClient) QueryOrderContents(o *Order) *MemberContractQuery {
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := o.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(order.Table, order.FieldID, id),
+			sqlgraph.From(entorder.Table, entorder.FieldID, id),
 			sqlgraph.To(membercontract.Table, membercontract.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, order.OrderContentsTable, order.OrderContentsColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, entorder.OrderContentsTable, entorder.OrderContentsColumn),
 		)
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
@@ -3795,9 +3984,9 @@ func (c *OrderClient) QuerySales(o *Order) *OrderSalesQuery {
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := o.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(order.Table, order.FieldID, id),
+			sqlgraph.From(entorder.Table, entorder.FieldID, id),
 			sqlgraph.To(ordersales.Table, ordersales.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, order.SalesTable, order.SalesColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, entorder.SalesTable, entorder.SalesColumn),
 		)
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
@@ -3811,9 +4000,9 @@ func (c *OrderClient) QueryOrderVenues(o *Order) *VenueQuery {
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := o.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(order.Table, order.FieldID, id),
+			sqlgraph.From(entorder.Table, entorder.FieldID, id),
 			sqlgraph.To(venue.Table, venue.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, order.OrderVenuesTable, order.OrderVenuesColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, entorder.OrderVenuesTable, entorder.OrderVenuesColumn),
 		)
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
@@ -3827,9 +4016,9 @@ func (c *OrderClient) QueryOrderMembers(o *Order) *MemberQuery {
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := o.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(order.Table, order.FieldID, id),
+			sqlgraph.From(entorder.Table, entorder.FieldID, id),
 			sqlgraph.To(member.Table, member.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, order.OrderMembersTable, order.OrderMembersColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, entorder.OrderMembersTable, entorder.OrderMembersColumn),
 		)
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
@@ -3843,9 +4032,9 @@ func (c *OrderClient) QueryOrderCreates(o *Order) *UserQuery {
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := o.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(order.Table, order.FieldID, id),
+			sqlgraph.From(entorder.Table, entorder.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, order.OrderCreatesTable, order.OrderCreatesColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, entorder.OrderCreatesTable, entorder.OrderCreatesColumn),
 		)
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
@@ -3993,7 +4182,7 @@ func (c *OrderAmountClient) QueryOrder(oa *OrderAmount) *OrderQuery {
 		id := oa.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(orderamount.Table, orderamount.FieldID, id),
-			sqlgraph.To(order.Table, order.FieldID),
+			sqlgraph.To(entorder.Table, entorder.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, orderamount.OrderTable, orderamount.OrderColumn),
 		)
 		fromV = sqlgraph.Neighbors(oa.driver.Dialect(), step)
@@ -4142,7 +4331,7 @@ func (c *OrderItemClient) QueryOrder(oi *OrderItem) *OrderQuery {
 		id := oi.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(orderitem.Table, orderitem.FieldID, id),
-			sqlgraph.To(order.Table, order.FieldID),
+			sqlgraph.To(entorder.Table, entorder.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, orderitem.OrderTable, orderitem.OrderColumn),
 		)
 		fromV = sqlgraph.Neighbors(oi.driver.Dialect(), step)
@@ -4291,7 +4480,7 @@ func (c *OrderPayClient) QueryOrder(op *OrderPay) *OrderQuery {
 		id := op.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(orderpay.Table, orderpay.FieldID, id),
-			sqlgraph.To(order.Table, order.FieldID),
+			sqlgraph.To(entorder.Table, entorder.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, orderpay.OrderTable, orderpay.OrderColumn),
 		)
 		fromV = sqlgraph.Neighbors(op.driver.Dialect(), step)
@@ -4440,7 +4629,7 @@ func (c *OrderSalesClient) QueryOrder(os *OrderSales) *OrderQuery {
 		id := os.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(ordersales.Table, ordersales.FieldID, id),
-			sqlgraph.To(order.Table, order.FieldID),
+			sqlgraph.To(entorder.Table, entorder.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, ordersales.OrderTable, ordersales.OrderColumn),
 		)
 		fromV = sqlgraph.Neighbors(os.driver.Dialect(), step)
@@ -4953,6 +5142,38 @@ func (c *RoleClient) QueryMenus(r *Role) *MenuQuery {
 			sqlgraph.From(role.Table, role.FieldID, id),
 			sqlgraph.To(menu.Table, menu.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, role.MenusTable, role.MenusPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUsers queries the users edge of a Role.
+func (c *RoleClient) QueryUsers(r *Role) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(role.Table, role.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, role.UsersTable, role.UsersPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryVenues queries the venues edge of a Role.
+func (c *RoleClient) QueryVenues(r *Role) *VenueQuery {
+	query := (&VenueClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(role.Table, role.FieldID, id),
+			sqlgraph.To(venue.Table, venue.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, role.VenuesTable, role.VenuesPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
 		return fromV, nil
@@ -5971,6 +6192,22 @@ func (c *UserClient) GetX(ctx context.Context, id int64) *User {
 	return obj
 }
 
+// QueryUserFace queries the user_face edge of a User.
+func (c *UserClient) QueryUserFace(u *User) *FaceQuery {
+	query := (&FaceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(face.Table, face.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UserFaceTable, user.UserFaceColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryToken queries the token edge of a User.
 func (c *UserClient) QueryToken(u *User) *TokenQuery {
 	query := (&TokenClient{config: c.config}).Query()
@@ -5987,6 +6224,22 @@ func (c *UserClient) QueryToken(u *User) *TokenQuery {
 	return query
 }
 
+// QueryTags queries the tags edge of a User.
+func (c *UserClient) QueryTags(u *User) *DictionaryDetailQuery {
+	query := (&DictionaryDetailClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(dictionarydetail.Table, dictionarydetail.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.TagsTable, user.TagsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryCreatedOrders queries the created_orders edge of a User.
 func (c *UserClient) QueryCreatedOrders(u *User) *OrderQuery {
 	query := (&OrderClient{config: c.config}).Query()
@@ -5994,7 +6247,7 @@ func (c *UserClient) QueryCreatedOrders(u *User) *OrderQuery {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(order.Table, order.FieldID),
+			sqlgraph.To(entorder.Table, entorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.CreatedOrdersTable, user.CreatedOrdersColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
@@ -6019,15 +6272,31 @@ func (c *UserClient) QueryUserEntry(u *User) *EntryLogsQuery {
 	return query
 }
 
-// QueryUserFace queries the user_face edge of a User.
-func (c *UserClient) QueryUserFace(u *User) *FaceQuery {
-	query := (&FaceClient{config: c.config}).Query()
+// QueryVenues queries the venues edge of a User.
+func (c *UserClient) QueryVenues(u *User) *VenueQuery {
+	query := (&VenueClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(face.Table, face.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.UserFaceTable, user.UserFaceColumn),
+			sqlgraph.To(venue.Table, venue.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.VenuesTable, user.VenuesPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryRoles queries the roles edge of a User.
+func (c *UserClient) QueryRoles(u *User) *RoleQuery {
+	query := (&RoleClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(role.Table, role.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.RolesTable, user.RolesPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
@@ -6191,7 +6460,7 @@ func (c *VenueClient) QueryVenueOrders(v *Venue) *OrderQuery {
 		id := v.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(venue.Table, venue.FieldID, id),
-			sqlgraph.To(order.Table, order.FieldID),
+			sqlgraph.To(entorder.Table, entorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, venue.VenueOrdersTable, venue.VenueOrdersColumn),
 		)
 		fromV = sqlgraph.Neighbors(v.driver.Dialect(), step)
@@ -6257,6 +6526,38 @@ func (c *VenueClient) QueryProducts(v *Venue) *ProductQuery {
 			sqlgraph.From(venue.Table, venue.FieldID, id),
 			sqlgraph.To(product.Table, product.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, venue.ProductsTable, venue.ProductsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(v.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUsers queries the users edge of a Venue.
+func (c *VenueClient) QueryUsers(v *Venue) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := v.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(venue.Table, venue.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, venue.UsersTable, venue.UsersPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(v.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryRoles queries the roles edge of a Venue.
+func (c *VenueClient) QueryRoles(v *Venue) *RoleQuery {
+	query := (&RoleClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := v.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(venue.Table, venue.FieldID, id),
+			sqlgraph.To(role.Table, role.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, venue.RolesTable, venue.RolesPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(v.driver.Dialect(), step)
 		return fromV, nil
@@ -6443,17 +6744,17 @@ type (
 	hooks struct {
 		API, Banner, Contract, Dictionary, DictionaryDetail, EntryLogs, Face, Logs,
 		Member, MemberContract, MemberContractContent, MemberDetails, MemberNote,
-		MemberProduct, MemberProductProperty, MemberProfile, Menu, MenuParam, Messages,
-		Order, OrderAmount, OrderItem, OrderPay, OrderSales, Product, ProductProperty,
-		Role, Schedule, ScheduleCoach, ScheduleMember, Sms, SmsLog, Token, User, Venue,
-		VenuePlace []ent.Hook
+		MemberProduct, MemberProductProperty, MemberProfile, MemberToken, Menu,
+		MenuParam, Messages, Order, OrderAmount, OrderItem, OrderPay, OrderSales,
+		Product, ProductProperty, Role, Schedule, ScheduleCoach, ScheduleMember, Sms,
+		SmsLog, Token, User, Venue, VenuePlace []ent.Hook
 	}
 	inters struct {
 		API, Banner, Contract, Dictionary, DictionaryDetail, EntryLogs, Face, Logs,
 		Member, MemberContract, MemberContractContent, MemberDetails, MemberNote,
-		MemberProduct, MemberProductProperty, MemberProfile, Menu, MenuParam, Messages,
-		Order, OrderAmount, OrderItem, OrderPay, OrderSales, Product, ProductProperty,
-		Role, Schedule, ScheduleCoach, ScheduleMember, Sms, SmsLog, Token, User, Venue,
-		VenuePlace []ent.Interceptor
+		MemberProduct, MemberProductProperty, MemberProfile, MemberToken, Menu,
+		MenuParam, Messages, Order, OrderAmount, OrderItem, OrderPay, OrderSales,
+		Product, ProductProperty, Role, Schedule, ScheduleCoach, ScheduleMember, Sms,
+		SmsLog, Token, User, Venue, VenuePlace []ent.Interceptor
 	}
 )

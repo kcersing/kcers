@@ -11,25 +11,27 @@ import (
 
 // 日志列表请求数据
 type LogsListReq struct {
-	Page      int64  `thrift:"page,1,optional" form:"page" json:"page" query:"page"`
-	PageSize  int64  `thrift:"pageSize,2,optional" form:"pageSize" json:"pageSize" query:"pageSize"`
-	Type      string `thrift:"type,3,optional" form:"type" json:"type" query:"type"`
-	Method    string `thrift:"method,4,optional" form:"method" json:"method" query:"method"`
-	API       string `thrift:"api,5,optional" form:"api" json:"api" query:"api"`
-	Success   bool   `thrift:"success,6,optional" form:"success" json:"success" query:"success"`
-	Operators string `thrift:"operators,7,optional" form:"operators" json:"operators" query:"operators"`
+	Page       int64  `thrift:"page,1,optional" form:"page" json:"page" query:"page"`
+	PageSize   int64  `thrift:"pageSize,2,optional" form:"pageSize" json:"pageSize" query:"pageSize"`
+	Type       string `thrift:"type,3,optional" form:"type" json:"type" query:"type"`
+	Method     string `thrift:"method,4,optional" form:"method" json:"method" query:"method"`
+	API        string `thrift:"api,5,optional" form:"api" json:"api" query:"api"`
+	Success    bool   `thrift:"success,6,optional" form:"success" json:"success" query:"success"`
+	Operatorsr string `thrift:"operatorsr,7,optional" form:"operatorsr" json:"operatorsr" query:"operatorsr"`
+	Identity   int64  `thrift:"identity,8,optional" form:"identity" json:"identity" query:"identity"`
 }
 
 func NewLogsListReq() *LogsListReq {
 	return &LogsListReq{
 
-		Page:      0,
-		PageSize:  0,
-		Type:      "",
-		Method:    "",
-		API:       "",
-		Success:   true,
-		Operators: "",
+		Page:       0,
+		PageSize:   0,
+		Type:       "",
+		Method:     "",
+		API:        "",
+		Success:    true,
+		Operatorsr: "",
+		Identity:   0,
 	}
 }
 
@@ -40,7 +42,8 @@ func (p *LogsListReq) InitDefault() {
 	p.Method = ""
 	p.API = ""
 	p.Success = true
-	p.Operators = ""
+	p.Operatorsr = ""
+	p.Identity = 0
 }
 
 var LogsListReq_Page_DEFAULT int64 = 0
@@ -97,13 +100,22 @@ func (p *LogsListReq) GetSuccess() (v bool) {
 	return p.Success
 }
 
-var LogsListReq_Operators_DEFAULT string = ""
+var LogsListReq_Operatorsr_DEFAULT string = ""
 
-func (p *LogsListReq) GetOperators() (v string) {
-	if !p.IsSetOperators() {
-		return LogsListReq_Operators_DEFAULT
+func (p *LogsListReq) GetOperatorsr() (v string) {
+	if !p.IsSetOperatorsr() {
+		return LogsListReq_Operatorsr_DEFAULT
 	}
-	return p.Operators
+	return p.Operatorsr
+}
+
+var LogsListReq_Identity_DEFAULT int64 = 0
+
+func (p *LogsListReq) GetIdentity() (v int64) {
+	if !p.IsSetIdentity() {
+		return LogsListReq_Identity_DEFAULT
+	}
+	return p.Identity
 }
 
 var fieldIDToName_LogsListReq = map[int16]string{
@@ -113,7 +125,8 @@ var fieldIDToName_LogsListReq = map[int16]string{
 	4: "method",
 	5: "api",
 	6: "success",
-	7: "operators",
+	7: "operatorsr",
+	8: "identity",
 }
 
 func (p *LogsListReq) IsSetPage() bool {
@@ -140,8 +153,12 @@ func (p *LogsListReq) IsSetSuccess() bool {
 	return p.Success != LogsListReq_Success_DEFAULT
 }
 
-func (p *LogsListReq) IsSetOperators() bool {
-	return p.Operators != LogsListReq_Operators_DEFAULT
+func (p *LogsListReq) IsSetOperatorsr() bool {
+	return p.Operatorsr != LogsListReq_Operatorsr_DEFAULT
+}
+
+func (p *LogsListReq) IsSetIdentity() bool {
+	return p.Identity != LogsListReq_Identity_DEFAULT
 }
 
 func (p *LogsListReq) Read(iprot thrift.TProtocol) (err error) {
@@ -214,6 +231,14 @@ func (p *LogsListReq) Read(iprot thrift.TProtocol) (err error) {
 		case 7:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField7(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 8:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField8(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -322,7 +347,18 @@ func (p *LogsListReq) ReadField7(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.Operators = _field
+	p.Operatorsr = _field
+	return nil
+}
+func (p *LogsListReq) ReadField8(iprot thrift.TProtocol) error {
+
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.Identity = _field
 	return nil
 }
 
@@ -358,6 +394,10 @@ func (p *LogsListReq) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField7(oprot); err != nil {
 			fieldId = 7
+			goto WriteFieldError
+		}
+		if err = p.writeField8(oprot); err != nil {
+			fieldId = 8
 			goto WriteFieldError
 		}
 	}
@@ -493,11 +533,11 @@ WriteFieldEndError:
 }
 
 func (p *LogsListReq) writeField7(oprot thrift.TProtocol) (err error) {
-	if p.IsSetOperators() {
-		if err = oprot.WriteFieldBegin("operators", thrift.STRING, 7); err != nil {
+	if p.IsSetOperatorsr() {
+		if err = oprot.WriteFieldBegin("operatorsr", thrift.STRING, 7); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(p.Operators); err != nil {
+		if err := oprot.WriteString(p.Operatorsr); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -509,6 +549,25 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 7 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 7 end error: ", p), err)
+}
+
+func (p *LogsListReq) writeField8(oprot thrift.TProtocol) (err error) {
+	if p.IsSetIdentity() {
+		if err = oprot.WriteFieldBegin("identity", thrift.I64, 8); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI64(p.Identity); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 end error: ", p), err)
 }
 
 func (p *LogsListReq) String() string {
@@ -529,10 +588,11 @@ type LogsInfo struct {
 	RespContent string `thrift:"respContent,6,optional" form:"respContent" json:"respContent" query:"respContent"`
 	IP          string `thrift:"ip,7,optional" form:"ip" json:"ip" query:"ip"`
 	UserAgent   string `thrift:"userAgent,8,optional" form:"userAgent" json:"userAgent" query:"userAgent"`
-	Operators   string `thrift:"operators,9,optional" form:"operators" json:"operators" query:"operators"`
+	Operatorsr  string `thrift:"operatorsr,9,optional" form:"operatorsr" json:"operatorsr" query:"operatorsr"`
 	Time        int64  `thrift:"time,10,optional" form:"time" json:"time" query:"time"`
 	CreatedAt   string `thrift:"createdAt,11,optional" form:"createdAt" json:"createdAt" query:"createdAt"`
 	UpdatedAt   string `thrift:"updatedAt,12,optional" form:"updatedAt" json:"updatedAt" query:"updatedAt"`
+	Identity    int64  `thrift:"identity,13,optional" form:"identity" json:"identity" query:"identity"`
 	ID          int64  `thrift:"id,251,optional" form:"id" json:"id" query:"id"`
 }
 
@@ -547,10 +607,11 @@ func NewLogsInfo() *LogsInfo {
 		RespContent: "",
 		IP:          "",
 		UserAgent:   "",
-		Operators:   "",
+		Operatorsr:  "",
 		Time:        0,
 		CreatedAt:   "",
 		UpdatedAt:   "",
+		Identity:    0,
 		ID:          0,
 	}
 }
@@ -564,10 +625,11 @@ func (p *LogsInfo) InitDefault() {
 	p.RespContent = ""
 	p.IP = ""
 	p.UserAgent = ""
-	p.Operators = ""
+	p.Operatorsr = ""
 	p.Time = 0
 	p.CreatedAt = ""
 	p.UpdatedAt = ""
+	p.Identity = 0
 	p.ID = 0
 }
 
@@ -643,13 +705,13 @@ func (p *LogsInfo) GetUserAgent() (v string) {
 	return p.UserAgent
 }
 
-var LogsInfo_Operators_DEFAULT string = ""
+var LogsInfo_Operatorsr_DEFAULT string = ""
 
-func (p *LogsInfo) GetOperators() (v string) {
-	if !p.IsSetOperators() {
-		return LogsInfo_Operators_DEFAULT
+func (p *LogsInfo) GetOperatorsr() (v string) {
+	if !p.IsSetOperatorsr() {
+		return LogsInfo_Operatorsr_DEFAULT
 	}
-	return p.Operators
+	return p.Operatorsr
 }
 
 var LogsInfo_Time_DEFAULT int64 = 0
@@ -679,6 +741,15 @@ func (p *LogsInfo) GetUpdatedAt() (v string) {
 	return p.UpdatedAt
 }
 
+var LogsInfo_Identity_DEFAULT int64 = 0
+
+func (p *LogsInfo) GetIdentity() (v int64) {
+	if !p.IsSetIdentity() {
+		return LogsInfo_Identity_DEFAULT
+	}
+	return p.Identity
+}
+
 var LogsInfo_ID_DEFAULT int64 = 0
 
 func (p *LogsInfo) GetID() (v int64) {
@@ -697,10 +768,11 @@ var fieldIDToName_LogsInfo = map[int16]string{
 	6:   "respContent",
 	7:   "ip",
 	8:   "userAgent",
-	9:   "operators",
+	9:   "operatorsr",
 	10:  "time",
 	11:  "createdAt",
 	12:  "updatedAt",
+	13:  "identity",
 	251: "id",
 }
 
@@ -736,8 +808,8 @@ func (p *LogsInfo) IsSetUserAgent() bool {
 	return p.UserAgent != LogsInfo_UserAgent_DEFAULT
 }
 
-func (p *LogsInfo) IsSetOperators() bool {
-	return p.Operators != LogsInfo_Operators_DEFAULT
+func (p *LogsInfo) IsSetOperatorsr() bool {
+	return p.Operatorsr != LogsInfo_Operatorsr_DEFAULT
 }
 
 func (p *LogsInfo) IsSetTime() bool {
@@ -750,6 +822,10 @@ func (p *LogsInfo) IsSetCreatedAt() bool {
 
 func (p *LogsInfo) IsSetUpdatedAt() bool {
 	return p.UpdatedAt != LogsInfo_UpdatedAt_DEFAULT
+}
+
+func (p *LogsInfo) IsSetIdentity() bool {
+	return p.Identity != LogsInfo_Identity_DEFAULT
 }
 
 func (p *LogsInfo) IsSetID() bool {
@@ -866,6 +942,14 @@ func (p *LogsInfo) Read(iprot thrift.TProtocol) (err error) {
 		case 12:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField12(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 13:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField13(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -1004,7 +1088,7 @@ func (p *LogsInfo) ReadField9(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.Operators = _field
+	p.Operatorsr = _field
 	return nil
 }
 func (p *LogsInfo) ReadField10(iprot thrift.TProtocol) error {
@@ -1038,6 +1122,17 @@ func (p *LogsInfo) ReadField12(iprot thrift.TProtocol) error {
 		_field = v
 	}
 	p.UpdatedAt = _field
+	return nil
+}
+func (p *LogsInfo) ReadField13(iprot thrift.TProtocol) error {
+
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.Identity = _field
 	return nil
 }
 func (p *LogsInfo) ReadField251(iprot thrift.TProtocol) error {
@@ -1104,6 +1199,10 @@ func (p *LogsInfo) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField12(oprot); err != nil {
 			fieldId = 12
+			goto WriteFieldError
+		}
+		if err = p.writeField13(oprot); err != nil {
+			fieldId = 13
 			goto WriteFieldError
 		}
 		if err = p.writeField251(oprot); err != nil {
@@ -1281,11 +1380,11 @@ WriteFieldEndError:
 }
 
 func (p *LogsInfo) writeField9(oprot thrift.TProtocol) (err error) {
-	if p.IsSetOperators() {
-		if err = oprot.WriteFieldBegin("operators", thrift.STRING, 9); err != nil {
+	if p.IsSetOperatorsr() {
+		if err = oprot.WriteFieldBegin("operatorsr", thrift.STRING, 9); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(p.Operators); err != nil {
+		if err := oprot.WriteString(p.Operatorsr); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -1354,6 +1453,25 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 12 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 12 end error: ", p), err)
+}
+
+func (p *LogsInfo) writeField13(oprot thrift.TProtocol) (err error) {
+	if p.IsSetIdentity() {
+		if err = oprot.WriteFieldBegin("identity", thrift.I64, 13); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI64(p.Identity); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 13 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 13 end error: ", p), err)
 }
 
 func (p *LogsInfo) writeField251(oprot thrift.TProtocol) (err error) {

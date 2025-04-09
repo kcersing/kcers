@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/token"
 	"kcers/biz/dal/db/mysql/ent/user"
@@ -29,36 +30,38 @@ type User struct {
 	CreatedID int64 `json:"created_id,omitempty"`
 	// 状态[0:禁用;1:正常]
 	Status int64 `json:"status,omitempty"`
+	// mobile number | 手机号
+	Mobile string `json:"mobile,omitempty"`
+	// 姓名
+	Name string `json:"name,omitempty"`
+	// 性别 | [0:女性;1:男性;3:保密]
+	Gender int64 `json:"gender,omitempty"`
 	// user's login name | 登录名
 	Username string `json:"username,omitempty"`
 	// password | 密码
 	Password string `json:"password,omitempty"`
-	// 姓名
-	Name string `json:"name,omitempty"`
+	// functions | 职能
+	Functions []string `json:"functions,omitempty"`
+	// job time | [1:全职;2:兼职;]
+	JobTime int64 `json:"job_time,omitempty"`
+	// 详情
+	Detail string `json:"detail,omitempty"`
 	// template mode | 布局方式
 	SideMode string `json:"side_mode,omitempty"`
 	// base color of template | 后台页面色调
 	BaseColor string `json:"base_color,omitempty"`
 	// active color of template | 当前激活的颜色设定
 	ActiveColor string `json:"active_color,omitempty"`
-	// role id | 角色ID
-	RoleID int64 `json:"role_id,omitempty"`
-	// mobile number | 手机号
-	Mobile string `json:"mobile,omitempty"`
 	// email | 邮箱号
 	Email string `json:"email,omitempty"`
 	// wecom | 微信号
 	Wecom string `json:"wecom,omitempty"`
-	// 职业
-	Job string `json:"job,omitempty"`
 	// 部门
 	Organization string `json:"organization,omitempty"`
 	// 登陆后默认场馆ID
 	DefaultVenueID int64 `json:"default_venue_id,omitempty"`
 	// avatar | 头像路径
 	Avatar string `json:"avatar,omitempty"`
-	// 性别 | [0:女性;1:男性;3:保密]
-	Gender int64 `json:"gender,omitempty"`
 	// 出生日期
 	Birthday time.Time `json:"birthday,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -69,17 +72,32 @@ type User struct {
 
 // UserEdges holds the relations/edges for other nodes in the graph.
 type UserEdges struct {
+	// UserFace holds the value of the user_face edge.
+	UserFace []*Face `json:"user_face,omitempty"`
 	// Token holds the value of the token edge.
 	Token *Token `json:"token,omitempty"`
+	// Tags holds the value of the tags edge.
+	Tags []*DictionaryDetail `json:"tags,omitempty"`
 	// CreatedOrders holds the value of the created_orders edge.
 	CreatedOrders []*Order `json:"created_orders,omitempty"`
 	// UserEntry holds the value of the user_entry edge.
 	UserEntry []*EntryLogs `json:"user_entry,omitempty"`
-	// UserFace holds the value of the user_face edge.
-	UserFace []*Face `json:"user_face,omitempty"`
+	// Venues holds the value of the venues edge.
+	Venues []*Venue `json:"venues,omitempty"`
+	// Roles holds the value of the roles edge.
+	Roles []*Role `json:"roles,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [7]bool
+}
+
+// UserFaceOrErr returns the UserFace value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) UserFaceOrErr() ([]*Face, error) {
+	if e.loadedTypes[0] {
+		return e.UserFace, nil
+	}
+	return nil, &NotLoadedError{edge: "user_face"}
 }
 
 // TokenOrErr returns the Token value or an error if the edge
@@ -87,16 +105,25 @@ type UserEdges struct {
 func (e UserEdges) TokenOrErr() (*Token, error) {
 	if e.Token != nil {
 		return e.Token, nil
-	} else if e.loadedTypes[0] {
+	} else if e.loadedTypes[1] {
 		return nil, &NotFoundError{label: token.Label}
 	}
 	return nil, &NotLoadedError{edge: "token"}
 }
 
+// TagsOrErr returns the Tags value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) TagsOrErr() ([]*DictionaryDetail, error) {
+	if e.loadedTypes[2] {
+		return e.Tags, nil
+	}
+	return nil, &NotLoadedError{edge: "tags"}
+}
+
 // CreatedOrdersOrErr returns the CreatedOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) CreatedOrdersOrErr() ([]*Order, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[3] {
 		return e.CreatedOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "created_orders"}
@@ -105,19 +132,28 @@ func (e UserEdges) CreatedOrdersOrErr() ([]*Order, error) {
 // UserEntryOrErr returns the UserEntry value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) UserEntryOrErr() ([]*EntryLogs, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[4] {
 		return e.UserEntry, nil
 	}
 	return nil, &NotLoadedError{edge: "user_entry"}
 }
 
-// UserFaceOrErr returns the UserFace value or an error if the edge
+// VenuesOrErr returns the Venues value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) UserFaceOrErr() ([]*Face, error) {
-	if e.loadedTypes[3] {
-		return e.UserFace, nil
+func (e UserEdges) VenuesOrErr() ([]*Venue, error) {
+	if e.loadedTypes[5] {
+		return e.Venues, nil
 	}
-	return nil, &NotLoadedError{edge: "user_face"}
+	return nil, &NotLoadedError{edge: "venues"}
+}
+
+// RolesOrErr returns the Roles value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) RolesOrErr() ([]*Role, error) {
+	if e.loadedTypes[6] {
+		return e.Roles, nil
+	}
+	return nil, &NotLoadedError{edge: "roles"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -125,9 +161,11 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldID, user.FieldDelete, user.FieldCreatedID, user.FieldStatus, user.FieldRoleID, user.FieldDefaultVenueID, user.FieldGender:
+		case user.FieldFunctions:
+			values[i] = new([]byte)
+		case user.FieldID, user.FieldDelete, user.FieldCreatedID, user.FieldStatus, user.FieldGender, user.FieldJobTime, user.FieldDefaultVenueID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldUsername, user.FieldPassword, user.FieldName, user.FieldSideMode, user.FieldBaseColor, user.FieldActiveColor, user.FieldMobile, user.FieldEmail, user.FieldWecom, user.FieldJob, user.FieldOrganization, user.FieldAvatar:
+		case user.FieldMobile, user.FieldName, user.FieldUsername, user.FieldPassword, user.FieldDetail, user.FieldSideMode, user.FieldBaseColor, user.FieldActiveColor, user.FieldEmail, user.FieldWecom, user.FieldOrganization, user.FieldAvatar:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldBirthday:
 			values[i] = new(sql.NullTime)
@@ -182,6 +220,24 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.Status = value.Int64
 			}
+		case user.FieldMobile:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mobile", values[i])
+			} else if value.Valid {
+				u.Mobile = value.String
+			}
+		case user.FieldName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field name", values[i])
+			} else if value.Valid {
+				u.Name = value.String
+			}
+		case user.FieldGender:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field gender", values[i])
+			} else if value.Valid {
+				u.Gender = value.Int64
+			}
 		case user.FieldUsername:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field username", values[i])
@@ -194,11 +250,25 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.Password = value.String
 			}
-		case user.FieldName:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field name", values[i])
+		case user.FieldFunctions:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field functions", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &u.Functions); err != nil {
+					return fmt.Errorf("unmarshal field functions: %w", err)
+				}
+			}
+		case user.FieldJobTime:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field job_time", values[i])
 			} else if value.Valid {
-				u.Name = value.String
+				u.JobTime = value.Int64
+			}
+		case user.FieldDetail:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field detail", values[i])
+			} else if value.Valid {
+				u.Detail = value.String
 			}
 		case user.FieldSideMode:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -218,18 +288,6 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.ActiveColor = value.String
 			}
-		case user.FieldRoleID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field role_id", values[i])
-			} else if value.Valid {
-				u.RoleID = value.Int64
-			}
-		case user.FieldMobile:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field mobile", values[i])
-			} else if value.Valid {
-				u.Mobile = value.String
-			}
 		case user.FieldEmail:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field email", values[i])
@@ -241,12 +299,6 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field wecom", values[i])
 			} else if value.Valid {
 				u.Wecom = value.String
-			}
-		case user.FieldJob:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field job", values[i])
-			} else if value.Valid {
-				u.Job = value.String
 			}
 		case user.FieldOrganization:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -265,12 +317,6 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field avatar", values[i])
 			} else if value.Valid {
 				u.Avatar = value.String
-			}
-		case user.FieldGender:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field gender", values[i])
-			} else if value.Valid {
-				u.Gender = value.Int64
 			}
 		case user.FieldBirthday:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -291,9 +337,19 @@ func (u *User) Value(name string) (ent.Value, error) {
 	return u.selectValues.Get(name)
 }
 
+// QueryUserFace queries the "user_face" edge of the User entity.
+func (u *User) QueryUserFace() *FaceQuery {
+	return NewUserClient(u.config).QueryUserFace(u)
+}
+
 // QueryToken queries the "token" edge of the User entity.
 func (u *User) QueryToken() *TokenQuery {
 	return NewUserClient(u.config).QueryToken(u)
+}
+
+// QueryTags queries the "tags" edge of the User entity.
+func (u *User) QueryTags() *DictionaryDetailQuery {
+	return NewUserClient(u.config).QueryTags(u)
 }
 
 // QueryCreatedOrders queries the "created_orders" edge of the User entity.
@@ -306,9 +362,14 @@ func (u *User) QueryUserEntry() *EntryLogsQuery {
 	return NewUserClient(u.config).QueryUserEntry(u)
 }
 
-// QueryUserFace queries the "user_face" edge of the User entity.
-func (u *User) QueryUserFace() *FaceQuery {
-	return NewUserClient(u.config).QueryUserFace(u)
+// QueryVenues queries the "venues" edge of the User entity.
+func (u *User) QueryVenues() *VenueQuery {
+	return NewUserClient(u.config).QueryVenues(u)
+}
+
+// QueryRoles queries the "roles" edge of the User entity.
+func (u *User) QueryRoles() *RoleQuery {
+	return NewUserClient(u.config).QueryRoles(u)
 }
 
 // Update returns a builder for updating this User.
@@ -349,14 +410,29 @@ func (u *User) String() string {
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", u.Status))
 	builder.WriteString(", ")
+	builder.WriteString("mobile=")
+	builder.WriteString(u.Mobile)
+	builder.WriteString(", ")
+	builder.WriteString("name=")
+	builder.WriteString(u.Name)
+	builder.WriteString(", ")
+	builder.WriteString("gender=")
+	builder.WriteString(fmt.Sprintf("%v", u.Gender))
+	builder.WriteString(", ")
 	builder.WriteString("username=")
 	builder.WriteString(u.Username)
 	builder.WriteString(", ")
 	builder.WriteString("password=")
 	builder.WriteString(u.Password)
 	builder.WriteString(", ")
-	builder.WriteString("name=")
-	builder.WriteString(u.Name)
+	builder.WriteString("functions=")
+	builder.WriteString(fmt.Sprintf("%v", u.Functions))
+	builder.WriteString(", ")
+	builder.WriteString("job_time=")
+	builder.WriteString(fmt.Sprintf("%v", u.JobTime))
+	builder.WriteString(", ")
+	builder.WriteString("detail=")
+	builder.WriteString(u.Detail)
 	builder.WriteString(", ")
 	builder.WriteString("side_mode=")
 	builder.WriteString(u.SideMode)
@@ -367,20 +443,11 @@ func (u *User) String() string {
 	builder.WriteString("active_color=")
 	builder.WriteString(u.ActiveColor)
 	builder.WriteString(", ")
-	builder.WriteString("role_id=")
-	builder.WriteString(fmt.Sprintf("%v", u.RoleID))
-	builder.WriteString(", ")
-	builder.WriteString("mobile=")
-	builder.WriteString(u.Mobile)
-	builder.WriteString(", ")
 	builder.WriteString("email=")
 	builder.WriteString(u.Email)
 	builder.WriteString(", ")
 	builder.WriteString("wecom=")
 	builder.WriteString(u.Wecom)
-	builder.WriteString(", ")
-	builder.WriteString("job=")
-	builder.WriteString(u.Job)
 	builder.WriteString(", ")
 	builder.WriteString("organization=")
 	builder.WriteString(u.Organization)
@@ -390,9 +457,6 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("avatar=")
 	builder.WriteString(u.Avatar)
-	builder.WriteString(", ")
-	builder.WriteString("gender=")
-	builder.WriteString(fmt.Sprintf("%v", u.Gender))
 	builder.WriteString(", ")
 	builder.WriteString("birthday=")
 	builder.WriteString(u.Birthday.Format(time.ANSIC))

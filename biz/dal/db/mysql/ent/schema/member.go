@@ -41,6 +41,8 @@ func (Member) Mixin() []ent.Mixin {
 
 func (Member) Edges() []ent.Edge {
 	return []ent.Edge{
+		edge.To("token", MemberToken.Type).Unique(),
+
 		edge.To("member_profile", MemberProfile.Type),
 		edge.To("member_details", MemberDetails.Type),
 		edge.To("member_notes", MemberNote.Type),

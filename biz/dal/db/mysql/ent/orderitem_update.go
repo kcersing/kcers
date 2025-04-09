@@ -6,9 +6,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/orderitem"
 	"kcers/biz/dal/db/mysql/ent/predicate"
+	"kcers/idl_gen/model/order"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -116,6 +117,53 @@ func (oiu *OrderItemUpdate) ClearOrderID() *OrderItemUpdate {
 	return oiu
 }
 
+// SetNumber sets the "number" field.
+func (oiu *OrderItemUpdate) SetNumber(i int64) *OrderItemUpdate {
+	oiu.mutation.ResetNumber()
+	oiu.mutation.SetNumber(i)
+	return oiu
+}
+
+// SetNillableNumber sets the "number" field if the given value is not nil.
+func (oiu *OrderItemUpdate) SetNillableNumber(i *int64) *OrderItemUpdate {
+	if i != nil {
+		oiu.SetNumber(*i)
+	}
+	return oiu
+}
+
+// AddNumber adds i to the "number" field.
+func (oiu *OrderItemUpdate) AddNumber(i int64) *OrderItemUpdate {
+	oiu.mutation.AddNumber(i)
+	return oiu
+}
+
+// ClearNumber clears the value of the "number" field.
+func (oiu *OrderItemUpdate) ClearNumber() *OrderItemUpdate {
+	oiu.mutation.ClearNumber()
+	return oiu
+}
+
+// SetName sets the "name" field.
+func (oiu *OrderItemUpdate) SetName(s string) *OrderItemUpdate {
+	oiu.mutation.SetName(s)
+	return oiu
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (oiu *OrderItemUpdate) SetNillableName(s *string) *OrderItemUpdate {
+	if s != nil {
+		oiu.SetName(*s)
+	}
+	return oiu
+}
+
+// ClearName clears the value of the "name" field.
+func (oiu *OrderItemUpdate) ClearName() *OrderItemUpdate {
+	oiu.mutation.ClearName()
+	return oiu
+}
+
 // SetProductID sets the "product_id" field.
 func (oiu *OrderItemUpdate) SetProductID(i int64) *OrderItemUpdate {
 	oiu.mutation.ResetProductID()
@@ -167,6 +215,26 @@ func (oiu *OrderItemUpdate) AddRelatedUserProductID(i int64) *OrderItemUpdate {
 // ClearRelatedUserProductID clears the value of the "related_user_product_id" field.
 func (oiu *OrderItemUpdate) ClearRelatedUserProductID() *OrderItemUpdate {
 	oiu.mutation.ClearRelatedUserProductID()
+	return oiu
+}
+
+// SetData sets the "data" field.
+func (oiu *OrderItemUpdate) SetData(or order.BuyReq) *OrderItemUpdate {
+	oiu.mutation.SetData(or)
+	return oiu
+}
+
+// SetNillableData sets the "data" field if the given value is not nil.
+func (oiu *OrderItemUpdate) SetNillableData(or *order.BuyReq) *OrderItemUpdate {
+	if or != nil {
+		oiu.SetData(*or)
+	}
+	return oiu
+}
+
+// ClearData clears the value of the "data" field.
+func (oiu *OrderItemUpdate) ClearData() *OrderItemUpdate {
+	oiu.mutation.ClearData()
 	return oiu
 }
 
@@ -264,6 +332,21 @@ func (oiu *OrderItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if oiu.mutation.CreatedIDCleared() {
 		_spec.ClearField(orderitem.FieldCreatedID, field.TypeInt64)
 	}
+	if value, ok := oiu.mutation.Number(); ok {
+		_spec.SetField(orderitem.FieldNumber, field.TypeInt64, value)
+	}
+	if value, ok := oiu.mutation.AddedNumber(); ok {
+		_spec.AddField(orderitem.FieldNumber, field.TypeInt64, value)
+	}
+	if oiu.mutation.NumberCleared() {
+		_spec.ClearField(orderitem.FieldNumber, field.TypeInt64)
+	}
+	if value, ok := oiu.mutation.Name(); ok {
+		_spec.SetField(orderitem.FieldName, field.TypeString, value)
+	}
+	if oiu.mutation.NameCleared() {
+		_spec.ClearField(orderitem.FieldName, field.TypeString)
+	}
 	if value, ok := oiu.mutation.ProductID(); ok {
 		_spec.SetField(orderitem.FieldProductID, field.TypeInt64, value)
 	}
@@ -282,6 +365,12 @@ func (oiu *OrderItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if oiu.mutation.RelatedUserProductIDCleared() {
 		_spec.ClearField(orderitem.FieldRelatedUserProductID, field.TypeInt64)
 	}
+	if value, ok := oiu.mutation.Data(); ok {
+		_spec.SetField(orderitem.FieldData, field.TypeJSON, value)
+	}
+	if oiu.mutation.DataCleared() {
+		_spec.ClearField(orderitem.FieldData, field.TypeJSON)
+	}
 	if oiu.mutation.OrderCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -290,7 +379,7 @@ func (oiu *OrderItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{orderitem.OrderColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -303,7 +392,7 @@ func (oiu *OrderItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{orderitem.OrderColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -419,6 +508,53 @@ func (oiuo *OrderItemUpdateOne) ClearOrderID() *OrderItemUpdateOne {
 	return oiuo
 }
 
+// SetNumber sets the "number" field.
+func (oiuo *OrderItemUpdateOne) SetNumber(i int64) *OrderItemUpdateOne {
+	oiuo.mutation.ResetNumber()
+	oiuo.mutation.SetNumber(i)
+	return oiuo
+}
+
+// SetNillableNumber sets the "number" field if the given value is not nil.
+func (oiuo *OrderItemUpdateOne) SetNillableNumber(i *int64) *OrderItemUpdateOne {
+	if i != nil {
+		oiuo.SetNumber(*i)
+	}
+	return oiuo
+}
+
+// AddNumber adds i to the "number" field.
+func (oiuo *OrderItemUpdateOne) AddNumber(i int64) *OrderItemUpdateOne {
+	oiuo.mutation.AddNumber(i)
+	return oiuo
+}
+
+// ClearNumber clears the value of the "number" field.
+func (oiuo *OrderItemUpdateOne) ClearNumber() *OrderItemUpdateOne {
+	oiuo.mutation.ClearNumber()
+	return oiuo
+}
+
+// SetName sets the "name" field.
+func (oiuo *OrderItemUpdateOne) SetName(s string) *OrderItemUpdateOne {
+	oiuo.mutation.SetName(s)
+	return oiuo
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (oiuo *OrderItemUpdateOne) SetNillableName(s *string) *OrderItemUpdateOne {
+	if s != nil {
+		oiuo.SetName(*s)
+	}
+	return oiuo
+}
+
+// ClearName clears the value of the "name" field.
+func (oiuo *OrderItemUpdateOne) ClearName() *OrderItemUpdateOne {
+	oiuo.mutation.ClearName()
+	return oiuo
+}
+
 // SetProductID sets the "product_id" field.
 func (oiuo *OrderItemUpdateOne) SetProductID(i int64) *OrderItemUpdateOne {
 	oiuo.mutation.ResetProductID()
@@ -470,6 +606,26 @@ func (oiuo *OrderItemUpdateOne) AddRelatedUserProductID(i int64) *OrderItemUpdat
 // ClearRelatedUserProductID clears the value of the "related_user_product_id" field.
 func (oiuo *OrderItemUpdateOne) ClearRelatedUserProductID() *OrderItemUpdateOne {
 	oiuo.mutation.ClearRelatedUserProductID()
+	return oiuo
+}
+
+// SetData sets the "data" field.
+func (oiuo *OrderItemUpdateOne) SetData(or order.BuyReq) *OrderItemUpdateOne {
+	oiuo.mutation.SetData(or)
+	return oiuo
+}
+
+// SetNillableData sets the "data" field if the given value is not nil.
+func (oiuo *OrderItemUpdateOne) SetNillableData(or *order.BuyReq) *OrderItemUpdateOne {
+	if or != nil {
+		oiuo.SetData(*or)
+	}
+	return oiuo
+}
+
+// ClearData clears the value of the "data" field.
+func (oiuo *OrderItemUpdateOne) ClearData() *OrderItemUpdateOne {
+	oiuo.mutation.ClearData()
 	return oiuo
 }
 
@@ -597,6 +753,21 @@ func (oiuo *OrderItemUpdateOne) sqlSave(ctx context.Context) (_node *OrderItem, 
 	if oiuo.mutation.CreatedIDCleared() {
 		_spec.ClearField(orderitem.FieldCreatedID, field.TypeInt64)
 	}
+	if value, ok := oiuo.mutation.Number(); ok {
+		_spec.SetField(orderitem.FieldNumber, field.TypeInt64, value)
+	}
+	if value, ok := oiuo.mutation.AddedNumber(); ok {
+		_spec.AddField(orderitem.FieldNumber, field.TypeInt64, value)
+	}
+	if oiuo.mutation.NumberCleared() {
+		_spec.ClearField(orderitem.FieldNumber, field.TypeInt64)
+	}
+	if value, ok := oiuo.mutation.Name(); ok {
+		_spec.SetField(orderitem.FieldName, field.TypeString, value)
+	}
+	if oiuo.mutation.NameCleared() {
+		_spec.ClearField(orderitem.FieldName, field.TypeString)
+	}
 	if value, ok := oiuo.mutation.ProductID(); ok {
 		_spec.SetField(orderitem.FieldProductID, field.TypeInt64, value)
 	}
@@ -615,6 +786,12 @@ func (oiuo *OrderItemUpdateOne) sqlSave(ctx context.Context) (_node *OrderItem, 
 	if oiuo.mutation.RelatedUserProductIDCleared() {
 		_spec.ClearField(orderitem.FieldRelatedUserProductID, field.TypeInt64)
 	}
+	if value, ok := oiuo.mutation.Data(); ok {
+		_spec.SetField(orderitem.FieldData, field.TypeJSON, value)
+	}
+	if oiuo.mutation.DataCleared() {
+		_spec.ClearField(orderitem.FieldData, field.TypeJSON)
+	}
 	if oiuo.mutation.OrderCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -623,7 +800,7 @@ func (oiuo *OrderItemUpdateOne) sqlSave(ctx context.Context) (_node *OrderItem, 
 			Columns: []string{orderitem.OrderColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -636,7 +813,7 @@ func (oiuo *OrderItemUpdateOne) sqlSave(ctx context.Context) (_node *OrderItem, 
 			Columns: []string{orderitem.OrderColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

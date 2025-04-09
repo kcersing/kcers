@@ -8,10 +8,12 @@ import (
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	"kcers/biz/dal/db/mysql/ent/product"
 	"kcers/biz/dal/db/mysql/ent/productproperty"
+	"kcers/biz/dal/db/mysql/ent/role"
+	"kcers/biz/dal/db/mysql/ent/user"
 	"kcers/biz/dal/db/mysql/ent/venue"
 	"kcers/biz/dal/db/mysql/ent/venueplace"
 	"time"
@@ -418,6 +420,36 @@ func (vu *VenueUpdate) AddProducts(p ...*Product) *VenueUpdate {
 	return vu.AddProductIDs(ids...)
 }
 
+// AddUserIDs adds the "users" edge to the User entity by IDs.
+func (vu *VenueUpdate) AddUserIDs(ids ...int64) *VenueUpdate {
+	vu.mutation.AddUserIDs(ids...)
+	return vu
+}
+
+// AddUsers adds the "users" edges to the User entity.
+func (vu *VenueUpdate) AddUsers(u ...*User) *VenueUpdate {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return vu.AddUserIDs(ids...)
+}
+
+// AddRoleIDs adds the "roles" edge to the Role entity by IDs.
+func (vu *VenueUpdate) AddRoleIDs(ids ...int64) *VenueUpdate {
+	vu.mutation.AddRoleIDs(ids...)
+	return vu
+}
+
+// AddRoles adds the "roles" edges to the Role entity.
+func (vu *VenueUpdate) AddRoles(r ...*Role) *VenueUpdate {
+	ids := make([]int64, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return vu.AddRoleIDs(ids...)
+}
+
 // Mutation returns the VenueMutation object of the builder.
 func (vu *VenueUpdate) Mutation() *VenueMutation {
 	return vu.mutation
@@ -547,6 +579,48 @@ func (vu *VenueUpdate) RemoveProducts(p ...*Product) *VenueUpdate {
 		ids[i] = p[i].ID
 	}
 	return vu.RemoveProductIDs(ids...)
+}
+
+// ClearUsers clears all "users" edges to the User entity.
+func (vu *VenueUpdate) ClearUsers() *VenueUpdate {
+	vu.mutation.ClearUsers()
+	return vu
+}
+
+// RemoveUserIDs removes the "users" edge to User entities by IDs.
+func (vu *VenueUpdate) RemoveUserIDs(ids ...int64) *VenueUpdate {
+	vu.mutation.RemoveUserIDs(ids...)
+	return vu
+}
+
+// RemoveUsers removes "users" edges to User entities.
+func (vu *VenueUpdate) RemoveUsers(u ...*User) *VenueUpdate {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return vu.RemoveUserIDs(ids...)
+}
+
+// ClearRoles clears all "roles" edges to the Role entity.
+func (vu *VenueUpdate) ClearRoles() *VenueUpdate {
+	vu.mutation.ClearRoles()
+	return vu
+}
+
+// RemoveRoleIDs removes the "roles" edge to Role entities by IDs.
+func (vu *VenueUpdate) RemoveRoleIDs(ids ...int64) *VenueUpdate {
+	vu.mutation.RemoveRoleIDs(ids...)
+	return vu
+}
+
+// RemoveRoles removes "roles" edges to Role entities.
+func (vu *VenueUpdate) RemoveRoles(r ...*Role) *VenueUpdate {
+	ids := make([]int64, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return vu.RemoveRoleIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -749,7 +823,7 @@ func (vu *VenueUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{venue.VenueOrdersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -762,7 +836,7 @@ func (vu *VenueUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{venue.VenueOrdersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -778,7 +852,7 @@ func (vu *VenueUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{venue.VenueOrdersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -959,6 +1033,96 @@ func (vu *VenueUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(product.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if vu.mutation.UsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   venue.UsersTable,
+			Columns: venue.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vu.mutation.RemovedUsersIDs(); len(nodes) > 0 && !vu.mutation.UsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   venue.UsersTable,
+			Columns: venue.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vu.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   venue.UsersTable,
+			Columns: venue.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if vu.mutation.RolesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   venue.RolesTable,
+			Columns: venue.RolesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vu.mutation.RemovedRolesIDs(); len(nodes) > 0 && !vu.mutation.RolesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   venue.RolesTable,
+			Columns: venue.RolesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vu.mutation.RolesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   venue.RolesTable,
+			Columns: venue.RolesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1371,6 +1535,36 @@ func (vuo *VenueUpdateOne) AddProducts(p ...*Product) *VenueUpdateOne {
 	return vuo.AddProductIDs(ids...)
 }
 
+// AddUserIDs adds the "users" edge to the User entity by IDs.
+func (vuo *VenueUpdateOne) AddUserIDs(ids ...int64) *VenueUpdateOne {
+	vuo.mutation.AddUserIDs(ids...)
+	return vuo
+}
+
+// AddUsers adds the "users" edges to the User entity.
+func (vuo *VenueUpdateOne) AddUsers(u ...*User) *VenueUpdateOne {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return vuo.AddUserIDs(ids...)
+}
+
+// AddRoleIDs adds the "roles" edge to the Role entity by IDs.
+func (vuo *VenueUpdateOne) AddRoleIDs(ids ...int64) *VenueUpdateOne {
+	vuo.mutation.AddRoleIDs(ids...)
+	return vuo
+}
+
+// AddRoles adds the "roles" edges to the Role entity.
+func (vuo *VenueUpdateOne) AddRoles(r ...*Role) *VenueUpdateOne {
+	ids := make([]int64, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return vuo.AddRoleIDs(ids...)
+}
+
 // Mutation returns the VenueMutation object of the builder.
 func (vuo *VenueUpdateOne) Mutation() *VenueMutation {
 	return vuo.mutation
@@ -1500,6 +1694,48 @@ func (vuo *VenueUpdateOne) RemoveProducts(p ...*Product) *VenueUpdateOne {
 		ids[i] = p[i].ID
 	}
 	return vuo.RemoveProductIDs(ids...)
+}
+
+// ClearUsers clears all "users" edges to the User entity.
+func (vuo *VenueUpdateOne) ClearUsers() *VenueUpdateOne {
+	vuo.mutation.ClearUsers()
+	return vuo
+}
+
+// RemoveUserIDs removes the "users" edge to User entities by IDs.
+func (vuo *VenueUpdateOne) RemoveUserIDs(ids ...int64) *VenueUpdateOne {
+	vuo.mutation.RemoveUserIDs(ids...)
+	return vuo
+}
+
+// RemoveUsers removes "users" edges to User entities.
+func (vuo *VenueUpdateOne) RemoveUsers(u ...*User) *VenueUpdateOne {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return vuo.RemoveUserIDs(ids...)
+}
+
+// ClearRoles clears all "roles" edges to the Role entity.
+func (vuo *VenueUpdateOne) ClearRoles() *VenueUpdateOne {
+	vuo.mutation.ClearRoles()
+	return vuo
+}
+
+// RemoveRoleIDs removes the "roles" edge to Role entities by IDs.
+func (vuo *VenueUpdateOne) RemoveRoleIDs(ids ...int64) *VenueUpdateOne {
+	vuo.mutation.RemoveRoleIDs(ids...)
+	return vuo
+}
+
+// RemoveRoles removes "roles" edges to Role entities.
+func (vuo *VenueUpdateOne) RemoveRoles(r ...*Role) *VenueUpdateOne {
+	ids := make([]int64, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return vuo.RemoveRoleIDs(ids...)
 }
 
 // Where appends a list predicates to the VenueUpdate builder.
@@ -1732,7 +1968,7 @@ func (vuo *VenueUpdateOne) sqlSave(ctx context.Context) (_node *Venue, err error
 			Columns: []string{venue.VenueOrdersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1745,7 +1981,7 @@ func (vuo *VenueUpdateOne) sqlSave(ctx context.Context) (_node *Venue, err error
 			Columns: []string{venue.VenueOrdersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1761,7 +1997,7 @@ func (vuo *VenueUpdateOne) sqlSave(ctx context.Context) (_node *Venue, err error
 			Columns: []string{venue.VenueOrdersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(entorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1942,6 +2178,96 @@ func (vuo *VenueUpdateOne) sqlSave(ctx context.Context) (_node *Venue, err error
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(product.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if vuo.mutation.UsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   venue.UsersTable,
+			Columns: venue.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vuo.mutation.RemovedUsersIDs(); len(nodes) > 0 && !vuo.mutation.UsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   venue.UsersTable,
+			Columns: venue.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vuo.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   venue.UsersTable,
+			Columns: venue.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if vuo.mutation.RolesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   venue.RolesTable,
+			Columns: venue.RolesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vuo.mutation.RemovedRolesIDs(); len(nodes) > 0 && !vuo.mutation.RolesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   venue.RolesTable,
+			Columns: venue.RolesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vuo.mutation.RolesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   venue.RolesTable,
+			Columns: venue.RolesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

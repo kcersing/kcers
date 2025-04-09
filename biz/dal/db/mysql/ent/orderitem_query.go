@@ -5,7 +5,7 @@ package ent
 import (
 	"context"
 	"fmt"
-	"kcers/biz/dal/db/mysql/ent/order"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/orderitem"
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	"math"
@@ -74,7 +74,7 @@ func (oiq *OrderItemQuery) QueryOrder() *OrderQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(orderitem.Table, orderitem.FieldID, selector),
-			sqlgraph.To(order.Table, order.FieldID),
+			sqlgraph.To(entorder.Table, entorder.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, orderitem.OrderTable, orderitem.OrderColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(oiq.driver.Dialect(), step)
@@ -419,7 +419,7 @@ func (oiq *OrderItemQuery) loadOrder(ctx context.Context, query *OrderQuery, nod
 	if len(ids) == 0 {
 		return nil
 	}
-	query.Where(order.IDIn(ids...))
+	query.Where(entorder.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err

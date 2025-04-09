@@ -34,8 +34,6 @@ const (
 	FieldPrice = "price"
 	// FieldStock holds the string denoting the stock field in the database.
 	FieldStock = "stock"
-	// FieldCreateID holds the string denoting the create_id field in the database.
-	FieldCreateID = "create_id"
 	// FieldIsSales holds the string denoting the is_sales field in the database.
 	FieldIsSales = "is_sales"
 	// FieldSignSalesAt holds the string denoting the sign_sales_at field in the database.
@@ -73,7 +71,6 @@ var Columns = []string{
 	FieldDescription,
 	FieldPrice,
 	FieldStock,
-	FieldCreateID,
 	FieldIsSales,
 	FieldSignSalesAt,
 	FieldEndSalesAt,
@@ -169,11 +166,6 @@ func ByPrice(opts ...sql.OrderTermOption) OrderOption {
 // ByStock orders the results by the stock field.
 func ByStock(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStock, opts...).ToFunc()
-}
-
-// ByCreateID orders the results by the create_id field.
-func ByCreateID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCreateID, opts...).ToFunc()
 }
 
 // BySignSalesAt orders the results by the sign_sales_at field.

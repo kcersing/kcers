@@ -12,9 +12,12 @@ import (
 	"kcers/biz/dal/config"
 	db "kcers/biz/dal/db/mysql"
 	"kcers/biz/dal/db/mysql/ent"
-	"kcers/biz/dal/db/mysql/ent/order"
+	order2 "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	"kcers/biz/infras/do"
+	"kcers/biz/infras/service/product"
+	"kcers/biz/infras/service/user"
+	"kcers/idl_gen/model/order"
 	"time"
 )
 
@@ -26,9 +29,9 @@ type Order struct {
 	cache *ristretto.Cache
 }
 
-func (o *Order) Update(req do.OrderInfo) error {
+func (o *Order) Update(req *order.OrderInfo) error {
 	_, err := o.db.Order.Update().
-		Where(order.IDEQ(req.ID)).
+		Where(order2.IDEQ(req.ID)).
 		SetVenueID(req.VenueId).
 		//SetSource(req.Source).
 		//SetDevice(req.Device).
@@ -41,10 +44,10 @@ func (o *Order) Update(req do.OrderInfo) error {
 	return nil
 }
 
-func (o *Order) List(req do.OrderListReq) (resp []*do.OrderInfo, total int, err error) {
+func (o *Order) List(req *order.ListOrderReq) (resp []*order.OrderInfo, total int, err error) {
 	var predicates []predicate.Order
 	if req.OrderSn != "" {
-		predicates = append(predicates, order.OrderSnEQ(req.OrderSn))
+		predicates = append(predicates, order2.OrderSnEQ(req.OrderSn))
 	}
 	lists, err := o.db.Order.Query().Where(predicates...).
 		Offset(int(req.Page-1) * int(req.PageSize)).
@@ -64,7 +67,7 @@ func (o *Order) List(req do.OrderListReq) (resp []*do.OrderInfo, total int, err 
 		ven, _ := v.QueryOrderVenues().First(o.ctx)
 		resp[i].VenueName = ven.Name
 		amount, _ := v.QueryAmount().First(o.ctx)
-		var amo do.OrderAmount
+		var amo *order.OrderAmount
 		err = copier.Copy(&amo, &amount)
 		if err != nil {
 			err = errors.Wrap(err, "copy Order info failed")
@@ -72,14 +75,14 @@ func (o *Order) List(req do.OrderListReq) (resp []*do.OrderInfo, total int, err 
 		}
 		resp[i].OrderAmount = amo
 		item, _ := v.QueryItem().First(o.ctx)
-		var ite do.OrderItem
+		var ite *order.OrderItem
 		err = copier.Copy(&ite, &item)
 		if err != nil {
 			err = errors.Wrap(err, "copy Order info failed")
 			return resp, 0, err
 		}
 		resp[i].OrderItem = ite
-		itemProductInfo, err := NewProduct(o.ctx, o.c).Info(ite.ProductId)
+		itemProductInfo, err := product.NewProduct(o.ctx, o.c).Info(ite.ProductId)
 		if err == nil {
 			resp[i].OrderItem.ProductName = itemProductInfo.Name
 		} else {
@@ -91,7 +94,7 @@ func (o *Order) List(req do.OrderListReq) (resp []*do.OrderInfo, total int, err 
 		resp[i].CreateName = cre.Nickname
 
 		sales, _ := v.QuerySales().All(o.ctx)
-		var sale []do.OrderSales
+		var sale []*order.OrderSales
 		err = copier.Copy(&sale, &sales)
 		if err != nil {
 			err = errors.Wrap(err, "copy Order Sales failed")
@@ -99,9 +102,9 @@ func (o *Order) List(req do.OrderListReq) (resp []*do.OrderInfo, total int, err 
 		}
 		resp[i].OrderSales = sale
 		for i2, orderSale := range resp[i].OrderSales {
-			info, err := admin.NewUser(o.ctx, o.c).Info(orderSale.SalesId)
+			info, err := user.NewUser(o.ctx, o.c).Info(orderSale.SalesId)
 			if err == nil {
-				resp[i].OrderSales[i2].SalesName = info.Nickname
+				resp[i].OrderSales[i2].SalesName = info.Name
 			} else {
 				hlog.Error(err)
 			}
@@ -121,23 +124,23 @@ func (o *Order) UpdateStatus(id int64, status int64) error {
 	return err
 }
 
-func (o *Order) Info(id int64) (info *do.OrderInfo, err error) {
+func (o *Order) Info(id int64) (info *order.OrderInfo, err error) {
 	ret, err := o.db.Order.Query().
-		Where(order.IDEQ(id)).
+		Where(order2.IDEQ(id)).
 		Limit(1).
 		First(o.ctx)
 	if err != nil {
 		klog.Error(err)
 		return nil, err
 	}
-	info = &do.OrderInfo{
+	info = &*order.OrderInfo{
 		ID: ret.ID,
 	}
 	return
 }
-func (o *Order) GetBySnOrder(sn string) (info *do.OrderInfo, err error) {
+func (o *Order) GetBySnOrder(sn string) (info *order.OrderInfo, err error) {
 	ret, err := o.db.Order.Query().
-		Where(order.OrderSnEQ(sn)).
+		Where(order2.OrderSnEQ(sn)).
 		Limit(1).
 		All(o.ctx)
 	if err != nil {
@@ -148,7 +151,7 @@ func (o *Order) GetBySnOrder(sn string) (info *do.OrderInfo, err error) {
 		return nil, errors.New("OrdersNoFound")
 	}
 	row := ret[0]
-	info = &do.OrderInfo{
+	info = &order.OrderInfo{
 		ID: row.ID,
 	}
 	return

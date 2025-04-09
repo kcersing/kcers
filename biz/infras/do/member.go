@@ -3,6 +3,8 @@ package do
 import "kcers/idl_gen/model/member"
 
 type Member interface {
+	Login(req *member.LoginReq) (resp *member.MemberInfo, err error)
+
 	Create(req *member.CreateOrUpdateMemberReq) error
 	Update(req *member.CreateOrUpdateMemberReq) error
 	Delete(id int64) error

@@ -54,6 +54,9 @@ type MemberProductProperty func(*sql.Selector)
 // MemberProfile is the predicate function for memberprofile builders.
 type MemberProfile func(*sql.Selector)
 
+// MemberToken is the predicate function for membertoken builders.
+type MemberToken func(*sql.Selector)
+
 // Menu is the predicate function for menu builders.
 type Menu func(*sql.Selector)
 
@@ -63,7 +66,7 @@ type MenuParam func(*sql.Selector)
 // Messages is the predicate function for messages builders.
 type Messages func(*sql.Selector)
 
-// Order is the predicate function for order builders.
+// Order is the predicate function for entorder builders.
 type Order func(*sql.Selector)
 
 // OrderAmount is the predicate function for orderamount builders.

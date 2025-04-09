@@ -14,7 +14,8 @@ import (
 	"kcers/biz/dal/db/mysql/ent/membernote"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/memberprofile"
-	"kcers/biz/dal/db/mysql/ent/order"
+	"kcers/biz/dal/db/mysql/ent/membertoken"
+	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	"math"
 
@@ -31,6 +32,7 @@ type MemberQuery struct {
 	order              []member.OrderOption
 	inters             []Interceptor
 	predicates         []predicate.Member
+	withToken          *MemberTokenQuery
 	withMemberProfile  *MemberProfileQuery
 	withMemberDetails  *MemberDetailsQuery
 	withMemberNotes    *MemberNoteQuery
@@ -74,6 +76,28 @@ func (mq *MemberQuery) Unique(unique bool) *MemberQuery {
 func (mq *MemberQuery) Order(o ...member.OrderOption) *MemberQuery {
 	mq.order = append(mq.order, o...)
 	return mq
+}
+
+// QueryToken chains the current query on the "token" edge.
+func (mq *MemberQuery) QueryToken() *MemberTokenQuery {
+	query := (&MemberTokenClient{config: mq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := mq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := mq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(member.Table, member.FieldID, selector),
+			sqlgraph.To(membertoken.Table, membertoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, member.TokenTable, member.TokenColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // QueryMemberProfile chains the current query on the "member_profile" edge.
@@ -155,7 +179,7 @@ func (mq *MemberQuery) QueryMemberOrders() *OrderQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(member.Table, member.FieldID, selector),
-			sqlgraph.To(order.Table, order.FieldID),
+			sqlgraph.To(entorder.Table, entorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, member.MemberOrdersTable, member.MemberOrdersColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
@@ -444,6 +468,7 @@ func (mq *MemberQuery) Clone() *MemberQuery {
 		order:              append([]member.OrderOption{}, mq.order...),
 		inters:             append([]Interceptor{}, mq.inters...),
 		predicates:         append([]predicate.Member{}, mq.predicates...),
+		withToken:          mq.withToken.Clone(),
 		withMemberProfile:  mq.withMemberProfile.Clone(),
 		withMemberDetails:  mq.withMemberDetails.Clone(),
 		withMemberNotes:    mq.withMemberNotes.Clone(),
@@ -457,6 +482,17 @@ func (mq *MemberQuery) Clone() *MemberQuery {
 		path:      mq.path,
 		modifiers: append([]func(*sql.Selector){}, mq.modifiers...),
 	}
+}
+
+// WithToken tells the query-builder to eager-load the nodes that are connected to
+// the "token" edge. The optional arguments are used to configure the query builder of the edge.
+func (mq *MemberQuery) WithToken(opts ...func(*MemberTokenQuery)) *MemberQuery {
+	query := (&MemberTokenClient{config: mq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	mq.withToken = query
+	return mq
 }
 
 // WithMemberProfile tells the query-builder to eager-load the nodes that are connected to
@@ -625,7 +661,8 @@ func (mq *MemberQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Membe
 	var (
 		nodes       = []*Member{}
 		_spec       = mq.querySpec()
-		loadedTypes = [8]bool{
+		loadedTypes = [9]bool{
+			mq.withToken != nil,
 			mq.withMemberProfile != nil,
 			mq.withMemberDetails != nil,
 			mq.withMemberNotes != nil,
@@ -656,6 +693,12 @@ func (mq *MemberQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Membe
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
+	}
+	if query := mq.withToken; query != nil {
+		if err := mq.loadToken(ctx, query, nodes, nil,
+			func(n *Member, e *MemberToken) { n.Edges.Token = e }); err != nil {
+			return nil, err
+		}
 	}
 	if query := mq.withMemberProfile; query != nil {
 		if err := mq.loadMemberProfile(ctx, query, nodes,
@@ -716,6 +759,34 @@ func (mq *MemberQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Membe
 	return nodes, nil
 }
 
+func (mq *MemberQuery) loadToken(ctx context.Context, query *MemberTokenQuery, nodes []*Member, init func(*Member), assign func(*Member, *MemberToken)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Member)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+	}
+	query.withFKs = true
+	query.Where(predicate.MemberToken(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(member.TokenColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.member_token
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "member_token" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "member_token" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
 func (mq *MemberQuery) loadMemberProfile(ctx context.Context, query *MemberProfileQuery, nodes []*Member, init func(*Member), assign func(*Member, *MemberProfile)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*Member)
@@ -817,7 +888,7 @@ func (mq *MemberQuery) loadMemberOrders(ctx context.Context, query *OrderQuery, 
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(order.FieldMemberID)
+		query.ctx.AppendFieldOnce(entorder.FieldMemberID)
 	}
 	query.Where(predicate.Order(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(member.MemberOrdersColumn), fks...))
