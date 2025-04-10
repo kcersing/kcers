@@ -1730,6 +1730,7 @@ type LoginResp struct {
 	Username    string      `thrift:"username,2" form:"username" json:"username" query:"username"`
 	UserRole    []*UserRole `thrift:"userRole,3" form:"userRole" json:"userRole" query:"userRole"`
 	UserRoleIds []int64     `thrift:"userRoleIds,4" form:"userRoleIds" json:"userRoleIds" query:"userRoleIds"`
+	RoleIdStr   string      `thrift:"roleIdStr,5" form:"roleIdStr" json:"roleIdStr" query:"roleIdStr"`
 }
 
 func NewLoginResp() *LoginResp {
@@ -1755,11 +1756,16 @@ func (p *LoginResp) GetUserRoleIds() (v []int64) {
 	return p.UserRoleIds
 }
 
+func (p *LoginResp) GetRoleIdStr() (v string) {
+	return p.RoleIdStr
+}
+
 var fieldIDToName_LoginResp = map[int16]string{
 	1: "userId",
 	2: "username",
 	3: "userRole",
 	4: "userRoleIds",
+	5: "roleIdStr",
 }
 
 func (p *LoginResp) Read(iprot thrift.TProtocol) (err error) {
@@ -1808,6 +1814,14 @@ func (p *LoginResp) Read(iprot thrift.TProtocol) (err error) {
 		case 4:
 			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField4(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 5:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField5(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -1910,6 +1924,17 @@ func (p *LoginResp) ReadField4(iprot thrift.TProtocol) error {
 	p.UserRoleIds = _field
 	return nil
 }
+func (p *LoginResp) ReadField5(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.RoleIdStr = _field
+	return nil
+}
 
 func (p *LoginResp) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
@@ -1931,6 +1956,10 @@ func (p *LoginResp) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField4(oprot); err != nil {
 			fieldId = 4
+			goto WriteFieldError
+		}
+		if err = p.writeField5(oprot); err != nil {
+			fieldId = 5
 			goto WriteFieldError
 		}
 	}
@@ -2033,6 +2062,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
+}
+
+func (p *LoginResp) writeField5(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("roleIdStr", thrift.STRING, 5); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.RoleIdStr); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
 }
 
 func (p *LoginResp) String() string {

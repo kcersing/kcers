@@ -7,16 +7,15 @@ import (
 	"github.com/pkg/errors"
 	"kcers/biz/dal/cache"
 	"kcers/biz/dal/config"
-	"kcers/biz/dal/enums"
-	"kcers/biz/infras/service"
-	"kcers/idl_gen/model/dictionary"
-
 	db "kcers/biz/dal/db/mysql"
 	"kcers/biz/dal/db/mysql/ent"
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	user2 "kcers/biz/dal/db/mysql/ent/user"
+	"kcers/biz/dal/enums"
 	"kcers/biz/infras/do"
+	"kcers/biz/infras/service"
 	"kcers/biz/pkg/encrypt"
+	"kcers/idl_gen/model/dictionary"
 	"kcers/idl_gen/model/user"
 	"time"
 )
@@ -57,6 +56,16 @@ func (u *User) SetRole(id int64, roleID []int64) error {
 	return nil
 }
 
+func (u *User) GetUserName(id int64) (name string) {
+	if id == 0 {
+		return ""
+	}
+	first, _ := u.db.User.Query().Where(user2.IDEQ(id)).First(u.ctx)
+	if first != nil {
+		return first.Name
+	}
+	return ""
+}
 func (u *User) Info(id int64) (info *user.UserInfo, err error) {
 	//info = new(user.UserInfo)
 	//userInterface, exist := u.cache.Get("userInfo" + strconv.Itoa(int(id)))
@@ -279,6 +288,38 @@ func (u *User) entUserInfo(userEnt ent.User) (info *user.UserInfo) {
 	}
 
 	return info
+}
+
+func (l *User) Login(req *user.LoginReq) (res *user.LoginResp, err error) {
+	only, err := l.db.User.Query().
+		Where(
+			user2.UsernameEQ(req.Username),
+			user2.Status(1),
+		).Only(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	if only == nil {
+		err = errors.New("login user not exist")
+		return nil, err
+	}
+	//VerifyPassword
+	if ok := encrypt.VerifyPassword(req.Password, only.Password); !ok {
+		err = errors.New("wrong password")
+		return nil, err
+	}
+
+	info, err := NewUser(l.ctx, l.c).Info(only.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	res = new(user.LoginResp)
+	res.Username = info.Username
+	res.UserId = info.ID
+	res.UserRole = info.UserRole
+	res.UserRoleIds = info.UserRoleIds
+	return res, err
 }
 
 func NewUser(ctx context.Context, c *app.RequestContext) do.User {

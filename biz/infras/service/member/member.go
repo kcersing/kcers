@@ -13,12 +13,12 @@ import (
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
 	"kcers/biz/dal/db/mysql/ent/predicate"
-	user2 "kcers/biz/dal/db/mysql/ent/user"
 	"kcers/biz/dal/enums"
 	"kcers/biz/dal/minio"
 	"kcers/biz/infras/do"
 	"kcers/biz/infras/service"
 	"kcers/biz/infras/service/system"
+	userService "kcers/biz/infras/service/user"
 	"kcers/biz/pkg/encrypt"
 	"kcers/idl_gen/model/member"
 	"strconv"
@@ -250,10 +250,8 @@ func (m *Member) entMemberDetail(v ent.Member) (detail *member.MemberDetail) {
 	return detail
 }
 func (m *Member) entMemberInfo(v ent.Member) *member.MemberInfo {
-	var createdName string
-	if v.CreatedID > 0 {
-		createdName = m.db.User.Query().Where(user2.IDEQ(v.CreatedID)).FirstX(m.ctx).Name
-	}
+
+	var createdName = userService.NewUser(m.ctx, m.c).GetUserName(v.CreatedID)
 	memberInfo := &member.MemberInfo{
 		ID:            v.ID,
 		Username:      v.Username,

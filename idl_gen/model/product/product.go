@@ -10,7 +10,6 @@ import (
 )
 
 type Property struct {
-	ProductId int64 `thrift:"productId,1,optional" form:"productId" json:"productId" query:"productId"`
 	/**名称 */
 	Name string `thrift:"name,2,optional" form:"name" json:"name" query:"name"`
 	/**定价 */
@@ -35,32 +34,38 @@ type Property struct {
 	/**标签-数组*/
 	TagId []int64 `thrift:"tagId,20,optional" form:"tagId" json:"tagId" query:"tagId"`
 	/**合同-数组*/
-	ContractId []int64 `thrift:"contractId,17,optional" form:"contractId" json:"contractId" query:"contractId"`
+	ContractId  []int64 `thrift:"contractId,17,optional" form:"contractId" json:"contractId" query:"contractId"`
+	CreatedAt   string  `thrift:"createdAt,21,optional" form:"createdAt" json:"createdAt" query:"createdAt"`
+	UpdatedAt   string  `thrift:"updatedAt,22,optional" form:"updatedAt" json:"updatedAt" query:"updatedAt"`
+	CreatedId   int64   `thrift:"createdId,23,optional" form:"createdId" json:"createdId" query:"createdId"`
+	CreatedName string  `thrift:"createdName,24,optional" form:"createdName" json:"createdName" query:"createdName"`
 }
 
 func NewProperty() *Property {
 	return &Property{
 
-		ProductId:  0,
-		Name:       "",
-		Price:      0.0,
-		Duration:   0,
-		Length:     0,
-		Count:      0,
-		Type:       "",
-		Data:       "",
-		ID:         0,
-		Status:     0,
-		StatusName: "",
-		Tags:       []*base.List{},
-		Contracts:  []*base.List{},
-		TagId:      []int64{},
-		ContractId: []int64{},
+		Name:        "",
+		Price:       0.0,
+		Duration:    0,
+		Length:      0,
+		Count:       0,
+		Type:        "",
+		Data:        "",
+		ID:          0,
+		Status:      0,
+		StatusName:  "",
+		Tags:        []*base.List{},
+		Contracts:   []*base.List{},
+		TagId:       []int64{},
+		ContractId:  []int64{},
+		CreatedAt:   "",
+		UpdatedAt:   "",
+		CreatedId:   0,
+		CreatedName: "",
 	}
 }
 
 func (p *Property) InitDefault() {
-	p.ProductId = 0
 	p.Name = ""
 	p.Price = 0.0
 	p.Duration = 0
@@ -75,15 +80,10 @@ func (p *Property) InitDefault() {
 	p.Contracts = []*base.List{}
 	p.TagId = []int64{}
 	p.ContractId = []int64{}
-}
-
-var Property_ProductId_DEFAULT int64 = 0
-
-func (p *Property) GetProductId() (v int64) {
-	if !p.IsSetProductId() {
-		return Property_ProductId_DEFAULT
-	}
-	return p.ProductId
+	p.CreatedAt = ""
+	p.UpdatedAt = ""
+	p.CreatedId = 0
+	p.CreatedName = ""
 }
 
 var Property_Name_DEFAULT string = ""
@@ -212,8 +212,43 @@ func (p *Property) GetContractId() (v []int64) {
 	return p.ContractId
 }
 
+var Property_CreatedAt_DEFAULT string = ""
+
+func (p *Property) GetCreatedAt() (v string) {
+	if !p.IsSetCreatedAt() {
+		return Property_CreatedAt_DEFAULT
+	}
+	return p.CreatedAt
+}
+
+var Property_UpdatedAt_DEFAULT string = ""
+
+func (p *Property) GetUpdatedAt() (v string) {
+	if !p.IsSetUpdatedAt() {
+		return Property_UpdatedAt_DEFAULT
+	}
+	return p.UpdatedAt
+}
+
+var Property_CreatedId_DEFAULT int64 = 0
+
+func (p *Property) GetCreatedId() (v int64) {
+	if !p.IsSetCreatedId() {
+		return Property_CreatedId_DEFAULT
+	}
+	return p.CreatedId
+}
+
+var Property_CreatedName_DEFAULT string = ""
+
+func (p *Property) GetCreatedName() (v string) {
+	if !p.IsSetCreatedName() {
+		return Property_CreatedName_DEFAULT
+	}
+	return p.CreatedName
+}
+
 var fieldIDToName_Property = map[int16]string{
-	1:  "productId",
 	2:  "name",
 	3:  "price",
 	4:  "duration",
@@ -228,10 +263,10 @@ var fieldIDToName_Property = map[int16]string{
 	19: "contracts",
 	20: "tagId",
 	17: "contractId",
-}
-
-func (p *Property) IsSetProductId() bool {
-	return p.ProductId != Property_ProductId_DEFAULT
+	21: "createdAt",
+	22: "updatedAt",
+	23: "createdId",
+	24: "createdName",
 }
 
 func (p *Property) IsSetName() bool {
@@ -290,6 +325,22 @@ func (p *Property) IsSetContractId() bool {
 	return p.ContractId != nil
 }
 
+func (p *Property) IsSetCreatedAt() bool {
+	return p.CreatedAt != Property_CreatedAt_DEFAULT
+}
+
+func (p *Property) IsSetUpdatedAt() bool {
+	return p.UpdatedAt != Property_UpdatedAt_DEFAULT
+}
+
+func (p *Property) IsSetCreatedId() bool {
+	return p.CreatedId != Property_CreatedId_DEFAULT
+}
+
+func (p *Property) IsSetCreatedName() bool {
+	return p.CreatedName != Property_CreatedName_DEFAULT
+}
+
 func (p *Property) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
@@ -309,14 +360,6 @@ func (p *Property) Read(iprot thrift.TProtocol) (err error) {
 		}
 
 		switch fieldId {
-		case 1:
-			if fieldTypeId == thrift.I64 {
-				if err = p.ReadField1(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
 		case 2:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField2(iprot); err != nil {
@@ -429,6 +472,38 @@ func (p *Property) Read(iprot thrift.TProtocol) (err error) {
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
 			}
+		case 21:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField21(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 22:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField22(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 23:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField23(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 24:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField24(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
 		default:
 			if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
@@ -458,17 +533,6 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *Property) ReadField1(iprot thrift.TProtocol) error {
-
-	var _field int64
-	if v, err := iprot.ReadI64(); err != nil {
-		return err
-	} else {
-		_field = v
-	}
-	p.ProductId = _field
-	return nil
-}
 func (p *Property) ReadField2(iprot thrift.TProtocol) error {
 
 	var _field string
@@ -671,6 +735,50 @@ func (p *Property) ReadField17(iprot thrift.TProtocol) error {
 	p.ContractId = _field
 	return nil
 }
+func (p *Property) ReadField21(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.CreatedAt = _field
+	return nil
+}
+func (p *Property) ReadField22(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.UpdatedAt = _field
+	return nil
+}
+func (p *Property) ReadField23(iprot thrift.TProtocol) error {
+
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.CreatedId = _field
+	return nil
+}
+func (p *Property) ReadField24(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.CreatedName = _field
+	return nil
+}
 
 func (p *Property) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
@@ -678,10 +786,6 @@ func (p *Property) Write(oprot thrift.TProtocol) (err error) {
 		goto WriteStructBeginError
 	}
 	if p != nil {
-		if err = p.writeField1(oprot); err != nil {
-			fieldId = 1
-			goto WriteFieldError
-		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
 			goto WriteFieldError
@@ -738,6 +842,22 @@ func (p *Property) Write(oprot thrift.TProtocol) (err error) {
 			fieldId = 17
 			goto WriteFieldError
 		}
+		if err = p.writeField21(oprot); err != nil {
+			fieldId = 21
+			goto WriteFieldError
+		}
+		if err = p.writeField22(oprot); err != nil {
+			fieldId = 22
+			goto WriteFieldError
+		}
+		if err = p.writeField23(oprot); err != nil {
+			fieldId = 23
+			goto WriteFieldError
+		}
+		if err = p.writeField24(oprot); err != nil {
+			fieldId = 24
+			goto WriteFieldError
+		}
 	}
 	if err = oprot.WriteFieldStop(); err != nil {
 		goto WriteFieldStopError
@@ -754,25 +874,6 @@ WriteFieldStopError:
 	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
 WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
-}
-
-func (p *Property) writeField1(oprot thrift.TProtocol) (err error) {
-	if p.IsSetProductId() {
-		if err = oprot.WriteFieldBegin("productId", thrift.I64, 1); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteI64(p.ProductId); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
 func (p *Property) writeField2(oprot thrift.TProtocol) (err error) {
@@ -1073,6 +1174,82 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 17 end error: ", p), err)
 }
 
+func (p *Property) writeField21(oprot thrift.TProtocol) (err error) {
+	if p.IsSetCreatedAt() {
+		if err = oprot.WriteFieldBegin("createdAt", thrift.STRING, 21); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.CreatedAt); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 21 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 21 end error: ", p), err)
+}
+
+func (p *Property) writeField22(oprot thrift.TProtocol) (err error) {
+	if p.IsSetUpdatedAt() {
+		if err = oprot.WriteFieldBegin("updatedAt", thrift.STRING, 22); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.UpdatedAt); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 22 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 22 end error: ", p), err)
+}
+
+func (p *Property) writeField23(oprot thrift.TProtocol) (err error) {
+	if p.IsSetCreatedId() {
+		if err = oprot.WriteFieldBegin("createdId", thrift.I64, 23); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI64(p.CreatedId); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 23 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 23 end error: ", p), err)
+}
+
+func (p *Property) writeField24(oprot thrift.TProtocol) (err error) {
+	if p.IsSetCreatedName() {
+		if err = oprot.WriteFieldBegin("createdName", thrift.STRING, 24); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.CreatedName); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 24 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 24 end error: ", p), err)
+}
+
 func (p *Property) String() string {
 	if p == nil {
 		return "<nil>"
@@ -1107,6 +1284,7 @@ type Product struct {
 	CreatedName string       `thrift:"createdName,21,optional" form:"createdName" json:"createdName" query:"createdName"`
 	Venues      []*base.List `thrift:"venues,19,optional" form:"venues" json:"venues" query:"venues"`
 	VenueId     []int64      `thrift:"venueId,22,optional" form:"venueId" json:"venueId" query:"venueId"`
+	VenueStr    string       `thrift:"venueStr,23,optional" form:"venueStr" json:"venueStr" query:"venueStr"`
 }
 
 func NewProduct() *Product {
@@ -1130,6 +1308,7 @@ func NewProduct() *Product {
 		CreatedName: "",
 		Venues:      []*base.List{},
 		VenueId:     []int64{},
+		VenueStr:    "",
 	}
 }
 
@@ -1152,6 +1331,7 @@ func (p *Product) InitDefault() {
 	p.CreatedName = ""
 	p.Venues = []*base.List{}
 	p.VenueId = []int64{}
+	p.VenueStr = ""
 }
 
 var Product_Name_DEFAULT string = ""
@@ -1316,6 +1496,15 @@ func (p *Product) GetVenueId() (v []int64) {
 	return p.VenueId
 }
 
+var Product_VenueStr_DEFAULT string = ""
+
+func (p *Product) GetVenueStr() (v string) {
+	if !p.IsSetVenueStr() {
+		return Product_VenueStr_DEFAULT
+	}
+	return p.VenueStr
+}
+
 var fieldIDToName_Product = map[int16]string{
 	1:  "name",
 	2:  "pic",
@@ -1335,6 +1524,7 @@ var fieldIDToName_Product = map[int16]string{
 	21: "createdName",
 	19: "venues",
 	22: "venueId",
+	23: "venueStr",
 }
 
 func (p *Product) IsSetName() bool {
@@ -1407,6 +1597,10 @@ func (p *Product) IsSetVenues() bool {
 
 func (p *Product) IsSetVenueId() bool {
 	return p.VenueId != nil
+}
+
+func (p *Product) IsSetVenueStr() bool {
+	return p.VenueStr != Product_VenueStr_DEFAULT
 }
 
 func (p *Product) Read(iprot thrift.TProtocol) (err error) {
@@ -1567,6 +1761,14 @@ func (p *Product) Read(iprot thrift.TProtocol) (err error) {
 		case 22:
 			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField22(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 23:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField23(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -1847,6 +2049,17 @@ func (p *Product) ReadField22(iprot thrift.TProtocol) error {
 	p.VenueId = _field
 	return nil
 }
+func (p *Product) ReadField23(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.VenueStr = _field
+	return nil
+}
 
 func (p *Product) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
@@ -1924,6 +2137,10 @@ func (p *Product) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField22(oprot); err != nil {
 			fieldId = 22
+			goto WriteFieldError
+		}
+		if err = p.writeField23(oprot); err != nil {
+			fieldId = 23
 			goto WriteFieldError
 		}
 	}
@@ -2316,6 +2533,25 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 22 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 22 end error: ", p), err)
+}
+
+func (p *Product) writeField23(oprot thrift.TProtocol) (err error) {
+	if p.IsSetVenueStr() {
+		if err = oprot.WriteFieldBegin("venueStr", thrift.STRING, 23); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(p.VenueStr); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 23 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 23 end error: ", p), err)
 }
 
 func (p *Product) String() string {

@@ -446,6 +446,7 @@ func (p *RoleMenu) String() string {
 type RoleListReq struct {
 	Page     int64 `thrift:"page,1,optional" form:"page" json:"page" query:"page"`
 	PageSize int64 `thrift:"pageSize,2,optional" form:"pageSize" json:"pageSize" query:"pageSize"`
+	VenueId  int64 `thrift:"venueId,12,optional" form:"venueId" json:"venueId" query:"venueId"`
 }
 
 func NewRoleListReq() *RoleListReq {
@@ -453,12 +454,14 @@ func NewRoleListReq() *RoleListReq {
 
 		Page:     1,
 		PageSize: 100,
+		VenueId:  0,
 	}
 }
 
 func (p *RoleListReq) InitDefault() {
 	p.Page = 1
 	p.PageSize = 100
+	p.VenueId = 0
 }
 
 var RoleListReq_Page_DEFAULT int64 = 1
@@ -479,9 +482,19 @@ func (p *RoleListReq) GetPageSize() (v int64) {
 	return p.PageSize
 }
 
+var RoleListReq_VenueId_DEFAULT int64 = 0
+
+func (p *RoleListReq) GetVenueId() (v int64) {
+	if !p.IsSetVenueId() {
+		return RoleListReq_VenueId_DEFAULT
+	}
+	return p.VenueId
+}
+
 var fieldIDToName_RoleListReq = map[int16]string{
-	1: "page",
-	2: "pageSize",
+	1:  "page",
+	2:  "pageSize",
+	12: "venueId",
 }
 
 func (p *RoleListReq) IsSetPage() bool {
@@ -490,6 +503,10 @@ func (p *RoleListReq) IsSetPage() bool {
 
 func (p *RoleListReq) IsSetPageSize() bool {
 	return p.PageSize != RoleListReq_PageSize_DEFAULT
+}
+
+func (p *RoleListReq) IsSetVenueId() bool {
+	return p.VenueId != RoleListReq_VenueId_DEFAULT
 }
 
 func (p *RoleListReq) Read(iprot thrift.TProtocol) (err error) {
@@ -522,6 +539,14 @@ func (p *RoleListReq) Read(iprot thrift.TProtocol) (err error) {
 		case 2:
 			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 12:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField12(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -578,6 +603,17 @@ func (p *RoleListReq) ReadField2(iprot thrift.TProtocol) error {
 	p.PageSize = _field
 	return nil
 }
+func (p *RoleListReq) ReadField12(iprot thrift.TProtocol) error {
+
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.VenueId = _field
+	return nil
+}
 
 func (p *RoleListReq) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
@@ -591,6 +627,10 @@ func (p *RoleListReq) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField12(oprot); err != nil {
+			fieldId = 12
 			goto WriteFieldError
 		}
 	}
@@ -647,6 +687,25 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *RoleListReq) writeField12(oprot thrift.TProtocol) (err error) {
+	if p.IsSetVenueId() {
+		if err = oprot.WriteFieldBegin("venueId", thrift.I64, 12); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI64(p.VenueId); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 12 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 12 end error: ", p), err)
 }
 
 func (p *RoleListReq) String() string {

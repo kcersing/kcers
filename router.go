@@ -9,7 +9,7 @@ import (
 	"kcers/biz/dal/casbin"
 	"kcers/biz/mw"
 
-	service2 "kcers/biz/infras/service"
+	orderService "kcers/biz/infras/service/order"
 )
 
 // customizeRegister registers customize routers.
@@ -51,7 +51,7 @@ func customizedRegister(r *server.Hertz) {
 	r.POST("/service/wx/staff/refresh_token", mw.GetJWTMw(casbin.CasbinEnforcer()).RefreshHandler)
 
 	r.POST("/service/payment/WXNotify", func(c context.Context, ctx *app.RequestContext) {
-		service2.NewWXPayment(c, ctx).Notify(ctx)
+		orderService.NewWXPayment(c, ctx).Notify(ctx)
 	})
 
 }

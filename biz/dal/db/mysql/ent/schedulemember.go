@@ -3,9 +3,11 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/schedule"
 	"kcers/biz/dal/db/mysql/ent/schedulemember"
+	"kcers/idl_gen/model/base"
 	"strings"
 	"time"
 
@@ -43,6 +45,8 @@ type ScheduleMember struct {
 	MemberProductPropertyID int64 `json:"member_product_property_id,omitempty"`
 	// 类型
 	Type string `json:"type,omitempty"`
+	// 日期
+	Date time.Time `json:"date,omitempty"`
 	// 开始时间
 	StartAt time.Time `json:"start_at,omitempty"`
 	// 结束时间
@@ -51,6 +55,8 @@ type ScheduleMember struct {
 	SignStartAt time.Time `json:"sign_start_at,omitempty"`
 	// 下课签到时间
 	SignEndAt time.Time `json:"sign_end_at,omitempty"`
+	// 座位
+	Seat base.Seat `json:"seat,omitempty"`
 	// 会员名称
 	MemberName string `json:"member_name,omitempty"`
 	// 会员产品名称
@@ -90,11 +96,13 @@ func (*ScheduleMember) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case schedulemember.FieldSeat:
+			values[i] = new([]byte)
 		case schedulemember.FieldID, schedulemember.FieldDelete, schedulemember.FieldCreatedID, schedulemember.FieldStatus, schedulemember.FieldVenueID, schedulemember.FieldScheduleID, schedulemember.FieldMemberID, schedulemember.FieldMemberProductID, schedulemember.FieldMemberProductPropertyID:
 			values[i] = new(sql.NullInt64)
 		case schedulemember.FieldScheduleName, schedulemember.FieldType, schedulemember.FieldMemberName, schedulemember.FieldMemberProductName, schedulemember.FieldMemberProductPropertyName, schedulemember.FieldRemark:
 			values[i] = new(sql.NullString)
-		case schedulemember.FieldCreatedAt, schedulemember.FieldUpdatedAt, schedulemember.FieldStartAt, schedulemember.FieldEndAt, schedulemember.FieldSignStartAt, schedulemember.FieldSignEndAt:
+		case schedulemember.FieldCreatedAt, schedulemember.FieldUpdatedAt, schedulemember.FieldDate, schedulemember.FieldStartAt, schedulemember.FieldEndAt, schedulemember.FieldSignStartAt, schedulemember.FieldSignEndAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -189,6 +197,12 @@ func (sm *ScheduleMember) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				sm.Type = value.String
 			}
+		case schedulemember.FieldDate:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field date", values[i])
+			} else if value.Valid {
+				sm.Date = value.Time
+			}
 		case schedulemember.FieldStartAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field start_at", values[i])
@@ -212,6 +226,14 @@ func (sm *ScheduleMember) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field sign_end_at", values[i])
 			} else if value.Valid {
 				sm.SignEndAt = value.Time
+			}
+		case schedulemember.FieldSeat:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field seat", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &sm.Seat); err != nil {
+					return fmt.Errorf("unmarshal field seat: %w", err)
+				}
 			}
 		case schedulemember.FieldMemberName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -314,6 +336,9 @@ func (sm *ScheduleMember) String() string {
 	builder.WriteString("type=")
 	builder.WriteString(sm.Type)
 	builder.WriteString(", ")
+	builder.WriteString("date=")
+	builder.WriteString(sm.Date.Format(time.ANSIC))
+	builder.WriteString(", ")
 	builder.WriteString("start_at=")
 	builder.WriteString(sm.StartAt.Format(time.ANSIC))
 	builder.WriteString(", ")
@@ -325,6 +350,9 @@ func (sm *ScheduleMember) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("sign_end_at=")
 	builder.WriteString(sm.SignEndAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("seat=")
+	builder.WriteString(fmt.Sprintf("%v", sm.Seat))
 	builder.WriteString(", ")
 	builder.WriteString("member_name=")
 	builder.WriteString(sm.MemberName)

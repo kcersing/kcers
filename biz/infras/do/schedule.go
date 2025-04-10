@@ -24,5 +24,5 @@ type Schedule interface {
 	CoachDelete(id int64) error
 	CoachList(req *schedule.ScheduleCoachListReq) (resp []*schedule.ScheduleCoachInfo, total int, err error)
 	CoachUpdateStatus(ID int64, status int64) error
-	CoachInfo(ID int64) (roleInfo *schedule.ScheduleCoachInfo, err error)
+	CoachInfo(id int64) (info *schedule.ScheduleCoachInfo, err error)
 }

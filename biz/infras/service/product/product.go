@@ -13,9 +13,11 @@ import (
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	product2 "kcers/biz/dal/db/mysql/ent/product"
 	"kcers/biz/dal/db/mysql/ent/productproperty"
-	"kcers/biz/dal/db/mysql/ent/user"
+	"kcers/biz/dal/db/mysql/ent/venue"
 	"kcers/biz/dal/enums"
 	"kcers/biz/infras/do"
+	userService "kcers/biz/infras/service/user"
+	"kcers/idl_gen/model/base"
 	"kcers/idl_gen/model/product"
 	"strconv"
 	"time"
@@ -63,7 +65,7 @@ func (p *Product) Create(req *product.CreateOrUpdateReq) error {
 		SetPrice(req.Price).
 		SetStock(req.Stock).
 		AddPropertys(properties...).
-		SetCreateID(req.CreateId).
+		SetCreatedID(req.CreateId).
 		Save(p.ctx)
 
 	if err != nil {
@@ -83,7 +85,7 @@ func (p *Product) Update(req *product.CreateOrUpdateReq) error {
 		SetStatus(req.Status).
 		SetPrice(req.Price).
 		SetStock(req.Stock).
-		SetCreateID(req.CreateId).
+		SetCreatedID(req.CreateId).
 		Save(p.ctx)
 
 	if err != nil {
@@ -113,36 +115,20 @@ func (p *Product) List(req *product.ListReq) (resp []*product.Product, total int
 		return resp, total, err
 	}
 
-	err = copier.Copy(&resp, &lists)
-	if err != nil {
-		err = errors.Wrap(err, "copy product info failed")
-		return resp, 0, err
-	}
+	for _, v := range lists {
 
-	for i, v := range lists {
-		//propertys
+		resp = append(resp, p.entProduct(v))
 
-		ds, _ := v.QueryPropertys().IDs(p.ctx)
-
-		all, err := p.db.ProductProperty.Query().Where(productproperty.IDIn(ds...)).All(p.ctx)
-		if err != nil {
-			return nil, 0, err
-		}
-
-		for _, p := range all {
-			pi := product.Property{
-				ID:       p.ID,
-				Name:     p.Name,
-				Price:    p.Price,
-				Duration: p.Duration,
-				Length:   p.Length,
-				Count:    p.Count,
-				Type:     p.Type,
-				Data:     p.Data,
-				Status:   p.Status,
-			}
-			resp[i].Propertys = append(resp[i].Propertys, &pi)
-		}
+		//ds, _ := v.QueryPropertys().IDs(p.ctx)
+		//
+		//all, err := p.db.ProductProperty.Query().Where(productproperty.IDIn(ds...)).All(p.ctx)
+		//if err != nil {
+		//	return nil, 0, err
+		//}
+		//
+		//for _, py := range all {
+		//	resp[i].Propertys = append(resp[i].Propertys, p.entProperty(py))
+		//}
 	}
 
 	total, _ = p.db.Product.Query().Where(predicates...).Count(p.ctx)
@@ -166,7 +152,7 @@ func (p *Product) entProduct(req *ent.Product) (info *product.Product) {
 		Price:       req.Price,
 		Stock:       req.Stock,
 		Status:      req.Status,
-		CreatedId:   req.CreateID,
+		CreatedId:   req.CreatedID,
 
 		Propertys:  nil,
 		StatusName: statusName,
@@ -178,13 +164,21 @@ func (p *Product) entProduct(req *ent.Product) (info *product.Product) {
 		UpdatedAt:   req.UpdatedAt.Format(time.DateTime),
 	}
 
-	if req.CreateID != 0 {
-		create, err := p.db.User.Query().Where(user.IDEQ(req.CreateID)).First(p.ctx)
-		if err != nil {
-			err = errors.Wrap(err, "get user failed")
-			return info
+	info.CreatedName = userService.NewUser(p.ctx, p.c).GetUserName(req.CreatedID)
+	venues, err := req.QueryVenues().Select(venue.FieldID, venue.FieldName).All(p.ctx)
+	if err == nil {
+		var ven []*base.List
+		err = copier.Copy(&ven, &venues)
+		info.Venues = ven
+		for i2, v := range ven {
+			if i2 == 0 {
+				info.VenueStr = v.Name
+			} else {
+				info.VenueStr += ", " + v.Name
+			}
+			info.VenueId = append(info.VenueId, v.ID)
 		}
-		info.CreatedName = create.Name
+
 	}
 	return
 }

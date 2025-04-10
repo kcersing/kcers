@@ -160,6 +160,20 @@ func (scc *ScheduleCoachCreate) SetNillableType(s *string) *ScheduleCoachCreate 
 	return scc
 }
 
+// SetDate sets the "date" field.
+func (scc *ScheduleCoachCreate) SetDate(t time.Time) *ScheduleCoachCreate {
+	scc.mutation.SetDate(t)
+	return scc
+}
+
+// SetNillableDate sets the "date" field if the given value is not nil.
+func (scc *ScheduleCoachCreate) SetNillableDate(t *time.Time) *ScheduleCoachCreate {
+	if t != nil {
+		scc.SetDate(*t)
+	}
+	return scc
+}
+
 // SetStartAt sets the "start_at" field.
 func (scc *ScheduleCoachCreate) SetStartAt(t time.Time) *ScheduleCoachCreate {
 	scc.mutation.SetStartAt(t)
@@ -383,6 +397,10 @@ func (scc *ScheduleCoachCreate) createSpec() (*ScheduleCoach, *sqlgraph.CreateSp
 	if value, ok := scc.mutation.GetType(); ok {
 		_spec.SetField(schedulecoach.FieldType, field.TypeString, value)
 		_node.Type = value
+	}
+	if value, ok := scc.mutation.Date(); ok {
+		_spec.SetField(schedulecoach.FieldDate, field.TypeTime, value)
+		_node.Date = value
 	}
 	if value, ok := scc.mutation.StartAt(); ok {
 		_spec.SetField(schedulecoach.FieldStartAt, field.TypeTime, value)

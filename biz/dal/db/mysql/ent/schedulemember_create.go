@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/schedule"
 	"kcers/biz/dal/db/mysql/ent/schedulemember"
+	"kcers/idl_gen/model/base"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -188,6 +189,20 @@ func (smc *ScheduleMemberCreate) SetNillableType(s *string) *ScheduleMemberCreat
 	return smc
 }
 
+// SetDate sets the "date" field.
+func (smc *ScheduleMemberCreate) SetDate(t time.Time) *ScheduleMemberCreate {
+	smc.mutation.SetDate(t)
+	return smc
+}
+
+// SetNillableDate sets the "date" field if the given value is not nil.
+func (smc *ScheduleMemberCreate) SetNillableDate(t *time.Time) *ScheduleMemberCreate {
+	if t != nil {
+		smc.SetDate(*t)
+	}
+	return smc
+}
+
 // SetStartAt sets the "start_at" field.
 func (smc *ScheduleMemberCreate) SetStartAt(t time.Time) *ScheduleMemberCreate {
 	smc.mutation.SetStartAt(t)
@@ -240,6 +255,20 @@ func (smc *ScheduleMemberCreate) SetSignEndAt(t time.Time) *ScheduleMemberCreate
 func (smc *ScheduleMemberCreate) SetNillableSignEndAt(t *time.Time) *ScheduleMemberCreate {
 	if t != nil {
 		smc.SetSignEndAt(*t)
+	}
+	return smc
+}
+
+// SetSeat sets the "seat" field.
+func (smc *ScheduleMemberCreate) SetSeat(b base.Seat) *ScheduleMemberCreate {
+	smc.mutation.SetSeat(b)
+	return smc
+}
+
+// SetNillableSeat sets the "seat" field if the given value is not nil.
+func (smc *ScheduleMemberCreate) SetNillableSeat(b *base.Seat) *ScheduleMemberCreate {
+	if b != nil {
+		smc.SetSeat(*b)
 	}
 	return smc
 }
@@ -382,6 +411,10 @@ func (smc *ScheduleMemberCreate) defaults() {
 		v := schedulemember.DefaultSignEndAt()
 		smc.mutation.SetSignEndAt(v)
 	}
+	if _, ok := smc.mutation.Seat(); !ok {
+		v := schedulemember.DefaultSeat
+		smc.mutation.SetSeat(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -462,6 +495,10 @@ func (smc *ScheduleMemberCreate) createSpec() (*ScheduleMember, *sqlgraph.Create
 		_spec.SetField(schedulemember.FieldType, field.TypeString, value)
 		_node.Type = value
 	}
+	if value, ok := smc.mutation.Date(); ok {
+		_spec.SetField(schedulemember.FieldDate, field.TypeTime, value)
+		_node.Date = value
+	}
 	if value, ok := smc.mutation.StartAt(); ok {
 		_spec.SetField(schedulemember.FieldStartAt, field.TypeTime, value)
 		_node.StartAt = value
@@ -477,6 +514,10 @@ func (smc *ScheduleMemberCreate) createSpec() (*ScheduleMember, *sqlgraph.Create
 	if value, ok := smc.mutation.SignEndAt(); ok {
 		_spec.SetField(schedulemember.FieldSignEndAt, field.TypeTime, value)
 		_node.SignEndAt = value
+	}
+	if value, ok := smc.mutation.Seat(); ok {
+		_spec.SetField(schedulemember.FieldSeat, field.TypeJSON, value)
+		_node.Seat = value
 	}
 	if value, ok := smc.mutation.MemberName(); ok {
 		_spec.SetField(schedulemember.FieldMemberName, field.TypeString, value)

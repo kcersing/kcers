@@ -24,6 +24,7 @@ func (Role) Fields() []ent.Field {
 		field.Ints("apis").Default([]int{}).
 			//SchemaType(map[string]string{dialect.MySQL: "varchar(512)"}).
 			Comment("apis"),
+		field.Int64("venue_id").Default(0).Comment("场馆ID"),
 	}
 }
 

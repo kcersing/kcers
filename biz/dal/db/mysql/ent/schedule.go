@@ -45,7 +45,7 @@ type Schedule struct {
 	// 剩余可约人数
 	NumSurplus int64 `json:"num_surplus,omitempty"`
 	// 日期
-	Date string `json:"date,omitempty"`
+	Date time.Time `json:"date,omitempty"`
 	// 开始时间
 	StartAt time.Time `json:"start_at,omitempty"`
 	// 开始时间
@@ -102,9 +102,9 @@ func (*Schedule) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case schedule.FieldID, schedule.FieldDelete, schedule.FieldCreatedID, schedule.FieldStatus, schedule.FieldVenueID, schedule.FieldPropertyID, schedule.FieldLength, schedule.FieldPlaceID, schedule.FieldNum, schedule.FieldNumSurplus:
 			values[i] = new(sql.NullInt64)
-		case schedule.FieldType, schedule.FieldName, schedule.FieldDate, schedule.FieldRemark, schedule.FieldVenueName, schedule.FieldPlaceName:
+		case schedule.FieldType, schedule.FieldName, schedule.FieldRemark, schedule.FieldVenueName, schedule.FieldPlaceName:
 			values[i] = new(sql.NullString)
-		case schedule.FieldCreatedAt, schedule.FieldUpdatedAt, schedule.FieldStartAt, schedule.FieldEndAt:
+		case schedule.FieldCreatedAt, schedule.FieldUpdatedAt, schedule.FieldDate, schedule.FieldStartAt, schedule.FieldEndAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -206,10 +206,10 @@ func (s *Schedule) assignValues(columns []string, values []any) error {
 				s.NumSurplus = value.Int64
 			}
 		case schedule.FieldDate:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field date", values[i])
 			} else if value.Valid {
-				s.Date = value.String
+				s.Date = value.Time
 			}
 		case schedule.FieldStartAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -333,7 +333,7 @@ func (s *Schedule) String() string {
 	builder.WriteString(fmt.Sprintf("%v", s.NumSurplus))
 	builder.WriteString(", ")
 	builder.WriteString("date=")
-	builder.WriteString(s.Date)
+	builder.WriteString(s.Date.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("start_at=")
 	builder.WriteString(s.StartAt.Format(time.ANSIC))

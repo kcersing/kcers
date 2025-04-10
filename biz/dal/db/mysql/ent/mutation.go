@@ -36504,6 +36504,8 @@ type RoleMutation struct {
 	addorder_no    *int64
 	apis           *[]int
 	appendapis     []int
+	venue_id       *int64
+	addvenue_id    *int64
 	clearedFields  map[string]struct{}
 	menus          map[int64]struct{}
 	removedmenus   map[int64]struct{}
@@ -37182,6 +37184,62 @@ func (m *RoleMutation) ResetApis() {
 	m.appendapis = nil
 }
 
+// SetVenueID sets the "venue_id" field.
+func (m *RoleMutation) SetVenueID(i int64) {
+	m.venue_id = &i
+	m.addvenue_id = nil
+}
+
+// VenueID returns the value of the "venue_id" field in the mutation.
+func (m *RoleMutation) VenueID() (r int64, exists bool) {
+	v := m.venue_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVenueID returns the old "venue_id" field's value of the Role entity.
+// If the Role object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RoleMutation) OldVenueID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVenueID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVenueID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVenueID: %w", err)
+	}
+	return oldValue.VenueID, nil
+}
+
+// AddVenueID adds i to the "venue_id" field.
+func (m *RoleMutation) AddVenueID(i int64) {
+	if m.addvenue_id != nil {
+		*m.addvenue_id += i
+	} else {
+		m.addvenue_id = &i
+	}
+}
+
+// AddedVenueID returns the value that was added to the "venue_id" field in this mutation.
+func (m *RoleMutation) AddedVenueID() (r int64, exists bool) {
+	v := m.addvenue_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetVenueID resets all changes to the "venue_id" field.
+func (m *RoleMutation) ResetVenueID() {
+	m.venue_id = nil
+	m.addvenue_id = nil
+}
+
 // AddMenuIDs adds the "menus" edge to the Menu entity by ids.
 func (m *RoleMutation) AddMenuIDs(ids ...int64) {
 	if m.menus == nil {
@@ -37378,7 +37436,7 @@ func (m *RoleMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RoleMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, role.FieldCreatedAt)
 	}
@@ -37412,6 +37470,9 @@ func (m *RoleMutation) Fields() []string {
 	if m.apis != nil {
 		fields = append(fields, role.FieldApis)
 	}
+	if m.venue_id != nil {
+		fields = append(fields, role.FieldVenueID)
+	}
 	return fields
 }
 
@@ -37442,6 +37503,8 @@ func (m *RoleMutation) Field(name string) (ent.Value, bool) {
 		return m.OrderNo()
 	case role.FieldApis:
 		return m.Apis()
+	case role.FieldVenueID:
+		return m.VenueID()
 	}
 	return nil, false
 }
@@ -37473,6 +37536,8 @@ func (m *RoleMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldOrderNo(ctx)
 	case role.FieldApis:
 		return m.OldApis(ctx)
+	case role.FieldVenueID:
+		return m.OldVenueID(ctx)
 	}
 	return nil, fmt.Errorf("unknown Role field %s", name)
 }
@@ -37559,6 +37624,13 @@ func (m *RoleMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetApis(v)
 		return nil
+	case role.FieldVenueID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVenueID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Role field %s", name)
 }
@@ -37579,6 +37651,9 @@ func (m *RoleMutation) AddedFields() []string {
 	if m.addorder_no != nil {
 		fields = append(fields, role.FieldOrderNo)
 	}
+	if m.addvenue_id != nil {
+		fields = append(fields, role.FieldVenueID)
+	}
 	return fields
 }
 
@@ -37595,6 +37670,8 @@ func (m *RoleMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedStatus()
 	case role.FieldOrderNo:
 		return m.AddedOrderNo()
+	case role.FieldVenueID:
+		return m.AddedVenueID()
 	}
 	return nil, false
 }
@@ -37631,6 +37708,13 @@ func (m *RoleMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddOrderNo(v)
+		return nil
+	case role.FieldVenueID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddVenueID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Role numeric field %s", name)
@@ -37724,6 +37808,9 @@ func (m *RoleMutation) ResetField(name string) error {
 		return nil
 	case role.FieldApis:
 		m.ResetApis()
+		return nil
+	case role.FieldVenueID:
+		m.ResetVenueID()
 		return nil
 	}
 	return fmt.Errorf("unknown Role field %s", name)
@@ -37893,7 +37980,7 @@ type ScheduleMutation struct {
 	addnum         *int64
 	num_surplus    *int64
 	addnum_surplus *int64
-	date           *string
+	date           *time.Time
 	start_at       *time.Time
 	end_at         *time.Time
 	price          *float64
@@ -38844,12 +38931,12 @@ func (m *ScheduleMutation) ResetNumSurplus() {
 }
 
 // SetDate sets the "date" field.
-func (m *ScheduleMutation) SetDate(s string) {
-	m.date = &s
+func (m *ScheduleMutation) SetDate(t time.Time) {
+	m.date = &t
 }
 
 // Date returns the value of the "date" field in the mutation.
-func (m *ScheduleMutation) Date() (r string, exists bool) {
+func (m *ScheduleMutation) Date() (r time.Time, exists bool) {
 	v := m.date
 	if v == nil {
 		return
@@ -38860,7 +38947,7 @@ func (m *ScheduleMutation) Date() (r string, exists bool) {
 // OldDate returns the old "date" field's value of the Schedule entity.
 // If the Schedule object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScheduleMutation) OldDate(ctx context.Context) (v string, err error) {
+func (m *ScheduleMutation) OldDate(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDate is only allowed on UpdateOne operations")
 	}
@@ -39608,7 +39695,7 @@ func (m *ScheduleMutation) SetField(name string, value ent.Value) error {
 		m.SetNumSurplus(v)
 		return nil
 	case schedule.FieldDate:
-		v, ok := value.(string)
+		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -40145,6 +40232,7 @@ type ScheduleCoachMutation struct {
 	addcoach_id     *int64
 	schedule_name   *string
 	_type           *string
+	date            *time.Time
 	start_at        *time.Time
 	end_at          *time.Time
 	sign_start_at   *time.Time
@@ -40857,6 +40945,55 @@ func (m *ScheduleCoachMutation) ResetType() {
 	delete(m.clearedFields, schedulecoach.FieldType)
 }
 
+// SetDate sets the "date" field.
+func (m *ScheduleCoachMutation) SetDate(t time.Time) {
+	m.date = &t
+}
+
+// Date returns the value of the "date" field in the mutation.
+func (m *ScheduleCoachMutation) Date() (r time.Time, exists bool) {
+	v := m.date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDate returns the old "date" field's value of the ScheduleCoach entity.
+// If the ScheduleCoach object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScheduleCoachMutation) OldDate(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDate: %w", err)
+	}
+	return oldValue.Date, nil
+}
+
+// ClearDate clears the value of the "date" field.
+func (m *ScheduleCoachMutation) ClearDate() {
+	m.date = nil
+	m.clearedFields[schedulecoach.FieldDate] = struct{}{}
+}
+
+// DateCleared returns if the "date" field was cleared in this mutation.
+func (m *ScheduleCoachMutation) DateCleared() bool {
+	_, ok := m.clearedFields[schedulecoach.FieldDate]
+	return ok
+}
+
+// ResetDate resets all changes to the "date" field.
+func (m *ScheduleCoachMutation) ResetDate() {
+	m.date = nil
+	delete(m.clearedFields, schedulecoach.FieldDate)
+}
+
 // SetStartAt sets the "start_at" field.
 func (m *ScheduleCoachMutation) SetStartAt(t time.Time) {
 	m.start_at = &t
@@ -41163,7 +41300,7 @@ func (m *ScheduleCoachMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ScheduleCoachMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_at != nil {
 		fields = append(fields, schedulecoach.FieldCreatedAt)
 	}
@@ -41193,6 +41330,9 @@ func (m *ScheduleCoachMutation) Fields() []string {
 	}
 	if m._type != nil {
 		fields = append(fields, schedulecoach.FieldType)
+	}
+	if m.date != nil {
+		fields = append(fields, schedulecoach.FieldDate)
 	}
 	if m.start_at != nil {
 		fields = append(fields, schedulecoach.FieldStartAt)
@@ -41237,6 +41377,8 @@ func (m *ScheduleCoachMutation) Field(name string) (ent.Value, bool) {
 		return m.ScheduleName()
 	case schedulecoach.FieldType:
 		return m.GetType()
+	case schedulecoach.FieldDate:
+		return m.Date()
 	case schedulecoach.FieldStartAt:
 		return m.StartAt()
 	case schedulecoach.FieldEndAt:
@@ -41276,6 +41418,8 @@ func (m *ScheduleCoachMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldScheduleName(ctx)
 	case schedulecoach.FieldType:
 		return m.OldType(ctx)
+	case schedulecoach.FieldDate:
+		return m.OldDate(ctx)
 	case schedulecoach.FieldStartAt:
 		return m.OldStartAt(ctx)
 	case schedulecoach.FieldEndAt:
@@ -41364,6 +41508,13 @@ func (m *ScheduleCoachMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetType(v)
+		return nil
+	case schedulecoach.FieldDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDate(v)
 		return nil
 	case schedulecoach.FieldStartAt:
 		v, ok := value.(time.Time)
@@ -41523,6 +41674,9 @@ func (m *ScheduleCoachMutation) ClearedFields() []string {
 	if m.FieldCleared(schedulecoach.FieldType) {
 		fields = append(fields, schedulecoach.FieldType)
 	}
+	if m.FieldCleared(schedulecoach.FieldDate) {
+		fields = append(fields, schedulecoach.FieldDate)
+	}
 	if m.FieldCleared(schedulecoach.FieldStartAt) {
 		fields = append(fields, schedulecoach.FieldStartAt)
 	}
@@ -41582,6 +41736,9 @@ func (m *ScheduleCoachMutation) ClearField(name string) error {
 	case schedulecoach.FieldType:
 		m.ClearType()
 		return nil
+	case schedulecoach.FieldDate:
+		m.ClearDate()
+		return nil
 	case schedulecoach.FieldStartAt:
 		m.ClearStartAt()
 		return nil
@@ -41634,6 +41791,9 @@ func (m *ScheduleCoachMutation) ResetField(name string) error {
 		return nil
 	case schedulecoach.FieldType:
 		m.ResetType()
+		return nil
+	case schedulecoach.FieldDate:
+		m.ResetDate()
 		return nil
 	case schedulecoach.FieldStartAt:
 		m.ResetStartAt()
@@ -41752,10 +41912,12 @@ type ScheduleMemberMutation struct {
 	member_product_property_id    *int64
 	addmember_product_property_id *int64
 	_type                         *string
+	date                          *time.Time
 	start_at                      *time.Time
 	end_at                        *time.Time
 	sign_start_at                 *time.Time
 	sign_end_at                   *time.Time
+	seat                          *base.Seat
 	member_name                   *string
 	member_product_name           *string
 	member_product_property_name  *string
@@ -42607,6 +42769,55 @@ func (m *ScheduleMemberMutation) ResetType() {
 	delete(m.clearedFields, schedulemember.FieldType)
 }
 
+// SetDate sets the "date" field.
+func (m *ScheduleMemberMutation) SetDate(t time.Time) {
+	m.date = &t
+}
+
+// Date returns the value of the "date" field in the mutation.
+func (m *ScheduleMemberMutation) Date() (r time.Time, exists bool) {
+	v := m.date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDate returns the old "date" field's value of the ScheduleMember entity.
+// If the ScheduleMember object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScheduleMemberMutation) OldDate(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDate: %w", err)
+	}
+	return oldValue.Date, nil
+}
+
+// ClearDate clears the value of the "date" field.
+func (m *ScheduleMemberMutation) ClearDate() {
+	m.date = nil
+	m.clearedFields[schedulemember.FieldDate] = struct{}{}
+}
+
+// DateCleared returns if the "date" field was cleared in this mutation.
+func (m *ScheduleMemberMutation) DateCleared() bool {
+	_, ok := m.clearedFields[schedulemember.FieldDate]
+	return ok
+}
+
+// ResetDate resets all changes to the "date" field.
+func (m *ScheduleMemberMutation) ResetDate() {
+	m.date = nil
+	delete(m.clearedFields, schedulemember.FieldDate)
+}
+
 // SetStartAt sets the "start_at" field.
 func (m *ScheduleMemberMutation) SetStartAt(t time.Time) {
 	m.start_at = &t
@@ -42801,6 +43012,55 @@ func (m *ScheduleMemberMutation) SignEndAtCleared() bool {
 func (m *ScheduleMemberMutation) ResetSignEndAt() {
 	m.sign_end_at = nil
 	delete(m.clearedFields, schedulemember.FieldSignEndAt)
+}
+
+// SetSeat sets the "seat" field.
+func (m *ScheduleMemberMutation) SetSeat(b base.Seat) {
+	m.seat = &b
+}
+
+// Seat returns the value of the "seat" field in the mutation.
+func (m *ScheduleMemberMutation) Seat() (r base.Seat, exists bool) {
+	v := m.seat
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSeat returns the old "seat" field's value of the ScheduleMember entity.
+// If the ScheduleMember object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScheduleMemberMutation) OldSeat(ctx context.Context) (v base.Seat, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSeat is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSeat requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSeat: %w", err)
+	}
+	return oldValue.Seat, nil
+}
+
+// ClearSeat clears the value of the "seat" field.
+func (m *ScheduleMemberMutation) ClearSeat() {
+	m.seat = nil
+	m.clearedFields[schedulemember.FieldSeat] = struct{}{}
+}
+
+// SeatCleared returns if the "seat" field was cleared in this mutation.
+func (m *ScheduleMemberMutation) SeatCleared() bool {
+	_, ok := m.clearedFields[schedulemember.FieldSeat]
+	return ok
+}
+
+// ResetSeat resets all changes to the "seat" field.
+func (m *ScheduleMemberMutation) ResetSeat() {
+	m.seat = nil
+	delete(m.clearedFields, schedulemember.FieldSeat)
 }
 
 // SetMemberName sets the "member_name" field.
@@ -43060,7 +43320,7 @@ func (m *ScheduleMemberMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ScheduleMemberMutation) Fields() []string {
-	fields := make([]string, 0, 20)
+	fields := make([]string, 0, 22)
 	if m.created_at != nil {
 		fields = append(fields, schedulemember.FieldCreatedAt)
 	}
@@ -43097,6 +43357,9 @@ func (m *ScheduleMemberMutation) Fields() []string {
 	if m._type != nil {
 		fields = append(fields, schedulemember.FieldType)
 	}
+	if m.date != nil {
+		fields = append(fields, schedulemember.FieldDate)
+	}
 	if m.start_at != nil {
 		fields = append(fields, schedulemember.FieldStartAt)
 	}
@@ -43108,6 +43371,9 @@ func (m *ScheduleMemberMutation) Fields() []string {
 	}
 	if m.sign_end_at != nil {
 		fields = append(fields, schedulemember.FieldSignEndAt)
+	}
+	if m.seat != nil {
+		fields = append(fields, schedulemember.FieldSeat)
 	}
 	if m.member_name != nil {
 		fields = append(fields, schedulemember.FieldMemberName)
@@ -43153,6 +43419,8 @@ func (m *ScheduleMemberMutation) Field(name string) (ent.Value, bool) {
 		return m.MemberProductPropertyID()
 	case schedulemember.FieldType:
 		return m.GetType()
+	case schedulemember.FieldDate:
+		return m.Date()
 	case schedulemember.FieldStartAt:
 		return m.StartAt()
 	case schedulemember.FieldEndAt:
@@ -43161,6 +43429,8 @@ func (m *ScheduleMemberMutation) Field(name string) (ent.Value, bool) {
 		return m.SignStartAt()
 	case schedulemember.FieldSignEndAt:
 		return m.SignEndAt()
+	case schedulemember.FieldSeat:
+		return m.Seat()
 	case schedulemember.FieldMemberName:
 		return m.MemberName()
 	case schedulemember.FieldMemberProductName:
@@ -43202,6 +43472,8 @@ func (m *ScheduleMemberMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldMemberProductPropertyID(ctx)
 	case schedulemember.FieldType:
 		return m.OldType(ctx)
+	case schedulemember.FieldDate:
+		return m.OldDate(ctx)
 	case schedulemember.FieldStartAt:
 		return m.OldStartAt(ctx)
 	case schedulemember.FieldEndAt:
@@ -43210,6 +43482,8 @@ func (m *ScheduleMemberMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldSignStartAt(ctx)
 	case schedulemember.FieldSignEndAt:
 		return m.OldSignEndAt(ctx)
+	case schedulemember.FieldSeat:
+		return m.OldSeat(ctx)
 	case schedulemember.FieldMemberName:
 		return m.OldMemberName(ctx)
 	case schedulemember.FieldMemberProductName:
@@ -43311,6 +43585,13 @@ func (m *ScheduleMemberMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetType(v)
 		return nil
+	case schedulemember.FieldDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDate(v)
+		return nil
 	case schedulemember.FieldStartAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -43338,6 +43619,13 @@ func (m *ScheduleMemberMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSignEndAt(v)
+		return nil
+	case schedulemember.FieldSeat:
+		v, ok := value.(base.Seat)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSeat(v)
 		return nil
 	case schedulemember.FieldMemberName:
 		v, ok := value.(string)
@@ -43520,6 +43808,9 @@ func (m *ScheduleMemberMutation) ClearedFields() []string {
 	if m.FieldCleared(schedulemember.FieldType) {
 		fields = append(fields, schedulemember.FieldType)
 	}
+	if m.FieldCleared(schedulemember.FieldDate) {
+		fields = append(fields, schedulemember.FieldDate)
+	}
 	if m.FieldCleared(schedulemember.FieldStartAt) {
 		fields = append(fields, schedulemember.FieldStartAt)
 	}
@@ -43531,6 +43822,9 @@ func (m *ScheduleMemberMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(schedulemember.FieldSignEndAt) {
 		fields = append(fields, schedulemember.FieldSignEndAt)
+	}
+	if m.FieldCleared(schedulemember.FieldSeat) {
+		fields = append(fields, schedulemember.FieldSeat)
 	}
 	if m.FieldCleared(schedulemember.FieldMemberName) {
 		fields = append(fields, schedulemember.FieldMemberName)
@@ -43594,6 +43888,9 @@ func (m *ScheduleMemberMutation) ClearField(name string) error {
 	case schedulemember.FieldType:
 		m.ClearType()
 		return nil
+	case schedulemember.FieldDate:
+		m.ClearDate()
+		return nil
 	case schedulemember.FieldStartAt:
 		m.ClearStartAt()
 		return nil
@@ -43605,6 +43902,9 @@ func (m *ScheduleMemberMutation) ClearField(name string) error {
 		return nil
 	case schedulemember.FieldSignEndAt:
 		m.ClearSignEndAt()
+		return nil
+	case schedulemember.FieldSeat:
+		m.ClearSeat()
 		return nil
 	case schedulemember.FieldMemberName:
 		m.ClearMemberName()
@@ -43662,6 +43962,9 @@ func (m *ScheduleMemberMutation) ResetField(name string) error {
 	case schedulemember.FieldType:
 		m.ResetType()
 		return nil
+	case schedulemember.FieldDate:
+		m.ResetDate()
+		return nil
 	case schedulemember.FieldStartAt:
 		m.ResetStartAt()
 		return nil
@@ -43673,6 +43976,9 @@ func (m *ScheduleMemberMutation) ResetField(name string) error {
 		return nil
 	case schedulemember.FieldSignEndAt:
 		m.ResetSignEndAt()
+		return nil
+	case schedulemember.FieldSeat:
+		m.ResetSeat()
 		return nil
 	case schedulemember.FieldMemberName:
 		m.ResetMemberName()

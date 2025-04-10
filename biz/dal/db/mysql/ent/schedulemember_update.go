@@ -9,6 +9,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	"kcers/biz/dal/db/mysql/ent/schedule"
 	"kcers/biz/dal/db/mysql/ent/schedulemember"
+	"kcers/idl_gen/model/base"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -291,6 +292,26 @@ func (smu *ScheduleMemberUpdate) ClearType() *ScheduleMemberUpdate {
 	return smu
 }
 
+// SetDate sets the "date" field.
+func (smu *ScheduleMemberUpdate) SetDate(t time.Time) *ScheduleMemberUpdate {
+	smu.mutation.SetDate(t)
+	return smu
+}
+
+// SetNillableDate sets the "date" field if the given value is not nil.
+func (smu *ScheduleMemberUpdate) SetNillableDate(t *time.Time) *ScheduleMemberUpdate {
+	if t != nil {
+		smu.SetDate(*t)
+	}
+	return smu
+}
+
+// ClearDate clears the value of the "date" field.
+func (smu *ScheduleMemberUpdate) ClearDate() *ScheduleMemberUpdate {
+	smu.mutation.ClearDate()
+	return smu
+}
+
 // SetStartAt sets the "start_at" field.
 func (smu *ScheduleMemberUpdate) SetStartAt(t time.Time) *ScheduleMemberUpdate {
 	smu.mutation.SetStartAt(t)
@@ -368,6 +389,26 @@ func (smu *ScheduleMemberUpdate) SetNillableSignEndAt(t *time.Time) *ScheduleMem
 // ClearSignEndAt clears the value of the "sign_end_at" field.
 func (smu *ScheduleMemberUpdate) ClearSignEndAt() *ScheduleMemberUpdate {
 	smu.mutation.ClearSignEndAt()
+	return smu
+}
+
+// SetSeat sets the "seat" field.
+func (smu *ScheduleMemberUpdate) SetSeat(b base.Seat) *ScheduleMemberUpdate {
+	smu.mutation.SetSeat(b)
+	return smu
+}
+
+// SetNillableSeat sets the "seat" field if the given value is not nil.
+func (smu *ScheduleMemberUpdate) SetNillableSeat(b *base.Seat) *ScheduleMemberUpdate {
+	if b != nil {
+		smu.SetSeat(*b)
+	}
+	return smu
+}
+
+// ClearSeat clears the value of the "seat" field.
+func (smu *ScheduleMemberUpdate) ClearSeat() *ScheduleMemberUpdate {
+	smu.mutation.ClearSeat()
 	return smu
 }
 
@@ -602,6 +643,12 @@ func (smu *ScheduleMemberUpdate) sqlSave(ctx context.Context) (n int, err error)
 	if smu.mutation.TypeCleared() {
 		_spec.ClearField(schedulemember.FieldType, field.TypeString)
 	}
+	if value, ok := smu.mutation.Date(); ok {
+		_spec.SetField(schedulemember.FieldDate, field.TypeTime, value)
+	}
+	if smu.mutation.DateCleared() {
+		_spec.ClearField(schedulemember.FieldDate, field.TypeTime)
+	}
 	if value, ok := smu.mutation.StartAt(); ok {
 		_spec.SetField(schedulemember.FieldStartAt, field.TypeTime, value)
 	}
@@ -625,6 +672,12 @@ func (smu *ScheduleMemberUpdate) sqlSave(ctx context.Context) (n int, err error)
 	}
 	if smu.mutation.SignEndAtCleared() {
 		_spec.ClearField(schedulemember.FieldSignEndAt, field.TypeTime)
+	}
+	if value, ok := smu.mutation.Seat(); ok {
+		_spec.SetField(schedulemember.FieldSeat, field.TypeJSON, value)
+	}
+	if smu.mutation.SeatCleared() {
+		_spec.ClearField(schedulemember.FieldSeat, field.TypeJSON)
 	}
 	if value, ok := smu.mutation.MemberName(); ok {
 		_spec.SetField(schedulemember.FieldMemberName, field.TypeString, value)
@@ -962,6 +1015,26 @@ func (smuo *ScheduleMemberUpdateOne) ClearType() *ScheduleMemberUpdateOne {
 	return smuo
 }
 
+// SetDate sets the "date" field.
+func (smuo *ScheduleMemberUpdateOne) SetDate(t time.Time) *ScheduleMemberUpdateOne {
+	smuo.mutation.SetDate(t)
+	return smuo
+}
+
+// SetNillableDate sets the "date" field if the given value is not nil.
+func (smuo *ScheduleMemberUpdateOne) SetNillableDate(t *time.Time) *ScheduleMemberUpdateOne {
+	if t != nil {
+		smuo.SetDate(*t)
+	}
+	return smuo
+}
+
+// ClearDate clears the value of the "date" field.
+func (smuo *ScheduleMemberUpdateOne) ClearDate() *ScheduleMemberUpdateOne {
+	smuo.mutation.ClearDate()
+	return smuo
+}
+
 // SetStartAt sets the "start_at" field.
 func (smuo *ScheduleMemberUpdateOne) SetStartAt(t time.Time) *ScheduleMemberUpdateOne {
 	smuo.mutation.SetStartAt(t)
@@ -1039,6 +1112,26 @@ func (smuo *ScheduleMemberUpdateOne) SetNillableSignEndAt(t *time.Time) *Schedul
 // ClearSignEndAt clears the value of the "sign_end_at" field.
 func (smuo *ScheduleMemberUpdateOne) ClearSignEndAt() *ScheduleMemberUpdateOne {
 	smuo.mutation.ClearSignEndAt()
+	return smuo
+}
+
+// SetSeat sets the "seat" field.
+func (smuo *ScheduleMemberUpdateOne) SetSeat(b base.Seat) *ScheduleMemberUpdateOne {
+	smuo.mutation.SetSeat(b)
+	return smuo
+}
+
+// SetNillableSeat sets the "seat" field if the given value is not nil.
+func (smuo *ScheduleMemberUpdateOne) SetNillableSeat(b *base.Seat) *ScheduleMemberUpdateOne {
+	if b != nil {
+		smuo.SetSeat(*b)
+	}
+	return smuo
+}
+
+// ClearSeat clears the value of the "seat" field.
+func (smuo *ScheduleMemberUpdateOne) ClearSeat() *ScheduleMemberUpdateOne {
+	smuo.mutation.ClearSeat()
 	return smuo
 }
 
@@ -1303,6 +1396,12 @@ func (smuo *ScheduleMemberUpdateOne) sqlSave(ctx context.Context) (_node *Schedu
 	if smuo.mutation.TypeCleared() {
 		_spec.ClearField(schedulemember.FieldType, field.TypeString)
 	}
+	if value, ok := smuo.mutation.Date(); ok {
+		_spec.SetField(schedulemember.FieldDate, field.TypeTime, value)
+	}
+	if smuo.mutation.DateCleared() {
+		_spec.ClearField(schedulemember.FieldDate, field.TypeTime)
+	}
 	if value, ok := smuo.mutation.StartAt(); ok {
 		_spec.SetField(schedulemember.FieldStartAt, field.TypeTime, value)
 	}
@@ -1326,6 +1425,12 @@ func (smuo *ScheduleMemberUpdateOne) sqlSave(ctx context.Context) (_node *Schedu
 	}
 	if smuo.mutation.SignEndAtCleared() {
 		_spec.ClearField(schedulemember.FieldSignEndAt, field.TypeTime)
+	}
+	if value, ok := smuo.mutation.Seat(); ok {
+		_spec.SetField(schedulemember.FieldSeat, field.TypeJSON, value)
+	}
+	if smuo.mutation.SeatCleared() {
+		_spec.ClearField(schedulemember.FieldSeat, field.TypeJSON)
 	}
 	if value, ok := smuo.mutation.MemberName(); ok {
 		_spec.SetField(schedulemember.FieldMemberName, field.TypeString, value)

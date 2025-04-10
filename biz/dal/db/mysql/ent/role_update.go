@@ -215,6 +215,27 @@ func (ru *RoleUpdate) AppendApis(i []int) *RoleUpdate {
 	return ru
 }
 
+// SetVenueID sets the "venue_id" field.
+func (ru *RoleUpdate) SetVenueID(i int64) *RoleUpdate {
+	ru.mutation.ResetVenueID()
+	ru.mutation.SetVenueID(i)
+	return ru
+}
+
+// SetNillableVenueID sets the "venue_id" field if the given value is not nil.
+func (ru *RoleUpdate) SetNillableVenueID(i *int64) *RoleUpdate {
+	if i != nil {
+		ru.SetVenueID(*i)
+	}
+	return ru
+}
+
+// AddVenueID adds i to the "venue_id" field.
+func (ru *RoleUpdate) AddVenueID(i int64) *RoleUpdate {
+	ru.mutation.AddVenueID(i)
+	return ru
+}
+
 // AddMenuIDs adds the "menus" edge to the Menu entity by IDs.
 func (ru *RoleUpdate) AddMenuIDs(ids ...int64) *RoleUpdate {
 	ru.mutation.AddMenuIDs(ids...)
@@ -440,6 +461,12 @@ func (ru *RoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, role.FieldApis, value)
 		})
+	}
+	if value, ok := ru.mutation.VenueID(); ok {
+		_spec.SetField(role.FieldVenueID, field.TypeInt64, value)
+	}
+	if value, ok := ru.mutation.AddedVenueID(); ok {
+		_spec.AddField(role.FieldVenueID, field.TypeInt64, value)
 	}
 	if ru.mutation.MenusCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -780,6 +807,27 @@ func (ruo *RoleUpdateOne) AppendApis(i []int) *RoleUpdateOne {
 	return ruo
 }
 
+// SetVenueID sets the "venue_id" field.
+func (ruo *RoleUpdateOne) SetVenueID(i int64) *RoleUpdateOne {
+	ruo.mutation.ResetVenueID()
+	ruo.mutation.SetVenueID(i)
+	return ruo
+}
+
+// SetNillableVenueID sets the "venue_id" field if the given value is not nil.
+func (ruo *RoleUpdateOne) SetNillableVenueID(i *int64) *RoleUpdateOne {
+	if i != nil {
+		ruo.SetVenueID(*i)
+	}
+	return ruo
+}
+
+// AddVenueID adds i to the "venue_id" field.
+func (ruo *RoleUpdateOne) AddVenueID(i int64) *RoleUpdateOne {
+	ruo.mutation.AddVenueID(i)
+	return ruo
+}
+
 // AddMenuIDs adds the "menus" edge to the Menu entity by IDs.
 func (ruo *RoleUpdateOne) AddMenuIDs(ids ...int64) *RoleUpdateOne {
 	ruo.mutation.AddMenuIDs(ids...)
@@ -1035,6 +1083,12 @@ func (ruo *RoleUpdateOne) sqlSave(ctx context.Context) (_node *Role, err error) 
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, role.FieldApis, value)
 		})
+	}
+	if value, ok := ruo.mutation.VenueID(); ok {
+		_spec.SetField(role.FieldVenueID, field.TypeInt64, value)
+	}
+	if value, ok := ruo.mutation.AddedVenueID(); ok {
+		_spec.AddField(role.FieldVenueID, field.TypeInt64, value)
 	}
 	if ruo.mutation.MenusCleared() {
 		edge := &sqlgraph.EdgeSpec{

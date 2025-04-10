@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-func (s *Schedule) ScheduleCreate(req schedule.CreateOrUpdateScheduleReq) error {
+func (s *Schedule) ScheduleCreate(req *schedule.CreateOrUpdateScheduleReq) error {
 
 	// 解析字符串到 time.Time 类型
 	startTime, _ := time.Parse(time.DateTime, req.StartAt)

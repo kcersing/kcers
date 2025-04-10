@@ -15,8 +15,11 @@ const (
 
 	HlogFilePath = "./tmp/hlog/logs/"
 
-	MySqlDSN    = "%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local"
-	RabbitMqURI = "amqp://%s:%s@%s:%d/"
+	ExportFilePath = "./tmp/export/"
+
+	WechatFilePath = "./tmp/wechat/"
+	MySqlDSN       = "%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local"
+	RabbitMqURI    = "amqp://%s:%s@%s:%d/"
 
 	TCP                  = "tcp"
 	FreePortAddress      = ""

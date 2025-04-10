@@ -2,26 +2,19 @@ package schedule
 
 import (
 	"fmt"
-	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	"kcers/biz/dal/db/mysql/ent/member"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
-	"kcers/biz/dal/db/mysql/ent/memberprofile"
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	schedule2 "kcers/biz/dal/db/mysql/ent/schedule"
 	"kcers/biz/dal/db/mysql/ent/schedulemember"
 	"kcers/biz/dal/db/mysql/ent/venue"
-	"kcers/biz/dal/enums"
 	"kcers/biz/dal/minio"
-	member2 "kcers/biz/infras/service/member"
-	venueService "kcers/biz/infras/service/venue"
 	"kcers/idl_gen/model/admin/schedule"
-
-	"time"
 )
 
-func (s *Schedule) MemberCreate(req schedule.MemberSubscribeReq) error {
+func (s *Schedule) MemberCreate(req *schedule.MemberSubscribeReq) error {
 
 	sc, err := s.db.Schedule.Query().
 		Where(schedule2.ID(req.ScheduleId)).
@@ -85,7 +78,7 @@ func (s *Schedule) MemberCreate(req schedule.MemberSubscribeReq) error {
 
 }
 
-func (s *Schedule) MemberUpdate(req schedule.ScheduleMemberInfo) error {
+func (s *Schedule) MemberUpdate(req *schedule.ScheduleMemberInfo) error {
 	//TODO implement me
 	panic("implement me")
 }
@@ -95,7 +88,7 @@ func (s *Schedule) MemberDelete(id int64) error {
 	panic("implement me")
 }
 
-func (s *Schedule) MemberList(req schedule.ScheduleMemberListReq) (resp []*schedule.ScheduleMemberInfo, total int, err error) {
+func (s *Schedule) MemberList(req *schedule.ScheduleMemberListReq) (resp []*schedule.ScheduleMemberInfo, total int, err error) {
 
 	var predicates []predicate.ScheduleMember
 	if req.MemberId > 0 {
@@ -113,35 +106,8 @@ func (s *Schedule) MemberList(req schedule.ScheduleMemberListReq) (resp []*sched
 		return resp, total, err
 	}
 
-	err = copier.Copy(&resp, &lists)
-	if err != nil {
-		err = errors.Wrap(err, "copy Schedule Member info failed")
-		return resp, 0, err
-	}
-	for i, v := range lists {
-		vInfo, err := venueService.NewVenue(s.ctx, s.c).VenueInfo(v.VenueID)
-		if err == nil {
-			resp[i].VenueName = vInfo.Name
-		}
-		m, err := member2.NewMember(s.ctx, s.c).Info(v.MemberID)
-		if err == nil {
-			resp[i].Mobile = m.Mobile
-			resp[i].MemberName = m.Name
-		}
-
-		md, err := s.db.MemberProfile.Query().Where(memberprofile.MemberID(v.MemberID)).First(s.ctx)
-		if err != nil {
-			err = errors.Wrap(err, "未找到会员详情")
-			return resp, 0, err
-		} else {
-			var gender = enums.ReturnMemberGenderValues(md.Gender)
-			resp[i].Gender = gender
-			if !md.Birthday.IsZero() {
-				resp[i].Birthday = int64(time.Now().Sub(md.Birthday).Hours() / 24 / 365)
-
-			}
-		}
-		resp[i].CreatedAt = v.CreatedAt.Format(time.DateTime)
+	for _, v := range lists {
+		resp = append(resp, s.entScheduleMemberInfo(v, nil))
 
 	}
 
@@ -150,31 +116,27 @@ func (s *Schedule) MemberList(req schedule.ScheduleMemberListReq) (resp []*sched
 
 }
 
-func (s *Schedule) UpdateMemberStatus(ID int64, status int64) error {
-	_, err := s.db.ScheduleMember.Update().Where(schedulemember.ID(ID)).SetStatus(status).Save(s.ctx)
+func (s *Schedule) UpdateMemberStatus(id, status int64) error {
+	_, err := s.db.ScheduleMember.Update().Where(schedulemember.ID(id)).SetStatus(status).Save(s.ctx)
 	return err
 }
 
-func (s *Schedule) MemberInfo(ID int64) (info *schedule.ScheduleMemberInfo, err error) {
+func (s *Schedule) MemberInfo(id int64) (info *schedule.ScheduleMemberInfo, err error) {
 
-	m, err := s.db.ScheduleMember.Query().Where(schedulemember.ID(ID)).First(s.ctx)
+	m, err := s.db.ScheduleMember.Query().Where(schedulemember.ID(id)).First(s.ctx)
 
 	if err != nil {
 		err = errors.Wrap(err, "get Schedule Member failed")
 		return info, err
 	}
 
-	err = copier.Copy(&info, &m)
-	if err != nil {
-		err = errors.Wrap(err, "copy Schedule Member info failed")
-		return info, err
-	}
+	info = s.entScheduleMemberInfo(m, nil)
 
 	return info, nil
 
 }
 
-func (s Schedule) SearchSubscribeByMember(req schedule.SearchSubscribeByMemberReq) (list []schedule.SubscribeByMember, total int64, err error) {
+func (s *Schedule) SearchSubscribeByMember(req *schedule.SearchSubscribeByMemberReq) (list []*schedule.SubscribeByMember, total int64, err error) {
 
 	m, err := s.db.Member.Query().Where(member.Mobile(req.Mobile)).First(s.ctx)
 
@@ -196,7 +158,7 @@ func (s Schedule) SearchSubscribeByMember(req schedule.SearchSubscribeByMemberRe
 	}
 	for _, v := range mpp {
 		mp, _ := v.QueryOwner().First(s.ctx)
-		list = append(list, schedule.SubscribeByMember{
+		list = append(list, &schedule.SubscribeByMember{
 			Avatar:                    minio.URLconvert(s.ctx, s.c, m.Avatar),
 			Mobile:                    m.Mobile,
 			MemberId:                  m.ID,

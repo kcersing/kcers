@@ -915,6 +915,10 @@ func init() {
 	roleDescApis := roleFields[5].Descriptor()
 	// role.DefaultApis holds the default value on creation for the apis field.
 	role.DefaultApis = roleDescApis.Default.([]int)
+	// roleDescVenueID is the schema descriptor for venue_id field.
+	roleDescVenueID := roleFields[6].Descriptor()
+	// role.DefaultVenueID holds the default value on creation for the venue_id field.
+	role.DefaultVenueID = roleDescVenueID.Default.(int64)
 	scheduleMixin := schema.Schedule{}.Mixin()
 	scheduleMixinFields0 := scheduleMixin[0].Fields()
 	_ = scheduleMixinFields0
@@ -978,19 +982,19 @@ func init() {
 	// schedulecoach.DefaultStatus holds the default value on creation for the status field.
 	schedulecoach.DefaultStatus = schedulecoachDescStatus.Default.(int64)
 	// schedulecoachDescStartAt is the schema descriptor for start_at field.
-	schedulecoachDescStartAt := schedulecoachFields[5].Descriptor()
+	schedulecoachDescStartAt := schedulecoachFields[6].Descriptor()
 	// schedulecoach.DefaultStartAt holds the default value on creation for the start_at field.
 	schedulecoach.DefaultStartAt = schedulecoachDescStartAt.Default.(func() time.Time)
 	// schedulecoachDescEndAt is the schema descriptor for end_at field.
-	schedulecoachDescEndAt := schedulecoachFields[6].Descriptor()
+	schedulecoachDescEndAt := schedulecoachFields[7].Descriptor()
 	// schedulecoach.DefaultEndAt holds the default value on creation for the end_at field.
 	schedulecoach.DefaultEndAt = schedulecoachDescEndAt.Default.(func() time.Time)
 	// schedulecoachDescSignStartAt is the schema descriptor for sign_start_at field.
-	schedulecoachDescSignStartAt := schedulecoachFields[7].Descriptor()
+	schedulecoachDescSignStartAt := schedulecoachFields[8].Descriptor()
 	// schedulecoach.DefaultSignStartAt holds the default value on creation for the sign_start_at field.
 	schedulecoach.DefaultSignStartAt = schedulecoachDescSignStartAt.Default.(func() time.Time)
 	// schedulecoachDescSignEndAt is the schema descriptor for sign_end_at field.
-	schedulecoachDescSignEndAt := schedulecoachFields[8].Descriptor()
+	schedulecoachDescSignEndAt := schedulecoachFields[9].Descriptor()
 	// schedulecoach.DefaultSignEndAt holds the default value on creation for the sign_end_at field.
 	schedulecoach.DefaultSignEndAt = schedulecoachDescSignEndAt.Default.(func() time.Time)
 	schedulememberMixin := schema.ScheduleMember{}.Mixin()
@@ -1023,21 +1027,25 @@ func init() {
 	// schedulemember.DefaultStatus holds the default value on creation for the status field.
 	schedulemember.DefaultStatus = schedulememberDescStatus.Default.(int64)
 	// schedulememberDescStartAt is the schema descriptor for start_at field.
-	schedulememberDescStartAt := schedulememberFields[7].Descriptor()
+	schedulememberDescStartAt := schedulememberFields[8].Descriptor()
 	// schedulemember.DefaultStartAt holds the default value on creation for the start_at field.
 	schedulemember.DefaultStartAt = schedulememberDescStartAt.Default.(func() time.Time)
 	// schedulememberDescEndAt is the schema descriptor for end_at field.
-	schedulememberDescEndAt := schedulememberFields[8].Descriptor()
+	schedulememberDescEndAt := schedulememberFields[9].Descriptor()
 	// schedulemember.DefaultEndAt holds the default value on creation for the end_at field.
 	schedulemember.DefaultEndAt = schedulememberDescEndAt.Default.(func() time.Time)
 	// schedulememberDescSignStartAt is the schema descriptor for sign_start_at field.
-	schedulememberDescSignStartAt := schedulememberFields[9].Descriptor()
+	schedulememberDescSignStartAt := schedulememberFields[10].Descriptor()
 	// schedulemember.DefaultSignStartAt holds the default value on creation for the sign_start_at field.
 	schedulemember.DefaultSignStartAt = schedulememberDescSignStartAt.Default.(func() time.Time)
 	// schedulememberDescSignEndAt is the schema descriptor for sign_end_at field.
-	schedulememberDescSignEndAt := schedulememberFields[10].Descriptor()
+	schedulememberDescSignEndAt := schedulememberFields[11].Descriptor()
 	// schedulemember.DefaultSignEndAt holds the default value on creation for the sign_end_at field.
 	schedulemember.DefaultSignEndAt = schedulememberDescSignEndAt.Default.(func() time.Time)
+	// schedulememberDescSeat is the schema descriptor for seat field.
+	schedulememberDescSeat := schedulememberFields[12].Descriptor()
+	// schedulemember.DefaultSeat holds the default value on creation for the seat field.
+	schedulemember.DefaultSeat = schedulememberDescSeat.Default.(base.Seat)
 	smsMixin := schema.Sms{}.Mixin()
 	smsMixinFields0 := smsMixin[0].Fields()
 	_ = smsMixinFields0

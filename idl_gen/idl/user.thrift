@@ -46,8 +46,9 @@ struct LoginResp{
     2:  string username (api.raw = "username")
     3:  list<UserRole> userRole (api.raw = "userRole")
     4: list<i64> userRoleIds (api.raw = "userRoleIds")
-
+    5: string roleIdStr (api.raw = "roleIdStr")
 }
+
 struct UserRole{
     1:optional  string name="" (api.raw = "name")
     2:optional  string value="" (api.raw = "value")

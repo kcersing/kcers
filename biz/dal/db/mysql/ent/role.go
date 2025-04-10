@@ -41,6 +41,8 @@ type Role struct {
 	OrderNo int64 `json:"order_no,omitempty"`
 	// apis
 	Apis []int `json:"apis,omitempty"`
+	// 场馆ID
+	VenueID int64 `json:"venue_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the RoleQuery when eager-loading is set.
 	Edges        RoleEdges `json:"edges"`
@@ -94,7 +96,7 @@ func (*Role) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case role.FieldApis:
 			values[i] = new([]byte)
-		case role.FieldID, role.FieldDelete, role.FieldCreatedID, role.FieldStatus, role.FieldOrderNo:
+		case role.FieldID, role.FieldDelete, role.FieldCreatedID, role.FieldStatus, role.FieldOrderNo, role.FieldVenueID:
 			values[i] = new(sql.NullInt64)
 		case role.FieldName, role.FieldValue, role.FieldDefaultRouter, role.FieldRemark:
 			values[i] = new(sql.NullString)
@@ -189,6 +191,12 @@ func (r *Role) assignValues(columns []string, values []any) error {
 					return fmt.Errorf("unmarshal field apis: %w", err)
 				}
 			}
+		case role.FieldVenueID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field venue_id", values[i])
+			} else if value.Valid {
+				r.VenueID = value.Int64
+			}
 		default:
 			r.selectValues.Set(columns[i], values[i])
 		}
@@ -272,6 +280,9 @@ func (r *Role) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("apis=")
 	builder.WriteString(fmt.Sprintf("%v", r.Apis))
+	builder.WriteString(", ")
+	builder.WriteString("venue_id=")
+	builder.WriteString(fmt.Sprintf("%v", r.VenueID))
 	builder.WriteByte(')')
 	return builder.String()
 }

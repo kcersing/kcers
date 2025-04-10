@@ -56,6 +56,7 @@ struct RoleMenu {
 struct RoleListReq{
     1: optional i64 page=1 (api.raw = "page")
     2: optional i64 pageSize=100 (api.raw = "pageSize")
+    12:optional i64 venueId=0 (api.raw = "venueId")
 }
 //创建或更新角色信息参数
 struct RoleInfo {

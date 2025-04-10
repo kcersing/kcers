@@ -6,9 +6,13 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/hertz-contrib/jwt"
-	"github.com/spf13/cast"
 	"kcers/biz/dal/config"
+	tokenService "kcers/biz/infras/service/common"
+	userService "kcers/biz/infras/service/user"
+	"kcers/biz/pkg/errno"
+	"kcers/biz/pkg/utils"
 	"kcers/idl_gen/model/token"
+	"kcers/idl_gen/model/user"
 	"strconv"
 	"time"
 )
@@ -17,7 +21,7 @@ type jwtLogin struct {
 	Username  string `form:"username,required" json:"username,required"`   //lint:ignore SA5008 ignoreCheck
 	Password  string `form:"password,required" json:"password,required"`   //lint:ignore SA5008 ignoreCheck
 	Captcha   string `form:"captcha,required" json:"captcha,required"`     //lint:ignore SA5008 ignoreCheck
-	CaptchaID string `form:"captchaId,required" json:"captchaId,required"` //lint:ignore SA5008 ignoreCheck
+	CaptchaId string `form:"captchaId,required" json:"captchaId,required"` //lint:ignore SA5008 ignoreCheck
 }
 
 // jwt identityKey
@@ -36,7 +40,7 @@ func GetJWTMw(e *casbin.Enforcer) *jwt.HertzJWTMiddleware {
 
 func newJWT(enforcer *casbin.Enforcer) (jwtMiddleware *jwt.HertzJWTMiddleware, err error) {
 	jwtMiddleware, err = jwt.New(&jwt.HertzJWTMiddleware{
-		Realm:       "kcers",
+		Realm:       "saas",
 		Key:         []byte(config.GlobalServerConfig.Auth.AccessSecret),
 		Timeout:     time.Duration(config.GlobalServerConfig.Auth.AccessExpire) * time.Second,
 		MaxRefresh:  time.Hour,
@@ -58,15 +62,16 @@ func newJWT(enforcer *casbin.Enforcer) (jwtMiddleware *jwt.HertzJWTMiddleware, e
 				hlog.Error("get payloadMap error:", " claims data:", claims[identityKey])
 				return nil
 			}
-			hlog.Info("IdentityHandler")
-			hlog.Info(payloadMap)
-			c.Set("role_id", payloadMap["role_id"])
-			c.Set("user_id", payloadMap["user_id"])
+			c.Set("userId", payloadMap["userId"])
+			c.Set("userRole", payloadMap["userRole"])
+			c.Set("userRoleIds", payloadMap["userRoleIds"])
+			c.Set("userRoleIdStr", payloadMap["userRoleIdStr"])
+
 			return payloadMap
 		},
 		// Authenticator is used to validate the login data.
 		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {
-			res := new(login.LoginResp)
+			res := new(user.LoginResp)
 
 			var loginVal jwtLogin
 			if err := c.BindAndValidate(&loginVal); err != nil {
@@ -74,80 +79,98 @@ func newJWT(enforcer *casbin.Enforcer) (jwtMiddleware *jwt.HertzJWTMiddleware, e
 			}
 			// 验证码
 
-			username := loginVal.Username
-			password := loginVal.Password
-			res, err = admin.NewLogin(ctx, c).Login(username, password)
+			res, err = userService.NewUser(ctx, c).Login(&user.LoginReq{
+				Username:  loginVal.Username,
+				Password:  loginVal.Password,
+				CaptchaId: loginVal.Captcha,
+				Captcha:   loginVal.CaptchaId,
+			})
 
+			hlog.Info(res)
 			if err != nil {
 				hlog.Error(err, "jwtLogin error")
 				return nil, err
 			}
 			//jwt
 			var tokenInfo token.TokenInfo
-			tokenInfo.UserId = res.UserID
+			tokenInfo.UserId = res.UserId
 			tokenInfo.Username = res.Username
 			tokenInfo.ExpiredAt = time.Now().Add(time.Duration(config.GlobalServerConfig.Auth.AccessExpire) * time.Second).Format(time.DateTime)
 
-			err = admin.NewToken(ctx, c).Create(&tokenInfo)
+			err = tokenService.NewToken(ctx, c).Create(&tokenInfo)
 			if err != nil {
 				hlog.Error(err, "jwtLogin error, store token error")
 				return nil, err
 			}
 
 			payLoadMap := make(map[string]interface{})
-			payLoadMap["role_id"] = strconv.Itoa(int(res.RoleID))
-			payLoadMap["user_id"] = strconv.Itoa(int(res.UserID))
+			payLoadMap["userId"] = strconv.Itoa(int(res.UserId))
+			payLoadMap["userRole"] = res.UserRole
+			payLoadMap["userRoleIds"] = res.UserRoleIds
+			payLoadMap["userRoleIdStr"] = res.RoleIdStr
 			return payLoadMap, nil
 		},
 		// Authorizator is used to validate the authentication of the current request.
 		Authorizator: func(data interface{}, ctx context.Context, c *app.RequestContext) bool {
-			obj := string(c.URI().Path())
-			act := string(c.Method())
+			//obj := string(c.URI().Path())
+			//act := string(c.Method())
 			payloadMap, ok := data.(map[string]interface{})
+			hlog.Info(payloadMap)
 			if !ok {
 				hlog.Error("get payloadMap error:", " claims data:", data)
 				return false
 			}
-			roleId := payloadMap["role_id"].(string)
-			userId := payloadMap["user_id"].(string)
-
-			hlog.Info("Authorizator")
-			hlog.Info(payloadMap)
-
+			var userRoleIds []int64
+			if payloadMap["userRoleIds"] != "" {
+				roleIds := payloadMap["userRoleIds"].([]interface{})
+				for _, v := range roleIds {
+					i := v.(float64)
+					userRoleIds = append(userRoleIds, int64(i))
+				}
+			} else {
+				hlog.Error("暂无角色", err)
+				return false
+			}
+			if payloadMap["userId"] == "" {
+				hlog.Error("暂无角色", err)
+				return false
+			}
+			userId := payloadMap["userId"].(string)
 			// check token is valid
 			userIdInt, err := strconv.Atoi(userId)
 			if err != nil {
 				hlog.Error("get payloadMap error:", err)
 				return false
 			}
-			existToken := admin.NewToken(ctx, c).IsExistByUserID(int64(userIdInt))
+
+			existToken := tokenService.NewToken(ctx, c).IsExistByUserId(int64(userIdInt))
 			if !existToken {
 				return false
 			}
 			// check the role status
-			roleInfo, err := admin.NewRole(ctx, c).RoleInfoByID(cast.ToInt64(roleId))
-			// if the role is not exist or the role is not active, return false
-			if err != nil {
-				hlog.Error(err, "role is not exist")
-				return false
-			}
-			if roleInfo.Status != 1 {
-				hlog.Error("role cache is not a valid *ent.Role or the role is not active")
-				return false
-			}
+			//roleInfo, err := service.NewRole(ctx, c).RoleInfoByID(cast.ToInt64(roleId))
+			//// if the role is not exist or the role is not active, return false
+			//if err != nil {
+			//	hlog.Error(err, "role is not exist")
+			//	return false
+			//}
+			//if roleInfo.Status != 1 {
+			//	hlog.Error("role cache is not a valid *ent.Role or the role is not active")
+			//	return false
+			//}
 
-			sub := roleId
+			//sub := roleId
 			//check the permission
-			pass, err := enforcer.Enforce(sub, obj, act)
-			if err != nil {
-				hlog.Error("casbin err,  role id: ", roleId, " path: ", obj, " method: ", act, " pass: ", pass, " err: ", err.Error())
-				return false
-			}
-			if !pass {
-				hlog.Info("casbin forbid role id: ", roleId, " path: ", obj, " method: ", act, " pass: ", pass)
-			}
-			hlog.Info("casbin allow role id: ", roleId, " path: ", obj, " method: ", act, " pass: ", pass)
-			return pass
+			//pass, err := enforcer.Enforce(sub, obj, act)
+			//if err != nil {
+			//	hlog.Error("casbin err,  role id: ", roleId, " path: ", obj, " method: ", act, " pass: ", pass, " err: ", err.Error())
+			//	return false
+			//}
+			//if !pass {
+			//	hlog.Info("casbin forbid role id: ", roleId, " path: ", obj, " method: ", act, " pass: ", pass)
+			//}
+			//hlog.Info("casbin allow role id: ", roleId, " path: ", obj, " method: ", act, " pass: ", pass)
+			//return pass
 
 			return true
 		},
@@ -156,6 +179,13 @@ func newJWT(enforcer *casbin.Enforcer) (jwtMiddleware *jwt.HertzJWTMiddleware, e
 				"code":    code,
 				"message": message,
 			})
+		},
+		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
+			utils.SendResponse(c, errno.Success,
+				map[string]interface{}{
+					"token":  token,
+					"expire": expire.Format(time.RFC3339),
+				}, 0, "")
 		},
 	})
 

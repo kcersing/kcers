@@ -3,6 +3,7 @@
 package schedulemember
 
 import (
+	"kcers/idl_gen/model/base"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -38,6 +39,8 @@ const (
 	FieldMemberProductPropertyID = "member_product_property_id"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
+	// FieldDate holds the string denoting the date field in the database.
+	FieldDate = "date"
 	// FieldStartAt holds the string denoting the start_at field in the database.
 	FieldStartAt = "start_at"
 	// FieldEndAt holds the string denoting the end_at field in the database.
@@ -46,6 +49,8 @@ const (
 	FieldSignStartAt = "sign_start_at"
 	// FieldSignEndAt holds the string denoting the sign_end_at field in the database.
 	FieldSignEndAt = "sign_end_at"
+	// FieldSeat holds the string denoting the seat field in the database.
+	FieldSeat = "seat"
 	// FieldMemberName holds the string denoting the member_name field in the database.
 	FieldMemberName = "member_name"
 	// FieldMemberProductName holds the string denoting the member_product_name field in the database.
@@ -82,10 +87,12 @@ var Columns = []string{
 	FieldMemberProductID,
 	FieldMemberProductPropertyID,
 	FieldType,
+	FieldDate,
 	FieldStartAt,
 	FieldEndAt,
 	FieldSignStartAt,
 	FieldSignEndAt,
+	FieldSeat,
 	FieldMemberName,
 	FieldMemberProductName,
 	FieldMemberProductPropertyName,
@@ -123,6 +130,8 @@ var (
 	DefaultSignStartAt func() time.Time
 	// DefaultSignEndAt holds the default value on creation for the "sign_end_at" field.
 	DefaultSignEndAt func() time.Time
+	// DefaultSeat holds the default value on creation for the "seat" field.
+	DefaultSeat base.Seat
 )
 
 // OrderOption defines the ordering options for the ScheduleMember queries.
@@ -191,6 +200,11 @@ func ByMemberProductPropertyID(opts ...sql.OrderTermOption) OrderOption {
 // ByType orders the results by the type field.
 func ByType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldType, opts...).ToFunc()
+}
+
+// ByDate orders the results by the date field.
+func ByDate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDate, opts...).ToFunc()
 }
 
 // ByStartAt orders the results by the start_at field.

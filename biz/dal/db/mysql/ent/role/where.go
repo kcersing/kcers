@@ -105,6 +105,11 @@ func OrderNo(v int64) predicate.Role {
 	return predicate.Role(sql.FieldEQ(FieldOrderNo, v))
 }
 
+// VenueID applies equality check predicate on the "venue_id" field. It's identical to VenueIDEQ.
+func VenueID(v int64) predicate.Role {
+	return predicate.Role(sql.FieldEQ(FieldVenueID, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Role {
 	return predicate.Role(sql.FieldEQ(FieldCreatedAt, v))
@@ -653,6 +658,46 @@ func OrderNoLT(v int64) predicate.Role {
 // OrderNoLTE applies the LTE predicate on the "order_no" field.
 func OrderNoLTE(v int64) predicate.Role {
 	return predicate.Role(sql.FieldLTE(FieldOrderNo, v))
+}
+
+// VenueIDEQ applies the EQ predicate on the "venue_id" field.
+func VenueIDEQ(v int64) predicate.Role {
+	return predicate.Role(sql.FieldEQ(FieldVenueID, v))
+}
+
+// VenueIDNEQ applies the NEQ predicate on the "venue_id" field.
+func VenueIDNEQ(v int64) predicate.Role {
+	return predicate.Role(sql.FieldNEQ(FieldVenueID, v))
+}
+
+// VenueIDIn applies the In predicate on the "venue_id" field.
+func VenueIDIn(vs ...int64) predicate.Role {
+	return predicate.Role(sql.FieldIn(FieldVenueID, vs...))
+}
+
+// VenueIDNotIn applies the NotIn predicate on the "venue_id" field.
+func VenueIDNotIn(vs ...int64) predicate.Role {
+	return predicate.Role(sql.FieldNotIn(FieldVenueID, vs...))
+}
+
+// VenueIDGT applies the GT predicate on the "venue_id" field.
+func VenueIDGT(v int64) predicate.Role {
+	return predicate.Role(sql.FieldGT(FieldVenueID, v))
+}
+
+// VenueIDGTE applies the GTE predicate on the "venue_id" field.
+func VenueIDGTE(v int64) predicate.Role {
+	return predicate.Role(sql.FieldGTE(FieldVenueID, v))
+}
+
+// VenueIDLT applies the LT predicate on the "venue_id" field.
+func VenueIDLT(v int64) predicate.Role {
+	return predicate.Role(sql.FieldLT(FieldVenueID, v))
+}
+
+// VenueIDLTE applies the LTE predicate on the "venue_id" field.
+func VenueIDLTE(v int64) predicate.Role {
+	return predicate.Role(sql.FieldLTE(FieldVenueID, v))
 }
 
 // HasMenus applies the HasEdge predicate on the "menus" edge.

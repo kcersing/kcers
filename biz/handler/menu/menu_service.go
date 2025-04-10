@@ -4,6 +4,7 @@ package menu
 
 import (
 	"context"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
@@ -30,8 +31,9 @@ func MenuAuth(ctx context.Context, c *app.RequestContext) {
 // MenuRole .
 // @router /service/menu/role [POST]
 func MenuRole(ctx context.Context, c *app.RequestContext) {
-	var _ error
+	var err error
 
+	hlog.Info(err)
 	resp := new(base.NilResponse)
 
 	c.JSON(consts.StatusOK, resp)

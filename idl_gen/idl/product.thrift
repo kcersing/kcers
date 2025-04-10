@@ -4,7 +4,7 @@ include "../base/base.thrift"
 
 
 struct Property {
-    1:optional i64 productId=0 (api.raw = "productId")
+
     /**名称 */
     2:optional string name ="" (api.raw = "name")
     /**定价 */
@@ -30,6 +30,11 @@ struct Property {
     20: optional list<i64> tagId=0   (api.raw = "tagId")
     /**合同-数组*/
     17: optional list<i64> contractId =0 (api.raw = "contractId")
+
+        21: optional string createdAt = ""  (api.raw = "createdAt")
+        22: optional string updatedAt = "" (api.raw = "updatedAt")
+        23: optional i64 createdId = 0 (api.raw = "createdId")
+        24: optional string createdName = "" (api.raw = "createdName")
 }
 
 struct Product {
@@ -58,6 +63,7 @@ struct Product {
     21: optional string createdName = "" (api.raw = "createdName")
     19: optional list<base.List> venues = {}  (api.raw = "venues")
     22: optional list<i64> venueId = {}  (api.raw = "venueId")
+    23: optional string venueStr = ""  (api.raw = "venueStr")
 }
 
 struct CreateOrUpdatePropertyReq {

@@ -202,35 +202,3 @@ func ApiAuth(ctx context.Context, c *app.RequestContext) {
 
 	c.JSON(consts.StatusOK, resp)
 }
-
-// GetLogsList .
-// @router /service/logs/list [POST]
-func GetLogsList(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req auth.LogsListReq
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(base.NilResponse)
-
-	c.JSON(consts.StatusOK, resp)
-}
-
-// DeleteLogs .
-// @router /service/logs/deleteAll [POST]
-func DeleteLogs(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req base.Ids
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(base.NilResponse)
-
-	c.JSON(consts.StatusOK, resp)
-}

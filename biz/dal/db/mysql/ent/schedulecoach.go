@@ -39,6 +39,8 @@ type ScheduleCoach struct {
 	ScheduleName string `json:"schedule_name,omitempty"`
 	// 类型
 	Type string `json:"type,omitempty"`
+	// 日期
+	Date time.Time `json:"date,omitempty"`
 	// 开始时间
 	StartAt time.Time `json:"start_at,omitempty"`
 	// 结束时间
@@ -84,7 +86,7 @@ func (*ScheduleCoach) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case schedulecoach.FieldScheduleName, schedulecoach.FieldType, schedulecoach.FieldCoachName:
 			values[i] = new(sql.NullString)
-		case schedulecoach.FieldCreatedAt, schedulecoach.FieldUpdatedAt, schedulecoach.FieldStartAt, schedulecoach.FieldEndAt, schedulecoach.FieldSignStartAt, schedulecoach.FieldSignEndAt:
+		case schedulecoach.FieldCreatedAt, schedulecoach.FieldUpdatedAt, schedulecoach.FieldDate, schedulecoach.FieldStartAt, schedulecoach.FieldEndAt, schedulecoach.FieldSignStartAt, schedulecoach.FieldSignEndAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -166,6 +168,12 @@ func (sc *ScheduleCoach) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
 				sc.Type = value.String
+			}
+		case schedulecoach.FieldDate:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field date", values[i])
+			} else if value.Valid {
+				sc.Date = value.Time
 			}
 		case schedulecoach.FieldStartAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -267,6 +275,9 @@ func (sc *ScheduleCoach) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("type=")
 	builder.WriteString(sc.Type)
+	builder.WriteString(", ")
+	builder.WriteString("date=")
+	builder.WriteString(sc.Date.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("start_at=")
 	builder.WriteString(sc.StartAt.Format(time.ANSIC))

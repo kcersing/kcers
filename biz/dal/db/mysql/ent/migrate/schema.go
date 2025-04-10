@@ -994,6 +994,7 @@ var (
 		{Name: "remark", Type: field.TypeString, Comment: "remark | 备注", Default: ""},
 		{Name: "order_no", Type: field.TypeInt64, Comment: "order number | 排序编号", Default: 0},
 		{Name: "apis", Type: field.TypeJSON, Comment: "apis"},
+		{Name: "venue_id", Type: field.TypeInt64, Comment: "场馆ID", Default: 0},
 	}
 	// SysRolesTable holds the schema information for the "sys_roles" table.
 	SysRolesTable = &schema.Table{
@@ -1017,7 +1018,7 @@ var (
 		{Name: "place_id", Type: field.TypeInt64, Nullable: true, Comment: "场地ID"},
 		{Name: "num", Type: field.TypeInt64, Nullable: true, Comment: "上课人数"},
 		{Name: "num_surplus", Type: field.TypeInt64, Nullable: true, Comment: "剩余可约人数"},
-		{Name: "date", Type: field.TypeString, Nullable: true, Comment: "日期"},
+		{Name: "date", Type: field.TypeTime, Nullable: true, Comment: "日期"},
 		{Name: "start_at", Type: field.TypeTime, Nullable: true, Comment: "开始时间"},
 		{Name: "end_at", Type: field.TypeTime, Nullable: true, Comment: "开始时间"},
 		{Name: "price", Type: field.TypeFloat64, Nullable: true, Comment: "课程价格", Default: 0},
@@ -1065,6 +1066,7 @@ var (
 		{Name: "coach_id", Type: field.TypeInt64, Nullable: true, Comment: "教练ID"},
 		{Name: "schedule_name", Type: field.TypeString, Nullable: true, Comment: "课程名称"},
 		{Name: "type", Type: field.TypeString, Nullable: true, Comment: "类型"},
+		{Name: "date", Type: field.TypeTime, Nullable: true, Comment: "日期"},
 		{Name: "start_at", Type: field.TypeTime, Nullable: true, Comment: "开始时间"},
 		{Name: "end_at", Type: field.TypeTime, Nullable: true, Comment: "结束时间"},
 		{Name: "sign_start_at", Type: field.TypeTime, Nullable: true, Comment: "上课签到时间"},
@@ -1080,7 +1082,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "schedule_coach_schedule_coachs",
-				Columns:    []*schema.Column{ScheduleCoachColumns[15]},
+				Columns:    []*schema.Column{ScheduleCoachColumns[16]},
 				RefColumns: []*schema.Column{ScheduleColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -1099,7 +1101,7 @@ var (
 			{
 				Name:    "schedulecoach_schedule_id",
 				Unique:  false,
-				Columns: []*schema.Column{ScheduleCoachColumns[15]},
+				Columns: []*schema.Column{ScheduleCoachColumns[16]},
 			},
 		},
 	}
@@ -1117,10 +1119,12 @@ var (
 		{Name: "member_product_id", Type: field.TypeInt64, Nullable: true, Comment: "会员购买课ID"},
 		{Name: "member_product_property_id", Type: field.TypeInt64, Nullable: true, Comment: "会员购买课ID"},
 		{Name: "type", Type: field.TypeString, Nullable: true, Comment: "类型"},
+		{Name: "date", Type: field.TypeTime, Nullable: true, Comment: "日期"},
 		{Name: "start_at", Type: field.TypeTime, Nullable: true, Comment: "开始时间"},
 		{Name: "end_at", Type: field.TypeTime, Nullable: true, Comment: "结束时间"},
 		{Name: "sign_start_at", Type: field.TypeTime, Nullable: true, Comment: "上课签到时间"},
 		{Name: "sign_end_at", Type: field.TypeTime, Nullable: true, Comment: "下课签到时间"},
+		{Name: "seat", Type: field.TypeJSON, Nullable: true, Comment: "座位"},
 		{Name: "member_name", Type: field.TypeString, Nullable: true, Comment: "会员名称"},
 		{Name: "member_product_name", Type: field.TypeString, Nullable: true, Comment: "会员产品名称"},
 		{Name: "member_product_property_name", Type: field.TypeString, Nullable: true, Comment: "会员产品属性名称"},
@@ -1135,7 +1139,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "schedule_member_schedule_members",
-				Columns:    []*schema.Column{ScheduleMemberColumns[20]},
+				Columns:    []*schema.Column{ScheduleMemberColumns[22]},
 				RefColumns: []*schema.Column{ScheduleColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -1154,7 +1158,7 @@ var (
 			{
 				Name:    "schedulemember_schedule_id",
 				Unique:  false,
-				Columns: []*schema.Column{ScheduleMemberColumns[20]},
+				Columns: []*schema.Column{ScheduleMemberColumns[22]},
 			},
 		},
 	}

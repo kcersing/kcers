@@ -36,6 +36,8 @@ const (
 	FieldOrderNo = "order_no"
 	// FieldApis holds the string denoting the apis field in the database.
 	FieldApis = "apis"
+	// FieldVenueID holds the string denoting the venue_id field in the database.
+	FieldVenueID = "venue_id"
 	// EdgeMenus holds the string denoting the menus edge name in mutations.
 	EdgeMenus = "menus"
 	// EdgeUsers holds the string denoting the users edge name in mutations.
@@ -75,6 +77,7 @@ var Columns = []string{
 	FieldRemark,
 	FieldOrderNo,
 	FieldApis,
+	FieldVenueID,
 }
 
 var (
@@ -120,6 +123,8 @@ var (
 	DefaultOrderNo int64
 	// DefaultApis holds the default value on creation for the "apis" field.
 	DefaultApis []int
+	// DefaultVenueID holds the default value on creation for the "venue_id" field.
+	DefaultVenueID int64
 )
 
 // OrderOption defines the ordering options for the Role queries.
@@ -178,6 +183,11 @@ func ByRemark(opts ...sql.OrderTermOption) OrderOption {
 // ByOrderNo orders the results by the order_no field.
 func ByOrderNo(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOrderNo, opts...).ToFunc()
+}
+
+// ByVenueID orders the results by the venue_id field.
+func ByVenueID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldVenueID, opts...).ToFunc()
 }
 
 // ByMenusCount orders the results by menus count.

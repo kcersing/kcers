@@ -34,6 +34,8 @@ const (
 	FieldScheduleName = "schedule_name"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
+	// FieldDate holds the string denoting the date field in the database.
+	FieldDate = "date"
 	// FieldStartAt holds the string denoting the start_at field in the database.
 	FieldStartAt = "start_at"
 	// FieldEndAt holds the string denoting the end_at field in the database.
@@ -70,6 +72,7 @@ var Columns = []string{
 	FieldScheduleID,
 	FieldScheduleName,
 	FieldType,
+	FieldDate,
 	FieldStartAt,
 	FieldEndAt,
 	FieldSignStartAt,
@@ -166,6 +169,11 @@ func ByScheduleName(opts ...sql.OrderTermOption) OrderOption {
 // ByType orders the results by the type field.
 func ByType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldType, opts...).ToFunc()
+}
+
+// ByDate orders the results by the date field.
+func ByDate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDate, opts...).ToFunc()
 }
 
 // ByStartAt orders the results by the start_at field.

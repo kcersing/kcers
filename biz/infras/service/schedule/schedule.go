@@ -5,7 +5,6 @@ import (
 	"github.com/casbin/casbin/v2"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/dgraph-io/ristretto"
-	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	"kcers/biz/dal/cache"
 	casbin2 "kcers/biz/dal/casbin"
@@ -71,26 +70,8 @@ func (s *Schedule) ScheduleList(req *schedule.ScheduleListReq) (resp []*schedule
 		return resp, total, err
 	}
 
-	err = copier.Copy(&resp, &lists)
-	if err != nil {
-		err = errors.Wrap(err, "copy Schedule info failed")
-		return resp, 0, err
-	}
-
-	for i, v := range lists {
-		resp[i].StartAt = v.StartAt.Format("15:04")
-		resp[i].EndAt = v.EndAt.Format("15:04")
-
-		coach, _ := v.QueryCoachs().First(s.ctx)
-		resp[i].CoachId = coach.CoachID
-		resp[i].CoachName = coach.CoachName
-
-		if v.Type == "course" {
-			member, _ := v.QueryMembers().First(s.ctx)
-			resp[i].MemberName = member.MemberName
-			resp[i].MemberProductName = member.MemberProductName
-			resp[i].MemberProductPropertyName = member.MemberProductPropertyName
-		}
+	for _, v := range lists {
+		resp = append(resp, s.entScheduleInfo(v))
 	}
 
 	total, _ = s.db.Schedule.Query().Where(predicates...).Count(s.ctx)
@@ -103,7 +84,7 @@ func (s *Schedule) ScheduleDateList(req *schedule.ScheduleListReq) (map[string][
 	lists, total, err := s.ScheduleList(req)
 	m := make(map[string][]*schedule.ScheduleInfo)
 	for _, v := range lists {
-		m[v.Data] = append(m[v.Data], v)
+		m[v.Date] = append(m[v.Date], v)
 	}
 
 	return m, total, err
@@ -112,9 +93,4 @@ func (s *Schedule) ScheduleDateList(req *schedule.ScheduleListReq) (map[string][
 func (s *Schedule) ScheduleUpdateStatus(ID int64, status int64) error {
 	_, err := s.db.Schedule.Update().Where(schedule2.IDEQ(ID)).SetStatus(status).Save(s.ctx)
 	return err
-}
-
-func (sc Schedule) ScheduleInfo(ID int64) (roleInfo *schedule.ScheduleInfo, err error) {
-	//TODO implement me
-	panic("implement me")
 }

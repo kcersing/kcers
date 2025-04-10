@@ -1,13 +1,13 @@
 package product
 
 import (
-	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	"kcers/biz/dal/db/mysql/ent"
 	"kcers/biz/dal/db/mysql/ent/predicate"
 	"kcers/biz/dal/db/mysql/ent/productproperty"
 	"kcers/biz/dal/db/mysql/ent/venue"
 	"kcers/biz/dal/enums"
+	userService "kcers/biz/infras/service/user"
 	"kcers/idl_gen/model/base"
 	"kcers/idl_gen/model/product"
 	"time"
@@ -49,14 +49,8 @@ func (p *Product) PropertyList(req *product.ListReq) (resp []*product.Property, 
 		return resp, total, err
 	}
 
-	err = copier.Copy(&resp, &lists)
-	if err != nil {
-		err = errors.Wrap(err, "copy Product info failed")
-		return resp, 0, err
-	}
-
-	for i, v := range lists {
-
+	for _, v := range lists {
+		resp = append(resp, p.entProperty(v))
 	}
 
 	total, _ = p.db.ProductProperty.Query().Where(predicates...).Count(p.ctx)
@@ -65,54 +59,47 @@ func (p *Product) PropertyList(req *product.ListReq) (resp []*product.Property, 
 }
 
 func (p *Product) entProperty(req *ent.ProductProperty) (info *product.Property) {
+	var tags, contracts []*base.List
+	tagAll, _ := req.QueryTags().All(p.ctx)
+	if tagAll != nil {
+		for _, item := range tagAll {
+			tag := &base.List{
+				ID:   item.ID,
+				Name: item.Title,
+			}
+			tags = append(tags, tag)
+		}
+	}
+
+	contractsAll, _ := req.QueryContracts().All(p.ctx)
+	if contractsAll != nil {
+		for _, item := range contractsAll {
+			contract := &base.List{
+				ID:   item.ID,
+				Name: item.Name,
+			}
+			contracts = append(contracts, contract)
+		}
+	}
+	var created = userService.NewUser(p.ctx, p.c).GetUserName(req.CreatedID)
 
 	info = &product.Property{
-		ProductId:  req.ProductID,
-		Name:       req.Name,
-		Price:      req.Price,
-		Duration:   req.Duration,
-		Length:     req.Length,
-		Count:      req.Count,
-		Type:       req.Type,
-		Data:       req.Data,
-		ID:         req.ID,
-		Status:     req.Status,
-		StatusName: enums.ReturnPropertyValues(req.Status),
-		Tags:       nil,
-		Contracts:  nil,
-	}
-
-	venues, err := req.QueryVenues().Select(venue.FieldID, venue.FieldName).All(m.ctx)
-	if err == nil {
-		var ven []*product.PropertyVenue
-		err = copier.Copy(&ven, &venues)
-		info.Venue = ven
-		for i2, v := range ven {
-			if i2 == 0 {
-				info.Venues = v.Name
-			} else {
-				info.Venues += ", " + v.Name
-			}
-			info.VenueId = append(info.VenueId, v.ID)
-		}
-
-	}
-
-	venues, err := v.QueryVenues().Select(venue.FieldID, venue.FieldName).All(p.ctx)
-	if err == nil {
-		var ven []base.List
-		err = copier.Copy(&ven, &venues)
-		resp[i].Venue = ven
-
-		for i2, v := range ven {
-			if i2 == 0 {
-				resp[i].Venues = v.Name
-			} else {
-				resp[i].Venues += ", " + v.Name
-			}
-			resp[i].VenueId = append(resp[i].VenueId, v.ID)
-		}
-
+		Name:        req.Name,
+		Price:       req.Price,
+		Duration:    req.Duration,
+		Length:      req.Length,
+		Count:       req.Count,
+		Type:        req.Type,
+		Data:        req.Data,
+		ID:          req.ID,
+		Status:      req.Status,
+		StatusName:  enums.ReturnPropertyValues(req.Status),
+		Tags:        tags,
+		Contracts:   contracts,
+		CreatedAt:   req.CreatedAt.Format(time.DateTime),
+		UpdatedAt:   req.UpdatedAt.Format(time.DateTime),
+		CreatedId:   req.CreatedID,
+		CreatedName: created,
 	}
 
 	return

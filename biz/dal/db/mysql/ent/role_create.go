@@ -153,6 +153,20 @@ func (rc *RoleCreate) SetApis(i []int) *RoleCreate {
 	return rc
 }
 
+// SetVenueID sets the "venue_id" field.
+func (rc *RoleCreate) SetVenueID(i int64) *RoleCreate {
+	rc.mutation.SetVenueID(i)
+	return rc
+}
+
+// SetNillableVenueID sets the "venue_id" field if the given value is not nil.
+func (rc *RoleCreate) SetNillableVenueID(i *int64) *RoleCreate {
+	if i != nil {
+		rc.SetVenueID(*i)
+	}
+	return rc
+}
+
 // SetID sets the "id" field.
 func (rc *RoleCreate) SetID(i int64) *RoleCreate {
 	rc.mutation.SetID(i)
@@ -275,6 +289,10 @@ func (rc *RoleCreate) defaults() {
 		v := role.DefaultApis
 		rc.mutation.SetApis(v)
 	}
+	if _, ok := rc.mutation.VenueID(); !ok {
+		v := role.DefaultVenueID
+		rc.mutation.SetVenueID(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -296,6 +314,9 @@ func (rc *RoleCreate) check() error {
 	}
 	if _, ok := rc.mutation.Apis(); !ok {
 		return &ValidationError{Name: "apis", err: errors.New(`ent: missing required field "Role.apis"`)}
+	}
+	if _, ok := rc.mutation.VenueID(); !ok {
+		return &ValidationError{Name: "venue_id", err: errors.New(`ent: missing required field "Role.venue_id"`)}
 	}
 	return nil
 }
@@ -372,6 +393,10 @@ func (rc *RoleCreate) createSpec() (*Role, *sqlgraph.CreateSpec) {
 	if value, ok := rc.mutation.Apis(); ok {
 		_spec.SetField(role.FieldApis, field.TypeJSON, value)
 		_node.Apis = value
+	}
+	if value, ok := rc.mutation.VenueID(); ok {
+		_spec.SetField(role.FieldVenueID, field.TypeInt64, value)
+		_node.VenueID = value
 	}
 	if nodes := rc.mutation.MenusIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

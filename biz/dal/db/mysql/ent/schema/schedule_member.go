@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 	"kcers/biz/dal/db/mysql/ent/schema/mixins"
+	"kcers/idl_gen/model/base"
 	"time"
 )
 
@@ -24,11 +25,12 @@ func (ScheduleMember) Fields() []ent.Field {
 		field.Int64("member_product_id").Comment("会员购买课ID").Optional(),
 		field.Int64("member_product_property_id").Comment("会员购买课ID").Optional(),
 		field.String("type").Comment("类型").Optional(),
+		field.Time("date").Comment("日期").Optional(),
 		field.Time("start_at").Default(time.Now).Comment("开始时间").Optional(),
 		field.Time("end_at").Default(time.Now).Comment("结束时间").Optional(),
 		field.Time("sign_start_at").Default(time.Now).Comment("上课签到时间").Optional(),
 		field.Time("sign_end_at").Default(time.Now).Comment("下课签到时间").Optional(),
-
+		field.JSON("seat", base.Seat{}).Default(base.Seat{}).Comment("座位").Optional(),
 		field.String("member_name").Comment("会员名称").Optional(),
 		field.String("member_product_name").Comment("会员产品名称").Optional(),
 		field.String("member_product_property_name").Comment("会员产品属性名称").Optional(),
