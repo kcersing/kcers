@@ -41,24 +41,16 @@ Casbin:
     [matchers]
     m = r.sub == p.sub && keyMatch2(r.obj,p.obj) && r.act == p.act
 
-
-Payment:
-  Alipay:
-    appid:
-    private_key:
-    app_public_cert_content:
-    alipay_root_cert_content:
-    alipay_public_cert_content:
-  Wechat:
-    appid:
-    mch_id:
-    api_key:
-    api_v3_key:
-    cert_file_content:
-    key_file_content:
-    pkcs12_file_content:
-    serial_no:
-    notify_url:
+Wechat:
+  appid:
+  mch_id:
+  api_key:
+  api_v3_key:
+  cert_file_content:
+  key_file_content:
+  pkcs12_file_content:
+  serial_no:
+  notify_url:
 
 Minio:
   EndPoint : localhost:9000
@@ -77,6 +69,12 @@ Aliyun:
     Captcha:
       SignName:
       TemplateCode :
+Alipay:
+  appid:
+  private_key:
+  app_public_cert_content:
+  alipay_root_cert_content:
+  alipay_public_cert_content:
 
 DouYin:
   AppId :

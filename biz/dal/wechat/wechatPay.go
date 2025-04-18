@@ -22,8 +22,7 @@ func InitWXPaymentApp() {
 
 func NewWXPaymentApp() *payment.Payment {
 
-	conf := config.GlobalServerConfig.Payment.Wechatpay
-
+	conf := config.GlobalServerConfig.Wechat
 	var cache kernel.CacheInterface
 	if config.GlobalServerConfig.Redis.Host != "" {
 		cache = kernel.NewRedisClient(&kernel.UniversalOptions{
@@ -47,26 +46,27 @@ func NewWXPaymentApp() *payment.Payment {
 		NotifyURL:    conf.NotifyUrl,
 		ResponseType: response.TYPE_MAP,
 
-		CertificateKeyPath: conf.CertificateKeyPath,
-		WechatPaySerial:    conf.WechatPaySerial,
-		RSAPublicKeyPath:   conf.RSAPublicKeyPath,
-		SubMchID:           conf.SubMchID,
-		SubAppID:           conf.SubAppID,
+		//CertificateKeyPath: conf.CertificateKeyPath,
+		//WechatPaySerial:    conf.WechatPaySerial,
+		//RSAPublicKeyPath:   conf.RSAPublicKeyPath,
+		//SubMchID:           conf.SubMchID,
+		//SubAppID:           conf.SubAppID,
 
 		Cache: cache,
 		Log: payment.Log{
-			Level: "debug",
-			File:  wechatFilePath + "/pay_log.log",
+			Level:  "debug",
+			File:   wechatFilePath + "/info.log",
+			Error:  wechatFilePath + "/error.log",
+			Stdout: true, //  是否打印在终端
 		},
 		Http: payment.Http{
 			Timeout: 30.0,
-			//BaseURI: "http://127.0.0.1:8888",
 			BaseURI: "https://api.mch.weixin.qq.com",
 		},
 
-		HttpDebug: false,
-		Debug:     false,
-		//Debug:     true,
+		HttpDebug: true,
+		//Debug:     false,
+		Debug: true,
 	})
 
 	if err != nil || Payment == nil {
