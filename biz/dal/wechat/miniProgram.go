@@ -6,6 +6,8 @@ import (
 	"github.com/ArtisanCloud/PowerWeChat/v3/src/kernel/response"
 	"github.com/ArtisanCloud/PowerWeChat/v3/src/miniProgram"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"kcers/biz/dal/config"
+	"kcers/biz/pkg/consts"
 	"sync"
 )
 
