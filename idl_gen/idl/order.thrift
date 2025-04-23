@@ -8,10 +8,10 @@ struct OrderInfo {
     4:  optional string source="" (api.raw = "source")
     5:  optional string device="" (api.raw = "device")
     6:  optional string nature="" (api.raw = "nature")
-    10: optional string productType="" (api.raw = "productType")
+
     11:  optional i64 venueId=0 (api.raw = "venueId")
     12:  optional i64 memberId=0 (api.raw = "memberId")
-    13:  optional i64 createId=0 (api.raw = "createId")
+    13:  optional i64 createdId=0 (api.raw = "createdId")
     15:  optional string completionAt="" (api.raw = "completionAt")
     16:  optional string createdAt="" (api.raw = "createdAt")
     17:  optional string updatedAt="" (api.raw = "updatedAt")
@@ -22,9 +22,11 @@ struct OrderInfo {
     252: optional list<OrderPay> orderPay={} (api.raw = "orderPay")
     253: optional list<OrderSales> orderSales={} (api.raw = "orderSales")
 
+    14:  optional string createdName="" (api.raw = "createdName")
     20:  optional string statusName="" (api.raw = "statusName")
     21:  optional string sourceName="" (api.raw = "sourceName")
-    22: optional string productSubType="" (api.raw = "productSubType")
+
+    23: optional string venueName="" (api.raw = "venueName")
 
 }
  struct OrderCountInfo{
@@ -37,6 +39,7 @@ struct OrderSales{
     2:  optional i64 salesId=0 (api.raw = "salesId")
     3:  optional i64 ratio=0 (api.raw = "ratio")
     6:  optional i64 orderId=0 (api.raw = "orderId")
+    4:  optional string salesName="" (api.raw = "salesName")
 }
 struct OrderPay{
     1:  optional i64 id=0 (api.raw = "id")
@@ -73,6 +76,7 @@ struct OrderItem {
         16:  optional string createdAt="" (api.raw = "createdAt")
         17:  optional string updatedAt="" (api.raw = "updatedAt")
         9: optional i64 number=1 (api.raw = "number")
+
 }
 
 struct propertyItem{
