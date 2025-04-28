@@ -18,6 +18,7 @@ type ServerConfig struct {
 	Aliyun         Aliyun           `mapstructure:"Aliyun" json:"Aliyun"`
 	Wechat         Wechat           `mapstructure:"Wechat" json:"Wechat"`
 	Alipay         AliPay           `mapstructure:"Alipay" yaml:"Alipay"`
+	PicHost        string           `mapstructure:"PicHost" json:"PicHost"`
 }
 
 type MySQLConfig struct {
@@ -49,21 +50,19 @@ type CasbinConf struct {
 }
 
 type Wechat struct {
-	Appid             string `mapstructure:"appid" yaml:"appid"`
-	MchId             string `mapstructure:"mch_id" yaml:"mch_id"`
-	ApiKey            string `mapstructure:"api_key" yaml:"api_key"`
-	ApiV3Key          string `mapstructure:"api_v3_key" yaml:"api_v3_key"`
-	CertFileContent   string `mapstructure:"cert_file_content" yaml:"cert_file_content"`
-	KeyFileContent    string `mapstructure:"key_file_content" yaml:"key_file_content"`
-	Pkcs12FileContent string `mapstructure:"pkcs12_file_content" yaml:"pkcs12_file_content"`
-	SerialNo          string `mapstructure:"serial_no" yaml:"serial_no"`
-	NotifyUrl         string `mapstructure:"notify_url" yaml:"notify_url"`
-
-	//CertificateKeyPath string `mapstructure:"certificate_key_path" yaml:"certificate_key_path"`
-	//WechatPaySerial    string `mapstructure:"wechat_pay_serial" yaml:"wechat_pay_serial"`
-	//RSAPublicKeyPath   string `mapstructure:"rsa_public_key_path" yaml:"rsa_public_key_path"`
-	//SubMchID           string `mapstructure:"sub_mch_id" yaml:"sub_mch_id"`
-	//SubAppID           string `mapstructure:"sub_app_id" yaml:"sub_app_id"`
+	Appid              string `mapstructure:"appid" yaml:"appid"`
+	AppSecret          string `mapstructure:"app_secret" yaml:"app_secret"`
+	MchId              string `mapstructure:"mch_id" yaml:"mch_id"`
+	ApiKey             string `mapstructure:"api_key" yaml:"api_key"`
+	ApiV3Key           string `mapstructure:"api_v3_key" yaml:"api_v3_key"`
+	CertFileContent    string `mapstructure:"cert_file_content" yaml:"cert_file_content"`
+	KeyFileContent     string `mapstructure:"key_file_content" yaml:"key_file_content"`
+	Pkcs12FileContent  string `mapstructure:"pkcs12_file_content" yaml:"pkcs12_file_content"`
+	SerialNo           string `mapstructure:"serial_no" yaml:"serial_no"`
+	NotifyUrl          string `mapstructure:"notify_url" yaml:"notify_url"`
+	RSAPublicKeyPath   string `mapstructure:"rsa_public_key_path" yaml:"rsa_public_key_path"`
+	WechatPaySerialNo  string `mapstructure:"wechat_pay_serial_no" yaml:"wechat_pay_serial_no"`
+	CertificateKeyPath string `mapstructure:"certificate_key_path" yaml:"certificate_key_path"`
 }
 
 type AliPay struct {

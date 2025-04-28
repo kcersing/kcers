@@ -21,37 +21,34 @@ func InitMiniProgramApp() {
 	})
 }
 
-const TIMEZONE = "asia/shanghai"
-const DATETIME_FORMAT = "20060102"
-
 func NewMiniMiniProgramService() *miniProgram.MiniProgram {
 	conf := config.GlobalServerConfig.Wechat
 	var cache kernel.CacheInterface
 	if config.GlobalServerConfig.Redis.Host != "" {
 		cache = kernel.NewRedisClient(&kernel.UniversalOptions{
-			Addrs: []string{config.GlobalServerConfig.Redis.Host},
+			Addrs:    []string{config.GlobalServerConfig.Redis.Host},
+			Password: config.GlobalServerConfig.Redis.Password,
+			DB:       6,
 		})
 	}
 	wechatFilePath := consts.WechatFilePath
 
 	app, err := miniProgram.NewMiniProgram(&miniProgram.UserConfig{
-		AppID:        conf.Appid, // 小程序、公众号或者企业微信的appid
-		Secret:       conf.MchId, // 商户号 appID
+		AppID:        conf.Appid,
+		Secret:       conf.AppSecret,
 		ResponseType: response.TYPE_MAP,
 		Http:         miniProgram.Http{},
 		Log: miniProgram.Log{
 			Driver: &drivers.SimpleLogger{},
 			Level:  "debug",
 			File:   wechatFilePath + "/mini_log.log",
+			Stdout: false,
 		},
 		Cache:     cache,
-		HttpDebug: true,
+		HttpDebug: false,
 		Debug:     false,
 	})
-	// 2. 调用小程序的授权登陆接口
-	//code := "CODE" // 前端小程序登录时，从微信获取的code
-	//rs, err := app.Auth.Session(context.Background(), code)
-	//hlog.Info(rs.OpenID)
+
 	if err != nil {
 		hlog.Error(err)
 	}

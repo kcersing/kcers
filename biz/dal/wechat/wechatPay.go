@@ -16,63 +16,63 @@ var oncePaymentWechat sync.Once
 
 func InitWXPaymentApp() {
 	oncePaymentWechat.Do(func() {
-		PaymentWechatApp = NewWXPaymentApp()
+		var err error
+		PaymentWechatApp, err = NewWXPaymentApp()
+		if err != nil || PaymentWechatApp == nil {
+			hlog.Error("NewWXPaymentApp err: %s", err)
+		}
+
 	})
 }
 
-func NewWXPaymentApp() *payment.Payment {
+const TRANSACTION_SUCCESS = "TRANSACTION.SUCCESS"
+const TRANSACTION_FAILED = "TRANSACTION.FAILED"
+
+func NewWXPaymentApp() (*payment.Payment, error) {
 
 	conf := config.GlobalServerConfig.Wechat
 	var cache kernel.CacheInterface
 	if config.GlobalServerConfig.Redis.Host != "" {
 		cache = kernel.NewRedisClient(&kernel.UniversalOptions{
-			Addrs: []string{config.GlobalServerConfig.Redis.Host},
+			Addrs:    []string{config.GlobalServerConfig.Redis.Host},
+			Password: config.GlobalServerConfig.Redis.Password,
+			DB:       7,
 		})
 	}
-
 	wechatFilePath := consts.WechatFilePath
 	if err := os.MkdirAll(wechatFilePath, 0o777); err != nil {
 		panic(err)
 	}
-
 	Payment, err := payment.NewPayment(&payment.UserConfig{
-		AppID:        conf.Appid,           // 小程序、公众号或者企业微信的appid
-		MchID:        conf.MchId,           // 商户号 appID
-		MchApiV3Key:  conf.ApiV3Key,        // 微信V3接口调用必填
-		Key:          conf.ApiKey,          // 微信V2接口调用必填
-		CertPath:     conf.CertFileContent, // 商户后台支付的Cert证书路径
-		KeyPath:      conf.KeyFileContent,  // 商户后台支付的Key证书路径
-		SerialNo:     conf.SerialNo,        // 商户支付证书序列号
-		NotifyURL:    conf.NotifyUrl,
-		ResponseType: response.TYPE_MAP,
-
-		//CertificateKeyPath: conf.CertificateKeyPath,
-		//WechatPaySerial:    conf.WechatPaySerial,
+		AppID:              conf.Appid,    // 小程序、公众号或者企业微信的appid
+		MchID:              conf.MchId,    // 商户号 appID
+		MchApiV3Key:        conf.ApiV3Key, //
+		Key:                conf.ApiKey,
+		CertPath:           conf.CertFileContent,
+		KeyPath:            conf.KeyFileContent,
+		SerialNo:           conf.SerialNo,
+		CertificateKeyPath: conf.CertificateKeyPath,
+		WechatPaySerial:    conf.WechatPaySerialNo,
 		//RSAPublicKeyPath:   conf.RSAPublicKeyPath,
-		//SubMchID:           conf.SubMchID,
-		//SubAppID:           conf.SubAppID,
-
-		Cache: cache,
+		NotifyURL: conf.NotifyUrl,
+		//SubMchID:           conf.MchId,
+		//SubAppID:           conf.Appid,
+		ResponseType: response.TYPE_MAP,
+		Cache:        cache,
 		Log: payment.Log{
-			Level:  "debug",
-			File:   wechatFilePath + "/info.log",
-			Error:  wechatFilePath + "/error.log",
-			Stdout: true, //  是否打印在终端
+			Level: "debug",
+			File:  wechatFilePath + "wechatpay.log",
 		},
 		Http: payment.Http{
 			Timeout: 30.0,
+			//BaseURI: "http://127.0.0.1:8888",
 			BaseURI: "https://api.mch.weixin.qq.com",
 		},
 
-		HttpDebug: true,
-		//Debug:     false,
-		Debug: true,
+		HttpDebug: false,
+		Debug:     false,
+		//Debug:     true,
 	})
 
-	if err != nil || Payment == nil {
-		hlog.Error(err)
-		return nil
-	}
-
-	return Payment
+	return Payment, err
 }

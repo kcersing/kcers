@@ -49,40 +49,33 @@ func NewWXPayment(ctx context.Context, c *app.RequestContext) do.Payment {
 
 func (p *Payment) UnifyPay(req payment.PayReq) (interface{}, error) {
 
-	attach := "自定义数据说明"
-	description := "Image形象店-深圳腾大-QQ公仔"
-
 	options := &request2.RequestJSAPIPrepay{
 		Amount: &request2.JSAPIAmount{
 			Total:    int(req.Total * 100),
 			Currency: "CNY",
 		},
-		Attach:      attach,
-		Description: description,
+
+		Description: req.ProductName,
 		OutTradeNo:  req.OrderSn, // 这里是商户订单号，不能重复提交给微信
 		Payer: &request2.JSAPIPayer{
 			OpenID: req.OpenId, // 用户的openid， 记得也是动态的。
 		},
 	}
 
-	// 如果需要覆盖掉全局的notify_url
-	//options.SetNotifyUrl("https://pay.xxx.com/wx/notify")
-	// 下单
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
-	defer cancel()
-	response2, err := wechat.PaymentWechatApp.Order.JSAPITransaction(ctx, options)
-
+	response2, err := wechat.PaymentWechatApp.Order.JSAPITransaction(p.ctx, options)
+	hlog.Info("response2: %s", response2)
 	if err != nil {
-		hlog.Infof("error: %s", err)
-		return response2, err
+		hlog.Info("response2: %s", response2)
+		return nil, err
 	}
 
 	payConf, err := wechat.PaymentWechatApp.JSSDK.BridgeConfig(response2.PrepayID, false)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
-
+	hlog.Info("payConf: %s", payConf)
 	return payConf, nil
+
 }
 
 // QRPay 支付二维码

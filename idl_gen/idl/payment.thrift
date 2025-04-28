@@ -15,6 +15,7 @@ struct PayReq {
     2:optional string  orderSn="" (api.raw = "orderSn")
     3:optional double  total=0 (api.raw = "total")
     4:optional string  openId="" (api.raw = "openId")
+    5:optional string  productName="" (api.raw = "productName")
 }
 
 struct NotifyReq {
