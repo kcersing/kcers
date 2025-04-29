@@ -1,9 +1,10 @@
-Name: Kcersing Admin
+Name: Admin
 IsProd: true
 Host: 0.0.0.0
 Port: 9039
 Timeout: 30000
-Domain: http://127.0.0.1:9039/
+Domain: http://127.0.0.1/
+PicHost: http://127.0.0.1
 
 Captcha:
   KeyLong: 5
@@ -16,13 +17,12 @@ Auth:
   AccessExpire: 259200 # seconds, 3 days
 
 Redis:
-  Host: r-2ze5p4rpj6b4iikdo2.redis.rds.aliyuncs.com:6379
-  Password: hIUc7JZguHSK4BtT1qDq
+  Host: 127.0.0.1:6379
+  Password:
 
 MySQL:
-  #  Host: root:X3MeAGAmPSZp8A3H@tcp(121.40.98.240:3306)/kcers?parseTime=True
-  Host: root:root@tcp(127.0.0.1:3306)/kcers?parseTime=True
-  Salt: YOUR_SALT
+  Host: root:root@tcp(127.0.0.1:3306)/saas?parseTime=True
+  Salt: root
 
 PostgreSQL:
   Host: postgresql://postgres:root@127.0.0.1/postgres
@@ -43,23 +43,35 @@ Casbin:
 
 Wechat:
   appid:
+  app_secret:
   mch_id:
   api_key:
   api_v3_key:
-  cert_file_content:
-  key_file_content:
-  pkcs12_file_content:
+  cert_file_content: ./config/cert/wechat/apiclient_cert.pem
+  key_file_content: ./config/cert/wechat/apiclient_key.pem
+  pkcs12_file_content: ./config/cert/wechat/apiclient_cert.p12
   serial_no:
-  notify_url:
+  notify_url: https://127.0.0.1/service/payment/WXNotify
+  wechat_pay_serial_no:
+  rsa_public_key_path:
+  certificate_key_path: ./config/cert/wechat/wechatpay_platform.pem
 
 Minio:
-  EndPoint : localhost:9000
-  AccessKeyID : douyin
-  SecretAccessKey : douyin123
+  EndPoint : 127.0.0.1:9000
+  AccessKeyID : 123987
+  SecretAccessKey : 987123
   UseSSL : false
-  VideoBucketName : videobucket
+  VideoBucketName : files
   ImgBucketName : imagebucket
-  Url : http://localhost:9000
+  Url : http://127.0.0.1:9000
+
+Alipay: # 以下配置文件为新沙箱环境配置
+  appid:
+  private_key:
+  app_public_cert_content:
+  alipay_root_cert_content:
+  alipay_public_cert_content:
+  notify_url:
 
 Aliyun:
   Access:
@@ -69,14 +81,6 @@ Aliyun:
     Captcha:
       SignName:
       TemplateCode :
-Alipay:
-  appid:
-  private_key:
-  app_public_cert_content:
-  alipay_root_cert_content:
-  alipay_public_cert_content:
 
-DouYin:
-  AppId :
-  AppSecret :
-  AccountId :
+Swagger:
+  url : http://182.92.143.234:9039/swagger/doc.json
