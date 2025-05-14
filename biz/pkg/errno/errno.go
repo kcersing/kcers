@@ -41,6 +41,7 @@ var (
 	RecordNotFound     = NewErrNo(int64(base.Err_RecordNotFound), "record not found")
 	RecordAlreadyExist = NewErrNo(int64(base.Err_RecordAlreadyExist), "record already exist")
 	DirtyData          = NewErrNo(int64(base.Err_DirtyData), "dirty data")
+	DateErr            = NewErrNo(501, "日期类型传值错误")
 )
 
 // ConvertErr convert error to Errno
