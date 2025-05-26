@@ -803,7 +803,7 @@ func HasMemberProductEntry() predicate.MemberProduct {
 }
 
 // HasMemberProductEntryWith applies the HasEdge predicate on the "member_product_entry" edge with a given conditions (other predicates).
-func HasMemberProductEntryWith(preds ...predicate.EntryLogs) predicate.MemberProduct {
+func HasMemberProductEntryWith(preds ...predicate.VenueEntry) predicate.MemberProduct {
 	return predicate.MemberProduct(func(s *sql.Selector) {
 		step := newMemberProductEntryStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {

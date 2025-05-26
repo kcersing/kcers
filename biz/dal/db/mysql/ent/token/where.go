@@ -85,6 +85,11 @@ func Token(v string) predicate.Token {
 	return predicate.Token(sql.FieldEQ(FieldToken, v))
 }
 
+// Type applies equality check predicate on the "type" field. It's identical to TypeEQ.
+func Type(v int64) predicate.Token {
+	return predicate.Token(sql.FieldEQ(FieldType, v))
+}
+
 // Source applies equality check predicate on the "source" field. It's identical to SourceEQ.
 func Source(v string) predicate.Token {
 	return predicate.Token(sql.FieldEQ(FieldSource, v))
@@ -398,6 +403,56 @@ func TokenEqualFold(v string) predicate.Token {
 // TokenContainsFold applies the ContainsFold predicate on the "token" field.
 func TokenContainsFold(v string) predicate.Token {
 	return predicate.Token(sql.FieldContainsFold(FieldToken, v))
+}
+
+// TypeEQ applies the EQ predicate on the "type" field.
+func TypeEQ(v int64) predicate.Token {
+	return predicate.Token(sql.FieldEQ(FieldType, v))
+}
+
+// TypeNEQ applies the NEQ predicate on the "type" field.
+func TypeNEQ(v int64) predicate.Token {
+	return predicate.Token(sql.FieldNEQ(FieldType, v))
+}
+
+// TypeIn applies the In predicate on the "type" field.
+func TypeIn(vs ...int64) predicate.Token {
+	return predicate.Token(sql.FieldIn(FieldType, vs...))
+}
+
+// TypeNotIn applies the NotIn predicate on the "type" field.
+func TypeNotIn(vs ...int64) predicate.Token {
+	return predicate.Token(sql.FieldNotIn(FieldType, vs...))
+}
+
+// TypeGT applies the GT predicate on the "type" field.
+func TypeGT(v int64) predicate.Token {
+	return predicate.Token(sql.FieldGT(FieldType, v))
+}
+
+// TypeGTE applies the GTE predicate on the "type" field.
+func TypeGTE(v int64) predicate.Token {
+	return predicate.Token(sql.FieldGTE(FieldType, v))
+}
+
+// TypeLT applies the LT predicate on the "type" field.
+func TypeLT(v int64) predicate.Token {
+	return predicate.Token(sql.FieldLT(FieldType, v))
+}
+
+// TypeLTE applies the LTE predicate on the "type" field.
+func TypeLTE(v int64) predicate.Token {
+	return predicate.Token(sql.FieldLTE(FieldType, v))
+}
+
+// TypeIsNil applies the IsNil predicate on the "type" field.
+func TypeIsNil() predicate.Token {
+	return predicate.Token(sql.FieldIsNull(FieldType))
+}
+
+// TypeNotNil applies the NotNil predicate on the "type" field.
+func TypeNotNil() predicate.Token {
+	return predicate.Token(sql.FieldNotNull(FieldType))
 }
 
 // SourceEQ applies the EQ predicate on the "source" field.

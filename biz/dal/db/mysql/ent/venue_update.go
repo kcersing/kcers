@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
 	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/predicate"
@@ -15,6 +14,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/role"
 	"kcers/biz/dal/db/mysql/ent/user"
 	"kcers/biz/dal/db/mysql/ent/venue"
+	"kcers/biz/dal/db/mysql/ent/venueentry"
 	"kcers/biz/dal/db/mysql/ent/venueplace"
 	"time"
 
@@ -360,17 +360,17 @@ func (vu *VenueUpdate) AddVenueOrders(o ...*Order) *VenueUpdate {
 	return vu.AddVenueOrderIDs(ids...)
 }
 
-// AddVenueEntryIDs adds the "venue_entry" edge to the EntryLogs entity by IDs.
+// AddVenueEntryIDs adds the "venue_entry" edge to the VenueEntry entity by IDs.
 func (vu *VenueUpdate) AddVenueEntryIDs(ids ...int64) *VenueUpdate {
 	vu.mutation.AddVenueEntryIDs(ids...)
 	return vu
 }
 
-// AddVenueEntry adds the "venue_entry" edges to the EntryLogs entity.
-func (vu *VenueUpdate) AddVenueEntry(e ...*EntryLogs) *VenueUpdate {
-	ids := make([]int64, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// AddVenueEntry adds the "venue_entry" edges to the VenueEntry entity.
+func (vu *VenueUpdate) AddVenueEntry(v ...*VenueEntry) *VenueUpdate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return vu.AddVenueEntryIDs(ids...)
 }
@@ -497,23 +497,23 @@ func (vu *VenueUpdate) RemoveVenueOrders(o ...*Order) *VenueUpdate {
 	return vu.RemoveVenueOrderIDs(ids...)
 }
 
-// ClearVenueEntry clears all "venue_entry" edges to the EntryLogs entity.
+// ClearVenueEntry clears all "venue_entry" edges to the VenueEntry entity.
 func (vu *VenueUpdate) ClearVenueEntry() *VenueUpdate {
 	vu.mutation.ClearVenueEntry()
 	return vu
 }
 
-// RemoveVenueEntryIDs removes the "venue_entry" edge to EntryLogs entities by IDs.
+// RemoveVenueEntryIDs removes the "venue_entry" edge to VenueEntry entities by IDs.
 func (vu *VenueUpdate) RemoveVenueEntryIDs(ids ...int64) *VenueUpdate {
 	vu.mutation.RemoveVenueEntryIDs(ids...)
 	return vu
 }
 
-// RemoveVenueEntry removes "venue_entry" edges to EntryLogs entities.
-func (vu *VenueUpdate) RemoveVenueEntry(e ...*EntryLogs) *VenueUpdate {
-	ids := make([]int64, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// RemoveVenueEntry removes "venue_entry" edges to VenueEntry entities.
+func (vu *VenueUpdate) RemoveVenueEntry(v ...*VenueEntry) *VenueUpdate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return vu.RemoveVenueEntryIDs(ids...)
 }
@@ -868,7 +868,7 @@ func (vu *VenueUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{venue.VenueEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -881,7 +881,7 @@ func (vu *VenueUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{venue.VenueEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -897,7 +897,7 @@ func (vu *VenueUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{venue.VenueEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1475,17 +1475,17 @@ func (vuo *VenueUpdateOne) AddVenueOrders(o ...*Order) *VenueUpdateOne {
 	return vuo.AddVenueOrderIDs(ids...)
 }
 
-// AddVenueEntryIDs adds the "venue_entry" edge to the EntryLogs entity by IDs.
+// AddVenueEntryIDs adds the "venue_entry" edge to the VenueEntry entity by IDs.
 func (vuo *VenueUpdateOne) AddVenueEntryIDs(ids ...int64) *VenueUpdateOne {
 	vuo.mutation.AddVenueEntryIDs(ids...)
 	return vuo
 }
 
-// AddVenueEntry adds the "venue_entry" edges to the EntryLogs entity.
-func (vuo *VenueUpdateOne) AddVenueEntry(e ...*EntryLogs) *VenueUpdateOne {
-	ids := make([]int64, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// AddVenueEntry adds the "venue_entry" edges to the VenueEntry entity.
+func (vuo *VenueUpdateOne) AddVenueEntry(v ...*VenueEntry) *VenueUpdateOne {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return vuo.AddVenueEntryIDs(ids...)
 }
@@ -1612,23 +1612,23 @@ func (vuo *VenueUpdateOne) RemoveVenueOrders(o ...*Order) *VenueUpdateOne {
 	return vuo.RemoveVenueOrderIDs(ids...)
 }
 
-// ClearVenueEntry clears all "venue_entry" edges to the EntryLogs entity.
+// ClearVenueEntry clears all "venue_entry" edges to the VenueEntry entity.
 func (vuo *VenueUpdateOne) ClearVenueEntry() *VenueUpdateOne {
 	vuo.mutation.ClearVenueEntry()
 	return vuo
 }
 
-// RemoveVenueEntryIDs removes the "venue_entry" edge to EntryLogs entities by IDs.
+// RemoveVenueEntryIDs removes the "venue_entry" edge to VenueEntry entities by IDs.
 func (vuo *VenueUpdateOne) RemoveVenueEntryIDs(ids ...int64) *VenueUpdateOne {
 	vuo.mutation.RemoveVenueEntryIDs(ids...)
 	return vuo
 }
 
-// RemoveVenueEntry removes "venue_entry" edges to EntryLogs entities.
-func (vuo *VenueUpdateOne) RemoveVenueEntry(e ...*EntryLogs) *VenueUpdateOne {
-	ids := make([]int64, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// RemoveVenueEntry removes "venue_entry" edges to VenueEntry entities.
+func (vuo *VenueUpdateOne) RemoveVenueEntry(v ...*VenueEntry) *VenueUpdateOne {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return vuo.RemoveVenueEntryIDs(ids...)
 }
@@ -2013,7 +2013,7 @@ func (vuo *VenueUpdateOne) sqlSave(ctx context.Context) (_node *Venue, err error
 			Columns: []string{venue.VenueEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -2026,7 +2026,7 @@ func (vuo *VenueUpdateOne) sqlSave(ctx context.Context) (_node *Venue, err error
 			Columns: []string{venue.VenueEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -2042,7 +2042,7 @@ func (vuo *VenueUpdateOne) sqlSave(ctx context.Context) (_node *Venue, err error
 			Columns: []string{venue.VenueEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

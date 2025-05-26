@@ -5,7 +5,6 @@ package ent
 import (
 	"context"
 	"fmt"
-	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
 	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/product"
@@ -13,6 +12,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/role"
 	"kcers/biz/dal/db/mysql/ent/user"
 	"kcers/biz/dal/db/mysql/ent/venue"
+	"kcers/biz/dal/db/mysql/ent/venueentry"
 	"kcers/biz/dal/db/mysql/ent/venueplace"
 	"time"
 
@@ -273,17 +273,17 @@ func (vc *VenueCreate) AddVenueOrders(o ...*Order) *VenueCreate {
 	return vc.AddVenueOrderIDs(ids...)
 }
 
-// AddVenueEntryIDs adds the "venue_entry" edge to the EntryLogs entity by IDs.
+// AddVenueEntryIDs adds the "venue_entry" edge to the VenueEntry entity by IDs.
 func (vc *VenueCreate) AddVenueEntryIDs(ids ...int64) *VenueCreate {
 	vc.mutation.AddVenueEntryIDs(ids...)
 	return vc
 }
 
-// AddVenueEntry adds the "venue_entry" edges to the EntryLogs entity.
-func (vc *VenueCreate) AddVenueEntry(e ...*EntryLogs) *VenueCreate {
-	ids := make([]int64, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// AddVenueEntry adds the "venue_entry" edges to the VenueEntry entity.
+func (vc *VenueCreate) AddVenueEntry(v ...*VenueEntry) *VenueCreate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return vc.AddVenueEntryIDs(ids...)
 }
@@ -554,7 +554,7 @@ func (vc *VenueCreate) createSpec() (*Venue, *sqlgraph.CreateSpec) {
 			Columns: []string{venue.VenueEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

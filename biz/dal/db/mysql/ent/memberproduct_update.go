@@ -6,12 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/member"
 	"kcers/biz/dal/db/mysql/ent/membercontract"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
 	"kcers/biz/dal/db/mysql/ent/predicate"
+	"kcers/biz/dal/db/mysql/ent/venueentry"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -328,17 +328,17 @@ func (mpu *MemberProductUpdate) AddMemberProductPropertys(m ...*MemberProductPro
 	return mpu.AddMemberProductPropertyIDs(ids...)
 }
 
-// AddMemberProductEntryIDs adds the "member_product_entry" edge to the EntryLogs entity by IDs.
+// AddMemberProductEntryIDs adds the "member_product_entry" edge to the VenueEntry entity by IDs.
 func (mpu *MemberProductUpdate) AddMemberProductEntryIDs(ids ...int64) *MemberProductUpdate {
 	mpu.mutation.AddMemberProductEntryIDs(ids...)
 	return mpu
 }
 
-// AddMemberProductEntry adds the "member_product_entry" edges to the EntryLogs entity.
-func (mpu *MemberProductUpdate) AddMemberProductEntry(e ...*EntryLogs) *MemberProductUpdate {
-	ids := make([]int64, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// AddMemberProductEntry adds the "member_product_entry" edges to the VenueEntry entity.
+func (mpu *MemberProductUpdate) AddMemberProductEntry(v ...*VenueEntry) *MemberProductUpdate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return mpu.AddMemberProductEntryIDs(ids...)
 }
@@ -390,23 +390,23 @@ func (mpu *MemberProductUpdate) RemoveMemberProductPropertys(m ...*MemberProduct
 	return mpu.RemoveMemberProductPropertyIDs(ids...)
 }
 
-// ClearMemberProductEntry clears all "member_product_entry" edges to the EntryLogs entity.
+// ClearMemberProductEntry clears all "member_product_entry" edges to the VenueEntry entity.
 func (mpu *MemberProductUpdate) ClearMemberProductEntry() *MemberProductUpdate {
 	mpu.mutation.ClearMemberProductEntry()
 	return mpu
 }
 
-// RemoveMemberProductEntryIDs removes the "member_product_entry" edge to EntryLogs entities by IDs.
+// RemoveMemberProductEntryIDs removes the "member_product_entry" edge to VenueEntry entities by IDs.
 func (mpu *MemberProductUpdate) RemoveMemberProductEntryIDs(ids ...int64) *MemberProductUpdate {
 	mpu.mutation.RemoveMemberProductEntryIDs(ids...)
 	return mpu
 }
 
-// RemoveMemberProductEntry removes "member_product_entry" edges to EntryLogs entities.
-func (mpu *MemberProductUpdate) RemoveMemberProductEntry(e ...*EntryLogs) *MemberProductUpdate {
-	ids := make([]int64, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// RemoveMemberProductEntry removes "member_product_entry" edges to VenueEntry entities.
+func (mpu *MemberProductUpdate) RemoveMemberProductEntry(v ...*VenueEntry) *MemberProductUpdate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return mpu.RemoveMemberProductEntryIDs(ids...)
 }
@@ -649,7 +649,7 @@ func (mpu *MemberProductUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			Columns: []string{memberproduct.MemberProductEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -662,7 +662,7 @@ func (mpu *MemberProductUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			Columns: []string{memberproduct.MemberProductEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -678,7 +678,7 @@ func (mpu *MemberProductUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			Columns: []string{memberproduct.MemberProductEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1048,17 +1048,17 @@ func (mpuo *MemberProductUpdateOne) AddMemberProductPropertys(m ...*MemberProduc
 	return mpuo.AddMemberProductPropertyIDs(ids...)
 }
 
-// AddMemberProductEntryIDs adds the "member_product_entry" edge to the EntryLogs entity by IDs.
+// AddMemberProductEntryIDs adds the "member_product_entry" edge to the VenueEntry entity by IDs.
 func (mpuo *MemberProductUpdateOne) AddMemberProductEntryIDs(ids ...int64) *MemberProductUpdateOne {
 	mpuo.mutation.AddMemberProductEntryIDs(ids...)
 	return mpuo
 }
 
-// AddMemberProductEntry adds the "member_product_entry" edges to the EntryLogs entity.
-func (mpuo *MemberProductUpdateOne) AddMemberProductEntry(e ...*EntryLogs) *MemberProductUpdateOne {
-	ids := make([]int64, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// AddMemberProductEntry adds the "member_product_entry" edges to the VenueEntry entity.
+func (mpuo *MemberProductUpdateOne) AddMemberProductEntry(v ...*VenueEntry) *MemberProductUpdateOne {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return mpuo.AddMemberProductEntryIDs(ids...)
 }
@@ -1110,23 +1110,23 @@ func (mpuo *MemberProductUpdateOne) RemoveMemberProductPropertys(m ...*MemberPro
 	return mpuo.RemoveMemberProductPropertyIDs(ids...)
 }
 
-// ClearMemberProductEntry clears all "member_product_entry" edges to the EntryLogs entity.
+// ClearMemberProductEntry clears all "member_product_entry" edges to the VenueEntry entity.
 func (mpuo *MemberProductUpdateOne) ClearMemberProductEntry() *MemberProductUpdateOne {
 	mpuo.mutation.ClearMemberProductEntry()
 	return mpuo
 }
 
-// RemoveMemberProductEntryIDs removes the "member_product_entry" edge to EntryLogs entities by IDs.
+// RemoveMemberProductEntryIDs removes the "member_product_entry" edge to VenueEntry entities by IDs.
 func (mpuo *MemberProductUpdateOne) RemoveMemberProductEntryIDs(ids ...int64) *MemberProductUpdateOne {
 	mpuo.mutation.RemoveMemberProductEntryIDs(ids...)
 	return mpuo
 }
 
-// RemoveMemberProductEntry removes "member_product_entry" edges to EntryLogs entities.
-func (mpuo *MemberProductUpdateOne) RemoveMemberProductEntry(e ...*EntryLogs) *MemberProductUpdateOne {
-	ids := make([]int64, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// RemoveMemberProductEntry removes "member_product_entry" edges to VenueEntry entities.
+func (mpuo *MemberProductUpdateOne) RemoveMemberProductEntry(v ...*VenueEntry) *MemberProductUpdateOne {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return mpuo.RemoveMemberProductEntryIDs(ids...)
 }
@@ -1399,7 +1399,7 @@ func (mpuo *MemberProductUpdateOne) sqlSave(ctx context.Context) (_node *MemberP
 			Columns: []string{memberproduct.MemberProductEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1412,7 +1412,7 @@ func (mpuo *MemberProductUpdateOne) sqlSave(ctx context.Context) (_node *MemberP
 			Columns: []string{memberproduct.MemberProductEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1428,7 +1428,7 @@ func (mpuo *MemberProductUpdateOne) sqlSave(ctx context.Context) (_node *MemberP
 			Columns: []string{memberproduct.MemberProductEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

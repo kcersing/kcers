@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"kcers/biz/dal/db/mysql/ent/schema/mixins"
 )
 
@@ -40,7 +41,7 @@ func (Venue) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("places", VenuePlace.Type),
 		edge.To("venue_orders", Order.Type),
-		edge.To("venue_entry", EntryLogs.Type),
+		edge.To("venue_entry", VenueEntry.Type),
 		edge.From("member_property_venues", MemberProductProperty.Type).Ref("venues"),
 		edge.From("property_venues", ProductProperty.Type).Ref("venues"),
 
@@ -52,12 +53,14 @@ func (Venue) Edges() []ent.Edge {
 }
 
 func (Venue) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+		index.Fields("id"),
+	}
 }
 
 func (Venue) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "venue", Options: "AUTO_INCREMENT = 100000"},
+		entsql.Annotation{Table: "venue"},
 		entsql.WithComments(true),
 	}
 }

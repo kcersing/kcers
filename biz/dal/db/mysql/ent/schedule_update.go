@@ -10,10 +10,12 @@ import (
 	"kcers/biz/dal/db/mysql/ent/schedule"
 	"kcers/biz/dal/db/mysql/ent/schedulecoach"
 	"kcers/biz/dal/db/mysql/ent/schedulemember"
+	"kcers/idl_gen/model/base"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 )
 
@@ -473,6 +475,24 @@ func (su *ScheduleUpdate) ClearPlaceName() *ScheduleUpdate {
 	return su
 }
 
+// SetSeats sets the "seats" field.
+func (su *ScheduleUpdate) SetSeats(b [][]*base.Seat) *ScheduleUpdate {
+	su.mutation.SetSeats(b)
+	return su
+}
+
+// AppendSeats appends b to the "seats" field.
+func (su *ScheduleUpdate) AppendSeats(b [][]*base.Seat) *ScheduleUpdate {
+	su.mutation.AppendSeats(b)
+	return su
+}
+
+// ClearSeats clears the value of the "seats" field.
+func (su *ScheduleUpdate) ClearSeats() *ScheduleUpdate {
+	su.mutation.ClearSeats()
+	return su
+}
+
 // AddMemberIDs adds the "members" edge to the ScheduleMember entity by IDs.
 func (su *ScheduleUpdate) AddMemberIDs(ids ...int64) *ScheduleUpdate {
 	su.mutation.AddMemberIDs(ids...)
@@ -747,6 +767,17 @@ func (su *ScheduleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if su.mutation.PlaceNameCleared() {
 		_spec.ClearField(schedule.FieldPlaceName, field.TypeString)
+	}
+	if value, ok := su.mutation.Seats(); ok {
+		_spec.SetField(schedule.FieldSeats, field.TypeJSON, value)
+	}
+	if value, ok := su.mutation.AppendedSeats(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, schedule.FieldSeats, value)
+		})
+	}
+	if su.mutation.SeatsCleared() {
+		_spec.ClearField(schedule.FieldSeats, field.TypeJSON)
 	}
 	if su.mutation.MembersCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1302,6 +1333,24 @@ func (suo *ScheduleUpdateOne) ClearPlaceName() *ScheduleUpdateOne {
 	return suo
 }
 
+// SetSeats sets the "seats" field.
+func (suo *ScheduleUpdateOne) SetSeats(b [][]*base.Seat) *ScheduleUpdateOne {
+	suo.mutation.SetSeats(b)
+	return suo
+}
+
+// AppendSeats appends b to the "seats" field.
+func (suo *ScheduleUpdateOne) AppendSeats(b [][]*base.Seat) *ScheduleUpdateOne {
+	suo.mutation.AppendSeats(b)
+	return suo
+}
+
+// ClearSeats clears the value of the "seats" field.
+func (suo *ScheduleUpdateOne) ClearSeats() *ScheduleUpdateOne {
+	suo.mutation.ClearSeats()
+	return suo
+}
+
 // AddMemberIDs adds the "members" edge to the ScheduleMember entity by IDs.
 func (suo *ScheduleUpdateOne) AddMemberIDs(ids ...int64) *ScheduleUpdateOne {
 	suo.mutation.AddMemberIDs(ids...)
@@ -1606,6 +1655,17 @@ func (suo *ScheduleUpdateOne) sqlSave(ctx context.Context) (_node *Schedule, err
 	}
 	if suo.mutation.PlaceNameCleared() {
 		_spec.ClearField(schedule.FieldPlaceName, field.TypeString)
+	}
+	if value, ok := suo.mutation.Seats(); ok {
+		_spec.SetField(schedule.FieldSeats, field.TypeJSON, value)
+	}
+	if value, ok := suo.mutation.AppendedSeats(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, schedule.FieldSeats, value)
+		})
+	}
+	if suo.mutation.SeatsCleared() {
+		_spec.ClearField(schedule.FieldSeats, field.TypeJSON)
 	}
 	if suo.mutation.MembersCleared() {
 		edge := &sqlgraph.EdgeSpec{

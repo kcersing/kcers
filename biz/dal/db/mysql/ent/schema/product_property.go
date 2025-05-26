@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"kcers/biz/dal/db/mysql/ent/schema/mixins"
 )
 
@@ -22,6 +23,8 @@ func (ProductProperty) Fields() []ent.Field {
 		field.Int64("count").Comment("次数").Optional(),
 		field.Float("price").Comment("定价").Optional(),
 		field.String("data").Comment("").Optional(),
+		field.String("pic").Default("").Comment("主图").Optional(),
+		field.Text("description").Default("").Comment("详情").Optional(),
 	}
 }
 
@@ -42,12 +45,15 @@ func (ProductProperty) Edges() []ent.Edge {
 }
 
 func (ProductProperty) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+		index.Fields("id"),
+		index.Fields("name"),
+	}
 }
 
 func (ProductProperty) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "product_property", Options: "AUTO_INCREMENT = 100000"},
+		entsql.Annotation{Table: "product_property"},
 		entsql.WithComments(true),
 	}
 }

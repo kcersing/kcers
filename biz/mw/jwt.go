@@ -2,17 +2,16 @@ package mw
 
 import (
 	"context"
+	"errors"
 	"github.com/casbin/casbin/v2"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/hertz-contrib/jwt"
-	"kcers/biz/dal/config"
-	tokenService "kcers/biz/infras/service/common"
-	userService "kcers/biz/infras/service/user"
-	"kcers/biz/pkg/errno"
-	"kcers/biz/pkg/utils"
-	"kcers/idl_gen/model/token"
-	"kcers/idl_gen/model/user"
+	"saas/biz/dal/config"
+	"saas/biz/infras/service"
+	"saas/biz/pkg/errno"
+	"saas/biz/pkg/utils"
+	"saas/idl_gen/model/user"
 	"strconv"
 	"time"
 )
@@ -21,7 +20,7 @@ type jwtLogin struct {
 	Username  string `form:"username,required" json:"username,required"`   //lint:ignore SA5008 ignoreCheck
 	Password  string `form:"password,required" json:"password,required"`   //lint:ignore SA5008 ignoreCheck
 	Captcha   string `form:"captcha,required" json:"captcha,required"`     //lint:ignore SA5008 ignoreCheck
-	CaptchaId string `form:"captchaId,required" json:"captchaId,required"` //lint:ignore SA5008 ignoreCheck
+	CaptchaID string `form:"captchaId,required" json:"captchaId,required"` //lint:ignore SA5008 ignoreCheck
 }
 
 // jwt identityKey
@@ -39,6 +38,7 @@ func GetJWTMw(e *casbin.Enforcer) *jwt.HertzJWTMiddleware {
 }
 
 func newJWT(enforcer *casbin.Enforcer) (jwtMiddleware *jwt.HertzJWTMiddleware, err error) {
+
 	jwtMiddleware, err = jwt.New(&jwt.HertzJWTMiddleware{
 		Realm:       "saas",
 		Key:         []byte(config.GlobalServerConfig.Auth.AccessSecret),
@@ -65,7 +65,7 @@ func newJWT(enforcer *casbin.Enforcer) (jwtMiddleware *jwt.HertzJWTMiddleware, e
 			c.Set("userId", payloadMap["userId"])
 			c.Set("userRole", payloadMap["userRole"])
 			c.Set("userRoleIds", payloadMap["userRoleIds"])
-			c.Set("userRoleIdStr", payloadMap["userRoleIdStr"])
+			c.Set("userType", payloadMap["userType"])
 
 			return payloadMap
 		},
@@ -79,35 +79,18 @@ func newJWT(enforcer *casbin.Enforcer) (jwtMiddleware *jwt.HertzJWTMiddleware, e
 			}
 			// 验证码
 
-			res, err = userService.NewUser(ctx, c).Login(&user.LoginReq{
-				Username:  loginVal.Username,
-				Password:  loginVal.Password,
-				CaptchaId: loginVal.Captcha,
-				Captcha:   loginVal.CaptchaId,
-			})
-
-			hlog.Info(res)
+			username := loginVal.Username
+			password := loginVal.Password
+			res, err = service.NewLogin(ctx, c).Login(username, password)
 			if err != nil {
-				hlog.Error(err, "jwtLogin error")
-				return nil, err
-			}
-			//jwt
-			var tokenInfo token.TokenInfo
-			tokenInfo.UserId = res.UserId
-			tokenInfo.Username = res.Username
-			tokenInfo.ExpiredAt = time.Now().Add(time.Duration(config.GlobalServerConfig.Auth.AccessExpire) * time.Second).Format(time.DateTime)
-
-			err = tokenService.NewToken(ctx, c).Create(&tokenInfo)
-			if err != nil {
-				hlog.Error(err, "jwtLogin error, store token error")
-				return nil, err
+				return nil, errors.New("账号或密码错误")
 			}
 
 			payLoadMap := make(map[string]interface{})
 			payLoadMap["userId"] = strconv.Itoa(int(res.UserId))
 			payLoadMap["userRole"] = res.UserRole
 			payLoadMap["userRoleIds"] = res.UserRoleIds
-			payLoadMap["userRoleIdStr"] = res.RoleIdStr
+			payLoadMap["userType"] = strconv.Itoa(int(res.UserId))
 			return payLoadMap, nil
 		},
 		// Authorizator is used to validate the authentication of the current request.
@@ -115,38 +98,46 @@ func newJWT(enforcer *casbin.Enforcer) (jwtMiddleware *jwt.HertzJWTMiddleware, e
 			//obj := string(c.URI().Path())
 			//act := string(c.Method())
 			payloadMap, ok := data.(map[string]interface{})
-			hlog.Info(payloadMap)
+
 			if !ok {
 				hlog.Error("get payloadMap error:", " claims data:", data)
 				return false
 			}
 			var userRoleIds []int64
-			if payloadMap["userRoleIds"] != "" {
-				roleIds := payloadMap["userRoleIds"].([]interface{})
+
+			userType, ok := payloadMap["userType"].(string)
+			if !ok {
+				hlog.Error("userType 解析错误", err)
+				return false
+			}
+			userId, ok := payloadMap["userId"].(string)
+			if !ok {
+				hlog.Error("userId 解析错误")
+				return false
+			}
+
+			hlog.Info(userId)
+			if userType == "10" {
+
+			}
+
+			if userType == "1" {
+				roleIds, ok := payloadMap["userRoleIds"].([]interface{})
+				if !ok {
+					hlog.Error("payloadMap:", payloadMap)
+					return false
+				}
 				for _, v := range roleIds {
 					i := v.(float64)
 					userRoleIds = append(userRoleIds, int64(i))
 				}
-			} else {
-				hlog.Error("暂无角色", err)
-				return false
-			}
-			if payloadMap["userId"] == "" {
-				hlog.Error("暂无角色", err)
-				return false
-			}
-			userId := payloadMap["userId"].(string)
-			// check token is valid
-			userIdInt, err := strconv.Atoi(userId)
-			if err != nil {
-				hlog.Error("get payloadMap error:", err)
-				return false
 			}
 
-			existToken := tokenService.NewToken(ctx, c).IsExistByUserId(int64(userIdInt))
-			if !existToken {
-				return false
-			}
+			//
+			//existToken := service.NewToken(ctx, c).IsExistByUserId(int64(userIdInt))
+			//if !existToken {
+			//	return false
+			//}
 			// check the role status
 			//roleInfo, err := service.NewRole(ctx, c).RoleInfoByID(cast.ToInt64(roleId))
 			//// if the role is not exist or the role is not active, return false
@@ -174,18 +165,37 @@ func newJWT(enforcer *casbin.Enforcer) (jwtMiddleware *jwt.HertzJWTMiddleware, e
 
 			return true
 		},
+		LogoutResponse: func(ctx context.Context, c *app.RequestContext, code int) {
+			id := service.GetTokenUserID(c)
+			hlog.Info(id)
+			err = service.NewToken(ctx, c).Delete(id)
+			if err != nil {
+				utils.SendResponse(c, errno.ConvertErr(err), nil, 0, "")
+			}
+			utils.SendResponse(c, errno.Success, nil, 0, "")
+		},
 		Unauthorized: func(ctx context.Context, c *app.RequestContext, code int, message string) {
-			c.JSON(code, map[string]interface{}{
-				"code":    code,
-				"message": message,
-			})
+			utils.SendResponse(c, errno.NewErrNo(10002, "您没有访问此资源的权限"), message, 0, "")
 		},
 		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
+
 			utils.SendResponse(c, errno.Success,
 				map[string]interface{}{
 					"token":  token,
 					"expire": expire.Format(time.RFC3339),
 				}, 0, "")
+		},
+		RefreshResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
+
+			utils.SendResponse(c, errno.Success,
+				map[string]interface{}{
+					"token":  token,
+					"expire": expire.Format(time.RFC3339),
+				}, 0, "")
+		},
+		HTTPStatusMessageFunc: func(e error, ctx context.Context, c *app.RequestContext) string {
+			hlog.CtxErrorf(ctx, "jwt biz err = %+v", e.Error())
+			return e.Error()
 		},
 	})
 

@@ -45,10 +45,6 @@ type MemberProfile struct {
 	RelationMid int64 `json:"relation_mid,omitempty"`
 	// 关联会员
 	RelationMame string `json:"relation_mame,omitempty"`
-	// 跟进人员工
-	RelationUID int64 `json:"relation_uid,omitempty"`
-	// 跟进人员工
-	RelationUname string `json:"relation_uname,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MemberProfileQuery when eager-loading is set.
 	Edges        MemberProfileEdges `json:"edges"`
@@ -80,9 +76,9 @@ func (*MemberProfile) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case memberprofile.FieldID, memberprofile.FieldDelete, memberprofile.FieldCreatedID, memberprofile.FieldIntention, memberprofile.FieldSource, memberprofile.FieldMemberID, memberprofile.FieldGender, memberprofile.FieldRelationMid, memberprofile.FieldRelationUID:
+		case memberprofile.FieldID, memberprofile.FieldDelete, memberprofile.FieldCreatedID, memberprofile.FieldIntention, memberprofile.FieldSource, memberprofile.FieldMemberID, memberprofile.FieldGender, memberprofile.FieldRelationMid:
 			values[i] = new(sql.NullInt64)
-		case memberprofile.FieldEmail, memberprofile.FieldWecom, memberprofile.FieldRelationMame, memberprofile.FieldRelationUname:
+		case memberprofile.FieldEmail, memberprofile.FieldWecom, memberprofile.FieldRelationMame:
 			values[i] = new(sql.NullString)
 		case memberprofile.FieldCreatedAt, memberprofile.FieldUpdatedAt, memberprofile.FieldBirthday:
 			values[i] = new(sql.NullTime)
@@ -185,18 +181,6 @@ func (mp *MemberProfile) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				mp.RelationMame = value.String
 			}
-		case memberprofile.FieldRelationUID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field relation_uid", values[i])
-			} else if value.Valid {
-				mp.RelationUID = value.Int64
-			}
-		case memberprofile.FieldRelationUname:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field relation_uname", values[i])
-			} else if value.Valid {
-				mp.RelationUname = value.String
-			}
 		default:
 			mp.selectValues.Set(columns[i], values[i])
 		}
@@ -276,12 +260,6 @@ func (mp *MemberProfile) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("relation_mame=")
 	builder.WriteString(mp.RelationMame)
-	builder.WriteString(", ")
-	builder.WriteString("relation_uid=")
-	builder.WriteString(fmt.Sprintf("%v", mp.RelationUID))
-	builder.WriteString(", ")
-	builder.WriteString("relation_uname=")
-	builder.WriteString(mp.RelationUname)
 	builder.WriteByte(')')
 	return builder.String()
 }

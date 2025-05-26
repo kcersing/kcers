@@ -2,12 +2,18 @@ package cron
 
 import (
 	"context"
-
+	"saas/biz/dal/db"
+	memberproduct2 "saas/biz/dal/db/ent/memberproduct"
 	"time"
 )
 
+// GT >
+// GTE >=
+// LT <
+// LTE <=
 func SetMemberProductStatus() {
 	present := time.Now()
+
 	db.DB.MemberProduct.Update().
 		Where(
 			memberproduct2.StatusEQ(1),
@@ -15,6 +21,7 @@ func SetMemberProductStatus() {
 		).
 		SetStatus(2).
 		Save(context.Background())
+
 	db.DB.MemberProduct.Update().
 		Where(
 			memberproduct2.StatusEQ(2),

@@ -843,7 +843,7 @@ func HasMemberDetails() predicate.Member {
 }
 
 // HasMemberDetailsWith applies the HasEdge predicate on the "member_details" edge with a given conditions (other predicates).
-func HasMemberDetailsWith(preds ...predicate.MemberDetails) predicate.Member {
+func HasMemberDetailsWith(preds ...predicate.VenueMember) predicate.Member {
 	return predicate.Member(func(s *sql.Selector) {
 		step := newMemberDetailsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
@@ -935,7 +935,7 @@ func HasMemberEntry() predicate.Member {
 }
 
 // HasMemberEntryWith applies the HasEdge predicate on the "member_entry" edge with a given conditions (other predicates).
-func HasMemberEntryWith(preds ...predicate.EntryLogs) predicate.Member {
+func HasMemberEntryWith(preds ...predicate.VenueEntry) predicate.Member {
 	return predicate.Member(func(s *sql.Selector) {
 		step := newMemberEntryStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {

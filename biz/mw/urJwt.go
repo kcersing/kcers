@@ -6,20 +6,20 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/hertz-contrib/jwt"
-	"kcers/biz/dal/config"
-	tokenService "kcers/biz/infras/service/common"
-	memberService "kcers/biz/infras/service/member"
-	"kcers/biz/pkg/errno"
-	"kcers/biz/pkg/utils"
-	"kcers/idl_gen/model/member"
-	"kcers/idl_gen/model/token"
+	"saas/biz/dal/config"
+	"saas/biz/infras/service"
+	"saas/biz/pkg/errno"
+	"saas/biz/pkg/utils"
+	"saas/idl_gen/model/member"
+	"saas/idl_gen/model/token"
+	"saas/idl_gen/model/wx"
 	"strconv"
 	"time"
 )
 
 type jwtUsLogin struct {
 	Mobile     string `form:"mobile,required" json:"mobile,required"`
-	SmsCaptcha string `form:"smsCaptcha,required" json:"smsCaptcha,required"`
+	VerifyCode string `form:"verifyCode,required" json:"verifyCode,required"`
 }
 
 // jwt identityUsKey
@@ -42,6 +42,8 @@ func newUsJWT(enforcer *casbin.Enforcer) (jwtMiddleware *jwt.HertzJWTMiddleware,
 		Key:         []byte(config.GlobalServerConfig.Auth.AccessSecret),
 		Timeout:     time.Duration(config.GlobalServerConfig.Auth.AccessExpire) * time.Second,
 		MaxRefresh:  time.Hour,
+		TokenLookup: "header: Authorization, query: token, cookie: jwt",
+		//TokenHeadName: "Bearer",
 		IdentityKey: identityUsKey,
 		// PayloadFunc is used to define a custom token payload.
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
@@ -74,13 +76,12 @@ func newUsJWT(enforcer *casbin.Enforcer) (jwtMiddleware *jwt.HertzJWTMiddleware,
 			}
 			// 验证码
 
-			res, err = memberService.NewMember(ctx, c).Login(&member.LoginReq{
-				Mobile:     loginVal.Mobile,
-				SmsCaptcha: loginVal.SmsCaptcha,
+			res, err = service.NewMember(ctx, c).Login(&wx.MemberLoginReq{
+				Mobile:  loginVal.Mobile,
+				Captcha: loginVal.VerifyCode,
 			})
 
 			if err != nil {
-				hlog.Error(err, "jwtLogin error")
 				return nil, err
 			}
 
@@ -90,7 +91,7 @@ func newUsJWT(enforcer *casbin.Enforcer) (jwtMiddleware *jwt.HertzJWTMiddleware,
 			tokenInfo.Name = res.Name
 			tokenInfo.ExpiredAt = time.Now().Add(time.Duration(config.GlobalServerConfig.Auth.AccessExpire) * time.Second).Format(time.DateTime)
 
-			err = tokenService.NewToken(ctx, c).CreateMemberToken(&tokenInfo)
+			err = service.NewToken(ctx, c).CreateMemberToken(&tokenInfo)
 			if err != nil {
 				hlog.Error(err, "jwtLogin error, store token error")
 				return nil, err
@@ -104,36 +105,41 @@ func newUsJWT(enforcer *casbin.Enforcer) (jwtMiddleware *jwt.HertzJWTMiddleware,
 		// Authorizator is used to validate the authentication of the current request.
 		Authorizator: func(data interface{}, ctx context.Context, c *app.RequestContext) bool {
 			payloadMap, ok := data.(map[string]interface{})
-
 			if !ok {
 				hlog.Error("get payloadMap error:", " claims data:", data)
 				return false
 			}
-
-			if payloadMap["memberId"] == "" {
-				hlog.Error("会员未登录", err)
+			memberId, ok := payloadMap["memberId"].(string)
+			if !ok {
+				hlog.Error("memberId 解析错误")
 				return false
 			}
-			memberId := payloadMap["memberId"].(string)
+			hlog.Info(memberId)
 			// check token is valid
-			memberIdInt, err := strconv.Atoi(memberId)
-			if err != nil {
-				hlog.Error("get payloadMap error:", err)
-				return false
-			}
-
-			existToken := tokenService.NewToken(ctx, c).IsExistByMemberIdToken(int64(memberIdInt))
-			if !existToken {
-				return false
-			}
+			//memberIdInt, err := strconv.Atoi(memberId)
+			//if err != nil {
+			//	hlog.Error("get payloadMap error:", err)
+			//	return false
+			//}
+			//
+			//existToken := service.NewToken(ctx, c).IsExistByMemberIdToken(int64(memberIdInt))
+			//if !existToken {
+			//	return false
+			//}
 
 			return true
 		},
+		LogoutResponse: func(ctx context.Context, c *app.RequestContext, code int) {
+			id := service.GetTokenMemberID(c)
+			hlog.Info(id)
+			err = service.NewToken(ctx, c).DeleteMemberToken(id)
+			if err != nil {
+				utils.SendResponse(c, errno.ConvertErr(err), nil, 0, "")
+			}
+			utils.SendResponse(c, errno.Success, nil, 0, "")
+		},
 		Unauthorized: func(ctx context.Context, c *app.RequestContext, code int, message string) {
-			c.JSON(code, map[string]interface{}{
-				"code":    code,
-				"message": message,
-			})
+			utils.SendResponse(c, errno.NewErrNo(10004, "您没有访问此资源的权限"), message, 0, "")
 		},
 		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
 			utils.SendResponse(c, errno.Success,
@@ -141,6 +147,17 @@ func newUsJWT(enforcer *casbin.Enforcer) (jwtMiddleware *jwt.HertzJWTMiddleware,
 					"token":  token,
 					"expire": expire.Format(time.RFC3339),
 				}, 0, "")
+		},
+		RefreshResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
+			utils.SendResponse(c, errno.Success,
+				map[string]interface{}{
+					"token":  token,
+					"expire": expire.Format(time.RFC3339),
+				}, 0, "")
+		},
+		HTTPStatusMessageFunc: func(e error, ctx context.Context, c *app.RequestContext) string {
+			hlog.CtxErrorf(ctx, "jwt biz err = %+v", e.Error())
+			return e.Error()
 		},
 	})
 

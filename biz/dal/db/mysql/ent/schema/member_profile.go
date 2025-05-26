@@ -29,9 +29,6 @@ func (MemberProfile) Fields() []ent.Field {
 
 		field.Int64("relation_mid").Default(0).Comment("关联会员").Optional(),
 		field.String("relation_mame").Comment("关联会员").Optional(),
-
-		field.Int64("relation_uid").Default(0).Comment("跟进人员工").Optional(),
-		field.String("relation_uname").Comment("跟进人员工").Optional(),
 	}
 }
 
@@ -52,13 +49,14 @@ func (MemberProfile) Edges() []ent.Edge {
 
 func (MemberProfile) Indexes() []ent.Index {
 	return []ent.Index{
+		index.Fields("id"),
 		index.Fields("member_id"),
 	}
 }
 
 func (MemberProfile) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "member_profile", Options: "AUTO_INCREMENT = 100000"},
+		entsql.Annotation{Table: "member_profile"},
 		entsql.WithComments(true),
 	}
 }

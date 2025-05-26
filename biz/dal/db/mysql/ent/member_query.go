@@ -6,17 +6,17 @@ import (
 	"context"
 	"database/sql/driver"
 	"fmt"
-	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/face"
 	"kcers/biz/dal/db/mysql/ent/member"
 	"kcers/biz/dal/db/mysql/ent/membercontract"
-	"kcers/biz/dal/db/mysql/ent/memberdetails"
 	"kcers/biz/dal/db/mysql/ent/membernote"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/memberprofile"
 	"kcers/biz/dal/db/mysql/ent/membertoken"
 	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/predicate"
+	"kcers/biz/dal/db/mysql/ent/venueentry"
+	"kcers/biz/dal/db/mysql/ent/venuemember"
 	"math"
 
 	"entgo.io/ent"
@@ -34,11 +34,11 @@ type MemberQuery struct {
 	predicates         []predicate.Member
 	withToken          *MemberTokenQuery
 	withMemberProfile  *MemberProfileQuery
-	withMemberDetails  *MemberDetailsQuery
+	withMemberDetails  *VenueMemberQuery
 	withMemberNotes    *MemberNoteQuery
 	withMemberOrders   *OrderQuery
 	withMemberProducts *MemberProductQuery
-	withMemberEntry    *EntryLogsQuery
+	withMemberEntry    *VenueEntryQuery
 	withMemberContents *MemberContractQuery
 	withMemberFace     *FaceQuery
 	modifiers          []func(*sql.Selector)
@@ -123,8 +123,8 @@ func (mq *MemberQuery) QueryMemberProfile() *MemberProfileQuery {
 }
 
 // QueryMemberDetails chains the current query on the "member_details" edge.
-func (mq *MemberQuery) QueryMemberDetails() *MemberDetailsQuery {
-	query := (&MemberDetailsClient{config: mq.config}).Query()
+func (mq *MemberQuery) QueryMemberDetails() *VenueMemberQuery {
+	query := (&VenueMemberClient{config: mq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := mq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -135,7 +135,7 @@ func (mq *MemberQuery) QueryMemberDetails() *MemberDetailsQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(member.Table, member.FieldID, selector),
-			sqlgraph.To(memberdetails.Table, memberdetails.FieldID),
+			sqlgraph.To(venuemember.Table, venuemember.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, member.MemberDetailsTable, member.MemberDetailsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
@@ -211,8 +211,8 @@ func (mq *MemberQuery) QueryMemberProducts() *MemberProductQuery {
 }
 
 // QueryMemberEntry chains the current query on the "member_entry" edge.
-func (mq *MemberQuery) QueryMemberEntry() *EntryLogsQuery {
-	query := (&EntryLogsClient{config: mq.config}).Query()
+func (mq *MemberQuery) QueryMemberEntry() *VenueEntryQuery {
+	query := (&VenueEntryClient{config: mq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := mq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -223,7 +223,7 @@ func (mq *MemberQuery) QueryMemberEntry() *EntryLogsQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(member.Table, member.FieldID, selector),
-			sqlgraph.To(entrylogs.Table, entrylogs.FieldID),
+			sqlgraph.To(venueentry.Table, venueentry.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, member.MemberEntryTable, member.MemberEntryColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
@@ -508,8 +508,8 @@ func (mq *MemberQuery) WithMemberProfile(opts ...func(*MemberProfileQuery)) *Mem
 
 // WithMemberDetails tells the query-builder to eager-load the nodes that are connected to
 // the "member_details" edge. The optional arguments are used to configure the query builder of the edge.
-func (mq *MemberQuery) WithMemberDetails(opts ...func(*MemberDetailsQuery)) *MemberQuery {
-	query := (&MemberDetailsClient{config: mq.config}).Query()
+func (mq *MemberQuery) WithMemberDetails(opts ...func(*VenueMemberQuery)) *MemberQuery {
+	query := (&VenueMemberClient{config: mq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -552,8 +552,8 @@ func (mq *MemberQuery) WithMemberProducts(opts ...func(*MemberProductQuery)) *Me
 
 // WithMemberEntry tells the query-builder to eager-load the nodes that are connected to
 // the "member_entry" edge. The optional arguments are used to configure the query builder of the edge.
-func (mq *MemberQuery) WithMemberEntry(opts ...func(*EntryLogsQuery)) *MemberQuery {
-	query := (&EntryLogsClient{config: mq.config}).Query()
+func (mq *MemberQuery) WithMemberEntry(opts ...func(*VenueEntryQuery)) *MemberQuery {
+	query := (&VenueEntryClient{config: mq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -709,8 +709,8 @@ func (mq *MemberQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Membe
 	}
 	if query := mq.withMemberDetails; query != nil {
 		if err := mq.loadMemberDetails(ctx, query, nodes,
-			func(n *Member) { n.Edges.MemberDetails = []*MemberDetails{} },
-			func(n *Member, e *MemberDetails) { n.Edges.MemberDetails = append(n.Edges.MemberDetails, e) }); err != nil {
+			func(n *Member) { n.Edges.MemberDetails = []*VenueMember{} },
+			func(n *Member, e *VenueMember) { n.Edges.MemberDetails = append(n.Edges.MemberDetails, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -737,8 +737,8 @@ func (mq *MemberQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Membe
 	}
 	if query := mq.withMemberEntry; query != nil {
 		if err := mq.loadMemberEntry(ctx, query, nodes,
-			func(n *Member) { n.Edges.MemberEntry = []*EntryLogs{} },
-			func(n *Member, e *EntryLogs) { n.Edges.MemberEntry = append(n.Edges.MemberEntry, e) }); err != nil {
+			func(n *Member) { n.Edges.MemberEntry = []*VenueEntry{} },
+			func(n *Member, e *VenueEntry) { n.Edges.MemberEntry = append(n.Edges.MemberEntry, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -817,7 +817,7 @@ func (mq *MemberQuery) loadMemberProfile(ctx context.Context, query *MemberProfi
 	}
 	return nil
 }
-func (mq *MemberQuery) loadMemberDetails(ctx context.Context, query *MemberDetailsQuery, nodes []*Member, init func(*Member), assign func(*Member, *MemberDetails)) error {
+func (mq *MemberQuery) loadMemberDetails(ctx context.Context, query *VenueMemberQuery, nodes []*Member, init func(*Member), assign func(*Member, *VenueMember)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*Member)
 	for i := range nodes {
@@ -828,9 +828,9 @@ func (mq *MemberQuery) loadMemberDetails(ctx context.Context, query *MemberDetai
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(memberdetails.FieldMemberID)
+		query.ctx.AppendFieldOnce(venuemember.FieldMemberID)
 	}
-	query.Where(predicate.MemberDetails(func(s *sql.Selector) {
+	query.Where(predicate.VenueMember(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(member.MemberDetailsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
@@ -937,7 +937,7 @@ func (mq *MemberQuery) loadMemberProducts(ctx context.Context, query *MemberProd
 	}
 	return nil
 }
-func (mq *MemberQuery) loadMemberEntry(ctx context.Context, query *EntryLogsQuery, nodes []*Member, init func(*Member), assign func(*Member, *EntryLogs)) error {
+func (mq *MemberQuery) loadMemberEntry(ctx context.Context, query *VenueEntryQuery, nodes []*Member, init func(*Member), assign func(*Member, *VenueEntry)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*Member)
 	for i := range nodes {
@@ -948,9 +948,9 @@ func (mq *MemberQuery) loadMemberEntry(ctx context.Context, query *EntryLogsQuer
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(entrylogs.FieldMemberID)
+		query.ctx.AppendFieldOnce(venueentry.FieldMemberID)
 	}
-	query.Where(predicate.EntryLogs(func(s *sql.Selector) {
+	query.Where(predicate.VenueEntry(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(member.MemberEntryColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)

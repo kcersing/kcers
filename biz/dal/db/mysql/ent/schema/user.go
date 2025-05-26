@@ -58,12 +58,11 @@ func (User) Mixin() []ent.Mixin {
 
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
-
 		edge.To("user_face", Face.Type),
 		edge.To("token", Token.Type).Unique(),
 		edge.To("tags", DictionaryDetail.Type),
 		edge.To("created_orders", Order.Type),
-		edge.To("user_entry", EntryLogs.Type),
+		edge.To("user_entry", VenueEntry.Type),
 		edge.To("venues", Venue.Type),
 		edge.To("roles", Role.Type),
 	}
@@ -71,14 +70,15 @@ func (User) Edges() []ent.Edge {
 
 func (User) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("username", "email").
-			Unique(),
+		index.Fields("id"),
+		index.Fields("username"),
+		index.Fields("mobile"),
 	}
 }
 
 func (User) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "sys_users", Options: "AUTO_INCREMENT = 100000"},
+		entsql.Annotation{Table: "sys_users"},
 		entsql.WithComments(true),
 	}
 }

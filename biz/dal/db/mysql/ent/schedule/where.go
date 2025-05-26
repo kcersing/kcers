@@ -1280,6 +1280,16 @@ func PlaceNameContainsFold(v string) predicate.Schedule {
 	return predicate.Schedule(sql.FieldContainsFold(FieldPlaceName, v))
 }
 
+// SeatsIsNil applies the IsNil predicate on the "seats" field.
+func SeatsIsNil() predicate.Schedule {
+	return predicate.Schedule(sql.FieldIsNull(FieldSeats))
+}
+
+// SeatsNotNil applies the NotNil predicate on the "seats" field.
+func SeatsNotNil() predicate.Schedule {
+	return predicate.Schedule(sql.FieldNotNull(FieldSeats))
+}
+
 // HasMembers applies the HasEdge predicate on the "members" edge.
 func HasMembers() predicate.Schedule {
 	return predicate.Schedule(func(s *sql.Selector) {

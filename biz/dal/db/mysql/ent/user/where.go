@@ -1584,7 +1584,7 @@ func HasUserEntry() predicate.User {
 }
 
 // HasUserEntryWith applies the HasEdge predicate on the "user_entry" edge with a given conditions (other predicates).
-func HasUserEntryWith(preds ...predicate.EntryLogs) predicate.User {
+func HasUserEntryWith(preds ...predicate.VenueEntry) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := newUserEntryStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {

@@ -105,6 +105,34 @@ func (smc *ScheduleMemberCreate) SetNillableVenueID(i *int64) *ScheduleMemberCre
 	return smc
 }
 
+// SetPlaceID sets the "place_id" field.
+func (smc *ScheduleMemberCreate) SetPlaceID(i int64) *ScheduleMemberCreate {
+	smc.mutation.SetPlaceID(i)
+	return smc
+}
+
+// SetNillablePlaceID sets the "place_id" field if the given value is not nil.
+func (smc *ScheduleMemberCreate) SetNillablePlaceID(i *int64) *ScheduleMemberCreate {
+	if i != nil {
+		smc.SetPlaceID(*i)
+	}
+	return smc
+}
+
+// SetProductID sets the "product_id" field.
+func (smc *ScheduleMemberCreate) SetProductID(i int64) *ScheduleMemberCreate {
+	smc.mutation.SetProductID(i)
+	return smc
+}
+
+// SetNillableProductID sets the "product_id" field if the given value is not nil.
+func (smc *ScheduleMemberCreate) SetNillableProductID(i *int64) *ScheduleMemberCreate {
+	if i != nil {
+		smc.SetProductID(*i)
+	}
+	return smc
+}
+
 // SetScheduleID sets the "schedule_id" field.
 func (smc *ScheduleMemberCreate) SetScheduleID(i int64) *ScheduleMemberCreate {
 	smc.mutation.SetScheduleID(i)
@@ -129,6 +157,20 @@ func (smc *ScheduleMemberCreate) SetScheduleName(s string) *ScheduleMemberCreate
 func (smc *ScheduleMemberCreate) SetNillableScheduleName(s *string) *ScheduleMemberCreate {
 	if s != nil {
 		smc.SetScheduleName(*s)
+	}
+	return smc
+}
+
+// SetIsDeduct sets the "is_deduct" field.
+func (smc *ScheduleMemberCreate) SetIsDeduct(i int64) *ScheduleMemberCreate {
+	smc.mutation.SetIsDeduct(i)
+	return smc
+}
+
+// SetNillableIsDeduct sets the "is_deduct" field if the given value is not nil.
+func (smc *ScheduleMemberCreate) SetNillableIsDeduct(i *int64) *ScheduleMemberCreate {
+	if i != nil {
+		smc.SetIsDeduct(*i)
 	}
 	return smc
 }
@@ -395,6 +437,10 @@ func (smc *ScheduleMemberCreate) defaults() {
 		v := schedulemember.DefaultStatus
 		smc.mutation.SetStatus(v)
 	}
+	if _, ok := smc.mutation.IsDeduct(); !ok {
+		v := schedulemember.DefaultIsDeduct
+		smc.mutation.SetIsDeduct(v)
+	}
 	if _, ok := smc.mutation.StartAt(); !ok {
 		v := schedulemember.DefaultStartAt()
 		smc.mutation.SetStartAt(v)
@@ -475,9 +521,21 @@ func (smc *ScheduleMemberCreate) createSpec() (*ScheduleMember, *sqlgraph.Create
 		_spec.SetField(schedulemember.FieldVenueID, field.TypeInt64, value)
 		_node.VenueID = value
 	}
+	if value, ok := smc.mutation.PlaceID(); ok {
+		_spec.SetField(schedulemember.FieldPlaceID, field.TypeInt64, value)
+		_node.PlaceID = value
+	}
+	if value, ok := smc.mutation.ProductID(); ok {
+		_spec.SetField(schedulemember.FieldProductID, field.TypeInt64, value)
+		_node.ProductID = value
+	}
 	if value, ok := smc.mutation.ScheduleName(); ok {
 		_spec.SetField(schedulemember.FieldScheduleName, field.TypeString, value)
 		_node.ScheduleName = value
+	}
+	if value, ok := smc.mutation.IsDeduct(); ok {
+		_spec.SetField(schedulemember.FieldIsDeduct, field.TypeInt64, value)
+		_node.IsDeduct = value
 	}
 	if value, ok := smc.mutation.MemberID(); ok {
 		_spec.SetField(schedulemember.FieldMemberID, field.TypeInt64, value)

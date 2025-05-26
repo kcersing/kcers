@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 	"kcers/biz/dal/db/mysql/ent/schema/mixins"
+	"kcers/idl_gen/model/base"
 )
 
 type Schedule struct {
@@ -33,6 +34,8 @@ func (Schedule) Fields() []ent.Field {
 
 		field.String("venue_name").Comment("场馆名称").Optional(),
 		field.String("place_name").Comment("场地名称").Optional(),
+
+		field.JSON("seats", [][]*base.Seat{}).Default([][]*base.Seat{}).Comment("座位").Optional(),
 	}
 }
 
@@ -52,16 +55,16 @@ func (Schedule) Edges() []ent.Edge {
 
 func (Schedule) Indexes() []ent.Index {
 	return []ent.Index{
+		index.Fields("id"),
 		index.Fields("venue_id"),
 		index.Fields("property_id"),
-		index.Fields("start_at"),
-		index.Fields("end_at"),
+		index.Fields("date"),
 	}
 }
 
 func (Schedule) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "schedule", Options: "AUTO_INCREMENT = 100000"},
+		entsql.Annotation{Table: "schedule"},
 		entsql.WithComments(true),
 	}
 }

@@ -33,10 +33,16 @@ type ScheduleMember struct {
 	Status int64 `json:"status,omitempty"`
 	// 场馆id
 	VenueID int64 `json:"venue_id,omitempty"`
+	// 场地ID
+	PlaceID int64 `json:"place_id,omitempty"`
+	// 课程
+	ProductID int64 `json:"product_id,omitempty"`
 	// 课程ID
 	ScheduleID int64 `json:"schedule_id,omitempty"`
 	// 课程名称
 	ScheduleName string `json:"schedule_name,omitempty"`
+	// 是否扣除节数 0 否1 是
+	IsDeduct int64 `json:"is_deduct,omitempty"`
 	// 会员id
 	MemberID int64 `json:"member_id,omitempty"`
 	// 会员购买课ID
@@ -98,7 +104,7 @@ func (*ScheduleMember) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case schedulemember.FieldSeat:
 			values[i] = new([]byte)
-		case schedulemember.FieldID, schedulemember.FieldDelete, schedulemember.FieldCreatedID, schedulemember.FieldStatus, schedulemember.FieldVenueID, schedulemember.FieldScheduleID, schedulemember.FieldMemberID, schedulemember.FieldMemberProductID, schedulemember.FieldMemberProductPropertyID:
+		case schedulemember.FieldID, schedulemember.FieldDelete, schedulemember.FieldCreatedID, schedulemember.FieldStatus, schedulemember.FieldVenueID, schedulemember.FieldPlaceID, schedulemember.FieldProductID, schedulemember.FieldScheduleID, schedulemember.FieldIsDeduct, schedulemember.FieldMemberID, schedulemember.FieldMemberProductID, schedulemember.FieldMemberProductPropertyID:
 			values[i] = new(sql.NullInt64)
 		case schedulemember.FieldScheduleName, schedulemember.FieldType, schedulemember.FieldMemberName, schedulemember.FieldMemberProductName, schedulemember.FieldMemberProductPropertyName, schedulemember.FieldRemark:
 			values[i] = new(sql.NullString)
@@ -161,6 +167,18 @@ func (sm *ScheduleMember) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				sm.VenueID = value.Int64
 			}
+		case schedulemember.FieldPlaceID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field place_id", values[i])
+			} else if value.Valid {
+				sm.PlaceID = value.Int64
+			}
+		case schedulemember.FieldProductID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field product_id", values[i])
+			} else if value.Valid {
+				sm.ProductID = value.Int64
+			}
 		case schedulemember.FieldScheduleID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field schedule_id", values[i])
@@ -172,6 +190,12 @@ func (sm *ScheduleMember) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field schedule_name", values[i])
 			} else if value.Valid {
 				sm.ScheduleName = value.String
+			}
+		case schedulemember.FieldIsDeduct:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field is_deduct", values[i])
+			} else if value.Valid {
+				sm.IsDeduct = value.Int64
 			}
 		case schedulemember.FieldMemberID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -318,11 +342,20 @@ func (sm *ScheduleMember) String() string {
 	builder.WriteString("venue_id=")
 	builder.WriteString(fmt.Sprintf("%v", sm.VenueID))
 	builder.WriteString(", ")
+	builder.WriteString("place_id=")
+	builder.WriteString(fmt.Sprintf("%v", sm.PlaceID))
+	builder.WriteString(", ")
+	builder.WriteString("product_id=")
+	builder.WriteString(fmt.Sprintf("%v", sm.ProductID))
+	builder.WriteString(", ")
 	builder.WriteString("schedule_id=")
 	builder.WriteString(fmt.Sprintf("%v", sm.ScheduleID))
 	builder.WriteString(", ")
 	builder.WriteString("schedule_name=")
 	builder.WriteString(sm.ScheduleName)
+	builder.WriteString(", ")
+	builder.WriteString("is_deduct=")
+	builder.WriteString(fmt.Sprintf("%v", sm.IsDeduct))
 	builder.WriteString(", ")
 	builder.WriteString("member_id=")
 	builder.WriteString(fmt.Sprintf("%v", sm.MemberID))

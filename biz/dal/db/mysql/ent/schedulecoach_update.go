@@ -217,6 +217,33 @@ func (scu *ScheduleCoachUpdate) ClearScheduleName() *ScheduleCoachUpdate {
 	return scu
 }
 
+// SetProductID sets the "product_id" field.
+func (scu *ScheduleCoachUpdate) SetProductID(i int64) *ScheduleCoachUpdate {
+	scu.mutation.ResetProductID()
+	scu.mutation.SetProductID(i)
+	return scu
+}
+
+// SetNillableProductID sets the "product_id" field if the given value is not nil.
+func (scu *ScheduleCoachUpdate) SetNillableProductID(i *int64) *ScheduleCoachUpdate {
+	if i != nil {
+		scu.SetProductID(*i)
+	}
+	return scu
+}
+
+// AddProductID adds i to the "product_id" field.
+func (scu *ScheduleCoachUpdate) AddProductID(i int64) *ScheduleCoachUpdate {
+	scu.mutation.AddProductID(i)
+	return scu
+}
+
+// ClearProductID clears the value of the "product_id" field.
+func (scu *ScheduleCoachUpdate) ClearProductID() *ScheduleCoachUpdate {
+	scu.mutation.ClearProductID()
+	return scu
+}
+
 // SetType sets the "type" field.
 func (scu *ScheduleCoachUpdate) SetType(s string) *ScheduleCoachUpdate {
 	scu.mutation.SetType(s)
@@ -357,6 +384,26 @@ func (scu *ScheduleCoachUpdate) ClearCoachName() *ScheduleCoachUpdate {
 	return scu
 }
 
+// SetRemark sets the "remark" field.
+func (scu *ScheduleCoachUpdate) SetRemark(s string) *ScheduleCoachUpdate {
+	scu.mutation.SetRemark(s)
+	return scu
+}
+
+// SetNillableRemark sets the "remark" field if the given value is not nil.
+func (scu *ScheduleCoachUpdate) SetNillableRemark(s *string) *ScheduleCoachUpdate {
+	if s != nil {
+		scu.SetRemark(*s)
+	}
+	return scu
+}
+
+// ClearRemark clears the value of the "remark" field.
+func (scu *ScheduleCoachUpdate) ClearRemark() *ScheduleCoachUpdate {
+	scu.mutation.ClearRemark()
+	return scu
+}
+
 // SetSchedule sets the "schedule" edge to the Schedule entity.
 func (scu *ScheduleCoachUpdate) SetSchedule(s *Schedule) *ScheduleCoachUpdate {
 	return scu.SetScheduleID(s.ID)
@@ -484,6 +531,15 @@ func (scu *ScheduleCoachUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	if scu.mutation.ScheduleNameCleared() {
 		_spec.ClearField(schedulecoach.FieldScheduleName, field.TypeString)
 	}
+	if value, ok := scu.mutation.ProductID(); ok {
+		_spec.SetField(schedulecoach.FieldProductID, field.TypeInt64, value)
+	}
+	if value, ok := scu.mutation.AddedProductID(); ok {
+		_spec.AddField(schedulecoach.FieldProductID, field.TypeInt64, value)
+	}
+	if scu.mutation.ProductIDCleared() {
+		_spec.ClearField(schedulecoach.FieldProductID, field.TypeInt64)
+	}
 	if value, ok := scu.mutation.GetType(); ok {
 		_spec.SetField(schedulecoach.FieldType, field.TypeString, value)
 	}
@@ -525,6 +581,12 @@ func (scu *ScheduleCoachUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if scu.mutation.CoachNameCleared() {
 		_spec.ClearField(schedulecoach.FieldCoachName, field.TypeString)
+	}
+	if value, ok := scu.mutation.Remark(); ok {
+		_spec.SetField(schedulecoach.FieldRemark, field.TypeString, value)
+	}
+	if scu.mutation.RemarkCleared() {
+		_spec.ClearField(schedulecoach.FieldRemark, field.TypeString)
 	}
 	if scu.mutation.ScheduleCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -764,6 +826,33 @@ func (scuo *ScheduleCoachUpdateOne) ClearScheduleName() *ScheduleCoachUpdateOne 
 	return scuo
 }
 
+// SetProductID sets the "product_id" field.
+func (scuo *ScheduleCoachUpdateOne) SetProductID(i int64) *ScheduleCoachUpdateOne {
+	scuo.mutation.ResetProductID()
+	scuo.mutation.SetProductID(i)
+	return scuo
+}
+
+// SetNillableProductID sets the "product_id" field if the given value is not nil.
+func (scuo *ScheduleCoachUpdateOne) SetNillableProductID(i *int64) *ScheduleCoachUpdateOne {
+	if i != nil {
+		scuo.SetProductID(*i)
+	}
+	return scuo
+}
+
+// AddProductID adds i to the "product_id" field.
+func (scuo *ScheduleCoachUpdateOne) AddProductID(i int64) *ScheduleCoachUpdateOne {
+	scuo.mutation.AddProductID(i)
+	return scuo
+}
+
+// ClearProductID clears the value of the "product_id" field.
+func (scuo *ScheduleCoachUpdateOne) ClearProductID() *ScheduleCoachUpdateOne {
+	scuo.mutation.ClearProductID()
+	return scuo
+}
+
 // SetType sets the "type" field.
 func (scuo *ScheduleCoachUpdateOne) SetType(s string) *ScheduleCoachUpdateOne {
 	scuo.mutation.SetType(s)
@@ -901,6 +990,26 @@ func (scuo *ScheduleCoachUpdateOne) SetNillableCoachName(s *string) *ScheduleCoa
 // ClearCoachName clears the value of the "coach_name" field.
 func (scuo *ScheduleCoachUpdateOne) ClearCoachName() *ScheduleCoachUpdateOne {
 	scuo.mutation.ClearCoachName()
+	return scuo
+}
+
+// SetRemark sets the "remark" field.
+func (scuo *ScheduleCoachUpdateOne) SetRemark(s string) *ScheduleCoachUpdateOne {
+	scuo.mutation.SetRemark(s)
+	return scuo
+}
+
+// SetNillableRemark sets the "remark" field if the given value is not nil.
+func (scuo *ScheduleCoachUpdateOne) SetNillableRemark(s *string) *ScheduleCoachUpdateOne {
+	if s != nil {
+		scuo.SetRemark(*s)
+	}
+	return scuo
+}
+
+// ClearRemark clears the value of the "remark" field.
+func (scuo *ScheduleCoachUpdateOne) ClearRemark() *ScheduleCoachUpdateOne {
+	scuo.mutation.ClearRemark()
 	return scuo
 }
 
@@ -1061,6 +1170,15 @@ func (scuo *ScheduleCoachUpdateOne) sqlSave(ctx context.Context) (_node *Schedul
 	if scuo.mutation.ScheduleNameCleared() {
 		_spec.ClearField(schedulecoach.FieldScheduleName, field.TypeString)
 	}
+	if value, ok := scuo.mutation.ProductID(); ok {
+		_spec.SetField(schedulecoach.FieldProductID, field.TypeInt64, value)
+	}
+	if value, ok := scuo.mutation.AddedProductID(); ok {
+		_spec.AddField(schedulecoach.FieldProductID, field.TypeInt64, value)
+	}
+	if scuo.mutation.ProductIDCleared() {
+		_spec.ClearField(schedulecoach.FieldProductID, field.TypeInt64)
+	}
 	if value, ok := scuo.mutation.GetType(); ok {
 		_spec.SetField(schedulecoach.FieldType, field.TypeString, value)
 	}
@@ -1102,6 +1220,12 @@ func (scuo *ScheduleCoachUpdateOne) sqlSave(ctx context.Context) (_node *Schedul
 	}
 	if scuo.mutation.CoachNameCleared() {
 		_spec.ClearField(schedulecoach.FieldCoachName, field.TypeString)
+	}
+	if value, ok := scuo.mutation.Remark(); ok {
+		_spec.SetField(schedulecoach.FieldRemark, field.TypeString, value)
+	}
+	if scuo.mutation.RemarkCleared() {
+		_spec.ClearField(schedulecoach.FieldRemark, field.TypeString)
 	}
 	if scuo.mutation.ScheduleCleared() {
 		edge := &sqlgraph.EdgeSpec{

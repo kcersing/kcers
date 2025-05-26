@@ -64,8 +64,8 @@ const (
 	MemberProductPropertysColumn = "member_product_id"
 	// MemberProductEntryTable is the table that holds the member_product_entry relation/edge.
 	MemberProductEntryTable = "entry_logs"
-	// MemberProductEntryInverseTable is the table name for the EntryLogs entity.
-	// It exists in this package in order to avoid circular dependency with the "entrylogs" package.
+	// MemberProductEntryInverseTable is the table name for the VenueEntry entity.
+	// It exists in this package in order to avoid circular dependency with the "venueentry" package.
 	MemberProductEntryInverseTable = "entry_logs"
 	// MemberProductEntryColumn is the table column denoting the member_product_entry relation/edge.
 	MemberProductEntryColumn = "member_product_id"

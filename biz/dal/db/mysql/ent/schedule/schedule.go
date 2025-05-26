@@ -3,6 +3,7 @@
 package schedule
 
 import (
+	"kcers/idl_gen/model/base"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -54,6 +55,8 @@ const (
 	FieldVenueName = "venue_name"
 	// FieldPlaceName holds the string denoting the place_name field in the database.
 	FieldPlaceName = "place_name"
+	// FieldSeats holds the string denoting the seats field in the database.
+	FieldSeats = "seats"
 	// EdgeMembers holds the string denoting the members edge name in mutations.
 	EdgeMembers = "members"
 	// EdgeCoachs holds the string denoting the coachs edge name in mutations.
@@ -99,6 +102,7 @@ var Columns = []string{
 	FieldRemark,
 	FieldVenueName,
 	FieldPlaceName,
+	FieldSeats,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -126,6 +130,8 @@ var (
 	DefaultStatus int64
 	// DefaultPrice holds the default value on creation for the "price" field.
 	DefaultPrice float64
+	// DefaultSeats holds the default value on creation for the "seats" field.
+	DefaultSeats [][]*base.Seat
 )
 
 // OrderOption defines the ordering options for the Schedule queries.

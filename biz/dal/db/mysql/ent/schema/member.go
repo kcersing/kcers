@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"kcers/biz/dal/db/mysql/ent/schema/mixins"
 )
 
@@ -44,11 +45,11 @@ func (Member) Edges() []ent.Edge {
 		edge.To("token", MemberToken.Type).Unique(),
 
 		edge.To("member_profile", MemberProfile.Type),
-		edge.To("member_details", MemberDetails.Type),
+		edge.To("member_details", VenueMember.Type),
 		edge.To("member_notes", MemberNote.Type),
 		edge.To("member_orders", Order.Type),
 		edge.To("member_products", MemberProduct.Type),
-		edge.To("member_entry", EntryLogs.Type),
+		edge.To("member_entry", VenueEntry.Type),
 		edge.To("member_contents", MemberContract.Type),
 
 		edge.To("member_face", Face.Type),
@@ -56,12 +57,16 @@ func (Member) Edges() []ent.Edge {
 }
 
 func (Member) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+		index.Fields("id"),
+		index.Fields("username"),
+		index.Fields("mobile"),
+	}
 }
 
 func (Member) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "member", Options: "AUTO_INCREMENT = 100000"},
+		entsql.Annotation{Table: "member"},
 		entsql.WithComments(true),
 	}
 }

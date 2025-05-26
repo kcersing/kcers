@@ -78,8 +78,8 @@ const (
 	VenueOrdersColumn = "venue_id"
 	// VenueEntryTable is the table that holds the venue_entry relation/edge.
 	VenueEntryTable = "entry_logs"
-	// VenueEntryInverseTable is the table name for the EntryLogs entity.
-	// It exists in this package in order to avoid circular dependency with the "entrylogs" package.
+	// VenueEntryInverseTable is the table name for the VenueEntry entity.
+	// It exists in this package in order to avoid circular dependency with the "venueentry" package.
 	VenueEntryInverseTable = "entry_logs"
 	// VenueEntryColumn is the table column denoting the venue_entry relation/edge.
 	VenueEntryColumn = "venue_id"

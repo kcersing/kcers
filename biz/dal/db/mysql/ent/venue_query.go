@@ -6,7 +6,6 @@ import (
 	"context"
 	"database/sql/driver"
 	"fmt"
-	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
 	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/predicate"
@@ -15,6 +14,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/role"
 	"kcers/biz/dal/db/mysql/ent/user"
 	"kcers/biz/dal/db/mysql/ent/venue"
+	"kcers/biz/dal/db/mysql/ent/venueentry"
 	"kcers/biz/dal/db/mysql/ent/venueplace"
 	"math"
 
@@ -33,7 +33,7 @@ type VenueQuery struct {
 	predicates               []predicate.Venue
 	withPlaces               *VenuePlaceQuery
 	withVenueOrders          *OrderQuery
-	withVenueEntry           *EntryLogsQuery
+	withVenueEntry           *VenueEntryQuery
 	withMemberPropertyVenues *MemberProductPropertyQuery
 	withPropertyVenues       *ProductPropertyQuery
 	withProducts             *ProductQuery
@@ -121,8 +121,8 @@ func (vq *VenueQuery) QueryVenueOrders() *OrderQuery {
 }
 
 // QueryVenueEntry chains the current query on the "venue_entry" edge.
-func (vq *VenueQuery) QueryVenueEntry() *EntryLogsQuery {
-	query := (&EntryLogsClient{config: vq.config}).Query()
+func (vq *VenueQuery) QueryVenueEntry() *VenueEntryQuery {
+	query := (&VenueEntryClient{config: vq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := vq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -133,7 +133,7 @@ func (vq *VenueQuery) QueryVenueEntry() *EntryLogsQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(venue.Table, venue.FieldID, selector),
-			sqlgraph.To(entrylogs.Table, entrylogs.FieldID),
+			sqlgraph.To(venueentry.Table, venueentry.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, venue.VenueEntryTable, venue.VenueEntryColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(vq.driver.Dialect(), step)
@@ -483,8 +483,8 @@ func (vq *VenueQuery) WithVenueOrders(opts ...func(*OrderQuery)) *VenueQuery {
 
 // WithVenueEntry tells the query-builder to eager-load the nodes that are connected to
 // the "venue_entry" edge. The optional arguments are used to configure the query builder of the edge.
-func (vq *VenueQuery) WithVenueEntry(opts ...func(*EntryLogsQuery)) *VenueQuery {
-	query := (&EntryLogsClient{config: vq.config}).Query()
+func (vq *VenueQuery) WithVenueEntry(opts ...func(*VenueEntryQuery)) *VenueQuery {
+	query := (&VenueEntryClient{config: vq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -673,8 +673,8 @@ func (vq *VenueQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Venue,
 	}
 	if query := vq.withVenueEntry; query != nil {
 		if err := vq.loadVenueEntry(ctx, query, nodes,
-			func(n *Venue) { n.Edges.VenueEntry = []*EntryLogs{} },
-			func(n *Venue, e *EntryLogs) { n.Edges.VenueEntry = append(n.Edges.VenueEntry, e) }); err != nil {
+			func(n *Venue) { n.Edges.VenueEntry = []*VenueEntry{} },
+			func(n *Venue, e *VenueEntry) { n.Edges.VenueEntry = append(n.Edges.VenueEntry, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -778,7 +778,7 @@ func (vq *VenueQuery) loadVenueOrders(ctx context.Context, query *OrderQuery, no
 	}
 	return nil
 }
-func (vq *VenueQuery) loadVenueEntry(ctx context.Context, query *EntryLogsQuery, nodes []*Venue, init func(*Venue), assign func(*Venue, *EntryLogs)) error {
+func (vq *VenueQuery) loadVenueEntry(ctx context.Context, query *VenueEntryQuery, nodes []*Venue, init func(*Venue), assign func(*Venue, *VenueEntry)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*Venue)
 	for i := range nodes {
@@ -789,9 +789,9 @@ func (vq *VenueQuery) loadVenueEntry(ctx context.Context, query *EntryLogsQuery,
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(entrylogs.FieldVenueID)
+		query.ctx.AppendFieldOnce(venueentry.FieldVenueID)
 	}
-	query.Where(predicate.EntryLogs(func(s *sql.Selector) {
+	query.Where(predicate.VenueEntry(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(venue.VenueEntryColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)

@@ -191,6 +191,34 @@ func (ppc *ProductPropertyCreate) SetNillableData(s *string) *ProductPropertyCre
 	return ppc
 }
 
+// SetPic sets the "pic" field.
+func (ppc *ProductPropertyCreate) SetPic(s string) *ProductPropertyCreate {
+	ppc.mutation.SetPic(s)
+	return ppc
+}
+
+// SetNillablePic sets the "pic" field if the given value is not nil.
+func (ppc *ProductPropertyCreate) SetNillablePic(s *string) *ProductPropertyCreate {
+	if s != nil {
+		ppc.SetPic(*s)
+	}
+	return ppc
+}
+
+// SetDescription sets the "description" field.
+func (ppc *ProductPropertyCreate) SetDescription(s string) *ProductPropertyCreate {
+	ppc.mutation.SetDescription(s)
+	return ppc
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (ppc *ProductPropertyCreate) SetNillableDescription(s *string) *ProductPropertyCreate {
+	if s != nil {
+		ppc.SetDescription(*s)
+	}
+	return ppc
+}
+
 // SetID sets the "id" field.
 func (ppc *ProductPropertyCreate) SetID(i int64) *ProductPropertyCreate {
 	ppc.mutation.SetID(i)
@@ -312,6 +340,14 @@ func (ppc *ProductPropertyCreate) defaults() {
 		v := productproperty.DefaultStatus
 		ppc.mutation.SetStatus(v)
 	}
+	if _, ok := ppc.mutation.Pic(); !ok {
+		v := productproperty.DefaultPic
+		ppc.mutation.SetPic(v)
+	}
+	if _, ok := ppc.mutation.Description(); !ok {
+		v := productproperty.DefaultDescription
+		ppc.mutation.SetDescription(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -395,6 +431,14 @@ func (ppc *ProductPropertyCreate) createSpec() (*ProductProperty, *sqlgraph.Crea
 	if value, ok := ppc.mutation.Data(); ok {
 		_spec.SetField(productproperty.FieldData, field.TypeString, value)
 		_node.Data = value
+	}
+	if value, ok := ppc.mutation.Pic(); ok {
+		_spec.SetField(productproperty.FieldPic, field.TypeString, value)
+		_node.Pic = value
+	}
+	if value, ok := ppc.mutation.Description(); ok {
+		_spec.SetField(productproperty.FieldDescription, field.TypeString, value)
+		_node.Description = value
 	}
 	if nodes := ppc.mutation.ProductIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

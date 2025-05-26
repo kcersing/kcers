@@ -21,9 +21,6 @@ type Dictionary func(*sql.Selector)
 // DictionaryDetail is the predicate function for dictionarydetail builders.
 type DictionaryDetail func(*sql.Selector)
 
-// EntryLogs is the predicate function for entrylogs builders.
-type EntryLogs func(*sql.Selector)
-
 // Face is the predicate function for face builders.
 type Face func(*sql.Selector)
 
@@ -38,9 +35,6 @@ type MemberContract func(*sql.Selector)
 
 // MemberContractContent is the predicate function for membercontractcontent builders.
 type MemberContractContent func(*sql.Selector)
-
-// MemberDetails is the predicate function for memberdetails builders.
-type MemberDetails func(*sql.Selector)
 
 // MemberNote is the predicate function for membernote builders.
 type MemberNote func(*sql.Selector)
@@ -113,6 +107,12 @@ type User func(*sql.Selector)
 
 // Venue is the predicate function for venue builders.
 type Venue func(*sql.Selector)
+
+// VenueEntry is the predicate function for venueentry builders.
+type VenueEntry func(*sql.Selector)
+
+// VenueMember is the predicate function for venuemember builders.
+type VenueMember func(*sql.Selector)
 
 // VenuePlace is the predicate function for venueplace builders.
 type VenuePlace func(*sql.Selector)

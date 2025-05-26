@@ -51,7 +51,12 @@ func customizedRegister(r *server.Hertz) {
 	r.POST("/service/wx/staff/refresh_token", mw.GetJWTMw(casbin.CasbinEnforcer()).RefreshHandler)
 
 	r.POST("/service/payment/WXNotify", func(c context.Context, ctx *app.RequestContext) {
-		orderService.NewWXPayment(c, ctx).Notify(ctx)
+		hlog.Info("载入WXNotify")
+		service2.NewWXPayment(c, ctx).Notify(ctx)
+	})
+	r.POST("/service/payment/WXRefundNotify", func(c context.Context, ctx *app.RequestContext) {
+		hlog.Info("WXRefundNotify")
+		service2.NewWXPayment(c, ctx).RefundNotify(ctx)
 	})
 
 }

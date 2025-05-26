@@ -151,6 +151,60 @@ func (smu *ScheduleMemberUpdate) ClearVenueID() *ScheduleMemberUpdate {
 	return smu
 }
 
+// SetPlaceID sets the "place_id" field.
+func (smu *ScheduleMemberUpdate) SetPlaceID(i int64) *ScheduleMemberUpdate {
+	smu.mutation.ResetPlaceID()
+	smu.mutation.SetPlaceID(i)
+	return smu
+}
+
+// SetNillablePlaceID sets the "place_id" field if the given value is not nil.
+func (smu *ScheduleMemberUpdate) SetNillablePlaceID(i *int64) *ScheduleMemberUpdate {
+	if i != nil {
+		smu.SetPlaceID(*i)
+	}
+	return smu
+}
+
+// AddPlaceID adds i to the "place_id" field.
+func (smu *ScheduleMemberUpdate) AddPlaceID(i int64) *ScheduleMemberUpdate {
+	smu.mutation.AddPlaceID(i)
+	return smu
+}
+
+// ClearPlaceID clears the value of the "place_id" field.
+func (smu *ScheduleMemberUpdate) ClearPlaceID() *ScheduleMemberUpdate {
+	smu.mutation.ClearPlaceID()
+	return smu
+}
+
+// SetProductID sets the "product_id" field.
+func (smu *ScheduleMemberUpdate) SetProductID(i int64) *ScheduleMemberUpdate {
+	smu.mutation.ResetProductID()
+	smu.mutation.SetProductID(i)
+	return smu
+}
+
+// SetNillableProductID sets the "product_id" field if the given value is not nil.
+func (smu *ScheduleMemberUpdate) SetNillableProductID(i *int64) *ScheduleMemberUpdate {
+	if i != nil {
+		smu.SetProductID(*i)
+	}
+	return smu
+}
+
+// AddProductID adds i to the "product_id" field.
+func (smu *ScheduleMemberUpdate) AddProductID(i int64) *ScheduleMemberUpdate {
+	smu.mutation.AddProductID(i)
+	return smu
+}
+
+// ClearProductID clears the value of the "product_id" field.
+func (smu *ScheduleMemberUpdate) ClearProductID() *ScheduleMemberUpdate {
+	smu.mutation.ClearProductID()
+	return smu
+}
+
 // SetScheduleID sets the "schedule_id" field.
 func (smu *ScheduleMemberUpdate) SetScheduleID(i int64) *ScheduleMemberUpdate {
 	smu.mutation.SetScheduleID(i)
@@ -188,6 +242,33 @@ func (smu *ScheduleMemberUpdate) SetNillableScheduleName(s *string) *ScheduleMem
 // ClearScheduleName clears the value of the "schedule_name" field.
 func (smu *ScheduleMemberUpdate) ClearScheduleName() *ScheduleMemberUpdate {
 	smu.mutation.ClearScheduleName()
+	return smu
+}
+
+// SetIsDeduct sets the "is_deduct" field.
+func (smu *ScheduleMemberUpdate) SetIsDeduct(i int64) *ScheduleMemberUpdate {
+	smu.mutation.ResetIsDeduct()
+	smu.mutation.SetIsDeduct(i)
+	return smu
+}
+
+// SetNillableIsDeduct sets the "is_deduct" field if the given value is not nil.
+func (smu *ScheduleMemberUpdate) SetNillableIsDeduct(i *int64) *ScheduleMemberUpdate {
+	if i != nil {
+		smu.SetIsDeduct(*i)
+	}
+	return smu
+}
+
+// AddIsDeduct adds i to the "is_deduct" field.
+func (smu *ScheduleMemberUpdate) AddIsDeduct(i int64) *ScheduleMemberUpdate {
+	smu.mutation.AddIsDeduct(i)
+	return smu
+}
+
+// ClearIsDeduct clears the value of the "is_deduct" field.
+func (smu *ScheduleMemberUpdate) ClearIsDeduct() *ScheduleMemberUpdate {
+	smu.mutation.ClearIsDeduct()
 	return smu
 }
 
@@ -604,11 +685,38 @@ func (smu *ScheduleMemberUpdate) sqlSave(ctx context.Context) (n int, err error)
 	if smu.mutation.VenueIDCleared() {
 		_spec.ClearField(schedulemember.FieldVenueID, field.TypeInt64)
 	}
+	if value, ok := smu.mutation.PlaceID(); ok {
+		_spec.SetField(schedulemember.FieldPlaceID, field.TypeInt64, value)
+	}
+	if value, ok := smu.mutation.AddedPlaceID(); ok {
+		_spec.AddField(schedulemember.FieldPlaceID, field.TypeInt64, value)
+	}
+	if smu.mutation.PlaceIDCleared() {
+		_spec.ClearField(schedulemember.FieldPlaceID, field.TypeInt64)
+	}
+	if value, ok := smu.mutation.ProductID(); ok {
+		_spec.SetField(schedulemember.FieldProductID, field.TypeInt64, value)
+	}
+	if value, ok := smu.mutation.AddedProductID(); ok {
+		_spec.AddField(schedulemember.FieldProductID, field.TypeInt64, value)
+	}
+	if smu.mutation.ProductIDCleared() {
+		_spec.ClearField(schedulemember.FieldProductID, field.TypeInt64)
+	}
 	if value, ok := smu.mutation.ScheduleName(); ok {
 		_spec.SetField(schedulemember.FieldScheduleName, field.TypeString, value)
 	}
 	if smu.mutation.ScheduleNameCleared() {
 		_spec.ClearField(schedulemember.FieldScheduleName, field.TypeString)
+	}
+	if value, ok := smu.mutation.IsDeduct(); ok {
+		_spec.SetField(schedulemember.FieldIsDeduct, field.TypeInt64, value)
+	}
+	if value, ok := smu.mutation.AddedIsDeduct(); ok {
+		_spec.AddField(schedulemember.FieldIsDeduct, field.TypeInt64, value)
+	}
+	if smu.mutation.IsDeductCleared() {
+		_spec.ClearField(schedulemember.FieldIsDeduct, field.TypeInt64)
 	}
 	if value, ok := smu.mutation.MemberID(); ok {
 		_spec.SetField(schedulemember.FieldMemberID, field.TypeInt64, value)
@@ -874,6 +982,60 @@ func (smuo *ScheduleMemberUpdateOne) ClearVenueID() *ScheduleMemberUpdateOne {
 	return smuo
 }
 
+// SetPlaceID sets the "place_id" field.
+func (smuo *ScheduleMemberUpdateOne) SetPlaceID(i int64) *ScheduleMemberUpdateOne {
+	smuo.mutation.ResetPlaceID()
+	smuo.mutation.SetPlaceID(i)
+	return smuo
+}
+
+// SetNillablePlaceID sets the "place_id" field if the given value is not nil.
+func (smuo *ScheduleMemberUpdateOne) SetNillablePlaceID(i *int64) *ScheduleMemberUpdateOne {
+	if i != nil {
+		smuo.SetPlaceID(*i)
+	}
+	return smuo
+}
+
+// AddPlaceID adds i to the "place_id" field.
+func (smuo *ScheduleMemberUpdateOne) AddPlaceID(i int64) *ScheduleMemberUpdateOne {
+	smuo.mutation.AddPlaceID(i)
+	return smuo
+}
+
+// ClearPlaceID clears the value of the "place_id" field.
+func (smuo *ScheduleMemberUpdateOne) ClearPlaceID() *ScheduleMemberUpdateOne {
+	smuo.mutation.ClearPlaceID()
+	return smuo
+}
+
+// SetProductID sets the "product_id" field.
+func (smuo *ScheduleMemberUpdateOne) SetProductID(i int64) *ScheduleMemberUpdateOne {
+	smuo.mutation.ResetProductID()
+	smuo.mutation.SetProductID(i)
+	return smuo
+}
+
+// SetNillableProductID sets the "product_id" field if the given value is not nil.
+func (smuo *ScheduleMemberUpdateOne) SetNillableProductID(i *int64) *ScheduleMemberUpdateOne {
+	if i != nil {
+		smuo.SetProductID(*i)
+	}
+	return smuo
+}
+
+// AddProductID adds i to the "product_id" field.
+func (smuo *ScheduleMemberUpdateOne) AddProductID(i int64) *ScheduleMemberUpdateOne {
+	smuo.mutation.AddProductID(i)
+	return smuo
+}
+
+// ClearProductID clears the value of the "product_id" field.
+func (smuo *ScheduleMemberUpdateOne) ClearProductID() *ScheduleMemberUpdateOne {
+	smuo.mutation.ClearProductID()
+	return smuo
+}
+
 // SetScheduleID sets the "schedule_id" field.
 func (smuo *ScheduleMemberUpdateOne) SetScheduleID(i int64) *ScheduleMemberUpdateOne {
 	smuo.mutation.SetScheduleID(i)
@@ -911,6 +1073,33 @@ func (smuo *ScheduleMemberUpdateOne) SetNillableScheduleName(s *string) *Schedul
 // ClearScheduleName clears the value of the "schedule_name" field.
 func (smuo *ScheduleMemberUpdateOne) ClearScheduleName() *ScheduleMemberUpdateOne {
 	smuo.mutation.ClearScheduleName()
+	return smuo
+}
+
+// SetIsDeduct sets the "is_deduct" field.
+func (smuo *ScheduleMemberUpdateOne) SetIsDeduct(i int64) *ScheduleMemberUpdateOne {
+	smuo.mutation.ResetIsDeduct()
+	smuo.mutation.SetIsDeduct(i)
+	return smuo
+}
+
+// SetNillableIsDeduct sets the "is_deduct" field if the given value is not nil.
+func (smuo *ScheduleMemberUpdateOne) SetNillableIsDeduct(i *int64) *ScheduleMemberUpdateOne {
+	if i != nil {
+		smuo.SetIsDeduct(*i)
+	}
+	return smuo
+}
+
+// AddIsDeduct adds i to the "is_deduct" field.
+func (smuo *ScheduleMemberUpdateOne) AddIsDeduct(i int64) *ScheduleMemberUpdateOne {
+	smuo.mutation.AddIsDeduct(i)
+	return smuo
+}
+
+// ClearIsDeduct clears the value of the "is_deduct" field.
+func (smuo *ScheduleMemberUpdateOne) ClearIsDeduct() *ScheduleMemberUpdateOne {
+	smuo.mutation.ClearIsDeduct()
 	return smuo
 }
 
@@ -1357,11 +1546,38 @@ func (smuo *ScheduleMemberUpdateOne) sqlSave(ctx context.Context) (_node *Schedu
 	if smuo.mutation.VenueIDCleared() {
 		_spec.ClearField(schedulemember.FieldVenueID, field.TypeInt64)
 	}
+	if value, ok := smuo.mutation.PlaceID(); ok {
+		_spec.SetField(schedulemember.FieldPlaceID, field.TypeInt64, value)
+	}
+	if value, ok := smuo.mutation.AddedPlaceID(); ok {
+		_spec.AddField(schedulemember.FieldPlaceID, field.TypeInt64, value)
+	}
+	if smuo.mutation.PlaceIDCleared() {
+		_spec.ClearField(schedulemember.FieldPlaceID, field.TypeInt64)
+	}
+	if value, ok := smuo.mutation.ProductID(); ok {
+		_spec.SetField(schedulemember.FieldProductID, field.TypeInt64, value)
+	}
+	if value, ok := smuo.mutation.AddedProductID(); ok {
+		_spec.AddField(schedulemember.FieldProductID, field.TypeInt64, value)
+	}
+	if smuo.mutation.ProductIDCleared() {
+		_spec.ClearField(schedulemember.FieldProductID, field.TypeInt64)
+	}
 	if value, ok := smuo.mutation.ScheduleName(); ok {
 		_spec.SetField(schedulemember.FieldScheduleName, field.TypeString, value)
 	}
 	if smuo.mutation.ScheduleNameCleared() {
 		_spec.ClearField(schedulemember.FieldScheduleName, field.TypeString)
+	}
+	if value, ok := smuo.mutation.IsDeduct(); ok {
+		_spec.SetField(schedulemember.FieldIsDeduct, field.TypeInt64, value)
+	}
+	if value, ok := smuo.mutation.AddedIsDeduct(); ok {
+		_spec.AddField(schedulemember.FieldIsDeduct, field.TypeInt64, value)
+	}
+	if smuo.mutation.IsDeductCleared() {
+		_spec.ClearField(schedulemember.FieldIsDeduct, field.TypeInt64)
 	}
 	if value, ok := smuo.mutation.MemberID(); ok {
 		_spec.SetField(schedulemember.FieldMemberID, field.TypeInt64, value)

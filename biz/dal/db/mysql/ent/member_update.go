@@ -6,17 +6,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/face"
 	"kcers/biz/dal/db/mysql/ent/member"
 	"kcers/biz/dal/db/mysql/ent/membercontract"
-	"kcers/biz/dal/db/mysql/ent/memberdetails"
 	"kcers/biz/dal/db/mysql/ent/membernote"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/memberprofile"
 	"kcers/biz/dal/db/mysql/ent/membertoken"
 	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/predicate"
+	"kcers/biz/dal/db/mysql/ent/venueentry"
+	"kcers/biz/dal/db/mysql/ent/venuemember"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -292,17 +292,17 @@ func (mu *MemberUpdate) AddMemberProfile(m ...*MemberProfile) *MemberUpdate {
 	return mu.AddMemberProfileIDs(ids...)
 }
 
-// AddMemberDetailIDs adds the "member_details" edge to the MemberDetails entity by IDs.
+// AddMemberDetailIDs adds the "member_details" edge to the VenueMember entity by IDs.
 func (mu *MemberUpdate) AddMemberDetailIDs(ids ...int64) *MemberUpdate {
 	mu.mutation.AddMemberDetailIDs(ids...)
 	return mu
 }
 
-// AddMemberDetails adds the "member_details" edges to the MemberDetails entity.
-func (mu *MemberUpdate) AddMemberDetails(m ...*MemberDetails) *MemberUpdate {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+// AddMemberDetails adds the "member_details" edges to the VenueMember entity.
+func (mu *MemberUpdate) AddMemberDetails(v ...*VenueMember) *MemberUpdate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return mu.AddMemberDetailIDs(ids...)
 }
@@ -352,17 +352,17 @@ func (mu *MemberUpdate) AddMemberProducts(m ...*MemberProduct) *MemberUpdate {
 	return mu.AddMemberProductIDs(ids...)
 }
 
-// AddMemberEntryIDs adds the "member_entry" edge to the EntryLogs entity by IDs.
+// AddMemberEntryIDs adds the "member_entry" edge to the VenueEntry entity by IDs.
 func (mu *MemberUpdate) AddMemberEntryIDs(ids ...int64) *MemberUpdate {
 	mu.mutation.AddMemberEntryIDs(ids...)
 	return mu
 }
 
-// AddMemberEntry adds the "member_entry" edges to the EntryLogs entity.
-func (mu *MemberUpdate) AddMemberEntry(e ...*EntryLogs) *MemberUpdate {
-	ids := make([]int64, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// AddMemberEntry adds the "member_entry" edges to the VenueEntry entity.
+func (mu *MemberUpdate) AddMemberEntry(v ...*VenueEntry) *MemberUpdate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return mu.AddMemberEntryIDs(ids...)
 }
@@ -429,23 +429,23 @@ func (mu *MemberUpdate) RemoveMemberProfile(m ...*MemberProfile) *MemberUpdate {
 	return mu.RemoveMemberProfileIDs(ids...)
 }
 
-// ClearMemberDetails clears all "member_details" edges to the MemberDetails entity.
+// ClearMemberDetails clears all "member_details" edges to the VenueMember entity.
 func (mu *MemberUpdate) ClearMemberDetails() *MemberUpdate {
 	mu.mutation.ClearMemberDetails()
 	return mu
 }
 
-// RemoveMemberDetailIDs removes the "member_details" edge to MemberDetails entities by IDs.
+// RemoveMemberDetailIDs removes the "member_details" edge to VenueMember entities by IDs.
 func (mu *MemberUpdate) RemoveMemberDetailIDs(ids ...int64) *MemberUpdate {
 	mu.mutation.RemoveMemberDetailIDs(ids...)
 	return mu
 }
 
-// RemoveMemberDetails removes "member_details" edges to MemberDetails entities.
-func (mu *MemberUpdate) RemoveMemberDetails(m ...*MemberDetails) *MemberUpdate {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+// RemoveMemberDetails removes "member_details" edges to VenueMember entities.
+func (mu *MemberUpdate) RemoveMemberDetails(v ...*VenueMember) *MemberUpdate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return mu.RemoveMemberDetailIDs(ids...)
 }
@@ -513,23 +513,23 @@ func (mu *MemberUpdate) RemoveMemberProducts(m ...*MemberProduct) *MemberUpdate 
 	return mu.RemoveMemberProductIDs(ids...)
 }
 
-// ClearMemberEntry clears all "member_entry" edges to the EntryLogs entity.
+// ClearMemberEntry clears all "member_entry" edges to the VenueEntry entity.
 func (mu *MemberUpdate) ClearMemberEntry() *MemberUpdate {
 	mu.mutation.ClearMemberEntry()
 	return mu
 }
 
-// RemoveMemberEntryIDs removes the "member_entry" edge to EntryLogs entities by IDs.
+// RemoveMemberEntryIDs removes the "member_entry" edge to VenueEntry entities by IDs.
 func (mu *MemberUpdate) RemoveMemberEntryIDs(ids ...int64) *MemberUpdate {
 	mu.mutation.RemoveMemberEntryIDs(ids...)
 	return mu
 }
 
-// RemoveMemberEntry removes "member_entry" edges to EntryLogs entities.
-func (mu *MemberUpdate) RemoveMemberEntry(e ...*EntryLogs) *MemberUpdate {
-	ids := make([]int64, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// RemoveMemberEntry removes "member_entry" edges to VenueEntry entities.
+func (mu *MemberUpdate) RemoveMemberEntry(v ...*VenueEntry) *MemberUpdate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return mu.RemoveMemberEntryIDs(ids...)
 }
@@ -784,7 +784,7 @@ func (mu *MemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{member.MemberDetailsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(memberdetails.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venuemember.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -797,7 +797,7 @@ func (mu *MemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{member.MemberDetailsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(memberdetails.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venuemember.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -813,7 +813,7 @@ func (mu *MemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{member.MemberDetailsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(memberdetails.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venuemember.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -964,7 +964,7 @@ func (mu *MemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{member.MemberEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -977,7 +977,7 @@ func (mu *MemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{member.MemberEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -993,7 +993,7 @@ func (mu *MemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{member.MemberEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1367,17 +1367,17 @@ func (muo *MemberUpdateOne) AddMemberProfile(m ...*MemberProfile) *MemberUpdateO
 	return muo.AddMemberProfileIDs(ids...)
 }
 
-// AddMemberDetailIDs adds the "member_details" edge to the MemberDetails entity by IDs.
+// AddMemberDetailIDs adds the "member_details" edge to the VenueMember entity by IDs.
 func (muo *MemberUpdateOne) AddMemberDetailIDs(ids ...int64) *MemberUpdateOne {
 	muo.mutation.AddMemberDetailIDs(ids...)
 	return muo
 }
 
-// AddMemberDetails adds the "member_details" edges to the MemberDetails entity.
-func (muo *MemberUpdateOne) AddMemberDetails(m ...*MemberDetails) *MemberUpdateOne {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+// AddMemberDetails adds the "member_details" edges to the VenueMember entity.
+func (muo *MemberUpdateOne) AddMemberDetails(v ...*VenueMember) *MemberUpdateOne {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return muo.AddMemberDetailIDs(ids...)
 }
@@ -1427,17 +1427,17 @@ func (muo *MemberUpdateOne) AddMemberProducts(m ...*MemberProduct) *MemberUpdate
 	return muo.AddMemberProductIDs(ids...)
 }
 
-// AddMemberEntryIDs adds the "member_entry" edge to the EntryLogs entity by IDs.
+// AddMemberEntryIDs adds the "member_entry" edge to the VenueEntry entity by IDs.
 func (muo *MemberUpdateOne) AddMemberEntryIDs(ids ...int64) *MemberUpdateOne {
 	muo.mutation.AddMemberEntryIDs(ids...)
 	return muo
 }
 
-// AddMemberEntry adds the "member_entry" edges to the EntryLogs entity.
-func (muo *MemberUpdateOne) AddMemberEntry(e ...*EntryLogs) *MemberUpdateOne {
-	ids := make([]int64, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// AddMemberEntry adds the "member_entry" edges to the VenueEntry entity.
+func (muo *MemberUpdateOne) AddMemberEntry(v ...*VenueEntry) *MemberUpdateOne {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return muo.AddMemberEntryIDs(ids...)
 }
@@ -1504,23 +1504,23 @@ func (muo *MemberUpdateOne) RemoveMemberProfile(m ...*MemberProfile) *MemberUpda
 	return muo.RemoveMemberProfileIDs(ids...)
 }
 
-// ClearMemberDetails clears all "member_details" edges to the MemberDetails entity.
+// ClearMemberDetails clears all "member_details" edges to the VenueMember entity.
 func (muo *MemberUpdateOne) ClearMemberDetails() *MemberUpdateOne {
 	muo.mutation.ClearMemberDetails()
 	return muo
 }
 
-// RemoveMemberDetailIDs removes the "member_details" edge to MemberDetails entities by IDs.
+// RemoveMemberDetailIDs removes the "member_details" edge to VenueMember entities by IDs.
 func (muo *MemberUpdateOne) RemoveMemberDetailIDs(ids ...int64) *MemberUpdateOne {
 	muo.mutation.RemoveMemberDetailIDs(ids...)
 	return muo
 }
 
-// RemoveMemberDetails removes "member_details" edges to MemberDetails entities.
-func (muo *MemberUpdateOne) RemoveMemberDetails(m ...*MemberDetails) *MemberUpdateOne {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+// RemoveMemberDetails removes "member_details" edges to VenueMember entities.
+func (muo *MemberUpdateOne) RemoveMemberDetails(v ...*VenueMember) *MemberUpdateOne {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return muo.RemoveMemberDetailIDs(ids...)
 }
@@ -1588,23 +1588,23 @@ func (muo *MemberUpdateOne) RemoveMemberProducts(m ...*MemberProduct) *MemberUpd
 	return muo.RemoveMemberProductIDs(ids...)
 }
 
-// ClearMemberEntry clears all "member_entry" edges to the EntryLogs entity.
+// ClearMemberEntry clears all "member_entry" edges to the VenueEntry entity.
 func (muo *MemberUpdateOne) ClearMemberEntry() *MemberUpdateOne {
 	muo.mutation.ClearMemberEntry()
 	return muo
 }
 
-// RemoveMemberEntryIDs removes the "member_entry" edge to EntryLogs entities by IDs.
+// RemoveMemberEntryIDs removes the "member_entry" edge to VenueEntry entities by IDs.
 func (muo *MemberUpdateOne) RemoveMemberEntryIDs(ids ...int64) *MemberUpdateOne {
 	muo.mutation.RemoveMemberEntryIDs(ids...)
 	return muo
 }
 
-// RemoveMemberEntry removes "member_entry" edges to EntryLogs entities.
-func (muo *MemberUpdateOne) RemoveMemberEntry(e ...*EntryLogs) *MemberUpdateOne {
-	ids := make([]int64, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// RemoveMemberEntry removes "member_entry" edges to VenueEntry entities.
+func (muo *MemberUpdateOne) RemoveMemberEntry(v ...*VenueEntry) *MemberUpdateOne {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return muo.RemoveMemberEntryIDs(ids...)
 }
@@ -1889,7 +1889,7 @@ func (muo *MemberUpdateOne) sqlSave(ctx context.Context) (_node *Member, err err
 			Columns: []string{member.MemberDetailsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(memberdetails.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venuemember.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1902,7 +1902,7 @@ func (muo *MemberUpdateOne) sqlSave(ctx context.Context) (_node *Member, err err
 			Columns: []string{member.MemberDetailsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(memberdetails.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venuemember.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1918,7 +1918,7 @@ func (muo *MemberUpdateOne) sqlSave(ctx context.Context) (_node *Member, err err
 			Columns: []string{member.MemberDetailsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(memberdetails.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venuemember.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -2069,7 +2069,7 @@ func (muo *MemberUpdateOne) sqlSave(ctx context.Context) (_node *Member, err err
 			Columns: []string{member.MemberEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -2082,7 +2082,7 @@ func (muo *MemberUpdateOne) sqlSave(ctx context.Context) (_node *Member, err err
 			Columns: []string{member.MemberEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -2098,7 +2098,7 @@ func (muo *MemberUpdateOne) sqlSave(ctx context.Context) (_node *Member, err err
 			Columns: []string{member.MemberEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

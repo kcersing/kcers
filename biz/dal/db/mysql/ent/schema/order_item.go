@@ -44,6 +44,7 @@ func (OrderItem) Edges() []ent.Edge {
 
 func (OrderItem) Indexes() []ent.Index {
 	return []ent.Index{
+		index.Fields("id"),
 		index.Fields("order_id"),
 		index.Fields("product_id"),
 	}
@@ -51,7 +52,7 @@ func (OrderItem) Indexes() []ent.Index {
 
 func (OrderItem) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "order_item", Options: "AUTO_INCREMENT = 100000"},
+		entsql.Annotation{Table: "order_item"},
 		entsql.WithComments(true),
 	}
 }

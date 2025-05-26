@@ -40,13 +40,14 @@ func (MemberProduct) Edges() []ent.Edge {
 			Ref("member_products").
 			Field("member_id").Unique(),
 		edge.To("member_product_propertys", MemberProductProperty.Type),
-		edge.To("member_product_entry", EntryLogs.Type),
+		edge.To("member_product_entry", VenueEntry.Type),
 		edge.To("member_product_contents", MemberContract.Type),
 	}
 }
 
 func (MemberProduct) Indexes() []ent.Index {
 	return []ent.Index{
+		index.Fields("id"),
 		index.Fields("venue_id"),
 		index.Fields("member_id"),
 		index.Fields("product_id"),

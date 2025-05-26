@@ -27,10 +27,16 @@ const (
 	FieldStatus = "status"
 	// FieldVenueID holds the string denoting the venue_id field in the database.
 	FieldVenueID = "venue_id"
+	// FieldPlaceID holds the string denoting the place_id field in the database.
+	FieldPlaceID = "place_id"
+	// FieldProductID holds the string denoting the product_id field in the database.
+	FieldProductID = "product_id"
 	// FieldScheduleID holds the string denoting the schedule_id field in the database.
 	FieldScheduleID = "schedule_id"
 	// FieldScheduleName holds the string denoting the schedule_name field in the database.
 	FieldScheduleName = "schedule_name"
+	// FieldIsDeduct holds the string denoting the is_deduct field in the database.
+	FieldIsDeduct = "is_deduct"
 	// FieldMemberID holds the string denoting the member_id field in the database.
 	FieldMemberID = "member_id"
 	// FieldMemberProductID holds the string denoting the member_product_id field in the database.
@@ -81,8 +87,11 @@ var Columns = []string{
 	FieldCreatedID,
 	FieldStatus,
 	FieldVenueID,
+	FieldPlaceID,
+	FieldProductID,
 	FieldScheduleID,
 	FieldScheduleName,
+	FieldIsDeduct,
 	FieldMemberID,
 	FieldMemberProductID,
 	FieldMemberProductPropertyID,
@@ -122,6 +131,8 @@ var (
 	DefaultCreatedID int64
 	// DefaultStatus holds the default value on creation for the "status" field.
 	DefaultStatus int64
+	// DefaultIsDeduct holds the default value on creation for the "is_deduct" field.
+	DefaultIsDeduct int64
 	// DefaultStartAt holds the default value on creation for the "start_at" field.
 	DefaultStartAt func() time.Time
 	// DefaultEndAt holds the default value on creation for the "end_at" field.
@@ -172,6 +183,16 @@ func ByVenueID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldVenueID, opts...).ToFunc()
 }
 
+// ByPlaceID orders the results by the place_id field.
+func ByPlaceID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPlaceID, opts...).ToFunc()
+}
+
+// ByProductID orders the results by the product_id field.
+func ByProductID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldProductID, opts...).ToFunc()
+}
+
 // ByScheduleID orders the results by the schedule_id field.
 func ByScheduleID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldScheduleID, opts...).ToFunc()
@@ -180,6 +201,11 @@ func ByScheduleID(opts ...sql.OrderTermOption) OrderOption {
 // ByScheduleName orders the results by the schedule_name field.
 func ByScheduleName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldScheduleName, opts...).ToFunc()
+}
+
+// ByIsDeduct orders the results by the is_deduct field.
+func ByIsDeduct(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsDeduct, opts...).ToFunc()
 }
 
 // ByMemberID orders the results by the member_id field.

@@ -7,13 +7,13 @@ import (
 	"errors"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/dictionarydetail"
-	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/face"
 	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/role"
 	"kcers/biz/dal/db/mysql/ent/token"
 	"kcers/biz/dal/db/mysql/ent/user"
 	"kcers/biz/dal/db/mysql/ent/venue"
+	"kcers/biz/dal/db/mysql/ent/venueentry"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -373,17 +373,17 @@ func (uc *UserCreate) AddCreatedOrders(o ...*Order) *UserCreate {
 	return uc.AddCreatedOrderIDs(ids...)
 }
 
-// AddUserEntryIDs adds the "user_entry" edge to the EntryLogs entity by IDs.
+// AddUserEntryIDs adds the "user_entry" edge to the VenueEntry entity by IDs.
 func (uc *UserCreate) AddUserEntryIDs(ids ...int64) *UserCreate {
 	uc.mutation.AddUserEntryIDs(ids...)
 	return uc
 }
 
-// AddUserEntry adds the "user_entry" edges to the EntryLogs entity.
-func (uc *UserCreate) AddUserEntry(e ...*EntryLogs) *UserCreate {
-	ids := make([]int64, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// AddUserEntry adds the "user_entry" edges to the VenueEntry entity.
+func (uc *UserCreate) AddUserEntry(v ...*VenueEntry) *UserCreate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return uc.AddUserEntryIDs(ids...)
 }
@@ -701,7 +701,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.UserEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

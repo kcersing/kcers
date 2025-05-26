@@ -42,6 +42,10 @@ type ProductProperty struct {
 	Price float64 `json:"price,omitempty"`
 	// Data holds the value of the "data" field.
 	Data string `json:"data,omitempty"`
+	// 主图
+	Pic string `json:"pic,omitempty"`
+	// 详情
+	Description string `json:"description,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ProductPropertyQuery when eager-loading is set.
 	Edges        ProductPropertyEdges `json:"edges"`
@@ -108,7 +112,7 @@ func (*ProductProperty) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case productproperty.FieldID, productproperty.FieldDelete, productproperty.FieldCreatedID, productproperty.FieldStatus, productproperty.FieldDuration, productproperty.FieldLength, productproperty.FieldCount:
 			values[i] = new(sql.NullInt64)
-		case productproperty.FieldType, productproperty.FieldName, productproperty.FieldData:
+		case productproperty.FieldType, productproperty.FieldName, productproperty.FieldData, productproperty.FieldPic, productproperty.FieldDescription:
 			values[i] = new(sql.NullString)
 		case productproperty.FieldCreatedAt, productproperty.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -205,6 +209,18 @@ func (pp *ProductProperty) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				pp.Data = value.String
 			}
+		case productproperty.FieldPic:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field pic", values[i])
+			} else if value.Valid {
+				pp.Pic = value.String
+			}
+		case productproperty.FieldDescription:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field description", values[i])
+			} else if value.Valid {
+				pp.Description = value.String
+			}
 		default:
 			pp.selectValues.Set(columns[i], values[i])
 		}
@@ -296,6 +312,12 @@ func (pp *ProductProperty) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("data=")
 	builder.WriteString(pp.Data)
+	builder.WriteString(", ")
+	builder.WriteString("pic=")
+	builder.WriteString(pp.Pic)
+	builder.WriteString(", ")
+	builder.WriteString("description=")
+	builder.WriteString(pp.Description)
 	builder.WriteByte(')')
 	return builder.String()
 }

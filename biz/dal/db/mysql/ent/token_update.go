@@ -131,6 +131,33 @@ func (tu *TokenUpdate) SetNillableToken(s *string) *TokenUpdate {
 	return tu
 }
 
+// SetType sets the "type" field.
+func (tu *TokenUpdate) SetType(i int64) *TokenUpdate {
+	tu.mutation.ResetType()
+	tu.mutation.SetType(i)
+	return tu
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (tu *TokenUpdate) SetNillableType(i *int64) *TokenUpdate {
+	if i != nil {
+		tu.SetType(*i)
+	}
+	return tu
+}
+
+// AddType adds i to the "type" field.
+func (tu *TokenUpdate) AddType(i int64) *TokenUpdate {
+	tu.mutation.AddType(i)
+	return tu
+}
+
+// ClearType clears the value of the "type" field.
+func (tu *TokenUpdate) ClearType() *TokenUpdate {
+	tu.mutation.ClearType()
+	return tu
+}
+
 // SetSource sets the "source" field.
 func (tu *TokenUpdate) SetSource(s string) *TokenUpdate {
 	tu.mutation.SetSource(s)
@@ -275,6 +302,15 @@ func (tu *TokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := tu.mutation.Token(); ok {
 		_spec.SetField(token.FieldToken, field.TypeString, value)
+	}
+	if value, ok := tu.mutation.GetType(); ok {
+		_spec.SetField(token.FieldType, field.TypeInt64, value)
+	}
+	if value, ok := tu.mutation.AddedType(); ok {
+		_spec.AddField(token.FieldType, field.TypeInt64, value)
+	}
+	if tu.mutation.TypeCleared() {
+		_spec.ClearField(token.FieldType, field.TypeInt64)
 	}
 	if value, ok := tu.mutation.Source(); ok {
 		_spec.SetField(token.FieldSource, field.TypeString, value)
@@ -431,6 +467,33 @@ func (tuo *TokenUpdateOne) SetNillableToken(s *string) *TokenUpdateOne {
 	if s != nil {
 		tuo.SetToken(*s)
 	}
+	return tuo
+}
+
+// SetType sets the "type" field.
+func (tuo *TokenUpdateOne) SetType(i int64) *TokenUpdateOne {
+	tuo.mutation.ResetType()
+	tuo.mutation.SetType(i)
+	return tuo
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (tuo *TokenUpdateOne) SetNillableType(i *int64) *TokenUpdateOne {
+	if i != nil {
+		tuo.SetType(*i)
+	}
+	return tuo
+}
+
+// AddType adds i to the "type" field.
+func (tuo *TokenUpdateOne) AddType(i int64) *TokenUpdateOne {
+	tuo.mutation.AddType(i)
+	return tuo
+}
+
+// ClearType clears the value of the "type" field.
+func (tuo *TokenUpdateOne) ClearType() *TokenUpdateOne {
+	tuo.mutation.ClearType()
 	return tuo
 }
 
@@ -608,6 +671,15 @@ func (tuo *TokenUpdateOne) sqlSave(ctx context.Context) (_node *Token, err error
 	}
 	if value, ok := tuo.mutation.Token(); ok {
 		_spec.SetField(token.FieldToken, field.TypeString, value)
+	}
+	if value, ok := tuo.mutation.GetType(); ok {
+		_spec.SetField(token.FieldType, field.TypeInt64, value)
+	}
+	if value, ok := tuo.mutation.AddedType(); ok {
+		_spec.AddField(token.FieldType, field.TypeInt64, value)
+	}
+	if tuo.mutation.TypeCleared() {
+		_spec.ClearField(token.FieldType, field.TypeInt64)
 	}
 	if value, ok := tuo.mutation.Source(); ok {
 		_spec.SetField(token.FieldSource, field.TypeString, value)

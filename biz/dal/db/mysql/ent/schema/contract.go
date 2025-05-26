@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent/schema/edge"
+	"entgo.io/ent/schema/index"
 	"kcers/biz/dal/db/mysql/ent/schema/mixins"
 
 	"entgo.io/ent"
@@ -35,12 +36,14 @@ func (Contract) Edges() []ent.Edge {
 }
 
 func (Contract) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+		index.Fields("id"),
+	}
 }
 
 func (Contract) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "contracts", Options: "AUTO_INCREMENT = 100000"},
+		entsql.Annotation{Table: "contracts"},
 		entsql.WithComments(true),
 	}
 }

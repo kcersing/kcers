@@ -304,53 +304,6 @@ func (mpu *MemberProfileUpdate) ClearRelationMame() *MemberProfileUpdate {
 	return mpu
 }
 
-// SetRelationUID sets the "relation_uid" field.
-func (mpu *MemberProfileUpdate) SetRelationUID(i int64) *MemberProfileUpdate {
-	mpu.mutation.ResetRelationUID()
-	mpu.mutation.SetRelationUID(i)
-	return mpu
-}
-
-// SetNillableRelationUID sets the "relation_uid" field if the given value is not nil.
-func (mpu *MemberProfileUpdate) SetNillableRelationUID(i *int64) *MemberProfileUpdate {
-	if i != nil {
-		mpu.SetRelationUID(*i)
-	}
-	return mpu
-}
-
-// AddRelationUID adds i to the "relation_uid" field.
-func (mpu *MemberProfileUpdate) AddRelationUID(i int64) *MemberProfileUpdate {
-	mpu.mutation.AddRelationUID(i)
-	return mpu
-}
-
-// ClearRelationUID clears the value of the "relation_uid" field.
-func (mpu *MemberProfileUpdate) ClearRelationUID() *MemberProfileUpdate {
-	mpu.mutation.ClearRelationUID()
-	return mpu
-}
-
-// SetRelationUname sets the "relation_uname" field.
-func (mpu *MemberProfileUpdate) SetRelationUname(s string) *MemberProfileUpdate {
-	mpu.mutation.SetRelationUname(s)
-	return mpu
-}
-
-// SetNillableRelationUname sets the "relation_uname" field if the given value is not nil.
-func (mpu *MemberProfileUpdate) SetNillableRelationUname(s *string) *MemberProfileUpdate {
-	if s != nil {
-		mpu.SetRelationUname(*s)
-	}
-	return mpu
-}
-
-// ClearRelationUname clears the value of the "relation_uname" field.
-func (mpu *MemberProfileUpdate) ClearRelationUname() *MemberProfileUpdate {
-	mpu.mutation.ClearRelationUname()
-	return mpu
-}
-
 // SetMember sets the "member" edge to the Member entity.
 func (mpu *MemberProfileUpdate) SetMember(m *Member) *MemberProfileUpdate {
 	return mpu.SetMemberID(m.ID)
@@ -504,21 +457,6 @@ func (mpu *MemberProfileUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if mpu.mutation.RelationMameCleared() {
 		_spec.ClearField(memberprofile.FieldRelationMame, field.TypeString)
-	}
-	if value, ok := mpu.mutation.RelationUID(); ok {
-		_spec.SetField(memberprofile.FieldRelationUID, field.TypeInt64, value)
-	}
-	if value, ok := mpu.mutation.AddedRelationUID(); ok {
-		_spec.AddField(memberprofile.FieldRelationUID, field.TypeInt64, value)
-	}
-	if mpu.mutation.RelationUIDCleared() {
-		_spec.ClearField(memberprofile.FieldRelationUID, field.TypeInt64)
-	}
-	if value, ok := mpu.mutation.RelationUname(); ok {
-		_spec.SetField(memberprofile.FieldRelationUname, field.TypeString, value)
-	}
-	if mpu.mutation.RelationUnameCleared() {
-		_spec.ClearField(memberprofile.FieldRelationUname, field.TypeString)
 	}
 	if mpu.mutation.MemberCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -845,53 +783,6 @@ func (mpuo *MemberProfileUpdateOne) ClearRelationMame() *MemberProfileUpdateOne 
 	return mpuo
 }
 
-// SetRelationUID sets the "relation_uid" field.
-func (mpuo *MemberProfileUpdateOne) SetRelationUID(i int64) *MemberProfileUpdateOne {
-	mpuo.mutation.ResetRelationUID()
-	mpuo.mutation.SetRelationUID(i)
-	return mpuo
-}
-
-// SetNillableRelationUID sets the "relation_uid" field if the given value is not nil.
-func (mpuo *MemberProfileUpdateOne) SetNillableRelationUID(i *int64) *MemberProfileUpdateOne {
-	if i != nil {
-		mpuo.SetRelationUID(*i)
-	}
-	return mpuo
-}
-
-// AddRelationUID adds i to the "relation_uid" field.
-func (mpuo *MemberProfileUpdateOne) AddRelationUID(i int64) *MemberProfileUpdateOne {
-	mpuo.mutation.AddRelationUID(i)
-	return mpuo
-}
-
-// ClearRelationUID clears the value of the "relation_uid" field.
-func (mpuo *MemberProfileUpdateOne) ClearRelationUID() *MemberProfileUpdateOne {
-	mpuo.mutation.ClearRelationUID()
-	return mpuo
-}
-
-// SetRelationUname sets the "relation_uname" field.
-func (mpuo *MemberProfileUpdateOne) SetRelationUname(s string) *MemberProfileUpdateOne {
-	mpuo.mutation.SetRelationUname(s)
-	return mpuo
-}
-
-// SetNillableRelationUname sets the "relation_uname" field if the given value is not nil.
-func (mpuo *MemberProfileUpdateOne) SetNillableRelationUname(s *string) *MemberProfileUpdateOne {
-	if s != nil {
-		mpuo.SetRelationUname(*s)
-	}
-	return mpuo
-}
-
-// ClearRelationUname clears the value of the "relation_uname" field.
-func (mpuo *MemberProfileUpdateOne) ClearRelationUname() *MemberProfileUpdateOne {
-	mpuo.mutation.ClearRelationUname()
-	return mpuo
-}
-
 // SetMember sets the "member" edge to the Member entity.
 func (mpuo *MemberProfileUpdateOne) SetMember(m *Member) *MemberProfileUpdateOne {
 	return mpuo.SetMemberID(m.ID)
@@ -1075,21 +966,6 @@ func (mpuo *MemberProfileUpdateOne) sqlSave(ctx context.Context) (_node *MemberP
 	}
 	if mpuo.mutation.RelationMameCleared() {
 		_spec.ClearField(memberprofile.FieldRelationMame, field.TypeString)
-	}
-	if value, ok := mpuo.mutation.RelationUID(); ok {
-		_spec.SetField(memberprofile.FieldRelationUID, field.TypeInt64, value)
-	}
-	if value, ok := mpuo.mutation.AddedRelationUID(); ok {
-		_spec.AddField(memberprofile.FieldRelationUID, field.TypeInt64, value)
-	}
-	if mpuo.mutation.RelationUIDCleared() {
-		_spec.ClearField(memberprofile.FieldRelationUID, field.TypeInt64)
-	}
-	if value, ok := mpuo.mutation.RelationUname(); ok {
-		_spec.SetField(memberprofile.FieldRelationUname, field.TypeString, value)
-	}
-	if mpuo.mutation.RelationUnameCleared() {
-		_spec.ClearField(memberprofile.FieldRelationUname, field.TypeString)
 	}
 	if mpuo.mutation.MemberCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -72,8 +72,8 @@ const (
 	MemberProfileColumn = "member_id"
 	// MemberDetailsTable is the table that holds the member_details relation/edge.
 	MemberDetailsTable = "member_details"
-	// MemberDetailsInverseTable is the table name for the MemberDetails entity.
-	// It exists in this package in order to avoid circular dependency with the "memberdetails" package.
+	// MemberDetailsInverseTable is the table name for the VenueMember entity.
+	// It exists in this package in order to avoid circular dependency with the "venuemember" package.
 	MemberDetailsInverseTable = "member_details"
 	// MemberDetailsColumn is the table column denoting the member_details relation/edge.
 	MemberDetailsColumn = "member_id"
@@ -100,8 +100,8 @@ const (
 	MemberProductsColumn = "member_id"
 	// MemberEntryTable is the table that holds the member_entry relation/edge.
 	MemberEntryTable = "entry_logs"
-	// MemberEntryInverseTable is the table name for the EntryLogs entity.
-	// It exists in this package in order to avoid circular dependency with the "entrylogs" package.
+	// MemberEntryInverseTable is the table name for the VenueEntry entity.
+	// It exists in this package in order to avoid circular dependency with the "venueentry" package.
 	MemberEntryInverseTable = "entry_logs"
 	// MemberEntryColumn is the table column denoting the member_entry relation/edge.
 	MemberEntryColumn = "member_id"

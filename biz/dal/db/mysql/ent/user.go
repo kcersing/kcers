@@ -81,7 +81,7 @@ type UserEdges struct {
 	// CreatedOrders holds the value of the created_orders edge.
 	CreatedOrders []*Order `json:"created_orders,omitempty"`
 	// UserEntry holds the value of the user_entry edge.
-	UserEntry []*EntryLogs `json:"user_entry,omitempty"`
+	UserEntry []*VenueEntry `json:"user_entry,omitempty"`
 	// Venues holds the value of the venues edge.
 	Venues []*Venue `json:"venues,omitempty"`
 	// Roles holds the value of the roles edge.
@@ -131,7 +131,7 @@ func (e UserEdges) CreatedOrdersOrErr() ([]*Order, error) {
 
 // UserEntryOrErr returns the UserEntry value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) UserEntryOrErr() ([]*EntryLogs, error) {
+func (e UserEdges) UserEntryOrErr() ([]*VenueEntry, error) {
 	if e.loadedTypes[4] {
 		return e.UserEntry, nil
 	}
@@ -358,7 +358,7 @@ func (u *User) QueryCreatedOrders() *OrderQuery {
 }
 
 // QueryUserEntry queries the "user_entry" edge of the User entity.
-func (u *User) QueryUserEntry() *EntryLogsQuery {
+func (u *User) QueryUserEntry() *VenueEntryQuery {
 	return NewUserClient(u.config).QueryUserEntry(u)
 }
 

@@ -102,8 +102,8 @@ const (
 	CreatedOrdersColumn = "created_id"
 	// UserEntryTable is the table that holds the user_entry relation/edge.
 	UserEntryTable = "entry_logs"
-	// UserEntryInverseTable is the table name for the EntryLogs entity.
-	// It exists in this package in order to avoid circular dependency with the "entrylogs" package.
+	// UserEntryInverseTable is the table name for the VenueEntry entity.
+	// It exists in this package in order to avoid circular dependency with the "venueentry" package.
 	UserEntryInverseTable = "entry_logs"
 	// UserEntryColumn is the table column denoting the user_entry relation/edge.
 	UserEntryColumn = "user_id"

@@ -46,14 +46,13 @@ func (Product) Edges() []ent.Edge {
 
 func (Product) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("id").
-			Unique(),
+		index.Fields("id"),
 	}
 }
 
 func (Product) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "product", Options: "AUTO_INCREMENT = 100000"},
+		entsql.Annotation{Table: "product"},
 		entsql.WithComments(true),
 	}
 }

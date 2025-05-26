@@ -19,8 +19,11 @@ type ScheduleMember struct {
 func (ScheduleMember) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("venue_id").Comment("场馆id").Optional(),
+		field.Int64("place_id").Comment("场地ID").Optional(),
+		field.Int64("product_id").Comment("课程").Optional(),
 		field.Int64("schedule_id").Comment("课程ID").Optional(),
 		field.String("schedule_name").Comment("课程名称").Optional(),
+		field.Int64("is_deduct").Default(0).Comment("是否扣除节数 0 否1 是").Optional(),
 		field.Int64("member_id").Comment("会员id").Optional(),
 		field.Int64("member_product_id").Comment("会员购买课ID").Optional(),
 		field.Int64("member_product_property_id").Comment("会员购买课ID").Optional(),
@@ -56,6 +59,8 @@ func (ScheduleMember) Edges() []ent.Edge {
 
 func (ScheduleMember) Indexes() []ent.Index {
 	return []ent.Index{
+		index.Fields("id"),
+		index.Fields("date"),
 		index.Fields("venue_id"),
 		index.Fields("member_id"),
 		index.Fields("schedule_id"),
@@ -64,7 +69,7 @@ func (ScheduleMember) Indexes() []ent.Index {
 
 func (ScheduleMember) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "schedule_member", Options: "AUTO_INCREMENT = 100000"},
+		entsql.Annotation{Table: "schedule_member"},
 		entsql.WithComments(true),
 	}
 }

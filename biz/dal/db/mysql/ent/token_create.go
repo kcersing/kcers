@@ -89,6 +89,20 @@ func (tc *TokenCreate) SetToken(s string) *TokenCreate {
 	return tc
 }
 
+// SetType sets the "type" field.
+func (tc *TokenCreate) SetType(i int64) *TokenCreate {
+	tc.mutation.SetType(i)
+	return tc
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (tc *TokenCreate) SetNillableType(i *int64) *TokenCreate {
+	if i != nil {
+		tc.SetType(*i)
+	}
+	return tc
+}
+
 // SetSource sets the "source" field.
 func (tc *TokenCreate) SetSource(s string) *TokenCreate {
 	tc.mutation.SetSource(s)
@@ -248,6 +262,10 @@ func (tc *TokenCreate) createSpec() (*Token, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.Token(); ok {
 		_spec.SetField(token.FieldToken, field.TypeString, value)
 		_node.Token = value
+	}
+	if value, ok := tc.mutation.GetType(); ok {
+		_spec.SetField(token.FieldType, field.TypeInt64, value)
+		_node.Type = value
 	}
 	if value, ok := tc.mutation.Source(); ok {
 		_spec.SetField(token.FieldSource, field.TypeString, value)

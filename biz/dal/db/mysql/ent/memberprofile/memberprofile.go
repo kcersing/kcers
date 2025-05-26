@@ -40,10 +40,6 @@ const (
 	FieldRelationMid = "relation_mid"
 	// FieldRelationMame holds the string denoting the relation_mame field in the database.
 	FieldRelationMame = "relation_mame"
-	// FieldRelationUID holds the string denoting the relation_uid field in the database.
-	FieldRelationUID = "relation_uid"
-	// FieldRelationUname holds the string denoting the relation_uname field in the database.
-	FieldRelationUname = "relation_uname"
 	// EdgeMember holds the string denoting the member edge name in mutations.
 	EdgeMember = "member"
 	// Table holds the table name of the memberprofile in the database.
@@ -73,8 +69,6 @@ var Columns = []string{
 	FieldWecom,
 	FieldRelationMid,
 	FieldRelationMame,
-	FieldRelationUID,
-	FieldRelationUname,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -106,8 +100,6 @@ var (
 	DefaultGender int64
 	// DefaultRelationMid holds the default value on creation for the "relation_mid" field.
 	DefaultRelationMid int64
-	// DefaultRelationUID holds the default value on creation for the "relation_uid" field.
-	DefaultRelationUID int64
 )
 
 // OrderOption defines the ordering options for the MemberProfile queries.
@@ -181,16 +173,6 @@ func ByRelationMid(opts ...sql.OrderTermOption) OrderOption {
 // ByRelationMame orders the results by the relation_mame field.
 func ByRelationMame(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRelationMame, opts...).ToFunc()
-}
-
-// ByRelationUID orders the results by the relation_uid field.
-func ByRelationUID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldRelationUID, opts...).ToFunc()
-}
-
-// ByRelationUname orders the results by the relation_uname field.
-func ByRelationUname(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldRelationUname, opts...).ToFunc()
 }
 
 // ByMemberField orders the results by member field.

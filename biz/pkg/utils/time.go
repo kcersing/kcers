@@ -17,7 +17,7 @@
 package utils
 
 import (
-	"kcers/biz/pkg/errno"
+	"saas/biz/pkg/errno"
 	"time"
 )
 
@@ -54,7 +54,7 @@ func GetStringDateTime(d string) (time.Time, error) {
 func GetStringDateOnlyZeroTime(d string) (time.Time, error) {
 	at, err := time.ParseInLocation(time.DateOnly, d, time.Local)
 	if err != nil {
-		return GetZeroTime(time.Now()), err
+		return GetZeroTime(time.Now()), errno.DateErr
 	}
 	return GetZeroTime(at), nil
 }

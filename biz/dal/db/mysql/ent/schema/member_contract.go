@@ -46,6 +46,8 @@ func (MemberContract) Edges() []ent.Edge {
 
 func (MemberContract) Indexes() []ent.Index {
 	return []ent.Index{
+		index.Fields("id"),
+		index.Fields("venue_id"),
 		index.Fields("order_id"),
 		index.Fields("member_id"),
 		index.Fields("member_product_id"),
@@ -54,7 +56,7 @@ func (MemberContract) Indexes() []ent.Index {
 
 func (MemberContract) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "member_contract", Options: "AUTO_INCREMENT = 100000"},
+		entsql.Annotation{Table: "member_contract"},
 		entsql.WithComments(true),
 	}
 }

@@ -294,6 +294,46 @@ func (ppu *ProductPropertyUpdate) ClearData() *ProductPropertyUpdate {
 	return ppu
 }
 
+// SetPic sets the "pic" field.
+func (ppu *ProductPropertyUpdate) SetPic(s string) *ProductPropertyUpdate {
+	ppu.mutation.SetPic(s)
+	return ppu
+}
+
+// SetNillablePic sets the "pic" field if the given value is not nil.
+func (ppu *ProductPropertyUpdate) SetNillablePic(s *string) *ProductPropertyUpdate {
+	if s != nil {
+		ppu.SetPic(*s)
+	}
+	return ppu
+}
+
+// ClearPic clears the value of the "pic" field.
+func (ppu *ProductPropertyUpdate) ClearPic() *ProductPropertyUpdate {
+	ppu.mutation.ClearPic()
+	return ppu
+}
+
+// SetDescription sets the "description" field.
+func (ppu *ProductPropertyUpdate) SetDescription(s string) *ProductPropertyUpdate {
+	ppu.mutation.SetDescription(s)
+	return ppu
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (ppu *ProductPropertyUpdate) SetNillableDescription(s *string) *ProductPropertyUpdate {
+	if s != nil {
+		ppu.SetDescription(*s)
+	}
+	return ppu
+}
+
+// ClearDescription clears the value of the "description" field.
+func (ppu *ProductPropertyUpdate) ClearDescription() *ProductPropertyUpdate {
+	ppu.mutation.ClearDescription()
+	return ppu
+}
+
 // AddProductIDs adds the "product" edge to the Product entity by IDs.
 func (ppu *ProductPropertyUpdate) AddProductIDs(ids ...int64) *ProductPropertyUpdate {
 	ppu.mutation.AddProductIDs(ids...)
@@ -583,6 +623,18 @@ func (ppu *ProductPropertyUpdate) sqlSave(ctx context.Context) (n int, err error
 	}
 	if ppu.mutation.DataCleared() {
 		_spec.ClearField(productproperty.FieldData, field.TypeString)
+	}
+	if value, ok := ppu.mutation.Pic(); ok {
+		_spec.SetField(productproperty.FieldPic, field.TypeString, value)
+	}
+	if ppu.mutation.PicCleared() {
+		_spec.ClearField(productproperty.FieldPic, field.TypeString)
+	}
+	if value, ok := ppu.mutation.Description(); ok {
+		_spec.SetField(productproperty.FieldDescription, field.TypeString, value)
+	}
+	if ppu.mutation.DescriptionCleared() {
+		_spec.ClearField(productproperty.FieldDescription, field.TypeString)
 	}
 	if ppu.mutation.ProductCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1047,6 +1099,46 @@ func (ppuo *ProductPropertyUpdateOne) ClearData() *ProductPropertyUpdateOne {
 	return ppuo
 }
 
+// SetPic sets the "pic" field.
+func (ppuo *ProductPropertyUpdateOne) SetPic(s string) *ProductPropertyUpdateOne {
+	ppuo.mutation.SetPic(s)
+	return ppuo
+}
+
+// SetNillablePic sets the "pic" field if the given value is not nil.
+func (ppuo *ProductPropertyUpdateOne) SetNillablePic(s *string) *ProductPropertyUpdateOne {
+	if s != nil {
+		ppuo.SetPic(*s)
+	}
+	return ppuo
+}
+
+// ClearPic clears the value of the "pic" field.
+func (ppuo *ProductPropertyUpdateOne) ClearPic() *ProductPropertyUpdateOne {
+	ppuo.mutation.ClearPic()
+	return ppuo
+}
+
+// SetDescription sets the "description" field.
+func (ppuo *ProductPropertyUpdateOne) SetDescription(s string) *ProductPropertyUpdateOne {
+	ppuo.mutation.SetDescription(s)
+	return ppuo
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (ppuo *ProductPropertyUpdateOne) SetNillableDescription(s *string) *ProductPropertyUpdateOne {
+	if s != nil {
+		ppuo.SetDescription(*s)
+	}
+	return ppuo
+}
+
+// ClearDescription clears the value of the "description" field.
+func (ppuo *ProductPropertyUpdateOne) ClearDescription() *ProductPropertyUpdateOne {
+	ppuo.mutation.ClearDescription()
+	return ppuo
+}
+
 // AddProductIDs adds the "product" edge to the Product entity by IDs.
 func (ppuo *ProductPropertyUpdateOne) AddProductIDs(ids ...int64) *ProductPropertyUpdateOne {
 	ppuo.mutation.AddProductIDs(ids...)
@@ -1366,6 +1458,18 @@ func (ppuo *ProductPropertyUpdateOne) sqlSave(ctx context.Context) (_node *Produ
 	}
 	if ppuo.mutation.DataCleared() {
 		_spec.ClearField(productproperty.FieldData, field.TypeString)
+	}
+	if value, ok := ppuo.mutation.Pic(); ok {
+		_spec.SetField(productproperty.FieldPic, field.TypeString, value)
+	}
+	if ppuo.mutation.PicCleared() {
+		_spec.ClearField(productproperty.FieldPic, field.TypeString)
+	}
+	if value, ok := ppuo.mutation.Description(); ok {
+		_spec.SetField(productproperty.FieldDescription, field.TypeString, value)
+	}
+	if ppuo.mutation.DescriptionCleared() {
+		_spec.ClearField(productproperty.FieldDescription, field.TypeString)
 	}
 	if ppuo.mutation.ProductCleared() {
 		edge := &sqlgraph.EdgeSpec{

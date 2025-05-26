@@ -61,7 +61,7 @@ type VenueEdges struct {
 	// VenueOrders holds the value of the venue_orders edge.
 	VenueOrders []*Order `json:"venue_orders,omitempty"`
 	// VenueEntry holds the value of the venue_entry edge.
-	VenueEntry []*EntryLogs `json:"venue_entry,omitempty"`
+	VenueEntry []*VenueEntry `json:"venue_entry,omitempty"`
 	// MemberPropertyVenues holds the value of the member_property_venues edge.
 	MemberPropertyVenues []*MemberProductProperty `json:"member_property_venues,omitempty"`
 	// PropertyVenues holds the value of the property_venues edge.
@@ -97,7 +97,7 @@ func (e VenueEdges) VenueOrdersOrErr() ([]*Order, error) {
 
 // VenueEntryOrErr returns the VenueEntry value or an error if the edge
 // was not loaded in eager-loading.
-func (e VenueEdges) VenueEntryOrErr() ([]*EntryLogs, error) {
+func (e VenueEdges) VenueEntryOrErr() ([]*VenueEntry, error) {
 	if e.loadedTypes[2] {
 		return e.VenueEntry, nil
 	}
@@ -295,7 +295,7 @@ func (v *Venue) QueryVenueOrders() *OrderQuery {
 }
 
 // QueryVenueEntry queries the "venue_entry" edge of the Venue entity.
-func (v *Venue) QueryVenueEntry() *EntryLogsQuery {
+func (v *Venue) QueryVenueEntry() *VenueEntryQuery {
 	return NewVenueClient(v.config).QueryVenueEntry(v)
 }
 

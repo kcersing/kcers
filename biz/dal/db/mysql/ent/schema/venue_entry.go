@@ -10,11 +10,11 @@ import (
 	"kcers/biz/dal/db/mysql/ent/schema/mixins"
 )
 
-type EntryLogs struct {
+type VenueEntry struct {
 	ent.Schema
 }
 
-func (EntryLogs) Fields() []ent.Field {
+func (VenueEntry) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("member_id").Default(0).Comment("会员id").Optional(),
 		field.Int64("user_id").Default(0).Comment("用户id").Optional(),
@@ -32,13 +32,13 @@ func (EntryLogs) Fields() []ent.Field {
 	}
 }
 
-func (EntryLogs) Mixin() []ent.Mixin {
+func (VenueEntry) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixins.BaseMixin{},
 	}
 }
 
-func (EntryLogs) Edges() []ent.Edge {
+func (VenueEntry) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("venues", Venue.Type).Ref("venue_entry").Field("venue_id").Unique(),
 		edge.From("members", Member.Type).Ref("member_entry").Field("member_id").Unique(),
@@ -47,15 +47,18 @@ func (EntryLogs) Edges() []ent.Edge {
 	}
 }
 
-func (EntryLogs) Indexes() []ent.Index {
+func (VenueEntry) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("venue_id", "member_id", "user_id"),
+		index.Fields("id"),
+		index.Fields("venue_id"),
+		index.Fields("member_id"),
+		index.Fields("user_id"),
 	}
 }
 
-func (EntryLogs) Annotations() []schema.Annotation {
+func (VenueEntry) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "entry_logs", Options: "AUTO_INCREMENT = 100000"},
+		entsql.Annotation{Table: "entry_logs"},
 		entsql.WithComments(true),
 	}
 }

@@ -202,34 +202,6 @@ func (mpc *MemberProfileCreate) SetNillableRelationMame(s *string) *MemberProfil
 	return mpc
 }
 
-// SetRelationUID sets the "relation_uid" field.
-func (mpc *MemberProfileCreate) SetRelationUID(i int64) *MemberProfileCreate {
-	mpc.mutation.SetRelationUID(i)
-	return mpc
-}
-
-// SetNillableRelationUID sets the "relation_uid" field if the given value is not nil.
-func (mpc *MemberProfileCreate) SetNillableRelationUID(i *int64) *MemberProfileCreate {
-	if i != nil {
-		mpc.SetRelationUID(*i)
-	}
-	return mpc
-}
-
-// SetRelationUname sets the "relation_uname" field.
-func (mpc *MemberProfileCreate) SetRelationUname(s string) *MemberProfileCreate {
-	mpc.mutation.SetRelationUname(s)
-	return mpc
-}
-
-// SetNillableRelationUname sets the "relation_uname" field if the given value is not nil.
-func (mpc *MemberProfileCreate) SetNillableRelationUname(s *string) *MemberProfileCreate {
-	if s != nil {
-		mpc.SetRelationUname(*s)
-	}
-	return mpc
-}
-
 // SetID sets the "id" field.
 func (mpc *MemberProfileCreate) SetID(i int64) *MemberProfileCreate {
 	mpc.mutation.SetID(i)
@@ -307,10 +279,6 @@ func (mpc *MemberProfileCreate) defaults() {
 	if _, ok := mpc.mutation.RelationMid(); !ok {
 		v := memberprofile.DefaultRelationMid
 		mpc.mutation.SetRelationMid(v)
-	}
-	if _, ok := mpc.mutation.RelationUID(); !ok {
-		v := memberprofile.DefaultRelationUID
-		mpc.mutation.SetRelationUID(v)
 	}
 }
 
@@ -395,14 +363,6 @@ func (mpc *MemberProfileCreate) createSpec() (*MemberProfile, *sqlgraph.CreateSp
 	if value, ok := mpc.mutation.RelationMame(); ok {
 		_spec.SetField(memberprofile.FieldRelationMame, field.TypeString, value)
 		_node.RelationMame = value
-	}
-	if value, ok := mpc.mutation.RelationUID(); ok {
-		_spec.SetField(memberprofile.FieldRelationUID, field.TypeInt64, value)
-		_node.RelationUID = value
-	}
-	if value, ok := mpc.mutation.RelationUname(); ok {
-		_spec.SetField(memberprofile.FieldRelationUname, field.TypeString, value)
-		_node.RelationUname = value
 	}
 	if nodes := mpc.mutation.MemberIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

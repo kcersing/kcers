@@ -7,7 +7,6 @@ import (
 	"database/sql/driver"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/dictionarydetail"
-	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/face"
 	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/predicate"
@@ -15,6 +14,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/token"
 	"kcers/biz/dal/db/mysql/ent/user"
 	"kcers/biz/dal/db/mysql/ent/venue"
+	"kcers/biz/dal/db/mysql/ent/venueentry"
 	"math"
 
 	"entgo.io/ent"
@@ -34,7 +34,7 @@ type UserQuery struct {
 	withToken         *TokenQuery
 	withTags          *DictionaryDetailQuery
 	withCreatedOrders *OrderQuery
-	withUserEntry     *EntryLogsQuery
+	withUserEntry     *VenueEntryQuery
 	withVenues        *VenueQuery
 	withRoles         *RoleQuery
 	modifiers         []func(*sql.Selector)
@@ -163,8 +163,8 @@ func (uq *UserQuery) QueryCreatedOrders() *OrderQuery {
 }
 
 // QueryUserEntry chains the current query on the "user_entry" edge.
-func (uq *UserQuery) QueryUserEntry() *EntryLogsQuery {
-	query := (&EntryLogsClient{config: uq.config}).Query()
+func (uq *UserQuery) QueryUserEntry() *VenueEntryQuery {
+	query := (&VenueEntryClient{config: uq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := uq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -175,7 +175,7 @@ func (uq *UserQuery) QueryUserEntry() *EntryLogsQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(entrylogs.Table, entrylogs.FieldID),
+			sqlgraph.To(venueentry.Table, venueentry.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.UserEntryTable, user.UserEntryColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
@@ -480,8 +480,8 @@ func (uq *UserQuery) WithCreatedOrders(opts ...func(*OrderQuery)) *UserQuery {
 
 // WithUserEntry tells the query-builder to eager-load the nodes that are connected to
 // the "user_entry" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithUserEntry(opts ...func(*EntryLogsQuery)) *UserQuery {
-	query := (&EntryLogsClient{config: uq.config}).Query()
+func (uq *UserQuery) WithUserEntry(opts ...func(*VenueEntryQuery)) *UserQuery {
+	query := (&VenueEntryClient{config: uq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -649,8 +649,8 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	}
 	if query := uq.withUserEntry; query != nil {
 		if err := uq.loadUserEntry(ctx, query, nodes,
-			func(n *User) { n.Edges.UserEntry = []*EntryLogs{} },
-			func(n *User, e *EntryLogs) { n.Edges.UserEntry = append(n.Edges.UserEntry, e) }); err != nil {
+			func(n *User) { n.Edges.UserEntry = []*VenueEntry{} },
+			func(n *User, e *VenueEntry) { n.Edges.UserEntry = append(n.Edges.UserEntry, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -820,7 +820,7 @@ func (uq *UserQuery) loadCreatedOrders(ctx context.Context, query *OrderQuery, n
 	}
 	return nil
 }
-func (uq *UserQuery) loadUserEntry(ctx context.Context, query *EntryLogsQuery, nodes []*User, init func(*User), assign func(*User, *EntryLogs)) error {
+func (uq *UserQuery) loadUserEntry(ctx context.Context, query *VenueEntryQuery, nodes []*User, init func(*User), assign func(*User, *VenueEntry)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*User)
 	for i := range nodes {
@@ -831,9 +831,9 @@ func (uq *UserQuery) loadUserEntry(ctx context.Context, query *EntryLogsQuery, n
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(entrylogs.FieldUserID)
+		query.ctx.AppendFieldOnce(venueentry.FieldUserID)
 	}
-	query.Where(predicate.EntryLogs(func(s *sql.Selector) {
+	query.Where(predicate.VenueEntry(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(user.UserEntryColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)

@@ -85,6 +85,16 @@ func VenueID(v int64) predicate.ScheduleMember {
 	return predicate.ScheduleMember(sql.FieldEQ(FieldVenueID, v))
 }
 
+// PlaceID applies equality check predicate on the "place_id" field. It's identical to PlaceIDEQ.
+func PlaceID(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldEQ(FieldPlaceID, v))
+}
+
+// ProductID applies equality check predicate on the "product_id" field. It's identical to ProductIDEQ.
+func ProductID(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldEQ(FieldProductID, v))
+}
+
 // ScheduleID applies equality check predicate on the "schedule_id" field. It's identical to ScheduleIDEQ.
 func ScheduleID(v int64) predicate.ScheduleMember {
 	return predicate.ScheduleMember(sql.FieldEQ(FieldScheduleID, v))
@@ -93,6 +103,11 @@ func ScheduleID(v int64) predicate.ScheduleMember {
 // ScheduleName applies equality check predicate on the "schedule_name" field. It's identical to ScheduleNameEQ.
 func ScheduleName(v string) predicate.ScheduleMember {
 	return predicate.ScheduleMember(sql.FieldEQ(FieldScheduleName, v))
+}
+
+// IsDeduct applies equality check predicate on the "is_deduct" field. It's identical to IsDeductEQ.
+func IsDeduct(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldEQ(FieldIsDeduct, v))
 }
 
 // MemberID applies equality check predicate on the "member_id" field. It's identical to MemberIDEQ.
@@ -460,6 +475,106 @@ func VenueIDNotNil() predicate.ScheduleMember {
 	return predicate.ScheduleMember(sql.FieldNotNull(FieldVenueID))
 }
 
+// PlaceIDEQ applies the EQ predicate on the "place_id" field.
+func PlaceIDEQ(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldEQ(FieldPlaceID, v))
+}
+
+// PlaceIDNEQ applies the NEQ predicate on the "place_id" field.
+func PlaceIDNEQ(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldNEQ(FieldPlaceID, v))
+}
+
+// PlaceIDIn applies the In predicate on the "place_id" field.
+func PlaceIDIn(vs ...int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldIn(FieldPlaceID, vs...))
+}
+
+// PlaceIDNotIn applies the NotIn predicate on the "place_id" field.
+func PlaceIDNotIn(vs ...int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldNotIn(FieldPlaceID, vs...))
+}
+
+// PlaceIDGT applies the GT predicate on the "place_id" field.
+func PlaceIDGT(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldGT(FieldPlaceID, v))
+}
+
+// PlaceIDGTE applies the GTE predicate on the "place_id" field.
+func PlaceIDGTE(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldGTE(FieldPlaceID, v))
+}
+
+// PlaceIDLT applies the LT predicate on the "place_id" field.
+func PlaceIDLT(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldLT(FieldPlaceID, v))
+}
+
+// PlaceIDLTE applies the LTE predicate on the "place_id" field.
+func PlaceIDLTE(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldLTE(FieldPlaceID, v))
+}
+
+// PlaceIDIsNil applies the IsNil predicate on the "place_id" field.
+func PlaceIDIsNil() predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldIsNull(FieldPlaceID))
+}
+
+// PlaceIDNotNil applies the NotNil predicate on the "place_id" field.
+func PlaceIDNotNil() predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldNotNull(FieldPlaceID))
+}
+
+// ProductIDEQ applies the EQ predicate on the "product_id" field.
+func ProductIDEQ(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldEQ(FieldProductID, v))
+}
+
+// ProductIDNEQ applies the NEQ predicate on the "product_id" field.
+func ProductIDNEQ(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldNEQ(FieldProductID, v))
+}
+
+// ProductIDIn applies the In predicate on the "product_id" field.
+func ProductIDIn(vs ...int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldIn(FieldProductID, vs...))
+}
+
+// ProductIDNotIn applies the NotIn predicate on the "product_id" field.
+func ProductIDNotIn(vs ...int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldNotIn(FieldProductID, vs...))
+}
+
+// ProductIDGT applies the GT predicate on the "product_id" field.
+func ProductIDGT(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldGT(FieldProductID, v))
+}
+
+// ProductIDGTE applies the GTE predicate on the "product_id" field.
+func ProductIDGTE(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldGTE(FieldProductID, v))
+}
+
+// ProductIDLT applies the LT predicate on the "product_id" field.
+func ProductIDLT(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldLT(FieldProductID, v))
+}
+
+// ProductIDLTE applies the LTE predicate on the "product_id" field.
+func ProductIDLTE(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldLTE(FieldProductID, v))
+}
+
+// ProductIDIsNil applies the IsNil predicate on the "product_id" field.
+func ProductIDIsNil() predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldIsNull(FieldProductID))
+}
+
+// ProductIDNotNil applies the NotNil predicate on the "product_id" field.
+func ProductIDNotNil() predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldNotNull(FieldProductID))
+}
+
 // ScheduleIDEQ applies the EQ predicate on the "schedule_id" field.
 func ScheduleIDEQ(v int64) predicate.ScheduleMember {
 	return predicate.ScheduleMember(sql.FieldEQ(FieldScheduleID, v))
@@ -563,6 +678,56 @@ func ScheduleNameEqualFold(v string) predicate.ScheduleMember {
 // ScheduleNameContainsFold applies the ContainsFold predicate on the "schedule_name" field.
 func ScheduleNameContainsFold(v string) predicate.ScheduleMember {
 	return predicate.ScheduleMember(sql.FieldContainsFold(FieldScheduleName, v))
+}
+
+// IsDeductEQ applies the EQ predicate on the "is_deduct" field.
+func IsDeductEQ(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldEQ(FieldIsDeduct, v))
+}
+
+// IsDeductNEQ applies the NEQ predicate on the "is_deduct" field.
+func IsDeductNEQ(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldNEQ(FieldIsDeduct, v))
+}
+
+// IsDeductIn applies the In predicate on the "is_deduct" field.
+func IsDeductIn(vs ...int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldIn(FieldIsDeduct, vs...))
+}
+
+// IsDeductNotIn applies the NotIn predicate on the "is_deduct" field.
+func IsDeductNotIn(vs ...int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldNotIn(FieldIsDeduct, vs...))
+}
+
+// IsDeductGT applies the GT predicate on the "is_deduct" field.
+func IsDeductGT(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldGT(FieldIsDeduct, v))
+}
+
+// IsDeductGTE applies the GTE predicate on the "is_deduct" field.
+func IsDeductGTE(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldGTE(FieldIsDeduct, v))
+}
+
+// IsDeductLT applies the LT predicate on the "is_deduct" field.
+func IsDeductLT(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldLT(FieldIsDeduct, v))
+}
+
+// IsDeductLTE applies the LTE predicate on the "is_deduct" field.
+func IsDeductLTE(v int64) predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldLTE(FieldIsDeduct, v))
+}
+
+// IsDeductIsNil applies the IsNil predicate on the "is_deduct" field.
+func IsDeductIsNil() predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldIsNull(FieldIsDeduct))
+}
+
+// IsDeductNotNil applies the NotNil predicate on the "is_deduct" field.
+func IsDeductNotNil() predicate.ScheduleMember {
+	return predicate.ScheduleMember(sql.FieldNotNull(FieldIsDeduct))
 }
 
 // MemberIDEQ applies the EQ predicate on the "member_id" field.

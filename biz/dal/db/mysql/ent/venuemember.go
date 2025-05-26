@@ -5,7 +5,7 @@ package ent
 import (
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/member"
-	"kcers/biz/dal/db/mysql/ent/memberdetails"
+	"kcers/biz/dal/db/mysql/ent/venuemember"
 	"strings"
 	"time"
 
@@ -13,8 +13,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// MemberDetails is the model entity for the MemberDetails schema.
-type MemberDetails struct {
+// VenueMember is the model entity for the VenueMember schema.
+type VenueMember struct {
 	config `json:"-"`
 	// ID of the ent.
 	// primary key
@@ -29,6 +29,8 @@ type MemberDetails struct {
 	CreatedID int64 `json:"created_id,omitempty"`
 	// 会员id
 	MemberID int64 `json:"member_id,omitempty"`
+	// 场馆id
+	VenueID int64 `json:"venue_id,omitempty"`
 	// 消费总金额
 	MoneySum float64 `json:"money_sum,omitempty"`
 	// 首次的产品
@@ -43,14 +45,18 @@ type MemberDetails struct {
 	EntryDeadlineAt time.Time `json:"entry_deadline_at,omitempty"`
 	// 最后一次上课时间
 	ClassLastAt time.Time `json:"class_last_at,omitempty"`
+	// 跟进人员工
+	RelationUID int64 `json:"relation_uid,omitempty"`
+	// 跟进人员工
+	RelationUname string `json:"relation_uname,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the MemberDetailsQuery when eager-loading is set.
-	Edges        MemberDetailsEdges `json:"edges"`
+	// The values are being populated by the VenueMemberQuery when eager-loading is set.
+	Edges        VenueMemberEdges `json:"edges"`
 	selectValues sql.SelectValues
 }
 
-// MemberDetailsEdges holds the relations/edges for other nodes in the graph.
-type MemberDetailsEdges struct {
+// VenueMemberEdges holds the relations/edges for other nodes in the graph.
+type VenueMemberEdges struct {
 	// Member holds the value of the member edge.
 	Member *Member `json:"member,omitempty"`
 	// loadedTypes holds the information for reporting if a
@@ -60,7 +66,7 @@ type MemberDetailsEdges struct {
 
 // MemberOrErr returns the Member value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e MemberDetailsEdges) MemberOrErr() (*Member, error) {
+func (e VenueMemberEdges) MemberOrErr() (*Member, error) {
 	if e.Member != nil {
 		return e.Member, nil
 	} else if e.loadedTypes[0] {
@@ -70,17 +76,17 @@ func (e MemberDetailsEdges) MemberOrErr() (*Member, error) {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*MemberDetails) scanValues(columns []string) ([]any, error) {
+func (*VenueMember) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case memberdetails.FieldMoneySum:
+		case venuemember.FieldMoneySum:
 			values[i] = new(sql.NullFloat64)
-		case memberdetails.FieldID, memberdetails.FieldDelete, memberdetails.FieldCreatedID, memberdetails.FieldMemberID, memberdetails.FieldProductID, memberdetails.FieldEntrySum:
+		case venuemember.FieldID, venuemember.FieldDelete, venuemember.FieldCreatedID, venuemember.FieldMemberID, venuemember.FieldVenueID, venuemember.FieldProductID, venuemember.FieldEntrySum, venuemember.FieldRelationUID:
 			values[i] = new(sql.NullInt64)
-		case memberdetails.FieldProductName:
+		case venuemember.FieldProductName, venuemember.FieldRelationUname:
 			values[i] = new(sql.NullString)
-		case memberdetails.FieldCreatedAt, memberdetails.FieldUpdatedAt, memberdetails.FieldEntryLastAt, memberdetails.FieldEntryDeadlineAt, memberdetails.FieldClassLastAt:
+		case venuemember.FieldCreatedAt, venuemember.FieldUpdatedAt, venuemember.FieldEntryLastAt, venuemember.FieldEntryDeadlineAt, venuemember.FieldClassLastAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -90,170 +96,197 @@ func (*MemberDetails) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the MemberDetails fields.
-func (md *MemberDetails) assignValues(columns []string, values []any) error {
+// to the VenueMember fields.
+func (vm *VenueMember) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case memberdetails.FieldID:
+		case venuemember.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			md.ID = int64(value.Int64)
-		case memberdetails.FieldCreatedAt:
+			vm.ID = int64(value.Int64)
+		case venuemember.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				md.CreatedAt = value.Time
+				vm.CreatedAt = value.Time
 			}
-		case memberdetails.FieldUpdatedAt:
+		case venuemember.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				md.UpdatedAt = value.Time
+				vm.UpdatedAt = value.Time
 			}
-		case memberdetails.FieldDelete:
+		case venuemember.FieldDelete:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field delete", values[i])
 			} else if value.Valid {
-				md.Delete = value.Int64
+				vm.Delete = value.Int64
 			}
-		case memberdetails.FieldCreatedID:
+		case venuemember.FieldCreatedID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_id", values[i])
 			} else if value.Valid {
-				md.CreatedID = value.Int64
+				vm.CreatedID = value.Int64
 			}
-		case memberdetails.FieldMemberID:
+		case venuemember.FieldMemberID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field member_id", values[i])
 			} else if value.Valid {
-				md.MemberID = value.Int64
+				vm.MemberID = value.Int64
 			}
-		case memberdetails.FieldMoneySum:
+		case venuemember.FieldVenueID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field venue_id", values[i])
+			} else if value.Valid {
+				vm.VenueID = value.Int64
+			}
+		case venuemember.FieldMoneySum:
 			if value, ok := values[i].(*sql.NullFloat64); !ok {
 				return fmt.Errorf("unexpected type %T for field money_sum", values[i])
 			} else if value.Valid {
-				md.MoneySum = value.Float64
+				vm.MoneySum = value.Float64
 			}
-		case memberdetails.FieldProductID:
+		case venuemember.FieldProductID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field product_id", values[i])
 			} else if value.Valid {
-				md.ProductID = value.Int64
+				vm.ProductID = value.Int64
 			}
-		case memberdetails.FieldProductName:
+		case venuemember.FieldProductName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field product_name", values[i])
 			} else if value.Valid {
-				md.ProductName = value.String
+				vm.ProductName = value.String
 			}
-		case memberdetails.FieldEntrySum:
+		case venuemember.FieldEntrySum:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field entry_sum", values[i])
 			} else if value.Valid {
-				md.EntrySum = value.Int64
+				vm.EntrySum = value.Int64
 			}
-		case memberdetails.FieldEntryLastAt:
+		case venuemember.FieldEntryLastAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field entry_last_at", values[i])
 			} else if value.Valid {
-				md.EntryLastAt = value.Time
+				vm.EntryLastAt = value.Time
 			}
-		case memberdetails.FieldEntryDeadlineAt:
+		case venuemember.FieldEntryDeadlineAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field entry_deadline_at", values[i])
 			} else if value.Valid {
-				md.EntryDeadlineAt = value.Time
+				vm.EntryDeadlineAt = value.Time
 			}
-		case memberdetails.FieldClassLastAt:
+		case venuemember.FieldClassLastAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field class_last_at", values[i])
 			} else if value.Valid {
-				md.ClassLastAt = value.Time
+				vm.ClassLastAt = value.Time
+			}
+		case venuemember.FieldRelationUID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field relation_uid", values[i])
+			} else if value.Valid {
+				vm.RelationUID = value.Int64
+			}
+		case venuemember.FieldRelationUname:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field relation_uname", values[i])
+			} else if value.Valid {
+				vm.RelationUname = value.String
 			}
 		default:
-			md.selectValues.Set(columns[i], values[i])
+			vm.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the MemberDetails.
+// Value returns the ent.Value that was dynamically selected and assigned to the VenueMember.
 // This includes values selected through modifiers, order, etc.
-func (md *MemberDetails) Value(name string) (ent.Value, error) {
-	return md.selectValues.Get(name)
+func (vm *VenueMember) Value(name string) (ent.Value, error) {
+	return vm.selectValues.Get(name)
 }
 
-// QueryMember queries the "member" edge of the MemberDetails entity.
-func (md *MemberDetails) QueryMember() *MemberQuery {
-	return NewMemberDetailsClient(md.config).QueryMember(md)
+// QueryMember queries the "member" edge of the VenueMember entity.
+func (vm *VenueMember) QueryMember() *MemberQuery {
+	return NewVenueMemberClient(vm.config).QueryMember(vm)
 }
 
-// Update returns a builder for updating this MemberDetails.
-// Note that you need to call MemberDetails.Unwrap() before calling this method if this MemberDetails
+// Update returns a builder for updating this VenueMember.
+// Note that you need to call VenueMember.Unwrap() before calling this method if this VenueMember
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (md *MemberDetails) Update() *MemberDetailsUpdateOne {
-	return NewMemberDetailsClient(md.config).UpdateOne(md)
+func (vm *VenueMember) Update() *VenueMemberUpdateOne {
+	return NewVenueMemberClient(vm.config).UpdateOne(vm)
 }
 
-// Unwrap unwraps the MemberDetails entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the VenueMember entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (md *MemberDetails) Unwrap() *MemberDetails {
-	_tx, ok := md.config.driver.(*txDriver)
+func (vm *VenueMember) Unwrap() *VenueMember {
+	_tx, ok := vm.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: MemberDetails is not a transactional entity")
+		panic("ent: VenueMember is not a transactional entity")
 	}
-	md.config.driver = _tx.drv
-	return md
+	vm.config.driver = _tx.drv
+	return vm
 }
 
 // String implements the fmt.Stringer.
-func (md *MemberDetails) String() string {
+func (vm *VenueMember) String() string {
 	var builder strings.Builder
-	builder.WriteString("MemberDetails(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", md.ID))
+	builder.WriteString("VenueMember(")
+	builder.WriteString(fmt.Sprintf("id=%v, ", vm.ID))
 	builder.WriteString("created_at=")
-	builder.WriteString(md.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(vm.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
-	builder.WriteString(md.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(vm.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("delete=")
-	builder.WriteString(fmt.Sprintf("%v", md.Delete))
+	builder.WriteString(fmt.Sprintf("%v", vm.Delete))
 	builder.WriteString(", ")
 	builder.WriteString("created_id=")
-	builder.WriteString(fmt.Sprintf("%v", md.CreatedID))
+	builder.WriteString(fmt.Sprintf("%v", vm.CreatedID))
 	builder.WriteString(", ")
 	builder.WriteString("member_id=")
-	builder.WriteString(fmt.Sprintf("%v", md.MemberID))
+	builder.WriteString(fmt.Sprintf("%v", vm.MemberID))
+	builder.WriteString(", ")
+	builder.WriteString("venue_id=")
+	builder.WriteString(fmt.Sprintf("%v", vm.VenueID))
 	builder.WriteString(", ")
 	builder.WriteString("money_sum=")
-	builder.WriteString(fmt.Sprintf("%v", md.MoneySum))
+	builder.WriteString(fmt.Sprintf("%v", vm.MoneySum))
 	builder.WriteString(", ")
 	builder.WriteString("product_id=")
-	builder.WriteString(fmt.Sprintf("%v", md.ProductID))
+	builder.WriteString(fmt.Sprintf("%v", vm.ProductID))
 	builder.WriteString(", ")
 	builder.WriteString("product_name=")
-	builder.WriteString(md.ProductName)
+	builder.WriteString(vm.ProductName)
 	builder.WriteString(", ")
 	builder.WriteString("entry_sum=")
-	builder.WriteString(fmt.Sprintf("%v", md.EntrySum))
+	builder.WriteString(fmt.Sprintf("%v", vm.EntrySum))
 	builder.WriteString(", ")
 	builder.WriteString("entry_last_at=")
-	builder.WriteString(md.EntryLastAt.Format(time.ANSIC))
+	builder.WriteString(vm.EntryLastAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("entry_deadline_at=")
-	builder.WriteString(md.EntryDeadlineAt.Format(time.ANSIC))
+	builder.WriteString(vm.EntryDeadlineAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("class_last_at=")
-	builder.WriteString(md.ClassLastAt.Format(time.ANSIC))
+	builder.WriteString(vm.ClassLastAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("relation_uid=")
+	builder.WriteString(fmt.Sprintf("%v", vm.RelationUID))
+	builder.WriteString(", ")
+	builder.WriteString("relation_uname=")
+	builder.WriteString(vm.RelationUname)
 	builder.WriteByte(')')
 	return builder.String()
 }
 
-// MemberDetailsSlice is a parsable slice of MemberDetails.
-type MemberDetailsSlice []*MemberDetails
+// VenueMembers is a parsable slice of VenueMember.
+type VenueMembers []*VenueMember

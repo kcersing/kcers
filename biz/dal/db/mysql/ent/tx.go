@@ -22,8 +22,6 @@ type Tx struct {
 	Dictionary *DictionaryClient
 	// DictionaryDetail is the client for interacting with the DictionaryDetail builders.
 	DictionaryDetail *DictionaryDetailClient
-	// EntryLogs is the client for interacting with the EntryLogs builders.
-	EntryLogs *EntryLogsClient
 	// Face is the client for interacting with the Face builders.
 	Face *FaceClient
 	// Logs is the client for interacting with the Logs builders.
@@ -34,8 +32,6 @@ type Tx struct {
 	MemberContract *MemberContractClient
 	// MemberContractContent is the client for interacting with the MemberContractContent builders.
 	MemberContractContent *MemberContractContentClient
-	// MemberDetails is the client for interacting with the MemberDetails builders.
-	MemberDetails *MemberDetailsClient
 	// MemberNote is the client for interacting with the MemberNote builders.
 	MemberNote *MemberNoteClient
 	// MemberProduct is the client for interacting with the MemberProduct builders.
@@ -84,6 +80,10 @@ type Tx struct {
 	User *UserClient
 	// Venue is the client for interacting with the Venue builders.
 	Venue *VenueClient
+	// VenueEntry is the client for interacting with the VenueEntry builders.
+	VenueEntry *VenueEntryClient
+	// VenueMember is the client for interacting with the VenueMember builders.
+	VenueMember *VenueMemberClient
 	// VenuePlace is the client for interacting with the VenuePlace builders.
 	VenuePlace *VenuePlaceClient
 
@@ -222,13 +222,11 @@ func (tx *Tx) init() {
 	tx.Contract = NewContractClient(tx.config)
 	tx.Dictionary = NewDictionaryClient(tx.config)
 	tx.DictionaryDetail = NewDictionaryDetailClient(tx.config)
-	tx.EntryLogs = NewEntryLogsClient(tx.config)
 	tx.Face = NewFaceClient(tx.config)
 	tx.Logs = NewLogsClient(tx.config)
 	tx.Member = NewMemberClient(tx.config)
 	tx.MemberContract = NewMemberContractClient(tx.config)
 	tx.MemberContractContent = NewMemberContractContentClient(tx.config)
-	tx.MemberDetails = NewMemberDetailsClient(tx.config)
 	tx.MemberNote = NewMemberNoteClient(tx.config)
 	tx.MemberProduct = NewMemberProductClient(tx.config)
 	tx.MemberProductProperty = NewMemberProductPropertyClient(tx.config)
@@ -253,6 +251,8 @@ func (tx *Tx) init() {
 	tx.Token = NewTokenClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.Venue = NewVenueClient(tx.config)
+	tx.VenueEntry = NewVenueEntryClient(tx.config)
+	tx.VenueMember = NewVenueMemberClient(tx.config)
 	tx.VenuePlace = NewVenuePlaceClient(tx.config)
 }
 

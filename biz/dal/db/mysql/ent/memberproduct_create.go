@@ -5,11 +5,11 @@ package ent
 import (
 	"context"
 	"fmt"
-	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/member"
 	"kcers/biz/dal/db/mysql/ent/membercontract"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
+	"kcers/biz/dal/db/mysql/ent/venueentry"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -231,17 +231,17 @@ func (mpc *MemberProductCreate) AddMemberProductPropertys(m ...*MemberProductPro
 	return mpc.AddMemberProductPropertyIDs(ids...)
 }
 
-// AddMemberProductEntryIDs adds the "member_product_entry" edge to the EntryLogs entity by IDs.
+// AddMemberProductEntryIDs adds the "member_product_entry" edge to the VenueEntry entity by IDs.
 func (mpc *MemberProductCreate) AddMemberProductEntryIDs(ids ...int64) *MemberProductCreate {
 	mpc.mutation.AddMemberProductEntryIDs(ids...)
 	return mpc
 }
 
-// AddMemberProductEntry adds the "member_product_entry" edges to the EntryLogs entity.
-func (mpc *MemberProductCreate) AddMemberProductEntry(e ...*EntryLogs) *MemberProductCreate {
-	ids := make([]int64, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// AddMemberProductEntry adds the "member_product_entry" edges to the VenueEntry entity.
+func (mpc *MemberProductCreate) AddMemberProductEntry(v ...*VenueEntry) *MemberProductCreate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return mpc.AddMemberProductEntryIDs(ids...)
 }
@@ -437,7 +437,7 @@ func (mpc *MemberProductCreate) createSpec() (*MemberProduct, *sqlgraph.CreateSp
 			Columns: []string{memberproduct.MemberProductEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

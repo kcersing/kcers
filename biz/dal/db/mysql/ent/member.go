@@ -54,7 +54,7 @@ type MemberEdges struct {
 	// MemberProfile holds the value of the member_profile edge.
 	MemberProfile []*MemberProfile `json:"member_profile,omitempty"`
 	// MemberDetails holds the value of the member_details edge.
-	MemberDetails []*MemberDetails `json:"member_details,omitempty"`
+	MemberDetails []*VenueMember `json:"member_details,omitempty"`
 	// MemberNotes holds the value of the member_notes edge.
 	MemberNotes []*MemberNote `json:"member_notes,omitempty"`
 	// MemberOrders holds the value of the member_orders edge.
@@ -62,7 +62,7 @@ type MemberEdges struct {
 	// MemberProducts holds the value of the member_products edge.
 	MemberProducts []*MemberProduct `json:"member_products,omitempty"`
 	// MemberEntry holds the value of the member_entry edge.
-	MemberEntry []*EntryLogs `json:"member_entry,omitempty"`
+	MemberEntry []*VenueEntry `json:"member_entry,omitempty"`
 	// MemberContents holds the value of the member_contents edge.
 	MemberContents []*MemberContract `json:"member_contents,omitempty"`
 	// MemberFace holds the value of the member_face edge.
@@ -94,7 +94,7 @@ func (e MemberEdges) MemberProfileOrErr() ([]*MemberProfile, error) {
 
 // MemberDetailsOrErr returns the MemberDetails value or an error if the edge
 // was not loaded in eager-loading.
-func (e MemberEdges) MemberDetailsOrErr() ([]*MemberDetails, error) {
+func (e MemberEdges) MemberDetailsOrErr() ([]*VenueMember, error) {
 	if e.loadedTypes[2] {
 		return e.MemberDetails, nil
 	}
@@ -130,7 +130,7 @@ func (e MemberEdges) MemberProductsOrErr() ([]*MemberProduct, error) {
 
 // MemberEntryOrErr returns the MemberEntry value or an error if the edge
 // was not loaded in eager-loading.
-func (e MemberEdges) MemberEntryOrErr() ([]*EntryLogs, error) {
+func (e MemberEdges) MemberEntryOrErr() ([]*VenueEntry, error) {
 	if e.loadedTypes[6] {
 		return e.MemberEntry, nil
 	}
@@ -277,7 +277,7 @@ func (m *Member) QueryMemberProfile() *MemberProfileQuery {
 }
 
 // QueryMemberDetails queries the "member_details" edge of the Member entity.
-func (m *Member) QueryMemberDetails() *MemberDetailsQuery {
+func (m *Member) QueryMemberDetails() *VenueMemberQuery {
 	return NewMemberClient(m.config).QueryMemberDetails(m)
 }
 
@@ -297,7 +297,7 @@ func (m *Member) QueryMemberProducts() *MemberProductQuery {
 }
 
 // QueryMemberEntry queries the "member_entry" edge of the Member entity.
-func (m *Member) QueryMemberEntry() *EntryLogsQuery {
+func (m *Member) QueryMemberEntry() *VenueEntryQuery {
 	return NewMemberClient(m.config).QueryMemberEntry(m)
 }
 

@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/dictionarydetail"
-	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/face"
 	entorder "kcers/biz/dal/db/mysql/ent/order"
 	"kcers/biz/dal/db/mysql/ent/predicate"
@@ -15,6 +14,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/token"
 	"kcers/biz/dal/db/mysql/ent/user"
 	"kcers/biz/dal/db/mysql/ent/venue"
+	"kcers/biz/dal/db/mysql/ent/venueentry"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -529,17 +529,17 @@ func (uu *UserUpdate) AddCreatedOrders(o ...*Order) *UserUpdate {
 	return uu.AddCreatedOrderIDs(ids...)
 }
 
-// AddUserEntryIDs adds the "user_entry" edge to the EntryLogs entity by IDs.
+// AddUserEntryIDs adds the "user_entry" edge to the VenueEntry entity by IDs.
 func (uu *UserUpdate) AddUserEntryIDs(ids ...int64) *UserUpdate {
 	uu.mutation.AddUserEntryIDs(ids...)
 	return uu
 }
 
-// AddUserEntry adds the "user_entry" edges to the EntryLogs entity.
-func (uu *UserUpdate) AddUserEntry(e ...*EntryLogs) *UserUpdate {
-	ids := make([]int64, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// AddUserEntry adds the "user_entry" edges to the VenueEntry entity.
+func (uu *UserUpdate) AddUserEntry(v ...*VenueEntry) *UserUpdate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return uu.AddUserEntryIDs(ids...)
 }
@@ -648,23 +648,23 @@ func (uu *UserUpdate) RemoveCreatedOrders(o ...*Order) *UserUpdate {
 	return uu.RemoveCreatedOrderIDs(ids...)
 }
 
-// ClearUserEntry clears all "user_entry" edges to the EntryLogs entity.
+// ClearUserEntry clears all "user_entry" edges to the VenueEntry entity.
 func (uu *UserUpdate) ClearUserEntry() *UserUpdate {
 	uu.mutation.ClearUserEntry()
 	return uu
 }
 
-// RemoveUserEntryIDs removes the "user_entry" edge to EntryLogs entities by IDs.
+// RemoveUserEntryIDs removes the "user_entry" edge to VenueEntry entities by IDs.
 func (uu *UserUpdate) RemoveUserEntryIDs(ids ...int64) *UserUpdate {
 	uu.mutation.RemoveUserEntryIDs(ids...)
 	return uu
 }
 
-// RemoveUserEntry removes "user_entry" edges to EntryLogs entities.
-func (uu *UserUpdate) RemoveUserEntry(e ...*EntryLogs) *UserUpdate {
-	ids := make([]int64, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// RemoveUserEntry removes "user_entry" edges to VenueEntry entities.
+func (uu *UserUpdate) RemoveUserEntry(v ...*VenueEntry) *UserUpdate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return uu.RemoveUserEntryIDs(ids...)
 }
@@ -1074,7 +1074,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.UserEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1087,7 +1087,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.UserEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1103,7 +1103,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.UserEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1715,17 +1715,17 @@ func (uuo *UserUpdateOne) AddCreatedOrders(o ...*Order) *UserUpdateOne {
 	return uuo.AddCreatedOrderIDs(ids...)
 }
 
-// AddUserEntryIDs adds the "user_entry" edge to the EntryLogs entity by IDs.
+// AddUserEntryIDs adds the "user_entry" edge to the VenueEntry entity by IDs.
 func (uuo *UserUpdateOne) AddUserEntryIDs(ids ...int64) *UserUpdateOne {
 	uuo.mutation.AddUserEntryIDs(ids...)
 	return uuo
 }
 
-// AddUserEntry adds the "user_entry" edges to the EntryLogs entity.
-func (uuo *UserUpdateOne) AddUserEntry(e ...*EntryLogs) *UserUpdateOne {
-	ids := make([]int64, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// AddUserEntry adds the "user_entry" edges to the VenueEntry entity.
+func (uuo *UserUpdateOne) AddUserEntry(v ...*VenueEntry) *UserUpdateOne {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return uuo.AddUserEntryIDs(ids...)
 }
@@ -1834,23 +1834,23 @@ func (uuo *UserUpdateOne) RemoveCreatedOrders(o ...*Order) *UserUpdateOne {
 	return uuo.RemoveCreatedOrderIDs(ids...)
 }
 
-// ClearUserEntry clears all "user_entry" edges to the EntryLogs entity.
+// ClearUserEntry clears all "user_entry" edges to the VenueEntry entity.
 func (uuo *UserUpdateOne) ClearUserEntry() *UserUpdateOne {
 	uuo.mutation.ClearUserEntry()
 	return uuo
 }
 
-// RemoveUserEntryIDs removes the "user_entry" edge to EntryLogs entities by IDs.
+// RemoveUserEntryIDs removes the "user_entry" edge to VenueEntry entities by IDs.
 func (uuo *UserUpdateOne) RemoveUserEntryIDs(ids ...int64) *UserUpdateOne {
 	uuo.mutation.RemoveUserEntryIDs(ids...)
 	return uuo
 }
 
-// RemoveUserEntry removes "user_entry" edges to EntryLogs entities.
-func (uuo *UserUpdateOne) RemoveUserEntry(e ...*EntryLogs) *UserUpdateOne {
-	ids := make([]int64, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// RemoveUserEntry removes "user_entry" edges to VenueEntry entities.
+func (uuo *UserUpdateOne) RemoveUserEntry(v ...*VenueEntry) *UserUpdateOne {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return uuo.RemoveUserEntryIDs(ids...)
 }
@@ -2290,7 +2290,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.UserEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -2303,7 +2303,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.UserEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -2319,7 +2319,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.UserEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

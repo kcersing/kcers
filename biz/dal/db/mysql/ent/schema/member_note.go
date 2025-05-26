@@ -45,13 +45,14 @@ func (MemberNote) Edges() []ent.Edge {
 
 func (MemberNote) Indexes() []ent.Index {
 	return []ent.Index{
+		index.Fields("id"),
 		index.Fields("member_id"),
 	}
 }
 
 func (MemberNote) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "member_note", Options: "AUTO_INCREMENT = 100000"},
+		entsql.Annotation{Table: "member_note"},
 		entsql.WithComments(true),
 	}
 }

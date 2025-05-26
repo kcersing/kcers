@@ -11,13 +11,11 @@ import (
 	"kcers/biz/dal/db/mysql/ent/contract"
 	"kcers/biz/dal/db/mysql/ent/dictionary"
 	"kcers/biz/dal/db/mysql/ent/dictionarydetail"
-	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/face"
 	"kcers/biz/dal/db/mysql/ent/logs"
 	"kcers/biz/dal/db/mysql/ent/member"
 	"kcers/biz/dal/db/mysql/ent/membercontract"
 	"kcers/biz/dal/db/mysql/ent/membercontractcontent"
-	"kcers/biz/dal/db/mysql/ent/memberdetails"
 	"kcers/biz/dal/db/mysql/ent/membernote"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
@@ -49,6 +47,8 @@ import (
 	"kcers/biz/dal/db/mysql/ent/token"
 	"kcers/biz/dal/db/mysql/ent/user"
 	"kcers/biz/dal/db/mysql/ent/venue"
+	"kcers/biz/dal/db/mysql/ent/venueentry"
+	"kcers/biz/dal/db/mysql/ent/venuemember"
 	"kcers/biz/dal/db/mysql/ent/venueplace"
 )
 
@@ -115,13 +115,11 @@ func checkColumn(table, column string) error {
 			contract.Table:              contract.ValidColumn,
 			dictionary.Table:            dictionary.ValidColumn,
 			dictionarydetail.Table:      dictionarydetail.ValidColumn,
-			entrylogs.Table:             entrylogs.ValidColumn,
 			face.Table:                  face.ValidColumn,
 			logs.Table:                  logs.ValidColumn,
 			member.Table:                member.ValidColumn,
 			membercontract.Table:        membercontract.ValidColumn,
 			membercontractcontent.Table: membercontractcontent.ValidColumn,
-			memberdetails.Table:         memberdetails.ValidColumn,
 			membernote.Table:            membernote.ValidColumn,
 			memberproduct.Table:         memberproduct.ValidColumn,
 			memberproductproperty.Table: memberproductproperty.ValidColumn,
@@ -146,6 +144,8 @@ func checkColumn(table, column string) error {
 			token.Table:                 token.ValidColumn,
 			user.Table:                  user.ValidColumn,
 			venue.Table:                 venue.ValidColumn,
+			venueentry.Table:            venueentry.ValidColumn,
+			venuemember.Table:           venuemember.ValidColumn,
 			venueplace.Table:            venueplace.ValidColumn,
 		})
 	})

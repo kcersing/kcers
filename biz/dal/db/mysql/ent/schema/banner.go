@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"kcers/biz/dal/db/mysql/ent/schema/mixins"
 )
 
@@ -33,7 +34,9 @@ func (Banner) Edges() []ent.Edge {
 }
 
 func (Banner) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+		index.Fields("id"),
+	}
 }
 
 func (Banner) Annotations() []schema.Annotation {

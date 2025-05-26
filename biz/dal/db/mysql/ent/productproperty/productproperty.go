@@ -38,6 +38,10 @@ const (
 	FieldPrice = "price"
 	// FieldData holds the string denoting the data field in the database.
 	FieldData = "data"
+	// FieldPic holds the string denoting the pic field in the database.
+	FieldPic = "pic"
+	// FieldDescription holds the string denoting the description field in the database.
+	FieldDescription = "description"
 	// EdgeProduct holds the string denoting the product edge name in mutations.
 	EdgeProduct = "product"
 	// EdgeTags holds the string denoting the tags edge name in mutations.
@@ -85,6 +89,8 @@ var Columns = []string{
 	FieldCount,
 	FieldPrice,
 	FieldData,
+	FieldPic,
+	FieldDescription,
 }
 
 var (
@@ -125,6 +131,10 @@ var (
 	DefaultCreatedID int64
 	// DefaultStatus holds the default value on creation for the "status" field.
 	DefaultStatus int64
+	// DefaultPic holds the default value on creation for the "pic" field.
+	DefaultPic string
+	// DefaultDescription holds the default value on creation for the "description" field.
+	DefaultDescription string
 )
 
 // OrderOption defines the ordering options for the ProductProperty queries.
@@ -193,6 +203,16 @@ func ByPrice(opts ...sql.OrderTermOption) OrderOption {
 // ByData orders the results by the data field.
 func ByData(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldData, opts...).ToFunc()
+}
+
+// ByPic orders the results by the pic field.
+func ByPic(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPic, opts...).ToFunc()
+}
+
+// ByDescription orders the results by the description field.
+func ByDescription(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDescription, opts...).ToFunc()
 }
 
 // ByProductCount orders the results by product count.

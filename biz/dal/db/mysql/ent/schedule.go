@@ -3,8 +3,10 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"kcers/biz/dal/db/mysql/ent/schedule"
+	"kcers/idl_gen/model/base"
 	"strings"
 	"time"
 
@@ -58,6 +60,8 @@ type Schedule struct {
 	VenueName string `json:"venue_name,omitempty"`
 	// 场地名称
 	PlaceName string `json:"place_name,omitempty"`
+	// 座位
+	Seats [][]*base.Seat `json:"seats,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ScheduleQuery when eager-loading is set.
 	Edges        ScheduleEdges `json:"edges"`
@@ -98,6 +102,8 @@ func (*Schedule) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case schedule.FieldSeats:
+			values[i] = new([]byte)
 		case schedule.FieldPrice:
 			values[i] = new(sql.NullFloat64)
 		case schedule.FieldID, schedule.FieldDelete, schedule.FieldCreatedID, schedule.FieldStatus, schedule.FieldVenueID, schedule.FieldPropertyID, schedule.FieldLength, schedule.FieldPlaceID, schedule.FieldNum, schedule.FieldNumSurplus:
@@ -247,6 +253,14 @@ func (s *Schedule) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				s.PlaceName = value.String
 			}
+		case schedule.FieldSeats:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field seats", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &s.Seats); err != nil {
+					return fmt.Errorf("unmarshal field seats: %w", err)
+				}
+			}
 		default:
 			s.selectValues.Set(columns[i], values[i])
 		}
@@ -352,6 +366,9 @@ func (s *Schedule) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("place_name=")
 	builder.WriteString(s.PlaceName)
+	builder.WriteString(", ")
+	builder.WriteString("seats=")
+	builder.WriteString(fmt.Sprintf("%v", s.Seats))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -56,7 +56,7 @@ type MemberProductEdges struct {
 	// MemberProductPropertys holds the value of the member_product_propertys edge.
 	MemberProductPropertys []*MemberProductProperty `json:"member_product_propertys,omitempty"`
 	// MemberProductEntry holds the value of the member_product_entry edge.
-	MemberProductEntry []*EntryLogs `json:"member_product_entry,omitempty"`
+	MemberProductEntry []*VenueEntry `json:"member_product_entry,omitempty"`
 	// MemberProductContents holds the value of the member_product_contents edge.
 	MemberProductContents []*MemberContract `json:"member_product_contents,omitempty"`
 	// loadedTypes holds the information for reporting if a
@@ -86,7 +86,7 @@ func (e MemberProductEdges) MemberProductPropertysOrErr() ([]*MemberProductPrope
 
 // MemberProductEntryOrErr returns the MemberProductEntry value or an error if the edge
 // was not loaded in eager-loading.
-func (e MemberProductEdges) MemberProductEntryOrErr() ([]*EntryLogs, error) {
+func (e MemberProductEdges) MemberProductEntryOrErr() ([]*VenueEntry, error) {
 	if e.loadedTypes[2] {
 		return e.MemberProductEntry, nil
 	}
@@ -232,7 +232,7 @@ func (mp *MemberProduct) QueryMemberProductPropertys() *MemberProductPropertyQue
 }
 
 // QueryMemberProductEntry queries the "member_product_entry" edge of the MemberProduct entity.
-func (mp *MemberProduct) QueryMemberProductEntry() *EntryLogsQuery {
+func (mp *MemberProduct) QueryMemberProductEntry() *VenueEntryQuery {
 	return NewMemberProductClient(mp.config).QueryMemberProductEntry(mp)
 }
 

@@ -16,13 +16,11 @@ import (
 	"kcers/biz/dal/db/mysql/ent/contract"
 	"kcers/biz/dal/db/mysql/ent/dictionary"
 	"kcers/biz/dal/db/mysql/ent/dictionarydetail"
-	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/face"
 	"kcers/biz/dal/db/mysql/ent/logs"
 	"kcers/biz/dal/db/mysql/ent/member"
 	"kcers/biz/dal/db/mysql/ent/membercontract"
 	"kcers/biz/dal/db/mysql/ent/membercontractcontent"
-	"kcers/biz/dal/db/mysql/ent/memberdetails"
 	"kcers/biz/dal/db/mysql/ent/membernote"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
@@ -47,6 +45,8 @@ import (
 	"kcers/biz/dal/db/mysql/ent/token"
 	"kcers/biz/dal/db/mysql/ent/user"
 	"kcers/biz/dal/db/mysql/ent/venue"
+	"kcers/biz/dal/db/mysql/ent/venueentry"
+	"kcers/biz/dal/db/mysql/ent/venuemember"
 	"kcers/biz/dal/db/mysql/ent/venueplace"
 
 	"entgo.io/ent"
@@ -70,8 +70,6 @@ type Client struct {
 	Dictionary *DictionaryClient
 	// DictionaryDetail is the client for interacting with the DictionaryDetail builders.
 	DictionaryDetail *DictionaryDetailClient
-	// EntryLogs is the client for interacting with the EntryLogs builders.
-	EntryLogs *EntryLogsClient
 	// Face is the client for interacting with the Face builders.
 	Face *FaceClient
 	// Logs is the client for interacting with the Logs builders.
@@ -82,8 +80,6 @@ type Client struct {
 	MemberContract *MemberContractClient
 	// MemberContractContent is the client for interacting with the MemberContractContent builders.
 	MemberContractContent *MemberContractContentClient
-	// MemberDetails is the client for interacting with the MemberDetails builders.
-	MemberDetails *MemberDetailsClient
 	// MemberNote is the client for interacting with the MemberNote builders.
 	MemberNote *MemberNoteClient
 	// MemberProduct is the client for interacting with the MemberProduct builders.
@@ -132,6 +128,10 @@ type Client struct {
 	User *UserClient
 	// Venue is the client for interacting with the Venue builders.
 	Venue *VenueClient
+	// VenueEntry is the client for interacting with the VenueEntry builders.
+	VenueEntry *VenueEntryClient
+	// VenueMember is the client for interacting with the VenueMember builders.
+	VenueMember *VenueMemberClient
 	// VenuePlace is the client for interacting with the VenuePlace builders.
 	VenuePlace *VenuePlaceClient
 }
@@ -150,13 +150,11 @@ func (c *Client) init() {
 	c.Contract = NewContractClient(c.config)
 	c.Dictionary = NewDictionaryClient(c.config)
 	c.DictionaryDetail = NewDictionaryDetailClient(c.config)
-	c.EntryLogs = NewEntryLogsClient(c.config)
 	c.Face = NewFaceClient(c.config)
 	c.Logs = NewLogsClient(c.config)
 	c.Member = NewMemberClient(c.config)
 	c.MemberContract = NewMemberContractClient(c.config)
 	c.MemberContractContent = NewMemberContractContentClient(c.config)
-	c.MemberDetails = NewMemberDetailsClient(c.config)
 	c.MemberNote = NewMemberNoteClient(c.config)
 	c.MemberProduct = NewMemberProductClient(c.config)
 	c.MemberProductProperty = NewMemberProductPropertyClient(c.config)
@@ -181,6 +179,8 @@ func (c *Client) init() {
 	c.Token = NewTokenClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.Venue = NewVenueClient(c.config)
+	c.VenueEntry = NewVenueEntryClient(c.config)
+	c.VenueMember = NewVenueMemberClient(c.config)
 	c.VenuePlace = NewVenuePlaceClient(c.config)
 }
 
@@ -279,13 +279,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Contract:              NewContractClient(cfg),
 		Dictionary:            NewDictionaryClient(cfg),
 		DictionaryDetail:      NewDictionaryDetailClient(cfg),
-		EntryLogs:             NewEntryLogsClient(cfg),
 		Face:                  NewFaceClient(cfg),
 		Logs:                  NewLogsClient(cfg),
 		Member:                NewMemberClient(cfg),
 		MemberContract:        NewMemberContractClient(cfg),
 		MemberContractContent: NewMemberContractContentClient(cfg),
-		MemberDetails:         NewMemberDetailsClient(cfg),
 		MemberNote:            NewMemberNoteClient(cfg),
 		MemberProduct:         NewMemberProductClient(cfg),
 		MemberProductProperty: NewMemberProductPropertyClient(cfg),
@@ -310,6 +308,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Token:                 NewTokenClient(cfg),
 		User:                  NewUserClient(cfg),
 		Venue:                 NewVenueClient(cfg),
+		VenueEntry:            NewVenueEntryClient(cfg),
+		VenueMember:           NewVenueMemberClient(cfg),
 		VenuePlace:            NewVenuePlaceClient(cfg),
 	}, nil
 }
@@ -335,13 +335,11 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Contract:              NewContractClient(cfg),
 		Dictionary:            NewDictionaryClient(cfg),
 		DictionaryDetail:      NewDictionaryDetailClient(cfg),
-		EntryLogs:             NewEntryLogsClient(cfg),
 		Face:                  NewFaceClient(cfg),
 		Logs:                  NewLogsClient(cfg),
 		Member:                NewMemberClient(cfg),
 		MemberContract:        NewMemberContractClient(cfg),
 		MemberContractContent: NewMemberContractContentClient(cfg),
-		MemberDetails:         NewMemberDetailsClient(cfg),
 		MemberNote:            NewMemberNoteClient(cfg),
 		MemberProduct:         NewMemberProductClient(cfg),
 		MemberProductProperty: NewMemberProductPropertyClient(cfg),
@@ -366,6 +364,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Token:                 NewTokenClient(cfg),
 		User:                  NewUserClient(cfg),
 		Venue:                 NewVenueClient(cfg),
+		VenueEntry:            NewVenueEntryClient(cfg),
+		VenueMember:           NewVenueMemberClient(cfg),
 		VenuePlace:            NewVenuePlaceClient(cfg),
 	}, nil
 }
@@ -396,13 +396,13 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.API, c.Banner, c.Contract, c.Dictionary, c.DictionaryDetail, c.EntryLogs,
-		c.Face, c.Logs, c.Member, c.MemberContract, c.MemberContractContent,
-		c.MemberDetails, c.MemberNote, c.MemberProduct, c.MemberProductProperty,
-		c.MemberProfile, c.MemberToken, c.Menu, c.MenuParam, c.Messages, c.Order,
-		c.OrderAmount, c.OrderItem, c.OrderPay, c.OrderSales, c.Product,
-		c.ProductProperty, c.Role, c.Schedule, c.ScheduleCoach, c.ScheduleMember,
-		c.Sms, c.SmsLog, c.Token, c.User, c.Venue, c.VenuePlace,
+		c.API, c.Banner, c.Contract, c.Dictionary, c.DictionaryDetail, c.Face, c.Logs,
+		c.Member, c.MemberContract, c.MemberContractContent, c.MemberNote,
+		c.MemberProduct, c.MemberProductProperty, c.MemberProfile, c.MemberToken,
+		c.Menu, c.MenuParam, c.Messages, c.Order, c.OrderAmount, c.OrderItem,
+		c.OrderPay, c.OrderSales, c.Product, c.ProductProperty, c.Role, c.Schedule,
+		c.ScheduleCoach, c.ScheduleMember, c.Sms, c.SmsLog, c.Token, c.User, c.Venue,
+		c.VenueEntry, c.VenueMember, c.VenuePlace,
 	} {
 		n.Use(hooks...)
 	}
@@ -412,13 +412,13 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.API, c.Banner, c.Contract, c.Dictionary, c.DictionaryDetail, c.EntryLogs,
-		c.Face, c.Logs, c.Member, c.MemberContract, c.MemberContractContent,
-		c.MemberDetails, c.MemberNote, c.MemberProduct, c.MemberProductProperty,
-		c.MemberProfile, c.MemberToken, c.Menu, c.MenuParam, c.Messages, c.Order,
-		c.OrderAmount, c.OrderItem, c.OrderPay, c.OrderSales, c.Product,
-		c.ProductProperty, c.Role, c.Schedule, c.ScheduleCoach, c.ScheduleMember,
-		c.Sms, c.SmsLog, c.Token, c.User, c.Venue, c.VenuePlace,
+		c.API, c.Banner, c.Contract, c.Dictionary, c.DictionaryDetail, c.Face, c.Logs,
+		c.Member, c.MemberContract, c.MemberContractContent, c.MemberNote,
+		c.MemberProduct, c.MemberProductProperty, c.MemberProfile, c.MemberToken,
+		c.Menu, c.MenuParam, c.Messages, c.Order, c.OrderAmount, c.OrderItem,
+		c.OrderPay, c.OrderSales, c.Product, c.ProductProperty, c.Role, c.Schedule,
+		c.ScheduleCoach, c.ScheduleMember, c.Sms, c.SmsLog, c.Token, c.User, c.Venue,
+		c.VenueEntry, c.VenueMember, c.VenuePlace,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -437,8 +437,6 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Dictionary.mutate(ctx, m)
 	case *DictionaryDetailMutation:
 		return c.DictionaryDetail.mutate(ctx, m)
-	case *EntryLogsMutation:
-		return c.EntryLogs.mutate(ctx, m)
 	case *FaceMutation:
 		return c.Face.mutate(ctx, m)
 	case *LogsMutation:
@@ -449,8 +447,6 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.MemberContract.mutate(ctx, m)
 	case *MemberContractContentMutation:
 		return c.MemberContractContent.mutate(ctx, m)
-	case *MemberDetailsMutation:
-		return c.MemberDetails.mutate(ctx, m)
 	case *MemberNoteMutation:
 		return c.MemberNote.mutate(ctx, m)
 	case *MemberProductMutation:
@@ -499,6 +495,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.User.mutate(ctx, m)
 	case *VenueMutation:
 		return c.Venue.mutate(ctx, m)
+	case *VenueEntryMutation:
+		return c.VenueEntry.mutate(ctx, m)
+	case *VenueMemberMutation:
+		return c.VenueMember.mutate(ctx, m)
 	case *VenuePlaceMutation:
 		return c.VenuePlace.mutate(ctx, m)
 	default:
@@ -1251,203 +1251,6 @@ func (c *DictionaryDetailClient) mutate(ctx context.Context, m *DictionaryDetail
 	}
 }
 
-// EntryLogsClient is a client for the EntryLogs schema.
-type EntryLogsClient struct {
-	config
-}
-
-// NewEntryLogsClient returns a client for the EntryLogs from the given config.
-func NewEntryLogsClient(c config) *EntryLogsClient {
-	return &EntryLogsClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `entrylogs.Hooks(f(g(h())))`.
-func (c *EntryLogsClient) Use(hooks ...Hook) {
-	c.hooks.EntryLogs = append(c.hooks.EntryLogs, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `entrylogs.Intercept(f(g(h())))`.
-func (c *EntryLogsClient) Intercept(interceptors ...Interceptor) {
-	c.inters.EntryLogs = append(c.inters.EntryLogs, interceptors...)
-}
-
-// Create returns a builder for creating a EntryLogs entity.
-func (c *EntryLogsClient) Create() *EntryLogsCreate {
-	mutation := newEntryLogsMutation(c.config, OpCreate)
-	return &EntryLogsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of EntryLogs entities.
-func (c *EntryLogsClient) CreateBulk(builders ...*EntryLogsCreate) *EntryLogsCreateBulk {
-	return &EntryLogsCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *EntryLogsClient) MapCreateBulk(slice any, setFunc func(*EntryLogsCreate, int)) *EntryLogsCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &EntryLogsCreateBulk{err: fmt.Errorf("calling to EntryLogsClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*EntryLogsCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &EntryLogsCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for EntryLogs.
-func (c *EntryLogsClient) Update() *EntryLogsUpdate {
-	mutation := newEntryLogsMutation(c.config, OpUpdate)
-	return &EntryLogsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *EntryLogsClient) UpdateOne(el *EntryLogs) *EntryLogsUpdateOne {
-	mutation := newEntryLogsMutation(c.config, OpUpdateOne, withEntryLogs(el))
-	return &EntryLogsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *EntryLogsClient) UpdateOneID(id int64) *EntryLogsUpdateOne {
-	mutation := newEntryLogsMutation(c.config, OpUpdateOne, withEntryLogsID(id))
-	return &EntryLogsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for EntryLogs.
-func (c *EntryLogsClient) Delete() *EntryLogsDelete {
-	mutation := newEntryLogsMutation(c.config, OpDelete)
-	return &EntryLogsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *EntryLogsClient) DeleteOne(el *EntryLogs) *EntryLogsDeleteOne {
-	return c.DeleteOneID(el.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *EntryLogsClient) DeleteOneID(id int64) *EntryLogsDeleteOne {
-	builder := c.Delete().Where(entrylogs.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &EntryLogsDeleteOne{builder}
-}
-
-// Query returns a query builder for EntryLogs.
-func (c *EntryLogsClient) Query() *EntryLogsQuery {
-	return &EntryLogsQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeEntryLogs},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a EntryLogs entity by its id.
-func (c *EntryLogsClient) Get(ctx context.Context, id int64) (*EntryLogs, error) {
-	return c.Query().Where(entrylogs.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *EntryLogsClient) GetX(ctx context.Context, id int64) *EntryLogs {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryVenues queries the venues edge of a EntryLogs.
-func (c *EntryLogsClient) QueryVenues(el *EntryLogs) *VenueQuery {
-	query := (&VenueClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := el.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(entrylogs.Table, entrylogs.FieldID, id),
-			sqlgraph.To(venue.Table, venue.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, entrylogs.VenuesTable, entrylogs.VenuesColumn),
-		)
-		fromV = sqlgraph.Neighbors(el.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryMembers queries the members edge of a EntryLogs.
-func (c *EntryLogsClient) QueryMembers(el *EntryLogs) *MemberQuery {
-	query := (&MemberClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := el.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(entrylogs.Table, entrylogs.FieldID, id),
-			sqlgraph.To(member.Table, member.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, entrylogs.MembersTable, entrylogs.MembersColumn),
-		)
-		fromV = sqlgraph.Neighbors(el.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryUsers queries the users edge of a EntryLogs.
-func (c *EntryLogsClient) QueryUsers(el *EntryLogs) *UserQuery {
-	query := (&UserClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := el.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(entrylogs.Table, entrylogs.FieldID, id),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, entrylogs.UsersTable, entrylogs.UsersColumn),
-		)
-		fromV = sqlgraph.Neighbors(el.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryMemberProducts queries the member_products edge of a EntryLogs.
-func (c *EntryLogsClient) QueryMemberProducts(el *EntryLogs) *MemberProductQuery {
-	query := (&MemberProductClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := el.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(entrylogs.Table, entrylogs.FieldID, id),
-			sqlgraph.To(memberproduct.Table, memberproduct.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, entrylogs.MemberProductsTable, entrylogs.MemberProductsColumn),
-		)
-		fromV = sqlgraph.Neighbors(el.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *EntryLogsClient) Hooks() []Hook {
-	return c.hooks.EntryLogs
-}
-
-// Interceptors returns the client interceptors.
-func (c *EntryLogsClient) Interceptors() []Interceptor {
-	return c.inters.EntryLogs
-}
-
-func (c *EntryLogsClient) mutate(ctx context.Context, m *EntryLogsMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&EntryLogsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&EntryLogsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&EntryLogsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&EntryLogsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown EntryLogs mutation op: %q", m.Op())
-	}
-}
-
 // FaceClient is a client for the Face schema.
 type FaceClient struct {
 	config
@@ -1887,13 +1690,13 @@ func (c *MemberClient) QueryMemberProfile(m *Member) *MemberProfileQuery {
 }
 
 // QueryMemberDetails queries the member_details edge of a Member.
-func (c *MemberClient) QueryMemberDetails(m *Member) *MemberDetailsQuery {
-	query := (&MemberDetailsClient{config: c.config}).Query()
+func (c *MemberClient) QueryMemberDetails(m *Member) *VenueMemberQuery {
+	query := (&VenueMemberClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(member.Table, member.FieldID, id),
-			sqlgraph.To(memberdetails.Table, memberdetails.FieldID),
+			sqlgraph.To(venuemember.Table, venuemember.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, member.MemberDetailsTable, member.MemberDetailsColumn),
 		)
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
@@ -1951,13 +1754,13 @@ func (c *MemberClient) QueryMemberProducts(m *Member) *MemberProductQuery {
 }
 
 // QueryMemberEntry queries the member_entry edge of a Member.
-func (c *MemberClient) QueryMemberEntry(m *Member) *EntryLogsQuery {
-	query := (&EntryLogsClient{config: c.config}).Query()
+func (c *MemberClient) QueryMemberEntry(m *Member) *VenueEntryQuery {
+	query := (&VenueEntryClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(member.Table, member.FieldID, id),
-			sqlgraph.To(entrylogs.Table, entrylogs.FieldID),
+			sqlgraph.To(venueentry.Table, venueentry.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, member.MemberEntryTable, member.MemberEntryColumn),
 		)
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
@@ -2369,155 +2172,6 @@ func (c *MemberContractContentClient) mutate(ctx context.Context, m *MemberContr
 	}
 }
 
-// MemberDetailsClient is a client for the MemberDetails schema.
-type MemberDetailsClient struct {
-	config
-}
-
-// NewMemberDetailsClient returns a client for the MemberDetails from the given config.
-func NewMemberDetailsClient(c config) *MemberDetailsClient {
-	return &MemberDetailsClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `memberdetails.Hooks(f(g(h())))`.
-func (c *MemberDetailsClient) Use(hooks ...Hook) {
-	c.hooks.MemberDetails = append(c.hooks.MemberDetails, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `memberdetails.Intercept(f(g(h())))`.
-func (c *MemberDetailsClient) Intercept(interceptors ...Interceptor) {
-	c.inters.MemberDetails = append(c.inters.MemberDetails, interceptors...)
-}
-
-// Create returns a builder for creating a MemberDetails entity.
-func (c *MemberDetailsClient) Create() *MemberDetailsCreate {
-	mutation := newMemberDetailsMutation(c.config, OpCreate)
-	return &MemberDetailsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of MemberDetails entities.
-func (c *MemberDetailsClient) CreateBulk(builders ...*MemberDetailsCreate) *MemberDetailsCreateBulk {
-	return &MemberDetailsCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *MemberDetailsClient) MapCreateBulk(slice any, setFunc func(*MemberDetailsCreate, int)) *MemberDetailsCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &MemberDetailsCreateBulk{err: fmt.Errorf("calling to MemberDetailsClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*MemberDetailsCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &MemberDetailsCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for MemberDetails.
-func (c *MemberDetailsClient) Update() *MemberDetailsUpdate {
-	mutation := newMemberDetailsMutation(c.config, OpUpdate)
-	return &MemberDetailsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *MemberDetailsClient) UpdateOne(md *MemberDetails) *MemberDetailsUpdateOne {
-	mutation := newMemberDetailsMutation(c.config, OpUpdateOne, withMemberDetails(md))
-	return &MemberDetailsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *MemberDetailsClient) UpdateOneID(id int64) *MemberDetailsUpdateOne {
-	mutation := newMemberDetailsMutation(c.config, OpUpdateOne, withMemberDetailsID(id))
-	return &MemberDetailsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for MemberDetails.
-func (c *MemberDetailsClient) Delete() *MemberDetailsDelete {
-	mutation := newMemberDetailsMutation(c.config, OpDelete)
-	return &MemberDetailsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *MemberDetailsClient) DeleteOne(md *MemberDetails) *MemberDetailsDeleteOne {
-	return c.DeleteOneID(md.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *MemberDetailsClient) DeleteOneID(id int64) *MemberDetailsDeleteOne {
-	builder := c.Delete().Where(memberdetails.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &MemberDetailsDeleteOne{builder}
-}
-
-// Query returns a query builder for MemberDetails.
-func (c *MemberDetailsClient) Query() *MemberDetailsQuery {
-	return &MemberDetailsQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeMemberDetails},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a MemberDetails entity by its id.
-func (c *MemberDetailsClient) Get(ctx context.Context, id int64) (*MemberDetails, error) {
-	return c.Query().Where(memberdetails.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *MemberDetailsClient) GetX(ctx context.Context, id int64) *MemberDetails {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryMember queries the member edge of a MemberDetails.
-func (c *MemberDetailsClient) QueryMember(md *MemberDetails) *MemberQuery {
-	query := (&MemberClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := md.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(memberdetails.Table, memberdetails.FieldID, id),
-			sqlgraph.To(member.Table, member.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, memberdetails.MemberTable, memberdetails.MemberColumn),
-		)
-		fromV = sqlgraph.Neighbors(md.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *MemberDetailsClient) Hooks() []Hook {
-	return c.hooks.MemberDetails
-}
-
-// Interceptors returns the client interceptors.
-func (c *MemberDetailsClient) Interceptors() []Interceptor {
-	return c.inters.MemberDetails
-}
-
-func (c *MemberDetailsClient) mutate(ctx context.Context, m *MemberDetailsMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&MemberDetailsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&MemberDetailsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&MemberDetailsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&MemberDetailsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown MemberDetails mutation op: %q", m.Op())
-	}
-}
-
 // MemberNoteClient is a client for the MemberNote schema.
 type MemberNoteClient struct {
 	config
@@ -2808,13 +2462,13 @@ func (c *MemberProductClient) QueryMemberProductPropertys(mp *MemberProduct) *Me
 }
 
 // QueryMemberProductEntry queries the member_product_entry edge of a MemberProduct.
-func (c *MemberProductClient) QueryMemberProductEntry(mp *MemberProduct) *EntryLogsQuery {
-	query := (&EntryLogsClient{config: c.config}).Query()
+func (c *MemberProductClient) QueryMemberProductEntry(mp *MemberProduct) *VenueEntryQuery {
+	query := (&VenueEntryClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := mp.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(memberproduct.Table, memberproduct.FieldID, id),
-			sqlgraph.To(entrylogs.Table, entrylogs.FieldID),
+			sqlgraph.To(venueentry.Table, venueentry.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, memberproduct.MemberProductEntryTable, memberproduct.MemberProductEntryColumn),
 		)
 		fromV = sqlgraph.Neighbors(mp.driver.Dialect(), step)
@@ -6257,13 +5911,13 @@ func (c *UserClient) QueryCreatedOrders(u *User) *OrderQuery {
 }
 
 // QueryUserEntry queries the user_entry edge of a User.
-func (c *UserClient) QueryUserEntry(u *User) *EntryLogsQuery {
-	query := (&EntryLogsClient{config: c.config}).Query()
+func (c *UserClient) QueryUserEntry(u *User) *VenueEntryQuery {
+	query := (&VenueEntryClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(entrylogs.Table, entrylogs.FieldID),
+			sqlgraph.To(venueentry.Table, venueentry.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.UserEntryTable, user.UserEntryColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
@@ -6470,13 +6124,13 @@ func (c *VenueClient) QueryVenueOrders(v *Venue) *OrderQuery {
 }
 
 // QueryVenueEntry queries the venue_entry edge of a Venue.
-func (c *VenueClient) QueryVenueEntry(v *Venue) *EntryLogsQuery {
-	query := (&EntryLogsClient{config: c.config}).Query()
+func (c *VenueClient) QueryVenueEntry(v *Venue) *VenueEntryQuery {
+	query := (&VenueEntryClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := v.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(venue.Table, venue.FieldID, id),
-			sqlgraph.To(entrylogs.Table, entrylogs.FieldID),
+			sqlgraph.To(venueentry.Table, venueentry.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, venue.VenueEntryTable, venue.VenueEntryColumn),
 		)
 		fromV = sqlgraph.Neighbors(v.driver.Dialect(), step)
@@ -6587,6 +6241,352 @@ func (c *VenueClient) mutate(ctx context.Context, m *VenueMutation) (Value, erro
 		return (&VenueDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Venue mutation op: %q", m.Op())
+	}
+}
+
+// VenueEntryClient is a client for the VenueEntry schema.
+type VenueEntryClient struct {
+	config
+}
+
+// NewVenueEntryClient returns a client for the VenueEntry from the given config.
+func NewVenueEntryClient(c config) *VenueEntryClient {
+	return &VenueEntryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `venueentry.Hooks(f(g(h())))`.
+func (c *VenueEntryClient) Use(hooks ...Hook) {
+	c.hooks.VenueEntry = append(c.hooks.VenueEntry, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `venueentry.Intercept(f(g(h())))`.
+func (c *VenueEntryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.VenueEntry = append(c.inters.VenueEntry, interceptors...)
+}
+
+// Create returns a builder for creating a VenueEntry entity.
+func (c *VenueEntryClient) Create() *VenueEntryCreate {
+	mutation := newVenueEntryMutation(c.config, OpCreate)
+	return &VenueEntryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VenueEntry entities.
+func (c *VenueEntryClient) CreateBulk(builders ...*VenueEntryCreate) *VenueEntryCreateBulk {
+	return &VenueEntryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *VenueEntryClient) MapCreateBulk(slice any, setFunc func(*VenueEntryCreate, int)) *VenueEntryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &VenueEntryCreateBulk{err: fmt.Errorf("calling to VenueEntryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*VenueEntryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &VenueEntryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VenueEntry.
+func (c *VenueEntryClient) Update() *VenueEntryUpdate {
+	mutation := newVenueEntryMutation(c.config, OpUpdate)
+	return &VenueEntryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VenueEntryClient) UpdateOne(ve *VenueEntry) *VenueEntryUpdateOne {
+	mutation := newVenueEntryMutation(c.config, OpUpdateOne, withVenueEntry(ve))
+	return &VenueEntryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VenueEntryClient) UpdateOneID(id int64) *VenueEntryUpdateOne {
+	mutation := newVenueEntryMutation(c.config, OpUpdateOne, withVenueEntryID(id))
+	return &VenueEntryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VenueEntry.
+func (c *VenueEntryClient) Delete() *VenueEntryDelete {
+	mutation := newVenueEntryMutation(c.config, OpDelete)
+	return &VenueEntryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VenueEntryClient) DeleteOne(ve *VenueEntry) *VenueEntryDeleteOne {
+	return c.DeleteOneID(ve.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *VenueEntryClient) DeleteOneID(id int64) *VenueEntryDeleteOne {
+	builder := c.Delete().Where(venueentry.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VenueEntryDeleteOne{builder}
+}
+
+// Query returns a query builder for VenueEntry.
+func (c *VenueEntryClient) Query() *VenueEntryQuery {
+	return &VenueEntryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeVenueEntry},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a VenueEntry entity by its id.
+func (c *VenueEntryClient) Get(ctx context.Context, id int64) (*VenueEntry, error) {
+	return c.Query().Where(venueentry.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VenueEntryClient) GetX(ctx context.Context, id int64) *VenueEntry {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryVenues queries the venues edge of a VenueEntry.
+func (c *VenueEntryClient) QueryVenues(ve *VenueEntry) *VenueQuery {
+	query := (&VenueClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ve.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(venueentry.Table, venueentry.FieldID, id),
+			sqlgraph.To(venue.Table, venue.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, venueentry.VenuesTable, venueentry.VenuesColumn),
+		)
+		fromV = sqlgraph.Neighbors(ve.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMembers queries the members edge of a VenueEntry.
+func (c *VenueEntryClient) QueryMembers(ve *VenueEntry) *MemberQuery {
+	query := (&MemberClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ve.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(venueentry.Table, venueentry.FieldID, id),
+			sqlgraph.To(member.Table, member.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, venueentry.MembersTable, venueentry.MembersColumn),
+		)
+		fromV = sqlgraph.Neighbors(ve.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUsers queries the users edge of a VenueEntry.
+func (c *VenueEntryClient) QueryUsers(ve *VenueEntry) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ve.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(venueentry.Table, venueentry.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, venueentry.UsersTable, venueentry.UsersColumn),
+		)
+		fromV = sqlgraph.Neighbors(ve.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMemberProducts queries the member_products edge of a VenueEntry.
+func (c *VenueEntryClient) QueryMemberProducts(ve *VenueEntry) *MemberProductQuery {
+	query := (&MemberProductClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ve.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(venueentry.Table, venueentry.FieldID, id),
+			sqlgraph.To(memberproduct.Table, memberproduct.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, venueentry.MemberProductsTable, venueentry.MemberProductsColumn),
+		)
+		fromV = sqlgraph.Neighbors(ve.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VenueEntryClient) Hooks() []Hook {
+	return c.hooks.VenueEntry
+}
+
+// Interceptors returns the client interceptors.
+func (c *VenueEntryClient) Interceptors() []Interceptor {
+	return c.inters.VenueEntry
+}
+
+func (c *VenueEntryClient) mutate(ctx context.Context, m *VenueEntryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VenueEntryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VenueEntryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VenueEntryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VenueEntryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown VenueEntry mutation op: %q", m.Op())
+	}
+}
+
+// VenueMemberClient is a client for the VenueMember schema.
+type VenueMemberClient struct {
+	config
+}
+
+// NewVenueMemberClient returns a client for the VenueMember from the given config.
+func NewVenueMemberClient(c config) *VenueMemberClient {
+	return &VenueMemberClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `venuemember.Hooks(f(g(h())))`.
+func (c *VenueMemberClient) Use(hooks ...Hook) {
+	c.hooks.VenueMember = append(c.hooks.VenueMember, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `venuemember.Intercept(f(g(h())))`.
+func (c *VenueMemberClient) Intercept(interceptors ...Interceptor) {
+	c.inters.VenueMember = append(c.inters.VenueMember, interceptors...)
+}
+
+// Create returns a builder for creating a VenueMember entity.
+func (c *VenueMemberClient) Create() *VenueMemberCreate {
+	mutation := newVenueMemberMutation(c.config, OpCreate)
+	return &VenueMemberCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VenueMember entities.
+func (c *VenueMemberClient) CreateBulk(builders ...*VenueMemberCreate) *VenueMemberCreateBulk {
+	return &VenueMemberCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *VenueMemberClient) MapCreateBulk(slice any, setFunc func(*VenueMemberCreate, int)) *VenueMemberCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &VenueMemberCreateBulk{err: fmt.Errorf("calling to VenueMemberClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*VenueMemberCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &VenueMemberCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VenueMember.
+func (c *VenueMemberClient) Update() *VenueMemberUpdate {
+	mutation := newVenueMemberMutation(c.config, OpUpdate)
+	return &VenueMemberUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VenueMemberClient) UpdateOne(vm *VenueMember) *VenueMemberUpdateOne {
+	mutation := newVenueMemberMutation(c.config, OpUpdateOne, withVenueMember(vm))
+	return &VenueMemberUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VenueMemberClient) UpdateOneID(id int64) *VenueMemberUpdateOne {
+	mutation := newVenueMemberMutation(c.config, OpUpdateOne, withVenueMemberID(id))
+	return &VenueMemberUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VenueMember.
+func (c *VenueMemberClient) Delete() *VenueMemberDelete {
+	mutation := newVenueMemberMutation(c.config, OpDelete)
+	return &VenueMemberDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VenueMemberClient) DeleteOne(vm *VenueMember) *VenueMemberDeleteOne {
+	return c.DeleteOneID(vm.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *VenueMemberClient) DeleteOneID(id int64) *VenueMemberDeleteOne {
+	builder := c.Delete().Where(venuemember.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VenueMemberDeleteOne{builder}
+}
+
+// Query returns a query builder for VenueMember.
+func (c *VenueMemberClient) Query() *VenueMemberQuery {
+	return &VenueMemberQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeVenueMember},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a VenueMember entity by its id.
+func (c *VenueMemberClient) Get(ctx context.Context, id int64) (*VenueMember, error) {
+	return c.Query().Where(venuemember.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VenueMemberClient) GetX(ctx context.Context, id int64) *VenueMember {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryMember queries the member edge of a VenueMember.
+func (c *VenueMemberClient) QueryMember(vm *VenueMember) *MemberQuery {
+	query := (&MemberClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := vm.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(venuemember.Table, venuemember.FieldID, id),
+			sqlgraph.To(member.Table, member.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, venuemember.MemberTable, venuemember.MemberColumn),
+		)
+		fromV = sqlgraph.Neighbors(vm.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VenueMemberClient) Hooks() []Hook {
+	return c.hooks.VenueMember
+}
+
+// Interceptors returns the client interceptors.
+func (c *VenueMemberClient) Interceptors() []Interceptor {
+	return c.inters.VenueMember
+}
+
+func (c *VenueMemberClient) mutate(ctx context.Context, m *VenueMemberMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VenueMemberCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VenueMemberUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VenueMemberUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VenueMemberDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown VenueMember mutation op: %q", m.Op())
 	}
 }
 
@@ -6742,19 +6742,19 @@ func (c *VenuePlaceClient) mutate(ctx context.Context, m *VenuePlaceMutation) (V
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		API, Banner, Contract, Dictionary, DictionaryDetail, EntryLogs, Face, Logs,
-		Member, MemberContract, MemberContractContent, MemberDetails, MemberNote,
-		MemberProduct, MemberProductProperty, MemberProfile, MemberToken, Menu,
-		MenuParam, Messages, Order, OrderAmount, OrderItem, OrderPay, OrderSales,
-		Product, ProductProperty, Role, Schedule, ScheduleCoach, ScheduleMember, Sms,
-		SmsLog, Token, User, Venue, VenuePlace []ent.Hook
+		API, Banner, Contract, Dictionary, DictionaryDetail, Face, Logs, Member,
+		MemberContract, MemberContractContent, MemberNote, MemberProduct,
+		MemberProductProperty, MemberProfile, MemberToken, Menu, MenuParam, Messages,
+		Order, OrderAmount, OrderItem, OrderPay, OrderSales, Product, ProductProperty,
+		Role, Schedule, ScheduleCoach, ScheduleMember, Sms, SmsLog, Token, User, Venue,
+		VenueEntry, VenueMember, VenuePlace []ent.Hook
 	}
 	inters struct {
-		API, Banner, Contract, Dictionary, DictionaryDetail, EntryLogs, Face, Logs,
-		Member, MemberContract, MemberContractContent, MemberDetails, MemberNote,
-		MemberProduct, MemberProductProperty, MemberProfile, MemberToken, Menu,
-		MenuParam, Messages, Order, OrderAmount, OrderItem, OrderPay, OrderSales,
-		Product, ProductProperty, Role, Schedule, ScheduleCoach, ScheduleMember, Sms,
-		SmsLog, Token, User, Venue, VenuePlace []ent.Interceptor
+		API, Banner, Contract, Dictionary, DictionaryDetail, Face, Logs, Member,
+		MemberContract, MemberContractContent, MemberNote, MemberProduct,
+		MemberProductProperty, MemberProfile, MemberToken, Menu, MenuParam, Messages,
+		Order, OrderAmount, OrderItem, OrderPay, OrderSales, Product, ProductProperty,
+		Role, Schedule, ScheduleCoach, ScheduleMember, Sms, SmsLog, Token, User, Venue,
+		VenueEntry, VenueMember, VenuePlace []ent.Interceptor
 	}
 )

@@ -4,11 +4,11 @@ package ent
 
 import (
 	"fmt"
-	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/member"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/user"
 	"kcers/biz/dal/db/mysql/ent/venue"
+	"kcers/biz/dal/db/mysql/ent/venueentry"
 	"strings"
 	"time"
 
@@ -16,8 +16,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// EntryLogs is the model entity for the EntryLogs schema.
-type EntryLogs struct {
+// VenueEntry is the model entity for the VenueEntry schema.
+type VenueEntry struct {
 	config `json:"-"`
 	// ID of the ent.
 	// primary key
@@ -45,13 +45,13 @@ type EntryLogs struct {
 	// 离场时间
 	LeavingAt time.Time `json:"leaving_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the EntryLogsQuery when eager-loading is set.
-	Edges        EntryLogsEdges `json:"edges"`
+	// The values are being populated by the VenueEntryQuery when eager-loading is set.
+	Edges        VenueEntryEdges `json:"edges"`
 	selectValues sql.SelectValues
 }
 
-// EntryLogsEdges holds the relations/edges for other nodes in the graph.
-type EntryLogsEdges struct {
+// VenueEntryEdges holds the relations/edges for other nodes in the graph.
+type VenueEntryEdges struct {
 	// Venues holds the value of the venues edge.
 	Venues *Venue `json:"venues,omitempty"`
 	// Members holds the value of the members edge.
@@ -67,7 +67,7 @@ type EntryLogsEdges struct {
 
 // VenuesOrErr returns the Venues value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e EntryLogsEdges) VenuesOrErr() (*Venue, error) {
+func (e VenueEntryEdges) VenuesOrErr() (*Venue, error) {
 	if e.Venues != nil {
 		return e.Venues, nil
 	} else if e.loadedTypes[0] {
@@ -78,7 +78,7 @@ func (e EntryLogsEdges) VenuesOrErr() (*Venue, error) {
 
 // MembersOrErr returns the Members value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e EntryLogsEdges) MembersOrErr() (*Member, error) {
+func (e VenueEntryEdges) MembersOrErr() (*Member, error) {
 	if e.Members != nil {
 		return e.Members, nil
 	} else if e.loadedTypes[1] {
@@ -89,7 +89,7 @@ func (e EntryLogsEdges) MembersOrErr() (*Member, error) {
 
 // UsersOrErr returns the Users value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e EntryLogsEdges) UsersOrErr() (*User, error) {
+func (e VenueEntryEdges) UsersOrErr() (*User, error) {
 	if e.Users != nil {
 		return e.Users, nil
 	} else if e.loadedTypes[2] {
@@ -100,7 +100,7 @@ func (e EntryLogsEdges) UsersOrErr() (*User, error) {
 
 // MemberProductsOrErr returns the MemberProducts value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e EntryLogsEdges) MemberProductsOrErr() (*MemberProduct, error) {
+func (e VenueEntryEdges) MemberProductsOrErr() (*MemberProduct, error) {
 	if e.MemberProducts != nil {
 		return e.MemberProducts, nil
 	} else if e.loadedTypes[3] {
@@ -110,13 +110,13 @@ func (e EntryLogsEdges) MemberProductsOrErr() (*MemberProduct, error) {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*EntryLogs) scanValues(columns []string) ([]any, error) {
+func (*VenueEntry) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case entrylogs.FieldID, entrylogs.FieldDelete, entrylogs.FieldCreatedID, entrylogs.FieldMemberID, entrylogs.FieldUserID, entrylogs.FieldVenueID, entrylogs.FieldMemberProductID, entrylogs.FieldMemberPropertyID:
+		case venueentry.FieldID, venueentry.FieldDelete, venueentry.FieldCreatedID, venueentry.FieldMemberID, venueentry.FieldUserID, venueentry.FieldVenueID, venueentry.FieldMemberProductID, venueentry.FieldMemberPropertyID:
 			values[i] = new(sql.NullInt64)
-		case entrylogs.FieldCreatedAt, entrylogs.FieldUpdatedAt, entrylogs.FieldEntryAt, entrylogs.FieldLeavingAt:
+		case venueentry.FieldCreatedAt, venueentry.FieldUpdatedAt, venueentry.FieldEntryAt, venueentry.FieldLeavingAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -126,176 +126,176 @@ func (*EntryLogs) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the EntryLogs fields.
-func (el *EntryLogs) assignValues(columns []string, values []any) error {
+// to the VenueEntry fields.
+func (ve *VenueEntry) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case entrylogs.FieldID:
+		case venueentry.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			el.ID = int64(value.Int64)
-		case entrylogs.FieldCreatedAt:
+			ve.ID = int64(value.Int64)
+		case venueentry.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				el.CreatedAt = value.Time
+				ve.CreatedAt = value.Time
 			}
-		case entrylogs.FieldUpdatedAt:
+		case venueentry.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				el.UpdatedAt = value.Time
+				ve.UpdatedAt = value.Time
 			}
-		case entrylogs.FieldDelete:
+		case venueentry.FieldDelete:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field delete", values[i])
 			} else if value.Valid {
-				el.Delete = value.Int64
+				ve.Delete = value.Int64
 			}
-		case entrylogs.FieldCreatedID:
+		case venueentry.FieldCreatedID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_id", values[i])
 			} else if value.Valid {
-				el.CreatedID = value.Int64
+				ve.CreatedID = value.Int64
 			}
-		case entrylogs.FieldMemberID:
+		case venueentry.FieldMemberID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field member_id", values[i])
 			} else if value.Valid {
-				el.MemberID = value.Int64
+				ve.MemberID = value.Int64
 			}
-		case entrylogs.FieldUserID:
+		case venueentry.FieldUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
-				el.UserID = value.Int64
+				ve.UserID = value.Int64
 			}
-		case entrylogs.FieldVenueID:
+		case venueentry.FieldVenueID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field venue_id", values[i])
 			} else if value.Valid {
-				el.VenueID = value.Int64
+				ve.VenueID = value.Int64
 			}
-		case entrylogs.FieldMemberProductID:
+		case venueentry.FieldMemberProductID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field member_product_id", values[i])
 			} else if value.Valid {
-				el.MemberProductID = value.Int64
+				ve.MemberProductID = value.Int64
 			}
-		case entrylogs.FieldMemberPropertyID:
+		case venueentry.FieldMemberPropertyID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field member_property_id", values[i])
 			} else if value.Valid {
-				el.MemberPropertyID = value.Int64
+				ve.MemberPropertyID = value.Int64
 			}
-		case entrylogs.FieldEntryAt:
+		case venueentry.FieldEntryAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field entry_at", values[i])
 			} else if value.Valid {
-				el.EntryAt = value.Time
+				ve.EntryAt = value.Time
 			}
-		case entrylogs.FieldLeavingAt:
+		case venueentry.FieldLeavingAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field leaving_at", values[i])
 			} else if value.Valid {
-				el.LeavingAt = value.Time
+				ve.LeavingAt = value.Time
 			}
 		default:
-			el.selectValues.Set(columns[i], values[i])
+			ve.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the EntryLogs.
+// Value returns the ent.Value that was dynamically selected and assigned to the VenueEntry.
 // This includes values selected through modifiers, order, etc.
-func (el *EntryLogs) Value(name string) (ent.Value, error) {
-	return el.selectValues.Get(name)
+func (ve *VenueEntry) Value(name string) (ent.Value, error) {
+	return ve.selectValues.Get(name)
 }
 
-// QueryVenues queries the "venues" edge of the EntryLogs entity.
-func (el *EntryLogs) QueryVenues() *VenueQuery {
-	return NewEntryLogsClient(el.config).QueryVenues(el)
+// QueryVenues queries the "venues" edge of the VenueEntry entity.
+func (ve *VenueEntry) QueryVenues() *VenueQuery {
+	return NewVenueEntryClient(ve.config).QueryVenues(ve)
 }
 
-// QueryMembers queries the "members" edge of the EntryLogs entity.
-func (el *EntryLogs) QueryMembers() *MemberQuery {
-	return NewEntryLogsClient(el.config).QueryMembers(el)
+// QueryMembers queries the "members" edge of the VenueEntry entity.
+func (ve *VenueEntry) QueryMembers() *MemberQuery {
+	return NewVenueEntryClient(ve.config).QueryMembers(ve)
 }
 
-// QueryUsers queries the "users" edge of the EntryLogs entity.
-func (el *EntryLogs) QueryUsers() *UserQuery {
-	return NewEntryLogsClient(el.config).QueryUsers(el)
+// QueryUsers queries the "users" edge of the VenueEntry entity.
+func (ve *VenueEntry) QueryUsers() *UserQuery {
+	return NewVenueEntryClient(ve.config).QueryUsers(ve)
 }
 
-// QueryMemberProducts queries the "member_products" edge of the EntryLogs entity.
-func (el *EntryLogs) QueryMemberProducts() *MemberProductQuery {
-	return NewEntryLogsClient(el.config).QueryMemberProducts(el)
+// QueryMemberProducts queries the "member_products" edge of the VenueEntry entity.
+func (ve *VenueEntry) QueryMemberProducts() *MemberProductQuery {
+	return NewVenueEntryClient(ve.config).QueryMemberProducts(ve)
 }
 
-// Update returns a builder for updating this EntryLogs.
-// Note that you need to call EntryLogs.Unwrap() before calling this method if this EntryLogs
+// Update returns a builder for updating this VenueEntry.
+// Note that you need to call VenueEntry.Unwrap() before calling this method if this VenueEntry
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (el *EntryLogs) Update() *EntryLogsUpdateOne {
-	return NewEntryLogsClient(el.config).UpdateOne(el)
+func (ve *VenueEntry) Update() *VenueEntryUpdateOne {
+	return NewVenueEntryClient(ve.config).UpdateOne(ve)
 }
 
-// Unwrap unwraps the EntryLogs entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the VenueEntry entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (el *EntryLogs) Unwrap() *EntryLogs {
-	_tx, ok := el.config.driver.(*txDriver)
+func (ve *VenueEntry) Unwrap() *VenueEntry {
+	_tx, ok := ve.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: EntryLogs is not a transactional entity")
+		panic("ent: VenueEntry is not a transactional entity")
 	}
-	el.config.driver = _tx.drv
-	return el
+	ve.config.driver = _tx.drv
+	return ve
 }
 
 // String implements the fmt.Stringer.
-func (el *EntryLogs) String() string {
+func (ve *VenueEntry) String() string {
 	var builder strings.Builder
-	builder.WriteString("EntryLogs(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", el.ID))
+	builder.WriteString("VenueEntry(")
+	builder.WriteString(fmt.Sprintf("id=%v, ", ve.ID))
 	builder.WriteString("created_at=")
-	builder.WriteString(el.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(ve.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
-	builder.WriteString(el.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(ve.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("delete=")
-	builder.WriteString(fmt.Sprintf("%v", el.Delete))
+	builder.WriteString(fmt.Sprintf("%v", ve.Delete))
 	builder.WriteString(", ")
 	builder.WriteString("created_id=")
-	builder.WriteString(fmt.Sprintf("%v", el.CreatedID))
+	builder.WriteString(fmt.Sprintf("%v", ve.CreatedID))
 	builder.WriteString(", ")
 	builder.WriteString("member_id=")
-	builder.WriteString(fmt.Sprintf("%v", el.MemberID))
+	builder.WriteString(fmt.Sprintf("%v", ve.MemberID))
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
-	builder.WriteString(fmt.Sprintf("%v", el.UserID))
+	builder.WriteString(fmt.Sprintf("%v", ve.UserID))
 	builder.WriteString(", ")
 	builder.WriteString("venue_id=")
-	builder.WriteString(fmt.Sprintf("%v", el.VenueID))
+	builder.WriteString(fmt.Sprintf("%v", ve.VenueID))
 	builder.WriteString(", ")
 	builder.WriteString("member_product_id=")
-	builder.WriteString(fmt.Sprintf("%v", el.MemberProductID))
+	builder.WriteString(fmt.Sprintf("%v", ve.MemberProductID))
 	builder.WriteString(", ")
 	builder.WriteString("member_property_id=")
-	builder.WriteString(fmt.Sprintf("%v", el.MemberPropertyID))
+	builder.WriteString(fmt.Sprintf("%v", ve.MemberPropertyID))
 	builder.WriteString(", ")
 	builder.WriteString("entry_at=")
-	builder.WriteString(el.EntryAt.Format(time.ANSIC))
+	builder.WriteString(ve.EntryAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("leaving_at=")
-	builder.WriteString(el.LeavingAt.Format(time.ANSIC))
+	builder.WriteString(ve.LeavingAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }
 
-// EntryLogsSlice is a parsable slice of EntryLogs.
-type EntryLogsSlice []*EntryLogs
+// VenueEntries is a parsable slice of VenueEntry.
+type VenueEntries []*VenueEntry

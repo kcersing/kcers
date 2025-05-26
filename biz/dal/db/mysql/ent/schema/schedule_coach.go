@@ -22,6 +22,7 @@ func (ScheduleCoach) Fields() []ent.Field {
 		field.Int64("coach_id").Comment("教练ID").Optional(),
 		field.Int64("schedule_id").Comment("课程ID").Optional(),
 		field.String("schedule_name").Comment("课程名称").Optional(),
+		field.Int64("product_id").Comment("课程").Optional(),
 		field.String("type").Comment("类型").Optional(),
 		field.Time("date").Comment("日期").Optional(),
 		field.Time("start_at").Default(time.Now).Comment("开始时间").Optional(),
@@ -30,6 +31,7 @@ func (ScheduleCoach) Fields() []ent.Field {
 		field.Time("sign_end_at").Default(time.Now).Comment("下课签到时间").Optional(),
 
 		field.String("coach_name").Comment("教练名称").Optional(),
+		field.String("remark").Comment("备注").Optional(),
 	}
 }
 
@@ -50,6 +52,8 @@ func (ScheduleCoach) Edges() []ent.Edge {
 
 func (ScheduleCoach) Indexes() []ent.Index {
 	return []ent.Index{
+		index.Fields("id"),
+		index.Fields("date"),
 		index.Fields("venue_id"),
 		index.Fields("coach_id"),
 		index.Fields("schedule_id"),
@@ -58,7 +62,7 @@ func (ScheduleCoach) Indexes() []ent.Index {
 
 func (ScheduleCoach) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "schedule_coach", Options: "AUTO_INCREMENT = 100000"},
+		entsql.Annotation{Table: "schedule_coach"},
 		entsql.WithComments(true),
 	}
 }

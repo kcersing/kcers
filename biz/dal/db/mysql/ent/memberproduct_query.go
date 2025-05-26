@@ -6,12 +6,12 @@ import (
 	"context"
 	"database/sql/driver"
 	"fmt"
-	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/member"
 	"kcers/biz/dal/db/mysql/ent/membercontract"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/memberproductproperty"
 	"kcers/biz/dal/db/mysql/ent/predicate"
+	"kcers/biz/dal/db/mysql/ent/venueentry"
 	"math"
 
 	"entgo.io/ent"
@@ -29,7 +29,7 @@ type MemberProductQuery struct {
 	predicates                 []predicate.MemberProduct
 	withMembers                *MemberQuery
 	withMemberProductPropertys *MemberProductPropertyQuery
-	withMemberProductEntry     *EntryLogsQuery
+	withMemberProductEntry     *VenueEntryQuery
 	withMemberProductContents  *MemberContractQuery
 	modifiers                  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
@@ -113,8 +113,8 @@ func (mpq *MemberProductQuery) QueryMemberProductPropertys() *MemberProductPrope
 }
 
 // QueryMemberProductEntry chains the current query on the "member_product_entry" edge.
-func (mpq *MemberProductQuery) QueryMemberProductEntry() *EntryLogsQuery {
-	query := (&EntryLogsClient{config: mpq.config}).Query()
+func (mpq *MemberProductQuery) QueryMemberProductEntry() *VenueEntryQuery {
+	query := (&VenueEntryClient{config: mpq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := mpq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -125,7 +125,7 @@ func (mpq *MemberProductQuery) QueryMemberProductEntry() *EntryLogsQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(memberproduct.Table, memberproduct.FieldID, selector),
-			sqlgraph.To(entrylogs.Table, entrylogs.FieldID),
+			sqlgraph.To(venueentry.Table, venueentry.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, memberproduct.MemberProductEntryTable, memberproduct.MemberProductEntryColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(mpq.driver.Dialect(), step)
@@ -383,8 +383,8 @@ func (mpq *MemberProductQuery) WithMemberProductPropertys(opts ...func(*MemberPr
 
 // WithMemberProductEntry tells the query-builder to eager-load the nodes that are connected to
 // the "member_product_entry" edge. The optional arguments are used to configure the query builder of the edge.
-func (mpq *MemberProductQuery) WithMemberProductEntry(opts ...func(*EntryLogsQuery)) *MemberProductQuery {
-	query := (&EntryLogsClient{config: mpq.config}).Query()
+func (mpq *MemberProductQuery) WithMemberProductEntry(opts ...func(*VenueEntryQuery)) *MemberProductQuery {
+	query := (&VenueEntryClient{config: mpq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -526,8 +526,8 @@ func (mpq *MemberProductQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 	}
 	if query := mpq.withMemberProductEntry; query != nil {
 		if err := mpq.loadMemberProductEntry(ctx, query, nodes,
-			func(n *MemberProduct) { n.Edges.MemberProductEntry = []*EntryLogs{} },
-			func(n *MemberProduct, e *EntryLogs) {
+			func(n *MemberProduct) { n.Edges.MemberProductEntry = []*VenueEntry{} },
+			func(n *MemberProduct, e *VenueEntry) {
 				n.Edges.MemberProductEntry = append(n.Edges.MemberProductEntry, e)
 			}); err != nil {
 			return nil, err
@@ -604,7 +604,7 @@ func (mpq *MemberProductQuery) loadMemberProductPropertys(ctx context.Context, q
 	}
 	return nil
 }
-func (mpq *MemberProductQuery) loadMemberProductEntry(ctx context.Context, query *EntryLogsQuery, nodes []*MemberProduct, init func(*MemberProduct), assign func(*MemberProduct, *EntryLogs)) error {
+func (mpq *MemberProductQuery) loadMemberProductEntry(ctx context.Context, query *VenueEntryQuery, nodes []*MemberProduct, init func(*MemberProduct), assign func(*MemberProduct, *VenueEntry)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*MemberProduct)
 	for i := range nodes {
@@ -615,9 +615,9 @@ func (mpq *MemberProductQuery) loadMemberProductEntry(ctx context.Context, query
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(entrylogs.FieldMemberProductID)
+		query.ctx.AppendFieldOnce(venueentry.FieldMemberProductID)
 	}
-	query.Where(predicate.EntryLogs(func(s *sql.Selector) {
+	query.Where(predicate.VenueEntry(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(memberproduct.MemberProductEntryColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)

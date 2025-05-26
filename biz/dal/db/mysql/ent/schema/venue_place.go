@@ -47,13 +47,14 @@ func (VenuePlace) Edges() []ent.Edge {
 
 func (VenuePlace) Indexes() []ent.Index {
 	return []ent.Index{
+		index.Fields("id"),
 		index.Fields("venue_id"),
 	}
 }
 
 func (VenuePlace) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "venue_place", Options: "AUTO_INCREMENT = 100000"},
+		entsql.Annotation{Table: "venue_place"},
 		entsql.WithComments(true),
 	}
 }

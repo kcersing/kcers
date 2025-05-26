@@ -30,6 +30,8 @@ type Token struct {
 	UserID int64 `json:"user_id,omitempty"`
 	// Token string | Token 字符串
 	Token string `json:"token,omitempty"`
+	// 类型[1会员;2员工]
+	Type int64 `json:"type,omitempty"`
 	// Log in source such as GitHub | Token 来源 （本地为core, 第三方如github等）
 	Source string `json:"source,omitempty"`
 	//  Expire time | 过期时间
@@ -66,7 +68,7 @@ func (*Token) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case token.FieldID, token.FieldDelete, token.FieldCreatedID, token.FieldUserID:
+		case token.FieldID, token.FieldDelete, token.FieldCreatedID, token.FieldUserID, token.FieldType:
 			values[i] = new(sql.NullInt64)
 		case token.FieldToken, token.FieldSource:
 			values[i] = new(sql.NullString)
@@ -130,6 +132,12 @@ func (t *Token) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field token", values[i])
 			} else if value.Valid {
 				t.Token = value.String
+			}
+		case token.FieldType:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field type", values[i])
+			} else if value.Valid {
+				t.Type = value.Int64
 			}
 		case token.FieldSource:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -208,6 +216,9 @@ func (t *Token) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("token=")
 	builder.WriteString(t.Token)
+	builder.WriteString(", ")
+	builder.WriteString("type=")
+	builder.WriteString(fmt.Sprintf("%v", t.Type))
 	builder.WriteString(", ")
 	builder.WriteString("source=")
 	builder.WriteString(t.Source)

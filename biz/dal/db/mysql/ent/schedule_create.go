@@ -8,6 +8,7 @@ import (
 	"kcers/biz/dal/db/mysql/ent/schedule"
 	"kcers/biz/dal/db/mysql/ent/schedulecoach"
 	"kcers/biz/dal/db/mysql/ent/schedulemember"
+	"kcers/idl_gen/model/base"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -301,6 +302,12 @@ func (sc *ScheduleCreate) SetNillablePlaceName(s *string) *ScheduleCreate {
 	return sc
 }
 
+// SetSeats sets the "seats" field.
+func (sc *ScheduleCreate) SetSeats(b [][]*base.Seat) *ScheduleCreate {
+	sc.mutation.SetSeats(b)
+	return sc
+}
+
 // SetID sets the "id" field.
 func (sc *ScheduleCreate) SetID(i int64) *ScheduleCreate {
 	sc.mutation.SetID(i)
@@ -395,6 +402,10 @@ func (sc *ScheduleCreate) defaults() {
 	if _, ok := sc.mutation.Price(); !ok {
 		v := schedule.DefaultPrice
 		sc.mutation.SetPrice(v)
+	}
+	if _, ok := sc.mutation.Seats(); !ok {
+		v := schedule.DefaultSeats
+		sc.mutation.SetSeats(v)
 	}
 }
 
@@ -511,6 +522,10 @@ func (sc *ScheduleCreate) createSpec() (*Schedule, *sqlgraph.CreateSpec) {
 	if value, ok := sc.mutation.PlaceName(); ok {
 		_spec.SetField(schedule.FieldPlaceName, field.TypeString, value)
 		_node.PlaceName = value
+	}
+	if value, ok := sc.mutation.Seats(); ok {
+		_spec.SetField(schedule.FieldSeats, field.TypeJSON, value)
+		_node.Seats = value
 	}
 	if nodes := sc.mutation.MembersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

@@ -49,6 +49,7 @@ func (MemberProductProperty) Edges() []ent.Edge {
 
 func (MemberProductProperty) Indexes() []ent.Index {
 	return []ent.Index{
+		index.Fields("id"),
 		index.Fields("property_id"),
 		index.Fields("member_id"),
 		index.Fields("member_product_id"),
@@ -59,7 +60,7 @@ func (MemberProductProperty) Indexes() []ent.Index {
 
 func (MemberProductProperty) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "member_product_property", Options: "AUTO_INCREMENT = 100000"},
+		entsql.Annotation{Table: "member_product_property"},
 		entsql.WithComments(true),
 	}
 }

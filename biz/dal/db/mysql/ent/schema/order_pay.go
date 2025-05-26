@@ -44,13 +44,14 @@ func (OrderPay) Edges() []ent.Edge {
 
 func (OrderPay) Indexes() []ent.Index {
 	return []ent.Index{
+		index.Fields("id"),
 		index.Fields("order_id"),
 	}
 }
 
 func (OrderPay) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "order_pay", Options: "AUTO_INCREMENT = 100000"},
+		entsql.Annotation{Table: "order_pay"},
 		entsql.WithComments(true),
 	}
 }

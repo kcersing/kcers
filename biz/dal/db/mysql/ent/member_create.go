@@ -5,16 +5,16 @@ package ent
 import (
 	"context"
 	"fmt"
-	"kcers/biz/dal/db/mysql/ent/entrylogs"
 	"kcers/biz/dal/db/mysql/ent/face"
 	"kcers/biz/dal/db/mysql/ent/member"
 	"kcers/biz/dal/db/mysql/ent/membercontract"
-	"kcers/biz/dal/db/mysql/ent/memberdetails"
 	"kcers/biz/dal/db/mysql/ent/membernote"
 	"kcers/biz/dal/db/mysql/ent/memberproduct"
 	"kcers/biz/dal/db/mysql/ent/memberprofile"
 	"kcers/biz/dal/db/mysql/ent/membertoken"
 	entorder "kcers/biz/dal/db/mysql/ent/order"
+	"kcers/biz/dal/db/mysql/ent/venueentry"
+	"kcers/biz/dal/db/mysql/ent/venuemember"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -222,17 +222,17 @@ func (mc *MemberCreate) AddMemberProfile(m ...*MemberProfile) *MemberCreate {
 	return mc.AddMemberProfileIDs(ids...)
 }
 
-// AddMemberDetailIDs adds the "member_details" edge to the MemberDetails entity by IDs.
+// AddMemberDetailIDs adds the "member_details" edge to the VenueMember entity by IDs.
 func (mc *MemberCreate) AddMemberDetailIDs(ids ...int64) *MemberCreate {
 	mc.mutation.AddMemberDetailIDs(ids...)
 	return mc
 }
 
-// AddMemberDetails adds the "member_details" edges to the MemberDetails entity.
-func (mc *MemberCreate) AddMemberDetails(m ...*MemberDetails) *MemberCreate {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+// AddMemberDetails adds the "member_details" edges to the VenueMember entity.
+func (mc *MemberCreate) AddMemberDetails(v ...*VenueMember) *MemberCreate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return mc.AddMemberDetailIDs(ids...)
 }
@@ -282,17 +282,17 @@ func (mc *MemberCreate) AddMemberProducts(m ...*MemberProduct) *MemberCreate {
 	return mc.AddMemberProductIDs(ids...)
 }
 
-// AddMemberEntryIDs adds the "member_entry" edge to the EntryLogs entity by IDs.
+// AddMemberEntryIDs adds the "member_entry" edge to the VenueEntry entity by IDs.
 func (mc *MemberCreate) AddMemberEntryIDs(ids ...int64) *MemberCreate {
 	mc.mutation.AddMemberEntryIDs(ids...)
 	return mc
 }
 
-// AddMemberEntry adds the "member_entry" edges to the EntryLogs entity.
-func (mc *MemberCreate) AddMemberEntry(e ...*EntryLogs) *MemberCreate {
-	ids := make([]int64, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// AddMemberEntry adds the "member_entry" edges to the VenueEntry entity.
+func (mc *MemberCreate) AddMemberEntry(v ...*VenueEntry) *MemberCreate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
 	return mc.AddMemberEntryIDs(ids...)
 }
@@ -510,7 +510,7 @@ func (mc *MemberCreate) createSpec() (*Member, *sqlgraph.CreateSpec) {
 			Columns: []string{member.MemberDetailsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(memberdetails.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venuemember.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -574,7 +574,7 @@ func (mc *MemberCreate) createSpec() (*Member, *sqlgraph.CreateSpec) {
 			Columns: []string{member.MemberEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entrylogs.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(venueentry.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

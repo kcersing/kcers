@@ -40,6 +40,7 @@ func (OrderSales) Edges() []ent.Edge {
 }
 func (OrderSales) Indexes() []ent.Index {
 	return []ent.Index{
+		index.Fields("id"),
 		index.Fields("order_id"),
 		index.Fields("member_id"),
 		index.Fields("sales_id"),
@@ -48,7 +49,7 @@ func (OrderSales) Indexes() []ent.Index {
 
 func (OrderSales) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "order_sales", Options: "AUTO_INCREMENT = 100000"},
+		entsql.Annotation{Table: "order_sales"},
 		entsql.WithComments(true),
 	}
 }

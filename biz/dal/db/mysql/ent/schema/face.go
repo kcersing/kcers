@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"kcers/biz/dal/db/mysql/ent/schema/mixins"
 	"time"
 )
@@ -70,9 +71,12 @@ func (Face) Edges() []ent.Edge {
 }
 
 func (Face) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+		index.Fields("id"),
+		index.Fields("member_id"),
+		index.Fields("user_id"),
+	}
 }
-
 func (Face) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entsql.Annotation{Table: "faces"},

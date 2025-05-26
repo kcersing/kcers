@@ -68,18 +68,6 @@ func (f DictionaryDetailFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.V
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DictionaryDetailMutation", m)
 }
 
-// The EntryLogsFunc type is an adapter to allow the use of ordinary
-// function as EntryLogs mutator.
-type EntryLogsFunc func(context.Context, *ent.EntryLogsMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f EntryLogsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.EntryLogsMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EntryLogsMutation", m)
-}
-
 // The FaceFunc type is an adapter to allow the use of ordinary
 // function as Face mutator.
 type FaceFunc func(context.Context, *ent.FaceMutation) (ent.Value, error)
@@ -138,18 +126,6 @@ func (f MemberContractContentFunc) Mutate(ctx context.Context, m ent.Mutation) (
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MemberContractContentMutation", m)
-}
-
-// The MemberDetailsFunc type is an adapter to allow the use of ordinary
-// function as MemberDetails mutator.
-type MemberDetailsFunc func(context.Context, *ent.MemberDetailsMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f MemberDetailsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.MemberDetailsMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MemberDetailsMutation", m)
 }
 
 // The MemberNoteFunc type is an adapter to allow the use of ordinary
@@ -438,6 +414,30 @@ func (f VenueFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VenueMutation", m)
+}
+
+// The VenueEntryFunc type is an adapter to allow the use of ordinary
+// function as VenueEntry mutator.
+type VenueEntryFunc func(context.Context, *ent.VenueEntryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VenueEntryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.VenueEntryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VenueEntryMutation", m)
+}
+
+// The VenueMemberFunc type is an adapter to allow the use of ordinary
+// function as VenueMember mutator.
+type VenueMemberFunc func(context.Context, *ent.VenueMemberMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VenueMemberFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.VenueMemberMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VenueMemberMutation", m)
 }
 
 // The VenuePlaceFunc type is an adapter to allow the use of ordinary

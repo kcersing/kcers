@@ -26,6 +26,8 @@ const (
 	FieldUserID = "user_id"
 	// FieldToken holds the string denoting the token field in the database.
 	FieldToken = "token"
+	// FieldType holds the string denoting the type field in the database.
+	FieldType = "type"
 	// FieldSource holds the string denoting the source field in the database.
 	FieldSource = "source"
 	// FieldExpiredAt holds the string denoting the expired_at field in the database.
@@ -52,6 +54,7 @@ var Columns = []string{
 	FieldCreatedID,
 	FieldUserID,
 	FieldToken,
+	FieldType,
 	FieldSource,
 	FieldExpiredAt,
 }
@@ -126,6 +129,11 @@ func ByUserID(opts ...sql.OrderTermOption) OrderOption {
 // ByToken orders the results by the token field.
 func ByToken(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldToken, opts...).ToFunc()
+}
+
+// ByType orders the results by the type field.
+func ByType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldType, opts...).ToFunc()
 }
 
 // BySource orders the results by the source field.

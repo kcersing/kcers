@@ -115,6 +115,16 @@ func Data(v string) predicate.ProductProperty {
 	return predicate.ProductProperty(sql.FieldEQ(FieldData, v))
 }
 
+// Pic applies equality check predicate on the "pic" field. It's identical to PicEQ.
+func Pic(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldEQ(FieldPic, v))
+}
+
+// Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
+func Description(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldEQ(FieldDescription, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.ProductProperty {
 	return predicate.ProductProperty(sql.FieldEQ(FieldCreatedAt, v))
@@ -788,6 +798,156 @@ func DataEqualFold(v string) predicate.ProductProperty {
 // DataContainsFold applies the ContainsFold predicate on the "data" field.
 func DataContainsFold(v string) predicate.ProductProperty {
 	return predicate.ProductProperty(sql.FieldContainsFold(FieldData, v))
+}
+
+// PicEQ applies the EQ predicate on the "pic" field.
+func PicEQ(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldEQ(FieldPic, v))
+}
+
+// PicNEQ applies the NEQ predicate on the "pic" field.
+func PicNEQ(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldNEQ(FieldPic, v))
+}
+
+// PicIn applies the In predicate on the "pic" field.
+func PicIn(vs ...string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldIn(FieldPic, vs...))
+}
+
+// PicNotIn applies the NotIn predicate on the "pic" field.
+func PicNotIn(vs ...string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldNotIn(FieldPic, vs...))
+}
+
+// PicGT applies the GT predicate on the "pic" field.
+func PicGT(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldGT(FieldPic, v))
+}
+
+// PicGTE applies the GTE predicate on the "pic" field.
+func PicGTE(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldGTE(FieldPic, v))
+}
+
+// PicLT applies the LT predicate on the "pic" field.
+func PicLT(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldLT(FieldPic, v))
+}
+
+// PicLTE applies the LTE predicate on the "pic" field.
+func PicLTE(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldLTE(FieldPic, v))
+}
+
+// PicContains applies the Contains predicate on the "pic" field.
+func PicContains(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldContains(FieldPic, v))
+}
+
+// PicHasPrefix applies the HasPrefix predicate on the "pic" field.
+func PicHasPrefix(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldHasPrefix(FieldPic, v))
+}
+
+// PicHasSuffix applies the HasSuffix predicate on the "pic" field.
+func PicHasSuffix(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldHasSuffix(FieldPic, v))
+}
+
+// PicIsNil applies the IsNil predicate on the "pic" field.
+func PicIsNil() predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldIsNull(FieldPic))
+}
+
+// PicNotNil applies the NotNil predicate on the "pic" field.
+func PicNotNil() predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldNotNull(FieldPic))
+}
+
+// PicEqualFold applies the EqualFold predicate on the "pic" field.
+func PicEqualFold(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldEqualFold(FieldPic, v))
+}
+
+// PicContainsFold applies the ContainsFold predicate on the "pic" field.
+func PicContainsFold(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldContainsFold(FieldPic, v))
+}
+
+// DescriptionEQ applies the EQ predicate on the "description" field.
+func DescriptionEQ(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldEQ(FieldDescription, v))
+}
+
+// DescriptionNEQ applies the NEQ predicate on the "description" field.
+func DescriptionNEQ(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldNEQ(FieldDescription, v))
+}
+
+// DescriptionIn applies the In predicate on the "description" field.
+func DescriptionIn(vs ...string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldIn(FieldDescription, vs...))
+}
+
+// DescriptionNotIn applies the NotIn predicate on the "description" field.
+func DescriptionNotIn(vs ...string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldNotIn(FieldDescription, vs...))
+}
+
+// DescriptionGT applies the GT predicate on the "description" field.
+func DescriptionGT(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldGT(FieldDescription, v))
+}
+
+// DescriptionGTE applies the GTE predicate on the "description" field.
+func DescriptionGTE(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldGTE(FieldDescription, v))
+}
+
+// DescriptionLT applies the LT predicate on the "description" field.
+func DescriptionLT(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldLT(FieldDescription, v))
+}
+
+// DescriptionLTE applies the LTE predicate on the "description" field.
+func DescriptionLTE(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldLTE(FieldDescription, v))
+}
+
+// DescriptionContains applies the Contains predicate on the "description" field.
+func DescriptionContains(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldContains(FieldDescription, v))
+}
+
+// DescriptionHasPrefix applies the HasPrefix predicate on the "description" field.
+func DescriptionHasPrefix(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldHasPrefix(FieldDescription, v))
+}
+
+// DescriptionHasSuffix applies the HasSuffix predicate on the "description" field.
+func DescriptionHasSuffix(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldHasSuffix(FieldDescription, v))
+}
+
+// DescriptionIsNil applies the IsNil predicate on the "description" field.
+func DescriptionIsNil() predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldIsNull(FieldDescription))
+}
+
+// DescriptionNotNil applies the NotNil predicate on the "description" field.
+func DescriptionNotNil() predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldNotNull(FieldDescription))
+}
+
+// DescriptionEqualFold applies the EqualFold predicate on the "description" field.
+func DescriptionEqualFold(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldEqualFold(FieldDescription, v))
+}
+
+// DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
+func DescriptionContainsFold(v string) predicate.ProductProperty {
+	return predicate.ProductProperty(sql.FieldContainsFold(FieldDescription, v))
 }
 
 // HasProduct applies the HasEdge predicate on the "product" edge.
