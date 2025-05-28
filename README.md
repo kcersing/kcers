@@ -22,7 +22,7 @@ GO111MODULE=on go install github.com/cloudwego/thriftgo@latest
 | RPC 框架  | Kitex（看kitex版本） |
 | 数据库     | MySQL、Redis     |
 | 数据库orm  | ent             |
-| 消息队列    | RabbitMQ        |
+| 消息队列    | Kafka           |
 | 身份鉴权    | JWT             |
 | 访问控制    | Casbin          |
 | API 文档  | Swagger         |
