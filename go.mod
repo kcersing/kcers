@@ -18,8 +18,8 @@ require (
 	github.com/alibabacloud-go/tea v1.3.7
 	github.com/alibabacloud-go/tea-utils/v2 v2.0.7
 	github.com/apache/thrift v0.13.0
-	github.com/bytedance/sonic v1.12.2
-	github.com/cloudwego/hertz v0.9.5
+	github.com/bytedance/sonic v1.13.2
+	github.com/cloudwego/hertz v0.10.0
 	github.com/cloudwego/kitex v0.8.0
 	github.com/cockroachdb/errors v1.11.1
 	github.com/dgraph-io/ristretto v0.1.1
@@ -35,7 +35,6 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/kcersing/dy v0.0.0-20250319093200-c849f4153c26
 	github.com/lib/pq v1.10.9
-	github.com/medivhzhan/weapp/v2 v2.5.0
 	github.com/minio/minio-go/v7 v7.0.69
 	github.com/mojocn/base64Captcha v1.3.8
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
@@ -45,6 +44,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cast v1.6.0
 	github.com/spf13/viper v1.18.2
+	github.com/swaggo/swag v1.16.4
 	golang.org/x/crypto v0.35.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
@@ -53,6 +53,9 @@ require (
 	aidanwoods.dev/go-paseto v1.3.0 // indirect
 	ariga.io/atlas v0.31.1-0.20250212144724-069be8033e83 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/KyleBanks/depth v1.2.1 // indirect
+	github.com/PuerkitoBio/purell v1.1.1 // indirect
+	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/alibabacloud-go/alibabacloud-gateway-spi v0.0.5 // indirect
 	github.com/alibabacloud-go/debug v1.0.1 // indirect
@@ -64,14 +67,14 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bmatcuk/doublestar v1.3.4 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.8.1 // indirect
-	github.com/bytedance/gopkg v0.1.0 // indirect
-	github.com/bytedance/sonic/loader v0.2.0 // indirect
+	github.com/bytedance/gopkg v0.1.1 // indirect
+	github.com/bytedance/sonic/loader v0.2.4 // indirect
 	github.com/casbin/govaluate v1.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/clbanning/mxj/v2 v2.7.0 // indirect
-	github.com/cloudwego/base64x v0.1.4 // indirect
-	github.com/cloudwego/iasm v0.2.0 // indirect
-	github.com/cloudwego/netpoll v0.6.4 // indirect
+	github.com/cloudwego/base64x v0.1.5 // indirect
+	github.com/cloudwego/gopkg v0.1.4 // indirect
+	github.com/cloudwego/netpoll v0.7.0 // indirect
 	github.com/cockroachdb/logtags v0.0.0-20230118201751-21c54148d20b // indirect
 	github.com/cockroachdb/redact v1.1.5 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
@@ -79,6 +82,10 @@ require (
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/getsentry/sentry-go v0.18.0 // indirect
 	github.com/go-openapi/inflect v0.21.0 // indirect
+	github.com/go-openapi/jsonpointer v0.19.5 // indirect
+	github.com/go-openapi/jsonreference v0.19.6 // indirect
+	github.com/go-openapi/spec v0.20.4 // indirect
+	github.com/go-openapi/swag v0.19.15 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt/v4 v4.4.1 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
