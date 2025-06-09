@@ -1,4 +1,4 @@
-namespace go admin.schedule
+namespace go schedule
 
 include "../base/base.thrift"
 struct ScheduleInfo  {
@@ -173,6 +173,10 @@ service ScheduleService {
     base.NilResponse CreateSchedule(1: CreateOrUpdateScheduleReq req)  (api.post = "/service/schedule/create")
 
     base.NilResponse UpdateSchedule(1: CreateOrUpdateScheduleReq req) (api.post = "/service/schedule/update")
+    /**取消课程列表*/
+    base.NilResponse CancelSchedule(1: base.IDReq req)(api.post = "/service/schedule/cancel")
+    /**取消会员课程*/
+    base.NilResponse CancelScheduleMember(1: base.IDReq req)(api.post = "/service/schedule/member-cancel")
 
     base.NilResponse UpdateStatus(1: base.StatusCodeReq req) (api.post = "/service/schedule/status")
 
@@ -194,4 +198,24 @@ service ScheduleService {
 
     base.NilResponse UpdateCoachStatus(1: base.StatusCodeReq req) (api.post = "/service/schedule/schedule-coach-status")
 
+
+    base.NilResponse ScheduleListVenueExport(1: ScheduleListReq req )(api.post = "/service/schedule/list/export")
+    base.NilResponse ScheduleMemberListVenueExport(1: ScheduleMemberListReq req) (api.post = "/service/schedule/schedule-member-list/export")
+
+
+   /**会员签到*/
+   base.NilResponse SignMemberSchedule(1: base.IDReq req) (api.post = "/service/schedule/sign-member-schedule")
+   /**教练签到*/
+   base.NilResponse SignStaffSchedule(1: base.IDReq req) (api.post = "/service/schedule/sign-staff-schedule")
+
+   /**复制排期*/
+   base.NilResponse CopySchedule(1: CopyScheduleReq req) (api.post = "/service/schedule/copy-schedule")
+
+}
+struct CopyScheduleReq{
+   1:  optional i64 type=0 (api.raw = "type")
+   2:  optional string date="" (api.raw = "date")
+   3:  optional string startAt ="" (api.raw = "startAt")
+   4:  optional string endAt ="" (api.raw = "endAt")
+   5:  required i64 venueId = 0 (api.raw = "venueId")
 }

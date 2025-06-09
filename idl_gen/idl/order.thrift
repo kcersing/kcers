@@ -151,6 +151,11 @@ struct OrderAllCountReq{
     255: optional i64 page=1 (api.raw = "page")
     256: optional i64 pageSize=100 (api.raw = "pageSize")
 }
+struct PayReq{
+	     1: optional i64 orderId=0 (api.raw = "orderId")
+         2: optional string paySn="" (api.raw = "paySn")
+         3: optional double fee=0 (api.raw = "fee")
+}
 service OrderService {
 
     base.NilResponse Buy(1: BuyReq req) (api.post = "/service/order/buy")
@@ -160,11 +165,13 @@ service OrderService {
     base.NilResponse GetOrderById(1: base.IDReq req) (api.get = "/service/order/info") // 订单详情
     base.NilResponse OrderListExport(1: ListOrderReq req) (api.post = "/service/order/list/export")
 
+    base.NilResponse Refund(1: base.IDReq req) (api.post = "/service/order/refund")
 
+    base.NilResponse Pay(1: PayReq req) (api.post = "/service/order/pay")
     base.NilResponse OrderAllCount(1: OrderAllCountReq req) (api.post = "/service/order/all-count")
 
     base.NilResponse ContractSignMember(1: ContractSignMemberReq req) (api.post = "/service/order/contract-sign-member")
 
-
+    base.NilResponse OrderCancel(1: base.IDReq req) (api.post = "/service/order/cancel")
 
 }

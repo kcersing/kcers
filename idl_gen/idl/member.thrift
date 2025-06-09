@@ -18,7 +18,7 @@ struct CreateOrUpdateMemberReq {
 
 }
 
-struct CreateOrUpdateMemberAvatarReq {
+struct UpdateAvatarMemberReq {
     1:  optional i64 memberId=0 (api.raw = "memberId")
     2:  optional string avatar="" (api.raw = "avatar")
 }
@@ -235,6 +235,8 @@ struct LoginReq{
 
 
 service MemberService {
+
+  base.NilResponse UpdateAvatarMember(1: UpdateAvatarMemberReq req) (api.post = "/service/member/avatar-update")
 
   // 新增用户
   base.NilResponse CreateMember(1: CreateOrUpdateMemberReq req) (api.post = "/service/member/create")

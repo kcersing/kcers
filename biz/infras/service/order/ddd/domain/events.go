@@ -1,8 +1,10 @@
 package domain
 
-// OrderCreatedEvent 订单创建事件
-type OrderCreatedEvent struct {
-}
+import "time"
 
-type OrderItemAddedEvent struct {
+type Event interface {
+	GetEventId() string
+	SetOrderSn() string
+	GetCreatedAt() time.Time
+	SetEventType() string
 }
