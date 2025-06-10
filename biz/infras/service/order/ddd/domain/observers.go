@@ -57,7 +57,15 @@ func (d *EventDispatcher) Dispatch(event Event) {
 
 // InventoryService 库存服务接口
 type InventoryService interface {
-	Reserve() error
-	Release() error
-	RestoreForRefund() error
+	Reserve() error          //预留库存
+	Release() error          //扣除库存
+	RestoreForRefund() error //恢复库存
+}
+type PayService interface {
+	Refund(sn OrderSn, amount float64, reason string, createdId int64) error
+}
+
+type NotificationServer interface {
+	SendCreatedNotification(sn OrderSn) error
+	SendPaidNotification(sn OrderSn) error
 }
