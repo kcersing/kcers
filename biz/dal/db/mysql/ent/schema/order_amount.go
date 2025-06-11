@@ -22,6 +22,7 @@ func (OrderAmount) Fields() []ent.Field {
 		field.Float("residue").Comment("未支付金额").Optional(),
 		field.Float("remission").Comment("减免").Optional(),
 		field.Float("refund").Comment("退费金额").Optional(),
+		field.String("refund_reason").Comment("退费原因").Optional(),
 	}
 }
 

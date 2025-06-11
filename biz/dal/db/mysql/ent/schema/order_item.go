@@ -2,8 +2,6 @@ package schema
 
 import (
 	"entgo.io/ent/schema/index"
-	"kcers/idl_gen/model/order"
-
 	"kcers/biz/dal/db/mysql/ent/schema/mixins"
 
 	"entgo.io/ent"
@@ -24,7 +22,8 @@ func (OrderItem) Fields() []ent.Field {
 		field.String("name").Comment("名称").Optional(),
 		field.Int64("product_id").Comment("产品id").Optional(),
 		field.Int64("related_user_product_id").Default(0).Comment("关联会员产品id").Optional(),
-		field.JSON("data", order.BuyReq{}).Comment("数据附件").Optional(),
+		field.Float("unit_price").Comment("单价").Optional(),
+		field.String("sku").Comment("sku").Optional(),
 	}
 }
 
