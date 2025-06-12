@@ -5,10 +5,8 @@ import (
 	"sync"
 )
 
-type OrderSn string
-
 type Order struct {
-	OrderSn     OrderSn
+	Id          int64
 	Items       []OrderItem
 	TotalAmount float64
 	Status      OrderStatus
@@ -24,7 +22,7 @@ type OrderItem struct {
 	Price     float64
 }
 
-func CreateOrder(orderSn OrderSn, items []OrderItem) (order *Order, err error) {
+func CreateOrder(Id int64, items []OrderItem) (order *Order, err error) {
 	return
 }
 
@@ -34,7 +32,7 @@ func (o *Order) applyEvent(event Event) {
 	o.Events = append(o.Events, event)
 	switch e := event.(type) {
 	case *OrderCreatedEvent:
-		o.OrderSn = e.OrderSn
+		o.Id = e.Id
 		o.Items = e.Items
 		o.TotalAmount = e.TotalAmount
 		o.Status = OrderCreated
@@ -67,10 +65,10 @@ func (o *Order) ClearUncommittedEvents() {
 	defer o.mu.Unlock()
 	o.Events = make([]Event, 0)
 }
-func (o *Order) GetOrderSn() OrderSn {
+func (o *Order) GetId() int64 {
 	o.mu.RLock()
 	defer o.mu.RUnlock()
-	return o.OrderSn
+	return o.Id
 }
 func (o *Order) GetStatus() OrderStatus {
 	o.mu.RLock()
@@ -98,7 +96,7 @@ func (o *Order) Pay(payMethod string) (err error) {
 	o.mu.Lock()
 	defer o.mu.Unlock()
 	if o.Status != OrderCreated {
-		return fmt.Errorf("订单状态错误，当前状态：%s ", o.OrderSn)
+		return fmt.Errorf("订单状态错误，当前状态：%s ", o.Id)
 	}
 
 	if !o.Status.CanTransitionTo(OrderCancelled) {

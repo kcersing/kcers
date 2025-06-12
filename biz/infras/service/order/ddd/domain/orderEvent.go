@@ -4,7 +4,7 @@ import "time"
 
 // OrderCreatedEvent 订单创建事件
 type OrderCreatedEvent struct {
-	OrderSn     OrderSn
+	Id          int64
 	EventId     string
 	Items       []OrderItem
 	TotalAmount float64
@@ -15,8 +15,8 @@ type OrderCreatedEvent struct {
 func (e *OrderCreatedEvent) GetEventId() string {
 	return e.EventId
 }
-func (e *OrderCreatedEvent) SetOrderSn() OrderSn {
-	return e.OrderSn
+func (e *OrderCreatedEvent) SetId() int64 {
+	return e.Id
 }
 func (e *OrderCreatedEvent) GetCreatedAt() time.Time {
 	return e.CreatedAt
@@ -28,7 +28,7 @@ func (e *OrderCreatedEvent) SetEventType() string {
 // OrderPaidEvent 订单支付事件
 type OrderPaidEvent struct {
 	EventId   string
-	OrderSn   OrderSn
+	Id        int64
 	PaidAt    time.Time
 	PayMethod string
 	PayAmount float64
@@ -39,8 +39,8 @@ type OrderPaidEvent struct {
 func (e *OrderPaidEvent) GetEventId() string {
 	return e.EventId
 }
-func (e *OrderPaidEvent) SetOrderSn() OrderSn {
-	return e.OrderSn
+func (e *OrderPaidEvent) SetId() int64 {
+	return e.Id
 }
 func (e *OrderPaidEvent) GetCreatedAt() time.Time {
 	return e.CreatedAt
@@ -52,7 +52,7 @@ func (e *OrderPaidEvent) SetEventType() string {
 // OrderShippedEvent 订单发货事件
 type OrderShippedEvent struct {
 	EventId   string
-	OrderSn   OrderSn
+	Id        int64
 	ShippedAt time.Time
 	CreatedAt time.Time
 	CreatedId int64
@@ -61,8 +61,8 @@ type OrderShippedEvent struct {
 func (e *OrderShippedEvent) GetEventId() string {
 	return e.EventId
 }
-func (e *OrderShippedEvent) SetOrderSn() OrderSn {
-	return e.OrderSn
+func (e *OrderShippedEvent) SetId() int64 {
+	return e.Id
 }
 func (e *OrderShippedEvent) GetShippedAt() time.Time {
 	return e.ShippedAt
@@ -77,7 +77,7 @@ func (e *OrderShippedEvent) SetEventType() string {
 // OrderCompletedEvent 订单完成事件
 type OrderCompletedEvent struct {
 	EventId     string
-	OrderSn     OrderSn
+	Id          int64
 	CompletedAt time.Time
 	CreatedAt   time.Time
 	CreatedId   int64
@@ -86,8 +86,8 @@ type OrderCompletedEvent struct {
 func (e *OrderCompletedEvent) GetEventId() string {
 	return e.EventId
 }
-func (e *OrderCompletedEvent) SetOrderSn() OrderSn {
-	return e.OrderSn
+func (e *OrderCompletedEvent) SetId() int64 {
+	return e.Id
 }
 func (e *OrderCompletedEvent) GetCompletedAt() time.Time {
 	return e.CompletedAt
@@ -102,7 +102,7 @@ func (e *OrderCompletedEvent) SetEventType() string {
 // OrderCancelledEvent 订单取消事件
 type OrderCancelledEvent struct {
 	EventId     string
-	OrderSn     OrderSn
+	Id          int64
 	CancelledAt time.Time
 	CreatedAt   time.Time
 	CreatedId   int64
@@ -111,8 +111,8 @@ type OrderCancelledEvent struct {
 func (e *OrderCancelledEvent) GetEventId() string {
 	return e.EventId
 }
-func (e *OrderCancelledEvent) SetOrderSn() OrderSn {
-	return e.OrderSn
+func (e *OrderCancelledEvent) SetId() int64 {
+	return e.Id
 }
 func (e *OrderCancelledEvent) GetCancelledAt() time.Time {
 	return e.CancelledAt
@@ -127,7 +127,7 @@ func (e *OrderCancelledEvent) SetEventType() string {
 // OrderRefundedEvent 订单退款事件
 type OrderRefundedEvent struct {
 	EventId        string
-	OrderSn        OrderSn
+	Id             int64
 	RefundedAt     time.Time
 	CreatedAt      time.Time
 	CreatedId      int64
@@ -138,8 +138,8 @@ type OrderRefundedEvent struct {
 func (e *OrderRefundedEvent) GetEventId() string {
 	return e.EventId
 }
-func (e *OrderRefundedEvent) SetOrderSn() OrderSn {
-	return e.OrderSn
+func (e *OrderRefundedEvent) SetId() int64 {
+	return e.Id
 }
 func (e *OrderRefundedEvent) GetRefundedAt() time.Time {
 	return e.RefundedAt

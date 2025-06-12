@@ -12,7 +12,7 @@ import (
 type OrderRepository interface {
 	Save(ctx context.Context, order *Order) error
 	Update(ctx context.Context, order *Order) error
-	FindByOrderSn(ctx context.Context, orderSn OrderSn) (*Order, error)
+	FindById(ctx context.Context, Id int64) (*Order, error)
 }
 type OrderRepositoryImpl struct {
 	db           *ent.Client
@@ -57,6 +57,7 @@ func (o OrderRepositoryImpl) Save(ctx context.Context, order *Order) error {
 
 	//插入数据 order_snapshots
 
+	return nil
 }
 
 func (o OrderRepositoryImpl) Update(ctx context.Context, order *Order) error {
@@ -64,7 +65,7 @@ func (o OrderRepositoryImpl) Update(ctx context.Context, order *Order) error {
 	panic("implement me")
 }
 
-func (o OrderRepositoryImpl) FindByOrderSn(ctx context.Context, orderSn OrderSn) (*Order, error) {
+func (o OrderRepositoryImpl) FindById(ctx context.Context, Id int64) (*Order, error) {
 	//TODO implement me
 	panic("implement me")
 }
