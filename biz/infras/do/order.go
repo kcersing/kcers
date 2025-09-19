@@ -16,7 +16,6 @@ type Order interface {
 	Info(id int64) (info *order.OrderInfo, err error)
 	GetBySnOrder(sn string) (info *order.OrderInfo, err error)
 
-	RefundOrderList(req *order.ListOrderReq) (resp []*order.OrderItem, total int, err error)
 	CompletedOrder(orderEnt *ent.Order) (err error)
 	RefundOrder(id int64) (err error)
 	Pay(req PayOrder) (err error)
